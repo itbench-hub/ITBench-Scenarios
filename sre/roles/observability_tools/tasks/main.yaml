@@ -42,7 +42,7 @@
     - install_tools
 
 - name: List of common (SRE+FinOps) Helm installations
-  set_fact:
+  ansible.builtin.set_fact:
     common_helm_installations:
       - name: "{{ loki_namespace_project_name }}"
         namespace: "{{ loki_installation_name }}"
@@ -86,7 +86,7 @@
     - domain == "finops"
 
 - name: List of common FinOps Helm installations
-  set_fact:
+  ansible.builtin.set_fact:
     finops_related_helm_installations:
       - name: "{{ opencost_installation_name }}"
         namespace:  "{{ opencost_namespace_project_name }}"
