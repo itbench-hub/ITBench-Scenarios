@@ -1,4 +1,4 @@
-argcomplete==3.5.3
+argcomplete==3.6.1
 certifi==2025.1.31
 cfgv==3.4.0
 charset-normalizer==3.4.1
@@ -20,8 +20,8 @@ prompt_toolkit==3.0.50
 PyYAML==6.0.2
 questionary==2.1.0
 requests==2.32.3
-termcolor==2.5.0
+termcolor==3.0.1
 tomlkit==0.13.2
 urllib3==2.3.0
-virtualenv==20.29.3
+virtualenv==20.30.0
 wcwidth==0.2.13
