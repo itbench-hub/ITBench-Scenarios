@@ -30,7 +30,42 @@
           - web.enable-lifecycle
           - web.enable-otlp-receiver
       serverFiles:
+        alerting_rules.yml: {}
         recording_rules.yml:
           groups: "{{ prometheus_rules }}"
       prometheus-pushgateway:
         enabled: false
+
+- name: Deploy Ingress for Prometheus and AlertManager frontends
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ kubeconfig }}"
+    resource_definition:
+      apiVersion: networking.k8s.io/v1
+      kind: Ingress
+      metadata:
+        name: prometheus
+        namespace: "{{ prometheus_namespace_project_name }}"
+        annotations:
+          nginx.ingress.kubernetes.io/rewrite-target: /$2
+      spec:
+        ingressClassName: nginx
+        rules:
+          - http:
+              paths:
+                - pathType: ImplementationSpecific
+                  path: /prometheus(/|$)(.*)
+                  backend:
+                    service:
+                      name: "{{ prometheus_installation_name }}-server"
+                      port:
+                        number: 80
+          - http:
+              paths:
+                - pathType: ImplementationSpecific
+                  path: /alertmanager(/|$)(.*)
+                  backend:
+                    service:
+                      name: "{{ prometheus_installation_name }}-alertmanager"
+                      port:
+                        number: 9093
