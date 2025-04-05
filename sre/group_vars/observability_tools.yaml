@@ -19,7 +19,7 @@ es_chart_version: "21.4.5"
 # Prometheus - Grafana configuration
 prometheus_namespace_project_name: "prometheus"
 prometheus_installation_name: "prometheus"
-prometheus_chart_version: "27.5.1"
+prometheus_chart_version: "27.8.0"
 prometheus_service_name: "prometheus-server"
 
 # Granfana configuration
