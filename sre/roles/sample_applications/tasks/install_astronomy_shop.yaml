@@ -112,7 +112,7 @@
             tag: "0.3"
           resources:
             limits:
-              memory: 1500Mi
+              memory: 2048Mi
         imageprovider:
           resources:
             requests:
