@@ -1,19 +1,35 @@
 ---
-- name: Create Prometheus rules list
-  set_fact:
-    prometheus_rules: []
+- name: Set additional template variables
+  ansible.builtin.set_fact:
+    enable_finops_rules: "{{ domain == 'finops' }}"
 
-- name: Load OpenCost recording rules from yaml
-  set_fact:
-    opencost_recording_rules: "{{ lookup('ansible.builtin.file', 'files/recording_rules_opencost.yaml')| from_yaml }}"
-  when:
-    - domain == "finops"
+- name: Copy alerting rules template into tmp directory for processing
+  ansible.builtin.copy:
+    src: templates/prometheus-alerting-rules.j2
+    dest: /tmp/prometheus-alerting-rules.j2
 
-- name: Add OpenCost rules to Prometheus rules list
-  set_fact:
-    prometheus_rules: "{{ prometheus_rules + opencost_recording_rules }}"
-  when:
-    - domain == "finops"
+- name: Create a temporary template with fake curly brackets for processing
+  ansible.builtin.replace:
+    path: /tmp/prometheus-alerting-rules.j2
+    regexp: "\\{\\{([a-zA-Z\\.$_ ]*)\\}\\}"
+    replace: "<<\\1>>"
+
+- name: Create new alerting rules template from proccesed template
+  ansible.builtin.copy:
+    dest: /tmp/prometheus-required-alerting-rules.j2
+    content: "{{ lookup('ansible.builtin.template', '/tmp/prometheus-alerting-rules.j2') }}"
+
+- name: Escape double curly brackets in alerting rules yaml file
+  ansible.builtin.replace:
+    path: /tmp/prometheus-required-alerting-rules.j2
+    regexp: "<<([a-zA-Z\\.$_ ]*)>>"
+    replace: "\\{\\{\"\\{\\{\"\\}\\}\\1\\{\\{\"\\}\\}\"\\}\\}"
+
+- name: Remove double backslash in alerting rules yaml file
+  ansible.builtin.replace:
+    path: /tmp/prometheus-required-alerting-rules.j2
+    regexp: "\\\\"
+    replace: ""
 
 - name: Deploy the Prometheus stack
   kubernetes.core.helm:
@@ -30,9 +46,8 @@
           - web.enable-lifecycle
           - web.enable-otlp-receiver
       serverFiles:
-        alerting_rules.yml: {}
-        recording_rules.yml:
-          groups: "{{ prometheus_rules }}"
+        alerting_rules.yml: "{{ lookup('ansible.builtin.template', '/tmp/prometheus-required-alerting-rules.j2') | from_yaml }}"
+        recording_rules.yml: "{{ lookup('ansible.builtin.template', 'templates/prometheus-recording-rules.j2') | from_yaml }}"
       prometheus-pushgateway:
         enabled: false
 
