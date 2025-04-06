@@ -20,3 +20,28 @@
       extraEnvs:
       - name: OPENSEARCH_INITIAL_ADMIN_PASSWORD
         value: "Opensearch@admin@password@1234"
+
+- name: Deploy Ingress for OpenTelemetry Collector (Jaeger)
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ kubeconfig }}"
+    resource_definition:
+      apiVersion: networking.k8s.io/v1
+      kind: Ingress
+      metadata:
+        name: opensearch
+        namespace: "{{ opensearch_namespace_project_name }}"
+        annotations:
+          nginx.ingress.kubernetes.io/rewrite-target: /$2
+      spec:
+        ingressClassName: nginx
+        rules:
+          - http:
+              paths:
+                - pathType: ImplementationSpecific
+                  path: /opensearch(/|$)(.*)
+                  backend:
+                    service:
+                      name: "{{ opensearch_installation_name }}-cluster-master"
+                      port:
+                        number: 9200

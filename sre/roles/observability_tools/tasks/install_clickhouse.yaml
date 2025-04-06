@@ -43,3 +43,28 @@
   ansible.builtin.set_fact:
     clickhouse_user: "{{ clickhouse_secrets_info.resources[0].data.user | b64decode }}"
     clickhouse_password: "{{ clickhouse_secrets_info.resources[0].data.password | b64decode }}"
+
+- name: Deploy Ingress for Clickhouse
+  kubernetes.core.k8s:
+    state: present
+    kubeconfig: "{{ kubeconfig }}"
+    resource_definition:
+      apiVersion: networking.k8s.io/v1
+      kind: Ingress
+      metadata:
+        name: clickhouse
+        namespace: "{{ clickhouse_namespace_project_name }}"
+        annotations:
+          nginx.ingress.kubernetes.io/rewrite-target: /$2
+      spec:
+        ingressClassName: nginx
+        rules:
+          - http:
+              paths:
+                - pathType: ImplementationSpecific
+                  path: /clickhouse(/|$)(.*)
+                  backend:
+                    service:
+                      name: "{{ clickhouse_installation_name }}-clickhouse"
+                      port:
+                        number: 8123
