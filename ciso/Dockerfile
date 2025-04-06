@@ -1,10 +1,11 @@
-FROM python:3.11.10-slim
+FROM python:3.11-slim
 
 RUN apt update -y && apt install -y curl gnupg2 unzip ssh
 RUN mkdir /etc/agent-benchmark
 RUN ln -sf /bin/bash /bin/sh
 
 # install `ansible-playbook`
+RUN pip install --upgrade setuptools==70.0.0
 RUN pip install ansible-core jmespath kubernetes==31.0.0 --no-cache-dir passlib
 RUN ansible-galaxy collection install kubernetes.core community.crypto
 # install `helm`
