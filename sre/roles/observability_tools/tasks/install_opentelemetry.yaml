@@ -92,6 +92,7 @@
               username: "{{ clickhouse_user }}"
               password: "{{ clickhouse_password }}"
               endpoint: tcp://{{ clickhouse_installation_name }}-clickhouse.{{ clickhouse_namespace_project_name }}.svc.cluster.local:9000
+              logs_table_name: otel_k8s_events_logs
           receivers:
             k8sobjects:
               objects:
