@@ -22,9 +22,9 @@ clickhouse_installation_name: "clickhouse"
 clickhouse_chart_version: "0.2.0"
 
 # Nginx Ingress
-ingress_installation_name: "ingress-nginx"
-ingress_namespace_project_name: "ingress-nginx"
-ingress_chart_version: "4.12.0"
+ingress_installation_name: ingress-nginx
+ingress_namespace_project_name: ingress-nginx
+ingress_chart_version: 4.12.1
 
 # Opencost
 opencost_namespace_project_name: "opencost"

@@ -26,7 +26,6 @@
     api_version: v1
     kind: Namespace
     state: present
-    wait: true
 
 - name: Create a service account for OpenTelemetry Collector (Kubernetes Events)
   kubernetes.core.k8s:
@@ -36,17 +35,16 @@
     api_version: v1
     kind: ServiceAccount
     state: present
-    wait: true
 
 - name: Create a cluster role for OpenTelemetry Collector (Kubernetes Events)
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
-    name: "{{ opentelemetry_operator_collector_kubernetes_events_name }}-collector"
-    api_version: rbac.authorization.k8s.io/v1
-    kind: ClusterRole
     state: present
-    wait: true
     resource_definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRole
+      metadata:
+        name: "{{ opentelemetry_operator_collector_kubernetes_events_name }}-collector"
       rules:
         - apiGroups:
             - events.k8s.io
@@ -59,12 +57,12 @@
 - name: Create a cluster role binding for OpenTelemetry Collector (Kubernetes Events)
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
-    name: "{{ opentelemetry_operator_collector_kubernetes_events_name }}-collector"
-    api_version: rbac.authorization.k8s.io/v1
-    kind: ClusterRoleBinding
     state: present
-    wait: true
     resource_definition:
+      apiVersion: rbac.authorization.k8s.io/v1
+      kind: ClusterRoleBinding
+      metadata:
+        name: "{{ opentelemetry_operator_collector_kubernetes_events_name }}-collector"
       roleRef:
         apiGroup: rbac.authorization.k8s.io
         kind: ClusterRole
@@ -77,13 +75,13 @@
 - name: Deploy OpenTelemetry Collector (Kubernetes Events)
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
-    name: "{{ opentelemetry_operator_collector_kubernetes_events_name }}"
-    namespace: "{{ opentelemetry_operator_collectors_namespace }}"
-    api_version: opentelemetry.io/v1beta1
-    kind: OpenTelemetryCollector
     state: present
-    wait: true
     resource_definition:
+      apiVersion: opentelemetry.io/v1beta1
+      kind: OpenTelemetryCollector
+      metadata:
+        name: "{{ opentelemetry_operator_collector_kubernetes_events_name }}"
+        namespace: "{{ opentelemetry_operator_collectors_namespace }}"
       spec:
         image: otel/opentelemetry-collector-contrib:0.120.0
         serviceAccount: "{{ opentelemetry_operator_collector_kubernetes_events_name }}-collector"
@@ -121,19 +119,24 @@
 - name: Deploy OpenTelemetry Collector (Jaeger)
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
-    name: "{{ opentelemetry_operator_collector_jaeger_name }}"
-    namespace: "{{ opentelemetry_operator_collectors_namespace }}"
-    api_version: opentelemetry.io/v1beta1
-    kind: OpenTelemetryCollector
     state: present
-    wait: true
     resource_definition:
+      apiVersion: opentelemetry.io/v1beta1
+      kind: OpenTelemetryCollector
+      metadata:
+        name: "{{ opentelemetry_operator_collector_jaeger_name }}"
+        namespace: "{{ opentelemetry_operator_collectors_namespace }}"
       spec:
-        image: jaegertracing/jaeger:2.4.0
+        image: jaegertracing/jaeger:2.5.0
         ports:
         - name: jaeger
           port: 16686
         config: "{{ lookup('ansible.builtin.template', 'templates/otel-jaeger-config.j2') | from_yaml }}"
+
+
+# NOTE: The rewrite annotation is not added to the following Ingress because
+#       when rewriting the path, it adds the wrong Content-Type header to the
+#       request. This cases the Jaeger UI to not work correctly.
 
 - name: Deploy Ingress for OpenTelemetry Collector (Jaeger)
   kubernetes.core.k8s:
@@ -145,15 +148,13 @@
       metadata:
         name: jaeger
         namespace: "{{ opentelemetry_operator_collectors_namespace }}"
-        annotations:
-          nginx.ingress.kubernetes.io/rewrite-target: /$2
       spec:
         ingressClassName: nginx
         rules:
           - http:
               paths:
-                - pathType: ImplementationSpecific
-                  path: /jaeger(/|$)(.*)
+                - pathType: Prefix
+                  path: /jaeger
                   backend:
                     service:
                       name: "{{ opentelemetry_operator_collector_jaeger_name }}-collector"
