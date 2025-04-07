@@ -17,12 +17,6 @@
     kubeconfig_path: "{{ kubeconfig }}"
     repo_url: "https://opensearch-project.github.io/helm-charts"
 
-- name: Add Helm chart repo for Jaeger
-  kubernetes.core.helm_repository:
-    name: jaegertracing
-    kubeconfig_path: "{{ kubeconfig }}"
-    repo_url: "https://jaegertracing.github.io/helm-charts"
-
 - name: Add Helm chart repo from the Prometheus community
   kubernetes.core.helm_repository:
     name: prometheus-community
