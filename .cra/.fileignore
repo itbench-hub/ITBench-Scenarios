@@ -1,7 +1,0 @@
-# This project intentionally includes vulnerable resources for fault injection.
-# The following are intentionally vulnerable files:
-ciso/1.gen-cis-b-k8s-kyverno/examples/*.yaml
-ciso/1.gen-cis-b-k8s-kyverno/manifests/*.yaml
-ciso/2.gen-cis-b-k8s-kubectl-opa/manifests/*.yaml
-ciso/4.upd-cis-b-k8s-kyverno/examples/*.yaml
-ciso/4.upd-cis-b-k8s-kyverno/manifests/*.yaml
