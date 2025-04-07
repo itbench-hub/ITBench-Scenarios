@@ -130,7 +130,6 @@
             requests:
               cpu: 50m
               memory: 15Mi
-          resources:
             limits:
               memory: 32Mi
         quoteService:
