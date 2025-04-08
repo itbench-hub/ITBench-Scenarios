@@ -1,4 +1,6 @@
-## 0.0.1 (2025-04-08)
+## v0.0.1 (2025-04-08)
+
+This pre-release is the version (with fixes) used for in the ICML paper described [here](https://github.com/IBM/ITBench).
 
 ### Feat
 
