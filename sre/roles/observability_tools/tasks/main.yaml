@@ -22,7 +22,17 @@
     - install_tools
 
 - ansible.builtin.import_tasks:
+    file: install_loki.yaml
+  tags:
+    - install_tools
+
+- ansible.builtin.import_tasks:
     file: install_opensearch.yaml
+  tags:
+    - install_tools
+
+- ansible.builtin.import_tasks:
+    file: install_jaeger.yaml
   tags:
     - install_tools
 
@@ -48,12 +58,7 @@
   loop: "{{ common_helm_installations }}"
 
 - ansible.builtin.import_tasks:
-    file: install_opentelemetry.yaml
-  tags:
-    - install_tools
-
-- ansible.builtin.import_tasks:
-    file: install_grafana.yaml
+    file: install_opentelemetry_collector.yaml
   tags:
     - install_tools
 
@@ -88,11 +93,6 @@
   loop: "{{ finops_related_helm_installations }}"
   when:
     - domain == "finops"
-
-- ansible.builtin.import_tasks:
-    file: check_grafana_status.yaml
-  tags:
-    - install_tools
 
 - ansible.builtin.import_tasks:
     file: uninstall_observability_stack.yaml
