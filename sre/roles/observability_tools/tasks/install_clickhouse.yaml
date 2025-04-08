@@ -9,11 +9,11 @@
     release_state: present
     create_namespace: true
     wait: true
+    timeout: 10m0s
     values:
       clickhouse:
         defaultUser:
           allowExternalAccess: true
-    timeout: 10m0s
 
 - name: Wait for Clickhouse install to complete
   kubernetes.core.k8s_info:

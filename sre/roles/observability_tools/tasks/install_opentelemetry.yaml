@@ -154,7 +154,7 @@
         rules:
           - http:
               paths:
-                - pathType: Prefix
+                - pathType: ImplementationSpecific
                   path: /jaeger
                   backend:
                     service:

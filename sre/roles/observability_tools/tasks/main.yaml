@@ -34,6 +34,8 @@
 - name: List of common (SRE+FinOps) Helm installations
   ansible.builtin.set_fact:
     common_helm_installations:
+      - name: "{{ opensearch_installation_name }}"
+        namespace: "{{ opensearch_namespace_project_name }}"
       - name: "{{ prometheus_namespace_project_name }}"
         namespace: "{{ prometheus_installation_name }}"
 
