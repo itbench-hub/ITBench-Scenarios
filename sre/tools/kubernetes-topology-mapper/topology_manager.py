@@ -21,7 +21,6 @@ import threading
 def LINE():
     return sys._getframe(1).f_lineno
 
-
 # to Node somehow were getting attached to the namespace 
 # hence we define cluster scoped resources to avoid such connections.
 CLUSTER_SCOPED_RESOURCES = {
