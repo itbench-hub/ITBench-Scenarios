@@ -108,6 +108,14 @@
     state: absent
     wait: true
 
+- name: Uninstall the Kubernetes topology mapper
+  kubernetes.core.helm:
+    name: "{{ topology_mapper_installation_name }}"
+    kubeconfig_path: "{{ kubeconfig }}"
+    release_namespace: "{{ topology_mapper_namespace_project_name }}"
+    state: absent
+    wait: true
+
 - name: Uninstall OpenCost
   kubernetes.core.helm:
     name: "{{ opencost_installation_name }}"
