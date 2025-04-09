@@ -1,5 +1,3 @@
-# resource_watcher.py
-
 import logging
 import threading
 import queue
