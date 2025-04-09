@@ -118,34 +118,29 @@ INCIDENT_NUMBER=1 make inject_incident_fault
 ```
 Currently the incident scenarios open-sourced are incidents 1, 3, 23, 26, 27, and 102. One can leverage any one of these incidents at this point in time in their own environemnts. Additional details on the incident scenarios themselves and the fault mechanisms can be found [here].
 
-4. After fault injection, to view alerts in the Prometheus dashboard, use Port Forward to access the Prometheus service.
+4. After fault injection, to view alerts in the Prometheus dashboard, let's use port forwarding.
 
 ```bash
-kubectl port-forward svc/prometheus-server -n prometheus 8080:80 &
+kubectl port-forward svc/ingress-nginx-controller -n ingress-nginx 8080:80 &
 ```
 
-5. To view Prometheus dashboard in your web browser, use the following URL, and click on the `Alerts` tab:
+5. Now head over to the following URL:
 
 ```bash
-http://localhost:8080/prometheus
+http://localhost:8080/prometheus/alerts
 ```
 
-6. Four alerts are defined:
-- To track `error` across the different services
-- To track `latency` across the different services
+6. Alerts are defined:
 - To track status of deployments across the different namespaces
+- To track `latency` across the different services
+- To track `error` across the different services
 - To track Kafka connection status across the Kafka-related components
-An Alert's default `State` is `Normal`. After few minutes, the fault `State` changes to `Alerting`, indicating fault manifestation. The alert definitions for Grafana located [here](roles/observability_tools/templates/prometheus-alerting-rules.j2) and has been curated using this [guide](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/).
+An Alert's default `State` is `Inactive`. After few minutes, the fault `State` changes to `Firing`, indicating fault manifestation. The alert definitions are located [here](roles/observability_tools/templates/prometheus-alerting-rules.j2) and have been curated using this [guide](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/).
 
-7. (Optional) You only need to do this if you plan to leverage our [SRE-Agent](https://github.com/IBM/itbench-sre-agent). Port forward the topology mapper service by running.
-```bash
-kubectl -n kube-system port-forward svc/topology-monitor 8081:8080 &
+9. (Optional) You only need to do this if you plan to leverage our [SRE-Agent](https://github.com/IBM/itbench-sre-agent). Leverage the values below for the `.env.tmpl`
 ```
-
-8. (Optional) You only need to do this if you plan to leverage our [SRE-Agent](https://github.com/IBM/itbench-sre-agent). Leverage the values below for the `.env.tmpl`
-```
-PROMETHEUS_URL=http://localhost:8080/prometheus
-TOPOLOGY_URL=http://localhost:8081
+OBSERVABILITY_STACK_URL=http://localhost:8080/prometheus
+TOPOLOGY_URL=http://localhost:8080/topology
 ```
 
 9. To remove the injected fault, run the following `make` command:
@@ -153,7 +148,7 @@ TOPOLOGY_URL=http://localhost:8081
 ```bash
 INCIDENT_NUMBER=1 make remove_incident_fault
 ```
-After executing the command, the alert's `State` should change back to `Normal` from `Alerting`, indicating that the fault has been removed.
+After executing the command, the alert's `State` should change back to `Inactive` from `Firing`, indicating that the fault has been removed.
 
 10. Once done you can undeploy the observability, followed by the application stack by running:
 ```bash
