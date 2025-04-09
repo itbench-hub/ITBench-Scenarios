@@ -9,6 +9,7 @@ import argparse
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 class TaxonomyVisualizer:
     def __init__(self, topology_data: Dict):
         self.topology_data = topology_data
