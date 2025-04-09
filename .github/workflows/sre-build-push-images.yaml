@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - sre/tools/kubernetes-topology-mapper/*
+      - sre/tools/astronomy-shop-checkout-service/*
 
 jobs:
   docker:
@@ -21,11 +22,34 @@ jobs:
         uses: docker/setup-qemu-action@v3
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      - name: Build and push
+      - name: Build and push Kubernetes Topology Mapper
         uses: docker/build-push-action@v6
         with:
           context: sre/tools/kubernetes-topology-mapper
+          platform:
+            - linux/amd64
+            - linux/arm64
           push: true
           tags:
             - it-bench/topology-monitor:0.0.1
             - it-bench/topology-monitor:latest
+      - name: Build and push Unsupported Astronomy Shop Checkout Service image (amd)
+        uses: docker/build-push-action@v6
+        with:
+          context: sre/tools/kubernetes-topology-mapper
+          platform:
+            - linux/amd64
+          push: true
+          tags:
+            - it-bench/unsupported-checkout-service-amd64:0.0.1
+            - it-bench/unsupported-checkout-service-amd64:latest
+      - name: Build and push Unsupported Astronomy Shop Checkout Service image (arm)
+        uses: docker/build-push-action@v6
+        with:
+          context: sre/tools/kubernetes-topology-mapper
+          platform:
+            - linux/arm64
+          push: true
+          tags:
+            - it-bench/unsupported-checkout-service-arm64:0.0.1
+            - it-bench/unsupported-checkout-service-arm64:latest
