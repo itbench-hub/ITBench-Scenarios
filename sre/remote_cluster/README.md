@@ -33,7 +33,7 @@ ssh_key_for_cluster: "/home/<user>/.ssh/<key-name>.pub"
 
 6. To set up your local machine with the curl, aws-cli, jq, kubectl and kops run:
 ```bash
-# BECOME password is your user password or root password. 
+# BECOME password is your user password or root password.
 make configure_localmachine
 ```
 For Red Hat Enterprise Linux (RHEL), Fedora, CentOS installs to: /usr/local/bin
@@ -72,7 +72,7 @@ kubectl get pod --all-namespaces
 ```
 
 5. Now let's head back to the [parent README](../README.md) to deploy the incidents.
-   
+
 6. Once done with the experiment runs, to destroy the cluster, run the following command:
 ```bash
 make delete
@@ -93,11 +93,15 @@ Once you have deployed the observability stack, run the following command to fin
 kubectl get ingress -A
 ```
 
-To access the Granfana dashboard, copy the address for the `prometheus-grafana` ingress resource from the terminal and paste it into the browser with the following prefix: `/prometheus`.
-
 To access the Opencost dashboard, copy the address for the `opencost-ingress` ingress resource from the terminal and paste it into the browser.
 
+To access the Jaeger dashboard, copy the address for the `jaeger` ingress resource from the terminal and paste it into the browser with the following prefix: `/jaeger`.
+
+To access the Prometheus dashboard, copy the address for the `prometheus` ingress resource from the terminal and paste it into the browser with the following prefix: `/prometheus/query`.
+
+
 ```console
-http://<prometheus-granfana address>/prometheus
+http://<jaeger address>/jaeger
 http://<opencost-ingress address>
+http://<prometheus address>/prometheus/query
 ```

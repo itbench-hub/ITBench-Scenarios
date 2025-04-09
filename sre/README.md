@@ -6,11 +6,11 @@
 ITBench uses open source technologies to create completely repeatable and reproducible scenarios on a Kubernetes platform. A scenario involves deploying a set of observability tools, a sample application and triggering an incident (referred to as task) in the environment.
 
 ![itbench_sre_task_scenario.png](./docs/itbench_sre_task_scenario.png)
-While this repository focuses on scenarios, an open-source Language Model (LM)-based SRE-Agent that aims to diagnose and remediate issues in these scenario environments can be found [here](https://github.com/IBM/itbench-sre-agent). 
+While this repository focuses on scenarios, an open-source Language Model (LM)-based SRE-Agent that aims to diagnose and remediate issues in these scenario environments can be found [here](https://github.com/IBM/itbench-sre-agent).
 
 ### Project Structure
 
-This project uses Ansible to automate the deployment and undeployment of technologies to a Kubernetes cluster and the injection and removal of faults. 
+This project uses Ansible to automate the deployment and undeployment of technologies to a Kubernetes cluster and the injection and removal of faults.
 The playbook run is configured using variables defined in `group\_vars`.
 
 | Directory                   | Purpose                                                                                                      |
@@ -89,7 +89,7 @@ For instruction on how to create a kind cluster on Red Hat Enterprise Linux (RHE
 
 #### Remote Cluster
 
-For instruction on how to create an cloud provider based Kubernetes cluster, please see the instructions [here](./remote_cluster/README.md). 
+For instruction on how to create an cloud provider based Kubernetes cluster, please see the instructions [here](./remote_cluster/README.md).
 
 Currently, only AWS is supported. AWS clusters are provisioned using [kOps](https://kops.sigs.k8s.io/).
 
@@ -97,7 +97,7 @@ Currently, only AWS is supported. AWS clusters are provisioned using [kOps](http
 
 Now that our cluster is up and running, let's proceed with the deployment of the observability tools and application stack, injecting the fault, and monitoring of alerts in the Grafana dashboard.
 
-1. Deploy the observability tools. 
+1. Deploy the observability tools.
 
 ```bash
 make deploy_observability_stack
@@ -118,33 +118,33 @@ INCIDENT_NUMBER=1 make inject_incident_fault
 ```
 Currently the incident scenarios open-sourced are incidents 1, 3, 23, 26, 27, and 102. One can leverage any one of these incidents at this point in time in their own environemnts. Additional details on the incident scenarios themselves and the fault mechanisms can be found [here].
 
-4. After fault injection, to view alerts in the grafana dashboard, use Port Forward to access the Grafana service.
+4. After fault injection, to view alerts in the Prometheus dashboard, use Port Forward to access the Prometheus service.
 
 ```bash
-kubectl port-forward svc/ingress-nginx-controller -n ingress-nginx 8080:80 &
+kubectl port-forward svc/prometheus-server -n prometheus 8080:80 &
 ```
 
-5. To view Grafana dashboard in your web browser, use the following URL: 
+5. To view Prometheus dashboard in your web browser, use the following URL, and click on the `Alerts` tab:
 
 ```bash
-http://localhost:8080/grafana/alerting/list
+http://localhost:8080/prometheus
 ```
 
-6. In the right panel, under the `Grafana` section, click on the `AstronomyNotifications` folder to view the alerts on the dashboard. Four alerts are defined:
+6. Four alerts are defined:
 - To track `error` across the different services
 - To track `latency` across the different services
 - To track status of deployments across the different namespaces
 - To track Kafka connection status across the Kafka-related components
-An Alert's default `State` is `Normal`. After few minutes, the fault `State` changes to `Firing`, indicating fault manifestation. The alert definitions for Grafana located [here](roles/observability_tools/tasks/alert_rules) and has been curated using this [guide](https://grafana.com/docs/grafana/latest/alerting/alerting-rules/create-grafana-managed-rule/). 
+An Alert's default `State` is `Normal`. After few minutes, the fault `State` changes to `Alerting`, indicating fault manifestation. The alert definitions for Grafana located [here](roles/observability_tools/templates/prometheus-alerting-rules.j2) and has been curated using this [guide](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/).
 
-7. (Optional) You only need to do this if you plan to leverage our [SRE-Agent](https://github.com/IBM/itbench-sre-agent). Port forward the topology mapper service by running. 
+7. (Optional) You only need to do this if you plan to leverage our [SRE-Agent](https://github.com/IBM/itbench-sre-agent). Port forward the topology mapper service by running.
 ```bash
 kubectl -n kube-system port-forward svc/topology-monitor 8081:8080 &
 ```
 
 8. (Optional) You only need to do this if you plan to leverage our [SRE-Agent](https://github.com/IBM/itbench-sre-agent). Leverage the values below for the `.env.tmpl`
 ```
-GRAFANA_URL=http://localhost:8080/grafana
+PROMETHEUS_URL=http://localhost:8080/prometheus
 TOPOLOGY_URL=http://localhost:8081
 ```
 
@@ -153,7 +153,7 @@ TOPOLOGY_URL=http://localhost:8081
 ```bash
 INCIDENT_NUMBER=1 make remove_incident_fault
 ```
-After executing the command, the alert's `State` should change back to `Normal` from `Firing`, indicating that the fault has been removed.
+After executing the command, the alert's `State` should change back to `Normal` from `Alerting`, indicating that the fault has been removed.
 
 10. Once done you can undeploy the observability, followed by the application stack by running:
 ```bash
