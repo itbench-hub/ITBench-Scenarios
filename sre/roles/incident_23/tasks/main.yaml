@@ -15,7 +15,7 @@
         - name: checkout_weight
           value: "1000"
         - name: checkout_multi_weight
-          value: "1000"  
+          value: "1000"
   tags: incident_23
   when: is_fault_injection | bool
 
