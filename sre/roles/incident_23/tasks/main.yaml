@@ -21,7 +21,7 @@
 
 - name: fault_removal_incident_23
   ansible.builtin.import_role:
-    name: fault_removal
+    name: fault_injection
   vars:
       is_image_unsupported: true
       is_removal: true
