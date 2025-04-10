@@ -24,11 +24,11 @@
     api_version: v1
     kind: Node
     label_selectors:
-      - node-role.kubernetes.io/node = 
+      - node-role.kubernetes.io/node =
   register: nodes_info
   tags:
     - incident_23
-  when: 
+  when:
     - is_image_unsupported
     - is_fault_injection
 
@@ -37,7 +37,7 @@
     node_architectures: "{{ nodes_info | community.general.json_query('resources[*].status.nodeInfo.architecture') }}"
   tags:
     - incident_23
-  when: 
+  when:
     - is_image_unsupported
     - is_fault_injection
 
@@ -46,7 +46,7 @@
     architectures: "{{ node_architectures | intersect(['amd64', 'arm64']) }}"
   tags:
     - incident_23
-  when: 
+  when:
     - is_image_unsupported
     - is_fault_injection
 
@@ -55,7 +55,7 @@
     image_arch: "{{ ['amd64', 'arm64'] | difference(architectures) | first }}"
   tags:
     - incident_23
-  when: 
+  when:
     - is_image_unsupported
     - is_fault_injection
 
@@ -72,7 +72,7 @@
         value: quay.io/it-bench/unsupported-checkout-service-{{ image_arch }}:0.0.2
   tags:
     - incident_23
-  when: 
+  when:
     - is_image_unsupported
     - is_fault_injection
 
@@ -85,6 +85,6 @@
     namespace: "{{ otel_astronomy_app_namespace_project_name }}"
   tags:
     - incident_23
-  when: 
+  when:
     - is_image_unsupported
     - is_fault_removal
