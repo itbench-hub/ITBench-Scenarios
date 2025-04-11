@@ -77,12 +77,7 @@
     - is_fault_injection
 
 - name: Removing Unsupported Image Fault
-  kubernetes.core.k8s_rollback:
-    api_version: apps/v1
-    kind: Deployment
-    kubeconfig: "{{ kubeconfig }}"
-    name: "{{ target_deployment_name }}"
-    namespace: "{{ otel_astronomy_app_namespace_project_name }}"
+  ansible.builtin.shell: "KUBECONFIG={{ kubeconfig }} kubectl rollout undo deployment/{{ target_deployment_name }} -n {{ otel_astronomy_app_namespace_project_name }}"
   tags:
     - incident_23
   when:
