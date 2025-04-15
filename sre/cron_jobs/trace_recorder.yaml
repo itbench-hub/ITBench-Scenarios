@@ -22,7 +22,7 @@
       file: leverage_port_forwarding.yaml
 
   - name: Run traces.py from https://github.ibm.com/Saurabh-Jha/NTAM/blob/main/gather_traces.py
-    ansible.builtin.shell: "python /runner/project/cron_jobs/gather_traces.py --jaeger_url {{ jaeger_url }} --jaeger_token 'NOT_NEEDED' --output_file /runner/traces.json"
+    ansible.builtin.shell: "python /runner/project/sre/cron_jobs/gather_traces.py --jaeger_url {{ jaeger_url }} --jaeger_token 'NOT_NEEDED' --output_file /runner/traces.json"
 
   - name: Check if traces.json exists
     ansible.builtin.stat:
