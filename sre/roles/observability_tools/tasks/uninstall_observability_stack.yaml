@@ -24,6 +24,10 @@
     - api_version: opentelemetry.io/v1beta1
       kind: OpenTelemetryCollector
       namespace: "{{ opentelemetry_operator_collectors_namespace }}"
+  register: resource_deletion
+  failed_when:
+    - resource_deletion.failed
+    - not ('Failed to find exact match' in resource_deletion.msg)
 
 - name: Remove the Custom Resource Definitions (CRDs)
   kubernetes.core.k8s:
@@ -43,6 +47,10 @@
     - opampbridges.opentelemetry.io
     - instrumentations.opentelemetry.io
     - targetallocators.opentelemetry.io
+  register: crd_deletion
+  failed_when:
+    - crd_deletion.failed
+    - not ('Failed to find exact match' in crd_deletion.msg)
 
 - name: Remove non-namespaced resources
   kubernetes.core.k8s:
@@ -59,6 +67,10 @@
     - api_version: rbac.authorization.k8s.io/v1
       kind: ClusterRole
       name: "{{ opentelemetry_operator_collector_kubernetes_events_name }}-collector"
+  register: non_namespaced_resource_deletion
+  failed_when:
+    - non_namespaced_resource_deletion.failed
+    - not ('Failed to find exact match' in non_namespaced_resource_deletion.msg)
 
 - name: Uninstall OpenTelemetry Operator
   kubernetes.core.helm:
