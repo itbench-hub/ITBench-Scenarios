@@ -29,6 +29,16 @@
     - resource_deletion.failed
     - not ('Failed to find exact match' in resource_deletion.msg)
 
+- name: Remove the secret(s) associated with Clickhouse (holding up Helm uninstall for Clickhouse)
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: v1
+    kind: Secret
+    name: "sh.helm.release.v1.clickhouse.v1"
+    namespace: "{{ clickhouse_namespace_project_name }}"
+    state: absent
+    wait: true
+
 - name: Remove the Custom Resource Definitions (CRDs)
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
