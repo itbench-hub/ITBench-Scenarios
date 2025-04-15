@@ -205,6 +205,7 @@
       - "Credential-Kubeconfig-Scenario-{{scenario_number}}"
       - Credential-AWS
     extra_vars:
+      prometheus_namespace_project_name: prometheus
       sre_agent_directory: /runner/project
       conda_sh_directory: /opt/conda/etc/profile.d/conda.sh
       conda_env_directory: /runner/project/lumyn_env
