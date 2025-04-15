@@ -79,6 +79,7 @@
     release_namespace: "{{ opentelemetry_operator_namespace_project_name }}"
     state: absent
     wait: true
+    timeout: 10m
 
 - name: Uninstall OpenSearch
   kubernetes.core.helm:
@@ -87,6 +88,7 @@
     release_namespace: "{{ opensearch_namespace_project_name }}"
     state: absent
     wait: true
+    timeout: 10m
 
 - name: Uninstall Clickhouse
   kubernetes.core.helm:
@@ -95,6 +97,7 @@
     release_namespace: "{{ clickhouse_namespace_project_name }}"
     state: absent
     wait: true
+    timeout: 10m
 
 - name: Uninstall the Prometheus stack
   kubernetes.core.helm:
@@ -103,6 +106,7 @@
     release_namespace: "{{ prometheus_namespace_project_name }}"
     state: absent
     wait: true
+    timeout: 10m
 
 - name: Uninstall the Kubernetes Metrics Server
   kubernetes.core.helm:
@@ -111,6 +115,7 @@
     release_namespace: "{{ metrics_server_namespace_project_name }}"
     state: absent
     wait: true
+    timeout: 10m
 
 - name: Uninstall the Kubernetes topology mapper
   kubernetes.core.helm:
@@ -119,6 +124,7 @@
     release_namespace: "{{ topology_mapper_namespace_project_name }}"
     state: absent
     wait: true
+    timeout: 10m
 
 - name: Uninstall OpenCost
   kubernetes.core.helm:
@@ -127,6 +133,7 @@
     release_namespace: "{{ opencost_namespace_project_name }}"
     state: absent
     wait: true
+    timeout: 10m
 
 - name: Uninstall Ingress
   kubernetes.core.helm:
@@ -135,6 +142,7 @@
     release_namespace: "{{ ingress_namespace_project_name }}"
     state: absent
     wait: true
+    timeout: 10m
 
 - name: Remove the namespace associated with OpenSearch
   kubernetes.core.k8s:
