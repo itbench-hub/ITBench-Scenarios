@@ -1,9 +1,0 @@
-{
-    "exp-runner-noah-m4.xlarge-aws-1.k8s.local": true,
-    "exp-runner-noah-m4.xlarge-aws-2.k8s.local": true,
-    "exp-runner-noah-m4.xlarge-aws-3.k8s.local": true,
-    "exp-runner-noah-m4.xlarge-aws-4.k8s.local": true,
-    "exp-runner-noah-m4.xlarge-aws-5.k8s.local": true,
-    "exp-runner-noah-m4.xlarge-aws-6.k8s.local": true,
-    "exp-runner-noah-m4.xlarge-aws-7.k8s.local": true
-}

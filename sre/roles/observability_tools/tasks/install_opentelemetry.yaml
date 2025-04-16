@@ -177,7 +177,6 @@
     wait_condition:
       type: Ready
       status: "True"
-  register: kubernetes_events_collector_status
 
 - name: Wait for Jaeger Collector pods to be ready
   kubernetes.core.k8s_info:
@@ -194,4 +193,3 @@
     wait_condition:
       type: Ready
       status: "True"
-  register: jaeger_collector_status

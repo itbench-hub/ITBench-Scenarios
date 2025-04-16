@@ -16,7 +16,7 @@
   - name:  Tasks associated with leveraging ingress
     ansible.builtin.include_tasks:
       file: leverage_ingress.yaml
-  
+
   - name:  Tasks associated with leveraging port forwarding
     ansible.builtin.include_tasks:
       file: leverage_port_forwarding.yaml
