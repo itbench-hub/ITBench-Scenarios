@@ -31,9 +31,10 @@ docs_incident_23:
   technologies:
     - Node.js
   alerts:
-    - id: Error_Rate_is_Above_Threshold_frontend
-      text: Error Rate is Above Threshold
+    - id: ErrorRate
       group_id: frontend-service-1
+      metadata:
+        description: Error rate is above threshold for frontend service
   groups:
     - id: checkout-pod-1
       kind: Pod

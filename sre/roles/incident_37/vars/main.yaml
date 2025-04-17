@@ -39,17 +39,22 @@ docs_incident_37:
   "fault": []
 
   alerts:
-    - id: high_cost_variation
+    - id: CPUSpend
       text: "Cost has increased more than 20 percent"
       group_id: otel-demo-namespace-1
-
+      metadata:
+        description: CPU spend increased by 20 percent
+    - id: MemorySpend
+      text: "Cost has increased more than 20 percent"
+      group_id: otel-demo-namespace-1
+      metadata:
+        description: Memory spend increase
   groups:
     - id: otel-demo-namespace-1
       kind: Namespace
       name: otel-demo
       namespace: ""
       root_cause: true
-
   recommended_actions:
   - solution:
       id: "no_action"
