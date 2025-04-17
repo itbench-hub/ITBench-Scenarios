@@ -4,8 +4,8 @@ on:
   pull_request:
     branches:
       - main
-    # paths:
-    #   - sre/roles/observability_tools/templates/prometheus-alerting-rules.j2
+    paths:
+      - sre/roles/observability_tools/templates/prometheus-alerting-rules.j2
 
 jobs:
   validate:
