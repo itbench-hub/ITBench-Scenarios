@@ -114,9 +114,6 @@
             limits:
               memory: 800Mi
         load-generator:
-          imageOverride:
-            repository: quay.io/it-bench/loadgenerator
-            tag: "0.3"
           resources:
             limits:
               memory: 2048Mi
