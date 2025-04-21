@@ -33,7 +33,7 @@ metrics_server_chart_version: 3.12.2
 # OpenTelemetry Operator & Collector
 opentelemetry_operator_installation_name: opentelemetry-operator
 opentelemetry_operator_namespace_project_name: opentelemetry-operator
-opentelemetry_operator_chart_version: 0.86.0
+opentelemetry_operator_chart_version: 0.85.0
 
 opentelemetry_operator_collectors_namespace: opentelemetry-collectors
 opentelemetry_operator_collector_jaeger_name: jaeger
