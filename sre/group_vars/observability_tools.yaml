@@ -7,7 +7,7 @@ opensearch_chart_version: 2.32.0
 # Prometheus - Grafana configuration
 prometheus_namespace_project_name: "prometheus"
 prometheus_installation_name: "prometheus"
-prometheus_chart_version: 27.8.0
+prometheus_chart_version: 27.11.0
 prometheus_service_name: "prometheus-server"
 
 # Clickhouse
