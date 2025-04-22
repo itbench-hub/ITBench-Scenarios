@@ -2,7 +2,7 @@ OCI_BIN = $(shell which podman || which docker)
 
 IMG_REGISTRY ?= quay.io
 IMG_NAMESPACE ?= it-bench
-IMG = $(IMG_REGISTRY)/$(IMG_NAMESPACE)/mod-otel-demo-load-generator:0.0.1
+IMG = $(IMG_REGISTRY)/$(IMG_NAMESPACE)/otel-demo-weighted-load-generator:0.0.1
 
 .PHONY: help
 help: ## Display this help.
