@@ -114,6 +114,9 @@
             limits:
               memory: 800Mi
         load-generator:
+          imageOverride:
+            repository: quay.io/it-bench/otel-demo-weighted-load-generator
+            tag: "0.0.1"
           resources:
             limits:
               memory: 2048Mi
