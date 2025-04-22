@@ -116,7 +116,6 @@
   loop_control:
     loop_var: fault
     pause: "{{ delay_between_faults }}"
-  ansible.builtin.shell: KUBECONFIG={{ kubeconfig }} kubectl -n "{{ otel_astronomy_app_namespace_project_name }}" rollout restart deployment "{{ flagd_failure_flag_deployment_mappi
-g[fault] }}"
+  ansible.builtin.shell: KUBECONFIG={{ kubeconfig }} kubectl -n "{{ otel_astronomy_app_namespace_project_name }}" rollout restart deployment "{{ flagd_failure_flag_deployment_mapping[fault] }}"
   register: deployment_restart_output
   when: is_native and is_injection
