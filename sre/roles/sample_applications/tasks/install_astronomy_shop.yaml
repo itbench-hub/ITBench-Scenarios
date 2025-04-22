@@ -114,9 +114,12 @@
             limits:
               memory: 800Mi
         load-generator:
+          env:
+            - name: LOCUST_BROWSER_TRAFFIC_ENABLED
+              value: "false"
           imageOverride:
             repository: quay.io/it-bench/otel-demo-weighted-load-generator
-            tag: "0.0.1"
+            tag: "0.0.2"
           resources:
             limits:
               memory: 2048Mi
