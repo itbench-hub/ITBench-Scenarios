@@ -114,12 +114,9 @@
             limits:
               memory: 800Mi
         load-generator:
-          env:
-            - name: LOCUST_BROWSER_TRAFFIC_ENABLED
-              value: "false"
           imageOverride:
             repository: quay.io/it-bench/otel-demo-weighted-load-generator
-            tag: "0.0.2"
+            tag: "0.0.3"
           resources:
             limits:
               memory: 2048Mi
@@ -199,3 +196,36 @@
             memory: 512Mi
       prometheus:
         enabled: false
+
+- name: Get the load-generator deployment
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: apps/v1
+    kind: Deployment
+    name: "load-generator"
+    namespace: "{{ otel_astronomy_app_namespace_project_name }}"
+  register: load_generator_deployment_info
+
+- name: Initialize index variable
+  set_fact:
+    env_locust_browser_traffic_index: -1
+
+- name: Find index of environment variable
+  set_fact:
+    env_locust_browser_traffic_index: "{{ loop_index }}"
+  loop: "{{ load_generator_deployment_info.resources[0].spec.template.spec.containers[0].env | default([]) }}"
+  loop_control:
+    index_var: loop_index
+  when: item.name == "LOCUST_BROWSER_TRAFFIC_ENABLED"
+
+- name: Update specific environment variable
+  kubernetes.core.k8s_json_patch:
+    kubeconfig: "{{ kubeconfig }}"
+    kind: Deployment
+    name: "load-generator"
+    namespace: "{{ otel_astronomy_app_namespace_project_name }}"
+    patch:
+      - op: replace
+        path: "/spec/template/spec/containers/0/env/{{ env_locust_browser_traffic_index }}/value"
+        value: "false"
+  when: env_locust_browser_traffic_index is defined
