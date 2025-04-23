@@ -36,7 +36,7 @@ For MacOS installation uses Homebrew.
 
 7. Set up AWS credentials by running the following command. Enter the AWS access key ID and security access key when requested.
 ```bash
-make configure_aws_access
+aws configure
 ```
 
 ## Cluster Management

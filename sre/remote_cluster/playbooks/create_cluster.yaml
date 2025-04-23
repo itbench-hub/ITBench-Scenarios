@@ -22,12 +22,18 @@
     - name: "instance_type"
       prompt: "provide the instance type (m4.large, m4.xlarge, ...)"
       private: no
+  pre_tasks:
+    - name: Ensure bucket exists
+      amazon.aws.s3_bucket:
+        name: "{{ s3name }}"
+        region: "{{ aws_region }}"
+        state: present
   tasks:
     - name: Set kops path for Linux
       set_fact:
         kops_path: "/usr/local/bin/kops"
       when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Fedora' or ansible_distribution == 'CentOS' or ansible_distribution == 'RedHat'
-      
+
     - name: Set kops path for macOS
       set_fact:
         kops_path: "{{ '/opt/homebrew/bin/kops' if ansible_architecture == 'arm64' else '/usr/local/bin/kops' }}"
@@ -49,7 +55,7 @@
       when: inp | int >= 10
 
     - name: Create kops cluster
-      command: 
+      command:
         cmd:
           "{{ kops_path }} create cluster {{ cluster_name }}-{{ instance_type }}-aws.k8s.local \
           --zones {{ zones }} \

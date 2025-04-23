@@ -2,7 +2,7 @@
 - hosts: localhost
   vars:
     state_store: "s3://{{ s3name }}"
-    cleanup_temp_files: true  
+    cleanup_temp_files: true
 
   vars_files:
     - batch_variables.yaml
@@ -12,13 +12,19 @@
   collections:
     - community.aws
 
+  pre_tasks:
+    - name: Ensure bucket exists
+      amazon.aws.s3_bucket:
+        name: "{{ s3name }}"
+        region: "{{ aws_region }}"
+        state: present
   tasks:
     - name: Validate cluster_count is a number and within range
       fail:
         msg: "ERROR: cluster_count must be a number between 1 and 100. Current value: {{ cluster_count }}"
-      when: 
+      when:
         - not (cluster_count|int|string == cluster_count|string)
-        - cluster_count|int < 1 
+        - cluster_count|int < 1
         - cluster_count|int > 100
 
     - name: Validate node_count is a number
@@ -36,7 +42,7 @@
         kops_path: "/usr/local/bin/kops"
       when: ansible_distribution in ['Ubuntu', 'Fedora', 'CentOS', 'RedHat']
       tags: ['validate']
-      
+
     - name: Set kops path for macOS
       set_fact:
         kops_path: "/opt/homebrew/bin/kops"
@@ -51,7 +57,7 @@
     - name: Parse existing clusters
       set_fact:
         existing_cluster_names: "{{ (existing_clusters_output.stdout | from_json | map(attribute='metadata.name') | list) if existing_clusters_output.rc == 0 else [] }}"
-      
+
     - name: Show existing clusters
       debug:
         msg: "Found existing clusters: {{ existing_cluster_names }}"
@@ -63,10 +69,10 @@
 
     - name: Extract numbers from existing matching clusters
       set_fact:
-        existing_cluster_numbers: "{{ existing_cluster_names 
-          | select('match', '^' + cluster_name_prefix + '-' + instance_type + '-aws-\\d+\\.k8s\\.local$') 
-          | map('regex_replace', '^' + cluster_name_prefix + '-' + instance_type + '-aws-(\\d+)\\.k8s\\.local$', '\\1') 
-          | map('int') 
+        existing_cluster_numbers: "{{ existing_cluster_names
+          | select('match', '^' + cluster_name_prefix + '-' + instance_type + '-aws-\\d+\\.k8s\\.local$')
+          | map('regex_replace', '^' + cluster_name_prefix + '-' + instance_type + '-aws-(\\d+)\\.k8s\\.local$', '\\1')
+          | map('int')
           | list }}"
 
     - name: Determine new cluster numbers
@@ -113,25 +119,25 @@
 
     - name: Extract existing subnet names
       set_fact:
-        existing_subnet_names: "{{ existing_subnets_info.subnets 
-          | selectattr('tags.Name','defined') 
-          | selectattr('tags.Name','match', cluster_name_prefix + '-public-subnet-\\d+') 
-          | map(attribute='tags.Name') 
+        existing_subnet_names: "{{ existing_subnets_info.subnets
+          | selectattr('tags.Name','defined')
+          | selectattr('tags.Name','match', cluster_name_prefix + '-public-subnet-\\d+')
+          | map(attribute='tags.Name')
           | list }}"
 
     - name: Extract existing subnet IDs
       set_fact:
-        existing_subnet_ids: "{{ existing_subnets_info.subnets 
-          | selectattr('tags.Name','defined') 
-          | selectattr('tags.Name','match', cluster_name_prefix + '-public-subnet-\\d+') 
-          | map(attribute='subnet_id') 
+        existing_subnet_ids: "{{ existing_subnets_info.subnets
+          | selectattr('tags.Name','defined')
+          | selectattr('tags.Name','match', cluster_name_prefix + '-public-subnet-\\d+')
+          | map(attribute='subnet_id')
           | list }}"
 
     - name: Extract existing subnet numbers
       set_fact:
-        existing_subnet_numbers: "{{ existing_subnet_names 
-          | map('regex_replace', '^.*-public-subnet-(\\d+)$', '\\1') 
-          | map('int') 
+        existing_subnet_numbers: "{{ existing_subnet_names
+          | map('regex_replace', '^.*-public-subnet-(\\d+)$', '\\1')
+          | map('int')
           | list }}"
 
     - name: Determine which subnets to create
@@ -180,7 +186,7 @@
 
     - name: Debug cluster info
       debug:
-        msg: 
+        msg:
           - "Cluster subnet mapping: {{ cluster_subnet_mapping }}"
 
     - name: Create cluster info dictionary
@@ -302,7 +308,7 @@
           set_fact:
             cluster_validation_state: "{{ cluster_validation_state | combine({
               (item.item): (
-                item.rc == 0 or 
+                item.rc == 0 or
                 (item.stdout is defined and item.stdout is search('Your cluster.*is ready'))
               )
               }) }}"
