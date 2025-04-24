@@ -29,7 +29,14 @@ pre-commit install --hook-type commit-msg --hook-type pre-push
 
 ## Committing Code
 
-This projects requires the use of [pre-commit](https://github.com/pre-commit/pre-commit), [detect-secrets](https://github.com/Yelp/detect-secrets), and [commitizen](https://github.com/commitizen-tools/commitizen). These tools are installed through the process mentioned [here](#environment-set-up-guide).
+This project requires the use of the following tools:
+
+- [Ansible Lint](https://github.com/ansible/ansible-lint)
+- [commitizen](https://github.com/commitizen-tools/commitizen)
+- [detect-secrets](https://github.com/Yelp/detect-secrets)
+- [pre-commit](https://github.com/pre-commit/pre-commit)
+
+These tools are installed through the process mentioned [here](#environment-set-up-guide).
 
 All commits submitted to this repository must be signed, pass the pre-commit tests, and formatted through commitizen.
 
@@ -38,5 +45,3 @@ In order to sign and commit code using commitizen, please run the following comm
 ```shell
 cz commit -- --signoff
 ```
-
-[Ansible Lint](https://github.com/ansible/ansible-lint) is also provided through the Python dependencies.
