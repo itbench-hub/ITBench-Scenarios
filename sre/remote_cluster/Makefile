@@ -40,7 +40,7 @@ get_kcfg: ## Retrieves the kubeconfig for a single cluster
 
 .PHONY: list_clusters
 list_clusters: ## Lists all active clusters
-	ansible-playbook playbooks/list_clusters.yaml
+	ansible-playbook -v playbooks/list_clusters.yaml
 
 .PHONY: start
 start: list_clusters ## Starts an inactive cluster
@@ -55,8 +55,4 @@ stop: list_clusters ## Suspends an active cluster
 .PHONY: resize
 resize: list_clusters ## Resizes an active cluster
 	@echo "edit the file to set size both controller and workers to the desired value with min = max values = desired value"
-	ansible-playbook playbooks/edit_clustersize.yaml 
-
-.PHONY: install_istio_monitoring
-install_istio_monitoring: list_clusters ## Installs istio/prometheus/cadvisor monitoring on the cluster
-	ansible-playbook playbooks/install-istio-based-monitoring.yaml
+	ansible-playbook playbooks/edit_clustersize.yaml
