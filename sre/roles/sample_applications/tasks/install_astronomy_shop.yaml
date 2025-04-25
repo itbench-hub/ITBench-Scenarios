@@ -27,6 +27,38 @@
     clickhouse_user: "{{ clickhouse_secrets_info.resources[0].data.user | b64decode }}"
     clickhouse_password: "{{ clickhouse_secrets_info.resources[0].data.password | b64decode }}"
 
+- name: Create custom Security Context Constraint (SCC) for OpenTelemetry's Astronomy Shop
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    resource_definition:
+      apiVersion: security.openshift.io/v1
+      kind: SecurityContextConstraints
+      metadata:
+        name: otel-astronomy-shop-scc
+      allowPrivilegedContainer: false
+      runAsUser:
+        type: RunAsAny
+      seLinuxContext:
+        type: RunAsAny
+      fsGroup:
+        type: RunAsAny
+      supplementalGroups:
+        type: RunAsAny
+      seccompProfiles:
+        - '*'
+  when:
+    - (is_openshift | default(false))
+
+- name: Apply SCC to all service accounts in a Clickhouse and Opentelemetry operator namespaces
+  ansible.builtin.command:
+    cmd: >
+      oc adm policy add-scc-to-group otel-astronomy-shop-scc system:serviceaccounts:{{ otel_astronomy_app_namespace_project_name }}
+  environment:
+    KUBECONFIG: "{{ kubeconfig }}"
+  when:
+    - (is_openshift | default(false))
+
 - name: Deploy OpenTelemetry's Astronomy Shop Demo
   kubernetes.core.helm:
     name: "{{ otel_astronomy_app_installation_name }}"
