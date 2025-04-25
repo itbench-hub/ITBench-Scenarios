@@ -4,12 +4,24 @@
   tags:
     - install_tools
   when:
-    - sre_bench_runner
+    - (sre_bench_runner | default(false))
 
 - ansible.builtin.import_tasks:
     file: set_up_helm_charts.yaml
   tags:
     - install_tools
+
+- ansible.builtin.import_tasks:
+    file: set_up_namespaces.yaml
+  tags:
+    - install_tools
+
+- ansible.builtin.import_tasks:
+    file: set_up_service_account_scc_for_openshift.yaml
+  tags:
+    - install_tools
+  when:
+    - (is_openshift | default(false))
 
 - ansible.builtin.import_tasks:
     file: install_ingress.yaml
@@ -94,4 +106,4 @@
   tags:
     - uninstall_tools
   when:
-    - sre_bench_runner
+    - (sre_bench_runner | default(false))

@@ -82,6 +82,21 @@
     - non_namespaced_resource_deletion.failed
     - not ('Failed to find exact match' in non_namespaced_resource_deletion.msg)
 
+
+- name: Remove custom Security Context Constraints (SCC) on OpenShift
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    api_version: security.openshift.io/v1
+    kind: SecurityContextConstraints
+    name: "{{ item }}"
+    state: absent
+    wait: true
+  loop:
+    - clickhouse-otel-opensearch-opencost-scc
+    - prometheus-ingress-nginx-scc
+  when:
+    - (is_openshift | default(false))
+
 - name: Uninstall OpenTelemetry Operator
   kubernetes.core.helm:
     name: "{{ opentelemetry_operator_installation_name }}"

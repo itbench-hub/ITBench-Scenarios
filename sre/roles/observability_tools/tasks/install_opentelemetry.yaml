@@ -7,7 +7,6 @@
     chart_version: "{{ opentelemetry_operator_chart_version }}"
     release_namespace: "{{ opentelemetry_operator_namespace_project_name }}"
     release_state: present
-    create_namespace: true
     wait: true
     values:
       manager:
@@ -18,14 +17,6 @@
           enabled: false
         autoGenerateCert:
           enabled: true
-
-- name: Create a namespace for OpenTelemetry Collectors
-  kubernetes.core.k8s:
-    kubeconfig: "{{ kubeconfig }}"
-    name: "{{ opentelemetry_operator_collectors_namespace }}"
-    api_version: v1
-    kind: Namespace
-    state: present
 
 - name: Create a service account for OpenTelemetry Collector (Kubernetes Events)
   kubernetes.core.k8s:

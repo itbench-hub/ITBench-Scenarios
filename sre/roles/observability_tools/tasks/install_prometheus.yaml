@@ -39,7 +39,6 @@
     chart_version: "{{ prometheus_chart_version }}"
     release_namespace: "{{ prometheus_namespace_project_name }}"
     release_state: present
-    create_namespace: true
     values:
       alertmanager:
         extraArgs:

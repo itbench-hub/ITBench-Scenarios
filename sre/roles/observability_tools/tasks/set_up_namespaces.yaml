@@ -1,0 +1,17 @@
+---
+- name: Create namespace(s) for observability components
+  kubernetes.core.k8s:
+    kubeconfig: "{{ kubeconfig }}"
+    state: present
+    resource_definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ item }}"
+  loop:
+    - "{{ ingress_namespace_project_name }}"
+    - "{{ clickhouse_namespace_project_name }}"
+    - "{{ opentelemetry_operator_namespace_project_name }}"
+    - "{{ prometheus_namespace_project_name }}"
+    - "{{ opencost_namespace_project_name }}"
+    - "{{ metrics_server_namespace_project_name }}"

@@ -7,7 +7,6 @@
     chart_version: "{{ opencost_chart_version }}"
     release_namespace: "{{ opencost_namespace_project_name }}"
     release_state: present
-    create_namespace: true
     values:
       networkPolicies:
         enabled: true

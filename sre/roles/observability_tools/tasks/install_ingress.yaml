@@ -32,4 +32,6 @@
           "Referrer-Policy": strict-origin-when-cross-origin
         config:
           server-tokens: "false"
+        service:
+          type: "{{ 'NodePort' if is_local | bool else 'LoadBalancer' }}"
   ignore_errors: yes
