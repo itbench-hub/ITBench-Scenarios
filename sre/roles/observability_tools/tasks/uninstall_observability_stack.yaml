@@ -92,7 +92,8 @@
     state: absent
     wait: true
   loop:
-    - clickhouse-otel-opensearch-opencost-scc
+    - clickhouse-otel-opencost-scc
+    - opensearch-scc
     - prometheus-ingress-nginx-scc
   when:
     - (is_openshift | default(false))

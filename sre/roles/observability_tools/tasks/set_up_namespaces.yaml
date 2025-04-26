@@ -11,7 +11,9 @@
   loop:
     - "{{ ingress_namespace_project_name }}"
     - "{{ clickhouse_namespace_project_name }}"
+    - "{{ opensearch_namespace_project_name }}"
     - "{{ opentelemetry_operator_namespace_project_name }}"
+    - "{{ opentelemetry_operator_collectors_namespace }}"
     - "{{ prometheus_namespace_project_name }}"
     - "{{ opencost_namespace_project_name }}"
     - "{{ metrics_server_namespace_project_name }}"

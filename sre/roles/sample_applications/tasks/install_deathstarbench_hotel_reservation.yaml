@@ -16,7 +16,12 @@
       kind: SecurityContextConstraints
       metadata:
         name: dsb-hotel-reservation-scc
-      allowPrivilegedContainer: false
+      allowPrivilegedContainer: true
+      allowPrivilegeEscalation: true
+      readOnlyRootFilesystem: false
+      defaultAddCapabilities: []
+      requiredDropCapabilities:
+        - ALL
       runAsUser:
         type: RunAsAny
       seLinuxContext:
@@ -26,7 +31,7 @@
       supplementalGroups:
         type: RunAsAny
       seccompProfiles:
-        - '*'
+        - 'runtime/default'
   when:
     - (is_openshift | default(false))
 

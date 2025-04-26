@@ -36,7 +36,12 @@
       kind: SecurityContextConstraints
       metadata:
         name: otel-astronomy-shop-scc
-      allowPrivilegedContainer: false
+      allowPrivilegedContainer: true
+      allowPrivilegeEscalation: true
+      readOnlyRootFilesystem: false
+      defaultAddCapabilities: []
+      requiredDropCapabilities:
+        - ALL
       runAsUser:
         type: RunAsAny
       seLinuxContext:
@@ -46,7 +51,7 @@
       supplementalGroups:
         type: RunAsAny
       seccompProfiles:
-        - '*'
+        - 'runtime/default'
   when:
     - (is_openshift | default(false))
 
@@ -78,6 +83,10 @@
               memory: 100Mi
             limits:
               memory: 256Mi
+          securityContext:
+            privileged: true
+            allowPrivilegeEscalation: true
+            runAsUser: 0
         ad:
           resources:
             requests:
@@ -138,6 +147,10 @@
             requests:
               cpu: 10m
               memory: 25Mi
+          securityContext:
+            privileged: true
+            allowPrivilegeEscalation: true
+            runAsUser: 0
         kafka:
           resources:
             requests:
