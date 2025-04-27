@@ -6,6 +6,36 @@ _Note: The following guide has been largely based on this [blog](https://aws.ama
 
 _Note: The following setup guide presumes that the required software listed [here](../README.md#required-software) has been installed along with [creating the virtual environment and installing the dependencies](../README.md#installing-dependencies). If it has not, please go back and do so before following this document._
 
+## Recommended Software
+
+### MacOS
+
+- [Homebrew](https://brew.sh/)
+
+## Required Software
+
+- [awscli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) (v2)
+- [kops](https://kops.sigs.k8s.io/getting_started/install/)
+
+### Installing Required Software via Homebrew (for MacOS)
+
+1. Install required software
+```bash
+brew install awscli
+brew install kops
+```
+
+### Installing Required Software (for Red Hat Enterprise Linux -- RHEL)
+
+1. Install the AWS CLI v2, curl, and jq by running:
+```bash
+sudo dnf install awscli
+sudo dnf install curl
+sudo dnf install jq
+```
+2. Set up kops by following the instructions [here](https://kops.sigs.k8s.io/getting_started/install/#linux)
+
+
 ## First Time Setup
 
 1. Install Python dependencies. (Working directory is `remote_cluster`.)
@@ -26,15 +56,7 @@ cp -n playbooks/secret.yaml.example playbooks/secret.yaml
 ssh_key_for_cluster: "/home/<user>/.ssh/<key-name>.pub"
 ```
 
-6. To set up your local machine with the curl, aws-cli, jq, kubectl and kops run:
-```bash
-# BECOME password is your user password or root password.
-make configure_localmachine
-```
-For Red Hat Enterprise Linux (RHEL), Fedora, CentOS installs to: /usr/local/bin
-For MacOS installation uses Homebrew.
-
-7. Set up AWS credentials by running the following command. Enter the AWS access key ID and security access key when requested.
+6. Set up AWS credentials by running the following command. Enter the AWS access key ID and security access key when requested.
 ```bash
 aws configure
 ```

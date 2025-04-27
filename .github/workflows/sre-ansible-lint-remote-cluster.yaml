@@ -20,7 +20,6 @@ jobs:
             - sre/remote_cluster/batch_create_cluster.yaml
             - sre/remote_cluster/batch_delete_cluster.yaml
             - sre/remote_cluster/build_cluster.yaml
-            - sre/remote_cluster/configure_localmachine.yaml
             - sre/remote_cluster/delete_max_batch_cluster.yaml
             - sre/remote_cluster/destroy_all_clusters.yaml
             - sre/remote_cluster/edit_clustersize.yaml
