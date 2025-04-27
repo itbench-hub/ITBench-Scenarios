@@ -23,7 +23,6 @@ jobs:
             - sre/remote_cluster/delete_max_batch_cluster.yaml
             - sre/remote_cluster/destroy_all_clusters.yaml
             - sre/remote_cluster/edit_clustersize.yaml
-            - sre/remote_cluster/get_kcfg.yaml
             - sre/remote_cluster/playbooks/manage_kops_cluster.yaml
           working_directory: sre
           requirements_file: requirements.yaml

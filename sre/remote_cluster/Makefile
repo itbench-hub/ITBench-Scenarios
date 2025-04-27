@@ -52,3 +52,7 @@ list_kops_clusters: ## Lists all active clusters created by kops
 .PHONY: destroy_kops_cluster
 destroy_kops_cluster: ## Deletes a single cluster created by kops
 	ansible-playbook -i inventory.yaml playbooks/manage_kops_cluster.yaml --tags "delete"
+
+.PHONY: export_kubeconfig
+export_kubeconfig: ## Exports the kubeconfig of a single cluster created by kops
+	ansible-playbook -i inventory.yaml playbooks/manage_kops_cluster.yaml --tags "export"
