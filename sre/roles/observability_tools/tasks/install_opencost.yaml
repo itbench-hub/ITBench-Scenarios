@@ -38,15 +38,3 @@
             url: "http://{{ prometheus_service_name }}.{{ prometheus_namespace_project_name }}.svc.cluster.local:80"
           internal:
             enabled: false
-        ui:
-          ingress:
-            annotations:
-              # nginx.ingress.kubernetes.io/rewrite-target: /$2
-              nginx.ingress.kubernetes.io/enable-cors: "true"
-            enabled: true
-            hosts:
-              - host: null
-                paths:
-                  - /
-                  # - /{{ opencost_namespace_project_name }}(/|$)(.*)
-            ingressClassName: nginx
