@@ -27,14 +27,15 @@
       tags:
         - always
 
-    - name: Validate that kops exists
-      ansible.builtin.assert:
-        that: system_kops_path.stdout_lines | length > 0
-        fail_msg: kops is not installed. Please install kops.
-        success_msg: Using kops at {{ system_kops_path.stdout_lines[0] }}
+    - name: Create bucket if it doesn't exist
+      amazon.aws.s3_bucket:
+        name: "{{ cluster.state.s3_bucket_name }}"
+        region: "{{ cluster.aws.region }}"
+        state: present
       tags:
-        - list
-        - delete
+        - create
+      when:
+        - bucket_info.buckets | length == 0
 
     - name: Validate that bucket exists
       ansible.builtin.assert:
@@ -44,6 +45,7 @@
       tags:
         - list
         - delete
+        - export
 
     - name: Validate control node configuration
       ansible.builtin.assert:
@@ -65,16 +67,6 @@
         success_msg: Valid number of worker nodes configured.
       tags:
         - create
-
-    - name: Create bucket if it doesn't exist
-      amazon.aws.s3_bucket:
-        name: "{{ cluster.state.s3_bucket_name }}"
-        region: "{{ cluster.aws.region }}"
-        state: present
-      tags:
-        - create
-      when:
-        - bucket_info.buckets | length == 0
   tasks:
     - name: Set variables
       ansible.builtin.set_fact:
@@ -205,20 +197,58 @@
       tags:
         - list
 
-    - name: Parse out cluster names from formatted table
-      ansible.builtin.set_fact:
-        known_clusters: "{{ (known_clusters | default([])) + [item.split()[0]] }}"
-      loop: "{{ formatted_output.stdout_lines }}"
-      when:
-        - not item.startswith("NAME ")
-      tags:
-        - list
-
     - name: Show all clusters in formatted table
       ansible.builtin.debug:
         msg: "{{ formatted_output.stdout_lines }}"
       tags:
         - list
+
+    - name: Set file path destination default of kubeconfig
+      ansible.builtin.set_fact:
+        kubeconfig_path: /tmp/{{ cluster_name }}.yaml
+      tags:
+        - export
+
+    - name: Load variables from all.yaml
+      ansible.builtin.include_vars:
+        file: ../../group_vars/all.yaml
+      ignore_errors: true
+      tags:
+        - export
+
+    - name: Override file path with specified path if all.yaml loaded successfully
+      ansible.builtin.set_fact:
+        kubeconfig_path: "{{ kubeconfig }}"
+      tags:
+        - export
+      when:
+        - kubeconfig is defined
+
+    - name: Export the kubeconfig for the cluster
+      ansible.builtin.command:
+        argv:
+          - kops
+          - export
+          - --name
+          - "{{ cluster_name }}"
+          - kubecfg
+          - --admin
+          - --state
+          - "{{ state_store }}"
+          - --kubeconfig
+          - "{{ kubeconfig_path }}"
+      register: export_kops_output
+      changed_when: export_kops_output.rc == 0
+      tags:
+        - export
+
+    - name: Display file path of kubeconfig
+      ansible.builtin.debug:
+        msg:
+          - 'The kubeconfig has been exported to: {{ kubeconfig_path }}'
+          - 'Run the following command to execute kubectl commands: export KUBECONFIG={{ kubeconfig_path }}'
+      tags:
+        - export
 
     - name: Delete the cluster
       ansible.builtin.command:
