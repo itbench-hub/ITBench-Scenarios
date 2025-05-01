@@ -44,4 +44,5 @@ FinOps scenarios are located [here](./sre) along-side SRE scenarios.
 - Gerard R. Vanloo - [@Red-GV](https://github.com/Red-GV)
 - Takumi Yanagawa  - [@yana1205](https://github.com/yana1205)
 - Bekir O. Turkkan - [@bekiroguzhan](https://github.com/bekiroguzhan)
+- Yuji Watanabe    - [@yuji-watanabe-jp](https://github.com/yuji-watanabe-jp)
 - Rohan R. Arora   - [@rohanarora](https://github.com/rohanarora)
