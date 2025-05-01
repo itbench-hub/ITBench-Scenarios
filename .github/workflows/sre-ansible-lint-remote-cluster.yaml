@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - sre/remote_cluster/playbooks/*
+      - sre/remote_cluster/roles/*
 
 jobs:
   lint:
@@ -17,7 +18,9 @@ jobs:
         uses: ansible/ansible-lint@v25
         with:
           args:
-            - sre/remote_cluster/playbooks/manage_awx_stack.yaml
-            - sre/remote_cluster/playbooks/manage_kops_cluster.yaml
-          working_directory: sre
-          requirements_file: requirements.yaml
+            - playbooks/manage_awx_stack.yaml
+            - playbooks/manage_kops_cluster.yaml
+            - roles/awx
+            - roles/kops
+          working_directory: sre/remote_cluster
+          requirements_file: ../requirements.yaml

@@ -2,262 +2,42 @@
 - name: KOps (Kubernetes Operations) Cluster Management
   hosts:
     - development
-  vars:
-    aws_region_zones: "{{ [cluster.aws.region] | product(cluster.aws.zones) | map('join', '') | join(',') }}"
-    cluster_name: "{{ cluster.name_prefix }}-{{ cluster.nodes.worker.instance_type }}-aws.k8s.local"
-    state_store: s3://{{ cluster.state.s3_bucket_name }}
   pre_tasks:
-    - name: Check for kops
-      ansible.builtin.command:
-        cmd: which kops
-      register: system_kops_path
-      changed_when: false
+    - name: Import KOps role validation tasks
+      ansible.builtin.import_role:
+        name: kops
+        tasks_from: validate.yaml
       tags:
         - always
-
-    - name: Validate that kops exists
-      ansible.builtin.assert:
-        that: system_kops_path.stdout_lines | length > 0
-        fail_msg: kops is not installed. Please install kops.
-        success_msg: Using kops at {{ system_kops_path.stdout_lines[0] }}
-      tags:
-        - always
-
-    - name: Check for bucket
-      amazon.aws.s3_bucket_info:
-        name: "{{ cluster.state.s3_bucket_name }}"
-        region: "{{ cluster.aws.region }}"
-      register: bucket_info
-      tags:
-        - always
-
+  tasks:
     - name: Create bucket if it doesn't exist
       amazon.aws.s3_bucket:
-        name: "{{ cluster.state.s3_bucket_name }}"
+        name: "{{ cluster.s3.bucket_name }}"
         region: "{{ cluster.aws.region }}"
         state: present
       tags:
         - create
-      when:
-        - bucket_info.buckets | length == 0
 
-    - name: Validate that bucket exists
-      ansible.builtin.assert:
-        that: bucket_info.buckets | length > 0
-        fail_msg: s3 bucket not found.
-        success_msg: Found {{ cluster.state.s3_bucket_name }} bucket
-      tags:
-        - list
-        - delete
-        - export
-
-    - name: Validate control node configuration
-      ansible.builtin.assert:
-        that:
-          - cluster.nodes.control.count > 0
-          - cluster.nodes.control.count < 10
-          - cluster.nodes.control.count % 2 == 1
-        fail_msg: Invalid number of control nodes set. Must be an odd number between the range of 0 > x < 10.
-        success_msg: Valid number of control nodes configured.
-      tags:
-        - create
-
-    - name: Validate worker node configuration
-      ansible.builtin.assert:
-        that:
-          - cluster.nodes.worker.count > 0
-          - cluster.nodes.worker.count < 10
-        fail_msg: Invalid number of worker nodes set. Must be between the range of 0 > x < 10.
-        success_msg: Valid number of worker nodes configured.
-      tags:
-        - create
-  tasks:
-    - name: Create kops cluster
-      ansible.builtin.command:
-        argv:
-          - kops
-          - create
-          - cluster
-          - "{{ cluster_name }}"
-          - --zones
-          - "{{ aws_region_zones }}"
-          - --ssh-public-key
-          - "{{ cluster.ssh.public_key_path }}"
-          - --control-plane-size
-          - "{{ cluster.nodes.control.instance_type }}"
-          - --control-plane-count
-          - "{{ cluster.nodes.control.count }}"
-          - --node-size
-          - "{{ cluster.nodes.worker.instance_type }}"
-          - --node-count
-          - "{{ cluster.nodes.worker.count }}"
-          - --networking
-          - "{{ cluster.networking.mode }}"
-          - --state
-          - "{{ state_store }}"
-      register: create_kops_output
-      changed_when: create_kops_output.rc == 0
-      tags:
-        - create
-
-    - name: Build the Cluster
-      ansible.builtin.command:
-        argv:
-          - kops
-          - update
-          - cluster
-          - --name
-          - "{{ cluster_name }}"
-          - --state
-          - "{{ state_store }}"
-          - --yes
-          - --internal
-      register: update_kops_output
-      changed_when: update_kops_output.rc == 0
-      tags:
-        - create
-
-    - name: Display build logs
-      ansible.builtin.debug:
-        var: update_kops_output.stdout_lines
-      tags:
-        - create
-
-    - name: Export the kubeconfig for the cluster
-      ansible.builtin.command:
-        argv:
-          - kops
-          - export
-          - --name
-          - "{{ cluster_name }}"
-          - kubecfg
-          - --admin
-          - --state
-          - "{{ state_store }}"
-          - --kubeconfig
-          - /tmp/{{ cluster_name }}.yaml
-      register: export_kops_output
-      changed_when: export_kops_output.rc == 0
-      tags:
-        - create
-
-    - name: Validate the cluster
-      ansible.builtin.command:
-        argv:
-          - kops
-          - validate
-          - cluster
-          - --state
-          - "{{ state_store }}"
-      environment:
-        KUBECONFIG: /tmp/{{ cluster_name }}.yaml
-      register: validate_kops_output
-      changed_when: false
-      retries: 60
-      delay: 10
-      until: validate_kops_output.rc == 0
-      tags:
-        - create
-
-    - name: Display validation results
-      ansible.builtin.debug:
-        msg:
-          - "{{ validate_kops_output.stdout_lines }}"
-          - ""
-          - "You can now ssh into any of the machines in the cluster, using {{ cluster.ssh.public_key_path }}."
-      tags:
-        - create
-      when:
-        - validate_kops_output.rc == 0
-
-    - name: Run kops get clusters to list all clusters
-      ansible.builtin.command:
-        argv:
-          - kops
-          - get
-          - clusters
-          - --state
-          - "{{ state_store }}"
-      register: clusters_output
-      changed_when: false
-      tags:
-        - list
-
-    - name: Format as output table
-      ansible.builtin.shell:
-        cmd: |
-          set -o pipefail
-          echo "{{ clusters_output.stdout.split("\n") | join('\n') }}" | column -t
-      register: formatted_output
-      changed_when: false
-      tags:
-        - list
-
-    - name: Show all clusters in formatted table
-      ansible.builtin.debug:
-        msg: "{{ formatted_output.stdout_lines }}"
-      tags:
-        - list
-
-    - name: Set file path destination default of kubeconfig
-      ansible.builtin.set_fact:
-        kubeconfig_path: /tmp/{{ cluster_name }}.yaml
+    - name: Check for all.yaml group_var in main directory
+      ansible.builtin.find:
+        paths:
+          - "../../group_vars"
+        pattern:
+          - all.yaml
+      register: files_found
       tags:
         - export
 
-    - name: Load variables from all.yaml
+    - name: Include all.yaml variables
       ansible.builtin.include_vars:
         file: ../../group_vars/all.yaml
-      ignore_errors: true
-      tags:
-        - export
-
-    - name: Override file path with specified path if all.yaml loaded successfully
-      ansible.builtin.set_fact:
-        kubeconfig_path: "{{ kubeconfig }}"
       tags:
         - export
       when:
-        - kubeconfig is defined
+        - files_found.files | length == 1
 
-    - name: Export the kubeconfig for the cluster
-      ansible.builtin.command:
-        argv:
-          - kops
-          - export
-          - --name
-          - "{{ cluster_name }}"
-          - kubecfg
-          - --admin
-          - --state
-          - "{{ state_store }}"
-          - --kubeconfig
-          - "{{ kubeconfig_path }}"
-      register: export_kops_output
-      changed_when: export_kops_output.rc == 0
-      tags:
-        - export
-
-    - name: Display file path of kubeconfig
-      ansible.builtin.debug:
-        msg:
-          - 'The kubeconfig has been exported to: {{ kubeconfig_path }}'
-          - 'Run the following command to execute kubectl commands: export KUBECONFIG={{ kubeconfig_path }}'
-      tags:
-        - export
-
-    - name: Delete the cluster
-      ansible.builtin.command:
-        argv:
-          - kops
-          - delete
-          - cluster
-          - --name
-          - "{{ cluster_name }}"
-          - --yes
-          - --state
-          - "{{ state_store }}"
-      register: kops_delete_output
-      changed_when: kops_delete_output.rc == 0
-      tags:
-        - delete
+    - name: Import KOps role
+      ansible.builtin.import_role:
+        name: kops
+      vars:
+        kubeconfig_path: "{{ kubeconfig | default('/tmp/current-kops-cluster.yaml') }}"

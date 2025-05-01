@@ -2,7 +2,7 @@ cluster:
   aws:
     region: us-east-1
     zones:
-      - a
+      - us-east-1a
   name_prefix: development
   networking:
     mode: cilium
@@ -13,7 +13,7 @@ cluster:
     worker:
       count: 3
       instance_type: m4.xlarge
+  s3:
+    bucket_name: ""
   ssh:
     public_key_path: ""
-  state:
-    s3_bucket_name: ""

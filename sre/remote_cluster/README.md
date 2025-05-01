@@ -45,7 +45,7 @@ python -m pip install -r requirements-dev.txt
 
 2. Create the group variables for the development host. The `kops_cluster.yaml` file contains the configuration needed to customize the kops deployment.
 ```bash
-make generate_development_group_vars
+make group_vars
 vim group_vars/development/kops_cluster.yaml
 ```
 
@@ -72,7 +72,7 @@ kubeconfig: "<path to kubeconfig>"
 
 3. Run the following command to download the kubeconfig for the created cluster. Changing the value of the `cluster.name_prefix` to the prefix of an already created cluster allows the command to export that kubeconfig instead.
 ```bash
-make export_kops_cluster_kubeconfig
+make export_kops_kubeconfig
 ```
 
 4. Access remote k8s cluster
