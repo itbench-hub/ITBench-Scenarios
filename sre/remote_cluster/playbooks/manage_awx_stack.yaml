@@ -1,6 +1,18 @@
+---
 - name: AWX End-to-End Cluster Management
   hosts:
     - development
+  vars:
+    aws_region_zones: "{{ [cluster.aws.region] | product(cluster.aws.zones) | map('join', '') | join(',') }}"
+    runner_cluster_names: |
+      {{
+        [stack.name_prefix + "-runner"] |
+        product(range(1, runners.count + 1) | map('string')) |
+        map('join', '-') |
+        zip_longest([], fillvalue=cluster.nodes.worker.instance_type + "-aws.k8s.local") |
+        map('join', '-')
+      }}
+    state_store: s3://{{ cluster.state.s3_bucket_name }}
   pre_tasks:
     - name: Check for kops
       ansible.builtin.command:
@@ -75,22 +87,6 @@
       tags:
         - create
   tasks:
-    - name: Set variables
-      ansible.builtin.set_fact:
-        controller_cluster_name: "{{ stack.name_prefix }}-head-{{ cluster.nodes.worker.instance_type }}-aws.k8s.local"
-        runner_cluster_names: |
-          {{
-            [stack.name_prefix + "-runner"] |
-            product(range(1, runners.count + 1) | map('string')) |
-            map('join', '-') |
-            zip_longest([], fillvalue=cluster.nodes.worker.instance_type + "-aws.k8s.local") |
-            map('join', '-')
-          }}
-        state_store: s3://{{ cluster.state.s3_bucket_name }}
-        aws_region_zones: "{{ [cluster.aws.region] | product(cluster.aws.zones) | map('join', '') | join(',') }}"
-      tags:
-        - always
-
     - name: Retrieve list of clusters
       ansible.builtin.command:
         argv:
@@ -134,7 +130,7 @@
         - clusters_output.rc != 0
 
     - name: Create VPC for KOps clusters
-      ec2_vpc_net:
+      amazon.aws.ec2_vpc_net:
         name: "{{ stack.name_prefix }}-vpc"
         cidr_block: "{{ runners.aws.vpc.cidr }}"
         region: "{{ cluster.aws.region }}"
@@ -144,7 +140,7 @@
         - create
 
     - name: Create an Internet Gateway associated with VPC
-      ec2_vpc_igw:
+      amazon.aws.ec2_vpc_igw:
         vpc_id: "{{ vpc_info.vpc.id }}"
         region: "{{ cluster.aws.region }}"
         state: present
@@ -153,12 +149,12 @@
         - create
 
     - name: Create a subnet for each cluster
-      ec2_vpc_subnet:
+      amazon.aws.ec2_vpc_subnet:
         vpc_id: "{{ vpc_info.vpc.id }}"
         cidr: "{{ runners.aws.subnet.public_base }}.{{ item * 2 }}.0/23"
         az: "{{ cluster.aws.region }}a"
         region: "{{ cluster.aws.region }}"
-        map_public: yes
+        map_public: true
         state: present
         tags:
           Name: "{{ stack.name_prefix }}-public-subnet-{{ item }}"
@@ -176,7 +172,7 @@
         - create
 
     - name: Create a route table for public subnets
-      ec2_vpc_route_table:
+      amazon.aws.ec2_vpc_route_table:
         vpc_id: "{{ vpc_info.vpc.id }}"
         region: "{{ cluster.aws.region }}"
         subnets: "{{ subnet_ids }}"
@@ -410,7 +406,7 @@
         - delete
 
     - name: Delete all associated route tables
-      ec2_vpc_route_table:
+      amazon.aws.ec2_vpc_route_table:
         vpc_id: "{{ item.vpc_id }}"
         region: "{{ cluster.aws.region }}"
         route_table_id: "{{ item.id }}"

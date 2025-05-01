@@ -1,0 +1,2 @@
+# no-changed-when is being invoked on async commands, which is allowed
+remote_cluster/playbooks/manage_awx_stack.yaml no-changed-when

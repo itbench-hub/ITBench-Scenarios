@@ -32,24 +32,3 @@ create_awx_stack: ## Creates an AWX stack created by kops
 .PHONY: destroy_awx_stack
 destroy_awx_stack: ## Destroy an AWX stack created by kops
 	ansible-playbook -i inventory.yaml playbooks/manage_awx_stack.yaml --tags "delete"
-
-# V1
-
-.PHONY: destroy_all_clusters
-destroy_all_clusters: ## Deletes all clusters
-	ansible-playbook playbooks/destroy_all_clusters.yaml
-
-.PHONY: start
-start: list_kops_clusters ## Starts an inactive cluster
-	@echo "edit the file to set size both controller and workers to the desired value with min = max values = desired value"
-	ansible-playbook playbooks/edit_clustersize.yaml
-
-.PHONY: stop
-stop: list_kops_clusters ## Suspends an active cluster
-	@echo "edit the file to set size both controller and workers to be zero for min and max values"
-	ansible-playbook playbooks/edit_clustersize.yaml
-
-.PHONY: resize
-resize: list_kops_clusters ## Resizes an active cluster
-	@echo "edit the file to set size both controller and workers to the desired value with min = max values = desired value"
-	ansible-playbook playbooks/edit_clustersize.yaml

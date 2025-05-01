@@ -17,8 +17,6 @@ jobs:
         uses: ansible/ansible-lint@v25
         with:
           args:
-            - sre/remote_cluster/destroy_all_clusters.yaml
-            - sre/remote_cluster/edit_clustersize.yaml
             - sre/remote_cluster/playbooks/manage_awx_stack.yaml
             - sre/remote_cluster/playbooks/manage_kops_cluster.yaml
           working_directory: sre

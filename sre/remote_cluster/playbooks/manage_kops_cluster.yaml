@@ -2,6 +2,10 @@
 - name: KOps (Kubernetes Operations) Cluster Management
   hosts:
     - development
+  vars:
+    aws_region_zones: "{{ [cluster.aws.region] | product(cluster.aws.zones) | map('join', '') | join(',') }}"
+    cluster_name: "{{ cluster.name_prefix }}-{{ cluster.nodes.worker.instance_type }}-aws.k8s.local"
+    state_store: s3://{{ cluster.state.s3_bucket_name }}
   pre_tasks:
     - name: Check for kops
       ansible.builtin.command:
@@ -68,14 +72,6 @@
       tags:
         - create
   tasks:
-    - name: Set variables
-      ansible.builtin.set_fact:
-        cluster_name: "{{ cluster.name_prefix }}-{{ cluster.nodes.worker.instance_type }}-aws.k8s.local"
-        state_store: s3://{{ cluster.state.s3_bucket_name }}
-        aws_region_zones: "{{ [cluster.aws.region] | product(cluster.aws.zones) | map('join', '') | join(',') }}"
-      tags:
-        - always
-
     - name: Create kops cluster
       ansible.builtin.command:
         argv:
