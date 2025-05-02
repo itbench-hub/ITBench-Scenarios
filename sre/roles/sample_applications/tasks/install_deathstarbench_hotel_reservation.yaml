@@ -34,9 +34,9 @@
         - 'runtime/default'
   when:
     - cluster_type is defined
-    - cluster_type == "openshift"
+    - cluster_type == "openshift" or cluster_type == "openshift_crc_local"
 
-- name: Apply SCC to all service accounts in the namespace where Deathstarbench Hotel Reservation in installed
+- name: Apply SCC to all service accounts in the namespace where Deathstarbench Hotel Reservation is installed
   ansible.builtin.command:
     cmd: >
       oc adm policy add-scc-to-group dsb-hotel-reservation-scc system:serviceaccounts:{{ deathstarbench_hotelreservation_app_installation_name }}
@@ -44,7 +44,7 @@
     KUBECONFIG: "{{ kubeconfig }}"
   when:
     - cluster_type is defined
-    - cluster_type == "openshift"
+    - cluster_type == "openshift" or cluster_type == "openshift_crc_local"
 
 - name: Deploy DeathStarBench's Hotel Reservation
   kubernetes.core.helm:

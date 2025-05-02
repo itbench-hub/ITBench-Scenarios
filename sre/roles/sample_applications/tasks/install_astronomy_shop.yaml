@@ -54,9 +54,9 @@
         - 'runtime/default'
   when:
     - cluster_type is defined
-    - cluster_type == "openshift"
+    - cluster_type == "openshift" or cluster_type == "openshift_crc_local"
 
-- name: Apply SCC to all service accounts in the namespace where OpenTelemetry's Astronomy Shop namespace
+- name: Apply SCC to all service accounts in the namespace where OpenTelemetry's Astronomy Shop namespace is installed
   ansible.builtin.command:
     cmd: >
       oc adm policy add-scc-to-group otel-astronomy-shop-scc system:serviceaccounts:{{ otel_astronomy_app_namespace_project_name }}
@@ -64,7 +64,7 @@
     KUBECONFIG: "{{ kubeconfig }}"
   when:
     - cluster_type is defined
-    - cluster_type == "openshift"
+    - cluster_type == "openshift" or cluster_type == "openshift_crc_local"
 
 - name: Deploy OpenTelemetry's Astronomy Shop Demo
   kubernetes.core.helm:

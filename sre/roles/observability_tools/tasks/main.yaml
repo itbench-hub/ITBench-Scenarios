@@ -22,7 +22,7 @@
     - install_tools
   when:
     - cluster_type is defined
-    - cluster_type == "openshift"
+    - cluster_type == "openshift" or cluster_type == "openshift_crc_local"
 
 - ansible.builtin.import_tasks:
     file: install_ingress.yaml

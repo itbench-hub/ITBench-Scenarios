@@ -33,5 +33,5 @@
         config:
           server-tokens: "false"
         service:
-          type: "{{ 'NodePort' if is_local | bool else 'LoadBalancer' }}"
+          type: "{{ 'NodePort' if (cluster_type is defined and ((cluster_type == 'kind_local') or (cluster_type == 'openshift_crc_local'))) else 'LoadBalancer' }}"
   ignore_errors: yes
