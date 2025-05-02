@@ -1,4 +1,11 @@
 ---
+- name: Set Context Security Policies
+  ansible.builtin.set_fact:
+    security_policies:
+      - default-src 'self'
+      - form-action 'none'
+      - frame-ancestors 'none'
+
 - name: Set up Nginx Ingress
   kubernetes.core.helm:
     name: "{{ ingress_installation_name }}"
@@ -10,4 +17,8 @@
     create_namespace: true
     wait: true
     timeout: 20m0s
-  ignore_errors: yes
+    values:
+      controller:
+        addHeaders:
+          "Content-Security-Policy": "{{ security_policies | join('; ') }}"
+          "X-Content-Type-Options": nosniff
