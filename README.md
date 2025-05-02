@@ -1,8 +1,9 @@
 # ITBench-Scenarios
 
-This repository contains environment setup scripts and scenarios for the [ITBench](https://github.com/IBM/ITBench) project.
-For example, one of the SRE scenarios in ITBench is to resolve a “High error rate on service checkout”. Another scenario that is relevant for the CISO persona involves assessing the compliance posture for a “new control rule detected for RHEL 9.”
-Each of the ITBench scenarios are deployed in a sandboxed operational environment in which problem(s) are introduced.
+This repository contains infrastructure automation scripts for both deploying the environments and configuring the scenarios required to run [ITBench](https://github.com/IBM/ITBench).
+These scenarios are realistic simulations based on actual IT automation challenges faced by CISO, SRE, and FinOps teams.
+For example, one of the SRE scenarios is to resolve a “high error rate on service checkout” while a CISO scenario involves assessing the compliance posture for a “new control rule detected for RHEL 9.”
+Every ITBench scenario is deployed in a sandboxed operational Kubernetes (K8s) environment.
 
 ## [CISO Scenarios](./ciso)
 These scenarios simulate compliance-related misconfigurations. Each scenario provides:
@@ -36,9 +37,9 @@ FinOps scenarios are located [here](./sre) along-side SRE scenarios.
 - [ITBench](https://github.com/IBM/ITBench): Central repository providing an overview of the ITBench ecosystem, related announcements, and publications.
 - [CAA-CISO Agent](https://github.com/IBM/ITBench-CAA-CISO-Agent): CISO (Chief Information Security Officer) agents that automate compliance assessments by generating policies from natural language, collecting evidence, integrating with GitOps workflows, and deploying policies for assessment.
 - [SRE Agent](https://github.com/IBM/ITBench-SRE-Agent): SRE (Site Reliability Engineering) agents designed to diagnose and remediate problems in Kubernetes-based environments. Leverage logs, metrics, traces, and Kubernetes states/events from the IT enviroment.
-- [ITBench Leaderboard](https://github.com/IBM/itbench-leaderboard): Service that handles scenario deployment, agent evaluation, and maintains a public leaderboard for comparing agent performance on ITOps use cases.
-- [ITBench Utilities](https://github.com/IBM/itbench-utilities): Collection of supporting tools and utilities for participants in the ITBench ecosystem and leaderboard challenges.
-- [ITBench Tutorials](https://github.com/IBM/itbench-tutorials): Repository containing the latest tutorials, workshops, and educational content for getting started with ITBench.
+- [ITBench Leaderboard](https://github.com/IBM/ITBench-Leaderboard): Service that handles scenario deployment, agent evaluation, and maintains a public leaderboard for comparing agent performance on ITOps use cases.
+- [ITBench Utilities](https://github.com/IBM/ITBench-Utilities): Collection of supporting tools and utilities for participants in the ITBench ecosystem and leaderboard challenges.
+- [ITBench Tutorials](https://github.com/IBM/ITBench-Tutorials): Repository containing the latest tutorials, workshops, and educational content for getting started with ITBench.
 
 ## Maintainers
 - Gerard R. Vanloo - [@Red-GV](https://github.com/Red-GV)
