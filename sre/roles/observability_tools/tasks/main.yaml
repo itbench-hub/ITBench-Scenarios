@@ -21,7 +21,8 @@
   tags:
     - install_tools
   when:
-    - (is_openshift | default(false))
+    - cluster_type is defined
+    - cluster_type == "openshift"
 
 - ansible.builtin.import_tasks:
     file: install_ingress.yaml

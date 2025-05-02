@@ -7,7 +7,7 @@
     version: master
     force: yes
 
-- name: Create custom Security Context Constraint (SCC) for OpenTelemetry's Astronomy Shop
+- name: Create custom Security Context Constraint (SCC) for Deathstarbench Hotel Reservation
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
     state: present
@@ -33,16 +33,18 @@
       seccompProfiles:
         - 'runtime/default'
   when:
-    - (is_openshift | default(false))
+    - cluster_type is defined
+    - cluster_type == "openshift"
 
-- name: Apply SCC to all service accounts in a Clickhouse and Opentelemetry operator namespaces
+- name: Apply SCC to all service accounts in the namespace where Deathstarbench Hotel Reservation in installed
   ansible.builtin.command:
     cmd: >
       oc adm policy add-scc-to-group dsb-hotel-reservation-scc system:serviceaccounts:{{ deathstarbench_hotelreservation_app_installation_name }}
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
   when:
-    - (is_openshift | default(false))
+    - cluster_type is defined
+    - cluster_type == "openshift"
 
 - name: Deploy DeathStarBench's Hotel Reservation
   kubernetes.core.helm:

@@ -16,7 +16,8 @@
     state: absent
     wait: true
   when:
-    - (is_openshift | default(false))
+    - cluster_type is defined
+    - cluster_type == "openshift"
 
 - name: Remove the namespace associated with the installation of OpenTelemetry's Astronomy Shop Demo
   kubernetes.core.k8s:

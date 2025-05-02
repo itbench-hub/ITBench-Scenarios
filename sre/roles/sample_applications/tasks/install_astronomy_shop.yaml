@@ -53,16 +53,18 @@
       seccompProfiles:
         - 'runtime/default'
   when:
-    - (is_openshift | default(false))
+    - cluster_type is defined
+    - cluster_type == "openshift"
 
-- name: Apply SCC to all service accounts in a Clickhouse and Opentelemetry operator namespaces
+- name: Apply SCC to all service accounts in the namespace where OpenTelemetry's Astronomy Shop namespace
   ansible.builtin.command:
     cmd: >
       oc adm policy add-scc-to-group otel-astronomy-shop-scc system:serviceaccounts:{{ otel_astronomy_app_namespace_project_name }}
   environment:
     KUBECONFIG: "{{ kubeconfig }}"
   when:
-    - (is_openshift | default(false))
+    - cluster_type is defined
+    - cluster_type == "openshift"
 
 - name: Deploy OpenTelemetry's Astronomy Shop Demo
   kubernetes.core.helm:

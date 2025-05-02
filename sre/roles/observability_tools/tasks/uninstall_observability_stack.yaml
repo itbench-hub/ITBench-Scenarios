@@ -96,7 +96,8 @@
     - opensearch-scc
     - prometheus-ingress-nginx-scc
   when:
-    - (is_openshift | default(false))
+    - cluster_type is defined
+    - cluster_type == "openshift"
 
 - name: Uninstall OpenTelemetry Operator
   kubernetes.core.helm:
