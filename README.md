@@ -19,6 +19,7 @@ These scenarios focus on observability and incident response. Each scenario incl
   - Prometheus for metrics collection
   - Clickhouse and OpenSearch for search and analytics
   - Jaeger for distributed tracing
+  - OpenTelemetry for Kubernetes event logs collection
 - Simulated faults that trigger service degradation
 - Thereby leading to alerts associated with application performance issues such as increased error rates and latency spikes
 
