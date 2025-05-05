@@ -2,7 +2,10 @@
 - name: Set Context Security Policies
   ansible.builtin.set_fact:
     security_policies:
-      - default-src 'self'
+      # - default-src 'self'
+      # - script-src 'self'
+      # - "style-src 'self'"
+      - "img-src 'self' data:"
       - form-action 'none'
       - frame-ancestors 'none'
 
@@ -21,4 +24,5 @@
       controller:
         addHeaders:
           "Content-Security-Policy": "{{ security_policies | join('; ') }}"
+          "Content-Security-Policy-Report-Only": default-src 'self'
           "X-Content-Type-Options": nosniff
