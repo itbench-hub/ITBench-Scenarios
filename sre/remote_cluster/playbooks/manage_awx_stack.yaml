@@ -7,6 +7,9 @@
       ansible.builtin.import_role:
         name: awx
         tasks_from: validate.yaml
+      vars:
+        awx_cluster: "{{ cluster }}"
+        awx_stack: "{{ stack }}"
       tags:
         - always
   tasks:
@@ -21,3 +24,6 @@
     - name: Import AWX role
       ansible.builtin.import_role:
         name: awx
+      vars:
+        awx_cluster: "{{ cluster }}"
+        awx_stack: "{{ stack }}"

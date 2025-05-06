@@ -3,13 +3,13 @@
   ansible.builtin.set_fact:
     runner_cluster_names: |
       {{
-        [stack.name_prefix + "-runner"] |
-        product(range(1, stack.runners.count + 1) | map('string')) |
+        [awx_stack.name_prefix + "-runner"] |
+        product(range(1, awx_stack.runners.count + 1) | map('string')) |
         map('join', '-') |
-        zip_longest([], fillvalue=cluster.nodes.worker.instance_type + "-aws.k8s.local") |
+        zip_longest([], fillvalue=awx_cluster.nodes.worker.instance_type + "-aws.k8s.local") |
         map('join', '-')
       }}
-    state_store: s3://{{ cluster.s3.bucket_name }}
+    state_store: s3://{{ awx_cluster.s3.bucket_name }}
   tags:
     - always
 
@@ -62,4 +62,5 @@
   ansible.builtin.import_role:
     name: kops
   vars:
-    full_cluster_name_override: "{{ stack.name_prefix }}-head-{{ cluster.nodes.worker.instance_type }}-aws.k8s.local"
+    kops_cluster: "{{ awx_cluster }}"
+    kops_full_cluster_name_override: "{{ awx_stack.name_prefix }}-head-{{ awx_cluster.nodes.worker.instance_type }}-aws.k8s.local"

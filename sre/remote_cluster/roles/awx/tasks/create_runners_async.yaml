@@ -1,32 +1,32 @@
 ---
 - name: Create VPC for KOps clusters
   amazon.aws.ec2_vpc_net:
-    name: "{{ stack.name_prefix }}-vpc"
-    cidr_block: "{{ stack.runners.aws.vpc.cidr }}"
-    region: "{{ cluster.aws.region }}"
+    name: "{{ awx_stack.name_prefix }}-vpc"
+    cidr_block: "{{ awx_stack.runners.aws.vpc.cidr }}"
+    region: "{{ awx_cluster.aws.region }}"
     state: present
   register: vpc_info
 
 - name: Create an Internet Gateway associated with VPC
   amazon.aws.ec2_vpc_igw:
     vpc_id: "{{ vpc_info.vpc.id }}"
-    region: "{{ cluster.aws.region }}"
+    region: "{{ awx_cluster.aws.region }}"
     state: present
   register: igw_info
 
 - name: Create a subnet for each cluster
   amazon.aws.ec2_vpc_subnet:
     vpc_id: "{{ vpc_info.vpc.id }}"
-    cidr: "{{ stack.runners.aws.subnet.public_base }}.{{ item * 2 }}.0/23"
-    az: "{{ cluster.aws.zones[0] }}"
-    region: "{{ cluster.aws.region }}"
+    cidr: "{{ awx_stack.runners.aws.subnet.public_base }}.{{ item * 2 }}.0/23"
+    az: "{{ awx_cluster.aws.zones[0] }}"
+    region: "{{ awx_cluster.aws.region }}"
     map_public: true
     state: present
     tags:
-      Name: "{{ stack.name_prefix }}-public-subnet-{{ item }}"
+      Name: "{{ awx_stack.name_prefix }}-public-subnet-{{ item }}"
       Environment: k8s
       ManagedBy: ansible
-  loop: "{{ range(1, stack.runners.count + 1) }}"
+  loop: "{{ range(1, awx_stack.runners.count + 1) }}"
   register: public_subnets
 
 - name: Parse subnet ids
@@ -36,13 +36,13 @@
 - name: Create a route table for public subnets
   amazon.aws.ec2_vpc_route_table:
     vpc_id: "{{ vpc_info.vpc.id }}"
-    region: "{{ cluster.aws.region }}"
+    region: "{{ awx_cluster.aws.region }}"
     subnets: "{{ subnet_ids }}"
     routes:
       - dest: "0.0.0.0/0"
         gateway_id: "{{ igw_info.gateway_id }}"
     tags:
-      Name: "{{ stack.name_prefix }}-public-route-table"
+      Name: "{{ awx_stack.name_prefix }}-public-route-table"
       Creator: "ansible"
     state: present
 
@@ -62,19 +62,19 @@
       - --subnets
       - "{{ item[1] }}"
       - --zones
-      - "{{ cluster.aws.zones | join(',') }}"
+      - "{{ awx_cluster.aws.zones | join(',') }}"
       - --ssh-public-key
-      - "{{ cluster.ssh.public_key_path }}"
+      - "{{ awx_cluster.ssh.public_key_path }}"
       - --control-plane-size
-      - "{{ cluster.nodes.control.instance_type }}"
+      - "{{ awx_cluster.nodes.control.instance_type }}"
       - --control-plane-count
-      - "{{ cluster.nodes.control.count }}"
+      - "{{ awx_cluster.nodes.control.count }}"
       - --node-size
-      - "{{ cluster.nodes.worker.instance_type }}"
+      - "{{ awx_cluster.nodes.worker.instance_type }}"
       - --node-count
-      - "{{ cluster.nodes.worker.count }}"
+      - "{{ awx_cluster.nodes.worker.count }}"
       - --networking
-      - "{{ cluster.networking.mode }}"
+      - "{{ awx_cluster.networking.mode }}"
       - --state
       - "{{ state_store }}"
   async: 600

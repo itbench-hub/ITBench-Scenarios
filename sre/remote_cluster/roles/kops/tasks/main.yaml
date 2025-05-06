@@ -1,8 +1,8 @@
 ---
 - name: Set variables
   ansible.builtin.set_fact:
-    cluster_name: "{{ cluster.name_prefix }}-{{ cluster.nodes.worker.instance_type }}-aws.k8s.local"
-    state_store: s3://{{ cluster.s3.bucket_name }}
+    cluster_name: "{{ kops_cluster.name_prefix }}-{{ kops_cluster.nodes.worker.instance_type }}-aws.k8s.local"
+    state_store: s3://{{ kops_cluster.s3.bucket_name }}
   tags:
     - always
 

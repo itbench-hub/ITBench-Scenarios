@@ -9,11 +9,11 @@ argument_specs:
       - Rohan Arora
       - Gerard Vanloo
     options:
-      cluster:
+      awx_cluster:
         description: The configuration of the cluster
         required: true
         type: dict
-      stack:
+      awx_stack:
         description: The configuration of the AWX stack
         required: true
         type: dict
@@ -28,7 +28,7 @@ argument_specs:
     author:
       - Gerard Vanloo
     options:
-      stack:
+      awx_stack:
         required: true
         type: dict
         options:
@@ -60,3 +60,7 @@ argument_specs:
               count:
                 required: true
                 type: int
+      awx_cluster:
+        description: The configuration of the cluster
+        required: true
+        type: dict

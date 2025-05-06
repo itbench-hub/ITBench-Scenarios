@@ -9,15 +9,15 @@ argument_specs:
       - Saurabh Jha
       - Gerard Vanloo
     options:
-      cluster:
+      kops_cluster:
         description: The configuration of the cluster
         required: true
         type: dict
-      kubeconfig_path:
+      kops_kubeconfig_path:
         description: The absolute path of the kubeconfig
         required: false
         type: str
-      full_cluster_name_override:
+      kops_full_cluster_name_override:
         description: The full name of the cluster to use
         required: false
         type: str
@@ -32,7 +32,7 @@ argument_specs:
     author:
       - Gerard Vanloo
     options:
-      cluster:
+      kops_cluster:
         required: true
         type: dict
         options:

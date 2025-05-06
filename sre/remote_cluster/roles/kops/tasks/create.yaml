@@ -7,19 +7,19 @@
       - cluster
       - "{{ cluster_name }}"
       - --zones
-      - "{{ cluster.aws.zones | join(',') }}"
+      - "{{ kops_cluster.aws.zones | join(',') }}"
       - --ssh-public-key
-      - "{{ cluster.ssh.public_key_path }}"
+      - "{{ kops_cluster.ssh.public_key_path }}"
       - --control-plane-size
-      - "{{ cluster.nodes.control.instance_type }}"
+      - "{{ kops_cluster.nodes.control.instance_type }}"
       - --control-plane-count
-      - "{{ cluster.nodes.control.count }}"
+      - "{{ kops_cluster.nodes.control.count }}"
       - --node-size
-      - "{{ cluster.nodes.worker.instance_type }}"
+      - "{{ kops_cluster.nodes.worker.instance_type }}"
       - --node-count
-      - "{{ cluster.nodes.worker.count }}"
+      - "{{ kops_cluster.nodes.worker.count }}"
       - --networking
-      - "{{ cluster.networking.mode }}"
+      - "{{ kops_cluster.networking.mode }}"
       - --state
       - "{{ state_store }}"
   register: create_kops_output
@@ -84,6 +84,6 @@
 
 - name: Display ssh information
   ansible.builtin.debug:
-    msg: "You can now ssh into any of the machines in the cluster, using {{ cluster.ssh.public_key_path }}"
+    msg: "You can now ssh into any of the machines in the cluster, using {{ kops_cluster.ssh.public_key_path }}"
   when:
     - validate_kops_output.rc == 0

@@ -7,6 +7,8 @@
       ansible.builtin.import_role:
         name: kops
         tasks_from: validate.yaml
+      vars:
+        kops_cluster: "{{ cluster }}"
       tags:
         - always
   tasks:
@@ -40,4 +42,5 @@
       ansible.builtin.import_role:
         name: kops
       vars:
-        kubeconfig_path: "{{ kubeconfig | default('/tmp/current-kops-cluster.yaml') }}"
+        kops_cluster: "{{ cluster }}"
+        kops_kubeconfig_path: "{{ kubeconfig | default('/tmp/current-kops-cluster.yaml') }}"

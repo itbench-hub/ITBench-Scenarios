@@ -33,15 +33,15 @@
 - name: Find all route tables associated with kops clusters
   amazon.aws.ec2_vpc_route_table_info:
     filters:
-      "tag:Name": "{{ stack.name_prefix }}-public-route-table"
-    region: "{{ cluster.aws.region }}"
+      "tag:Name": "{{ awx_stack.name_prefix }}-public-route-table"
+    region: "{{ awx_cluster.aws.region }}"
   register: route_tables_info
 
 - name: Find all subnets associated with route tables' vpcs
   amazon.aws.ec2_vpc_subnet_info:
     filters:
       vpc-id: "{{ item.vpc_id }}"
-    region: "{{ cluster.aws.region }}"
+    region: "{{ awx_cluster.aws.region }}"
   loop: "{{ route_tables_info.route_tables }}"
   register: subnet_info_list
 
@@ -49,14 +49,14 @@
   amazon.aws.ec2_vpc_subnet:
     state: absent
     vpc_id: "{{ item.vpc_id }}"
-    region: "{{ cluster.aws.region }}"
+    region: "{{ awx_cluster.aws.region }}"
     cidr: "{{ item.cidr_block }}"
   loop: "{{ subnet_info_list.results | sum(attribute='subnets', start=[]) }}"
 
 - name: Delete all associated route tables
   amazon.aws.ec2_vpc_route_table:
     vpc_id: "{{ item.vpc_id }}"
-    region: "{{ cluster.aws.region }}"
+    region: "{{ awx_cluster.aws.region }}"
     route_table_id: "{{ item.id }}"
     lookup: id
     state: absent
@@ -66,12 +66,12 @@
   amazon.aws.ec2_vpc_igw:
     state: absent
     vpc_id: "{{ item.vpc_id }}"
-    region: "{{ cluster.aws.region }}"
+    region: "{{ awx_cluster.aws.region }}"
   loop: "{{ route_tables_info.route_tables }}"
 
 - name: Delete all associated VPCs
   amazon.aws.ec2_vpc_net:
     state: absent
     vpc_id: "{{ item.vpc_id }}"
-    region: "{{ cluster.aws.region }}"
+    region: "{{ awx_cluster.aws.region }}"
   loop: "{{ route_tables_info.route_tables }}"
