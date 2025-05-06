@@ -1,3 +1,21 @@
+## v0.0.3 (2025-05-)
+
+### Feat
+
+- replace Bitnami Elasticsearch and Grafana Loki with Altinity Clickhouse (#10)
+- switch from kube-prometheus-stack chart to prometheus chart (#7)
+
+### Fix
+
+- correct load-generator service/container name in Prometheus alerting rules (#100)
+- making the alert IDs consistent with Prometheus rules (#85)
+- update file locations for e2e tasks (#79)
+- making the `observability_url` consistent with the ITBench-SRE-Agent (#71)
+- add Prometheus metric scrape jobs configurations (#68)
+- choose unsupported architecture for incident 23 (#67)
+- update jaeger reference in hotel reservation installation (#69)
+- correct alert retrievals when ingress is not available (#45)
+
 ## v0.0.2 (2025-04-07)
 
 ### Fix
