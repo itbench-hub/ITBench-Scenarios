@@ -1,5 +1,5 @@
 ---
-- name: Create namespace(s) for observability components
+- name: Create namespace(s) for Nginx-Ingress -- to-be removed in OpenShift deployment PR
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
     state: present
