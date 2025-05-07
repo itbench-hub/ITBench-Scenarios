@@ -69,16 +69,6 @@
     template: templates/rbac.j2
     wait: true
 
-# - name: Remove OCP User Workload Monitoring
-#   kubernetes.core.k8s:
-#     kubeconfig: "{{ kubeconfig }}"
-#     state: absent
-#     src: files/openshift-user-workload-monitoring.yaml
-#     wait: true
-#   when:
-#     - cluster_type is defined
-#     - cluster_type == "openshift" or cluster_type == "openshift_crc_local"
-
 - name: Remove custom Security Context Constraints (SCC) on OpenShift
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"
