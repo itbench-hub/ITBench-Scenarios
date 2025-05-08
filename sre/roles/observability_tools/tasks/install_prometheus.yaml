@@ -39,8 +39,10 @@
     chart_version: "{{ prometheus_chart_version }}"
     release_namespace: "{{ prometheus_namespace_project_name }}"
     release_state: present
-    create_namespace: true
+    wait: true
+    timeout: 10m0s
     values:
+      alertmanager:
       extraScrapeConfigs: "{{ lookup('ansible.builtin.template', 'templates/prometheus-scrape-configs.j2') | from_yaml | to_yaml }}"
       server:
         extraFlags:
@@ -51,6 +53,8 @@
         recording_rules.yml: "{{ lookup('ansible.builtin.template', 'templates/prometheus-recording-rules.j2') | from_yaml }}"
       prometheus-pushgateway:
         enabled: false
+      prometheus-node-exporter:
+        enabled: "{{ false if (cluster_type is defined and ((cluster_type == 'openshift') or (cluster_type == 'openshift_crc_local'))) else true }}"
 
 - name: Deploy Ingress for Prometheus and AlertManager frontends
   kubernetes.core.k8s:
