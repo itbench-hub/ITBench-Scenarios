@@ -44,22 +44,6 @@
   tags:
     - install_tools
 
-- name: List of common (SRE+FinOps) Helm installations
-  ansible.builtin.set_fact:
-    common_helm_installations:
-      - name: "{{ opensearch_installation_name }}"
-        namespace: "{{ opensearch_namespace_project_name }}"
-      - name: "{{ prometheus_namespace_project_name }}"
-        namespace: "{{ prometheus_installation_name }}"
-
-- name: Wait for common (SRE + FinOps) installations to complete
-  ansible.builtin.command: "helm status {{ item.name }} -n {{ item.namespace }}"
-  register: helm_status
-  until: "helm_status.rc == 0 and helm_status.stdout.find('STATUS: deployed') != -1"
-  retries: 10
-  delay: 60
-  loop: "{{ common_helm_installations }}"
-
 - ansible.builtin.import_tasks:
     file: install_opentelemetry.yaml
   tags:

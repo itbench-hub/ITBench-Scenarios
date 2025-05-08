@@ -39,6 +39,8 @@
     chart_version: "{{ prometheus_chart_version }}"
     release_namespace: "{{ prometheus_namespace_project_name }}"
     release_state: present
+    wait: true
+    timeout: 10m0s
     values:
       alertmanager:
       extraScrapeConfigs: "{{ lookup('ansible.builtin.template', 'templates/prometheus-scrape-configs.j2') | from_yaml | to_yaml }}"
