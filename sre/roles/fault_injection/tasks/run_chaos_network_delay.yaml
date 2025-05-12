@@ -26,7 +26,7 @@
         namespace: "{{ chaos_mesh_namespace_project_name }}"
       spec:
         action: delay
-        mode: one
+        mode: all
         selector:
           namespaces:
             - "{{ target_namespace_name }}"
@@ -50,7 +50,7 @@
         namespace: "{{ chaos_mesh_namespace_project_name }}"
       spec:
         action: delay
-        mode: one
+        mode: all
         selector:
           namespaces:
             - "{{ target_namespace_name }}"

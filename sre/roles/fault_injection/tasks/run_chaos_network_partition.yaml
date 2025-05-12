@@ -27,7 +27,7 @@
         namespace: "{{ chaos_mesh_namespace_project_name }}"
       spec:
         action: partition
-        mode: one
+        mode: all
         selector:
           namespaces:
             - "{{ target_namespace_name }}"
@@ -35,7 +35,7 @@
             "app.kubernetes.io/component": "{{ target_label_name1 }}"
         direction: to
         target:
-          mode: one
+          mode: all
           selector:
             namespaces:
               - "{{ target_namespace_name }}"
@@ -57,7 +57,7 @@
         namespace: "{{ chaos_mesh_namespace_project_name }}"
       spec:
         action: partition
-        mode: one
+        mode: all
         selector:
           namespaces:
             - "{{ target_namespace_name }}"
@@ -65,7 +65,7 @@
             "app.kubernetes.io/component": "{{ target_label_name1 }}"
         direction: to
         target:
-          mode: one
+          mode: all
           selector:
             namespaces:
               - "{{ target_namespace_name }}"
