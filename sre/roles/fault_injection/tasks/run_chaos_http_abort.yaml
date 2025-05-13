@@ -22,7 +22,7 @@
       apiVersion: chaos-mesh.org/v1alpha1
       kind: Schedule
       metadata:
-        name: "schedule-{{ target_namespace_name }}-{{ target_label_name1 }}"
+        name: "schedule-httpabort-{{ target_namespace_name }}-{{ target_label_name1 }}"
         namespace: "{{ chaos_mesh_namespace_project_name }}"
       spec:
         schedule: "* * * * *"  # Run every minute
@@ -54,7 +54,7 @@
       apiVersion: chaos-mesh.org/v1alpha1
       kind: Schedule
       metadata:
-        name: "schedule-{{ target_namespace_name }}-{{ target_label_name1 }}"
+        name: "schedule-httpabort-{{ target_namespace_name }}-{{ target_label_name1 }}"
         namespace: "{{ chaos_mesh_namespace_project_name }}"
   register: fault_removal_status
   tags: chaos_mesh
