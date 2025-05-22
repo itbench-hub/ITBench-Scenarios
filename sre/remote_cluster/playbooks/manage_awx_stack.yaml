@@ -6,7 +6,7 @@
     - name: Import AWX role validation tasks
       ansible.builtin.import_role:
         name: awx
-        tasks_from: validate.yaml
+        tasks_from: validate
       vars:
         awx_cluster: "{{ cluster }}"
         awx_stack: "{{ stack }}"

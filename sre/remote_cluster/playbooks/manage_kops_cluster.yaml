@@ -6,7 +6,7 @@
     - name: Import KOps role validation tasks
       ansible.builtin.import_role:
         name: kops
-        tasks_from: validate.yaml
+        tasks_from: validate
       vars:
         kops_cluster: "{{ cluster }}"
       tags:
