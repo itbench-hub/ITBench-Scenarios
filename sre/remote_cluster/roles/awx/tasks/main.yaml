@@ -1,6 +1,7 @@
 ---
 - name: Set variables
   ansible.builtin.set_fact:
+    head_cluster_name: "{{ awx_stack.name_prefix }}-head-{{ awx_cluster.nodes.worker.instance_type }}-aws.k8s.local"
     runner_cluster_names: |
       {{
         [awx_stack.name_prefix + "-runner"] |
@@ -63,4 +64,12 @@
     name: kops
   vars:
     kops_cluster: "{{ awx_cluster }}"
-    kops_full_cluster_name_override: "{{ awx_stack.name_prefix }}-head-{{ awx_cluster.nodes.worker.instance_type }}-aws.k8s.local"
+    kops_full_cluster_name_override: "{{ head_cluster_name }}"
+
+- name: Import AWX installation tasks
+  ansible.builtin.import_tasks:
+    file: install_awx.yaml
+  vars:
+    cluster_name: "{{ head_cluster_name }}"
+  tags:
+    - create
