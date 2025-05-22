@@ -115,3 +115,19 @@ http://<jaeger address>/jaeger
 http://<opencost-ingress address>
 http://<prometheus address>/prometheus/query
 ```
+
+### How do I get the `kubeconfig` for a specific cluster?
+
+This is particularly common to get the `kubeconfig` of a head or runner cluster that is part of the AWX stack.
+
+First, list the created KOps clusters:
+
+```console
+make list_kops_clusters
+```
+
+Then, copy the name of the cluster from the table and run the following command:
+
+```console
+ansible-playbook -i inventory.yaml playbooks/manage_kops_cluster.yaml --tags "export" --extra-vars "kops_full_cluster_name_override=<name of cluster>"
+```

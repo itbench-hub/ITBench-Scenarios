@@ -1,5 +1,5 @@
 ---
-- name: Export the kubeconfig
+- name: Export the kubeconfig for the head cluster
   ansible.builtin.command:
     argv:
       - kops
@@ -11,7 +11,7 @@
       - --state
       - "{{ state_store }}"
       - --kubeconfig
-      - /tmp/head-cluster.yaml
+      - /tmp/{{ cluster_name }}.yaml
   register: export_kops_output
   changed_when: export_kops_output.rc == 0
 
@@ -21,24 +21,22 @@
     chart_repo_url: https://ansible-community.github.io/awx-operator-helm
     chart_version: 3.1.0
     create_namespace: true
-    kubeconfig: /tmp/head-cluster.yaml
-    release_name: awx-operator
-    release_namespace: awx
+    kubeconfig: /tmp/{{ cluster_name }}.yaml
+    release_name: "{{ awx_helm_releases.awx_operator.name }}"
+    release_namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
     release_state: present
     timeout: 10m0s
     wait: true
-  tags:
-    - awx_setup
 
 - name: Install AWX
   kubernetes.core.k8s:
-    kubeconfig: /tmp/head-cluster.yaml
+    kubeconfig: /tmp/{{ cluster_name }}.yaml
     resource_definition:
       apiVersion: awx.ansible.com/v1beta1
       kind: AWX
       metadata:
-        name: awx-deployment
-        namespace: awx
+        name: head
+        namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
       spec:
         service_type: loadbalancer
         postgres_data_volume_init: true
@@ -46,5 +44,9 @@
           chown 26:0 /var/lib/pgsql/data
           chmod 700 /var/lib/pgsql/data
     state: present
-
-# Add waits
+    wait: true
+    wait_condition:
+      reason: Successful
+      status: "True"
+      type: Successful
+    wait_timeout: 900

@@ -65,13 +65,13 @@
 - name: Delete all associated Internet Gateway
   amazon.aws.ec2_vpc_igw:
     state: absent
-    vpc_id: "{{ item.vpc_id }}"
+    vpc_id: "{{ item }}"
     region: "{{ awx_cluster.aws.region }}"
-  loop: "{{ route_tables_info.route_tables }}"
+  loop: "{{ route_tables_info.route_tables | community.general.json_query('[*].vpc_id') }}"
 
 - name: Delete all associated VPCs
   amazon.aws.ec2_vpc_net:
     state: absent
-    vpc_id: "{{ item.vpc_id }}"
+    vpc_id: "{{ item }}"
     region: "{{ awx_cluster.aws.region }}"
-  loop: "{{ route_tables_info.route_tables }}"
+  loop: "{{ route_tables_info.route_tables | community.general.json_query('[*].vpc_id') }}"

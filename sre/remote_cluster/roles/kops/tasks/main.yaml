@@ -8,11 +8,11 @@
 
 - name: Override cluster name
   ansible.builtin.set_fact:
-    cluster_name: "{{ full_cluster_name_override }}"
+    cluster_name: "{{ kops_full_cluster_name_override }}"
   tags:
     - always
   when:
-    - full_cluster_name_override is defined
+    - kops_full_cluster_name_override is defined
 
 - name: Import KOps cluster creation tasks
   ansible.builtin.import_tasks:
