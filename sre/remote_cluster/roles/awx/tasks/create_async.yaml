@@ -26,7 +26,7 @@
       Name: "{{ awx_stack.name_prefix }}-public-subnet-{{ item }}"
       Environment: k8s
       ManagedBy: ansible
-  loop: "{{ range(1, awx_stack.runners.count + 1) }}"
+  loop: "{{ range(1, (cluster_names | length) + 1) }}"
   register: public_subnets
 
 - name: Parse subnet ids

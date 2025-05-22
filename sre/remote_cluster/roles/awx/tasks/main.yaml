@@ -43,28 +43,17 @@
   when:
     - clusters_output.rc == 0
 
-- name: Import asynchronous AWX stack runner creation tasks
+- name: Import asynchronous AWX stack creation tasks
   ansible.builtin.import_tasks:
-    file: create_runners_async.yaml
+    file: create_async.yaml
   vars:
-    cluster_names: "{{ runner_cluster_names | difference(existing_cluster_names | default([])) }}"
+    cluster_names: |
+      {{
+        (runner_cluster_names + [head_cluster_name]) |
+        difference(existing_cluster_names | default([]))
+      }}
   tags:
     - create
-
-- name: Import asynchronous AWX stack runner deletion tasks
-  ansible.builtin.import_tasks:
-    file: delete_runners_async.yaml
-  vars:
-    cluster_names: "{{ existing_cluster_names | default([]) | intersect(runner_cluster_names) }}"
-  tags:
-    - delete
-
-- name: Import KOps role for head cluster management
-  ansible.builtin.import_role:
-    name: kops
-  vars:
-    kops_cluster: "{{ awx_cluster }}"
-    kops_full_cluster_name_override: "{{ head_cluster_name }}"
 
 - name: Import AWX installation tasks
   ansible.builtin.import_tasks:
@@ -73,3 +62,16 @@
     cluster_name: "{{ head_cluster_name }}"
   tags:
     - create
+
+- name: Import asynchronous AWX stack deletion tasks
+  ansible.builtin.import_tasks:
+    file: delete_async.yaml
+  vars:
+    cluster_names: |
+      {{
+        existing_cluster_names |
+        default([]) |
+        intersect((runner_cluster_names + [head_cluster_name]))
+      }}
+  tags:
+    - delete
