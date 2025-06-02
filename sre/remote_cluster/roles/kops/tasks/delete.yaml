@@ -1,5 +1,5 @@
 ---
-- name: Delete the cluster
+- name: Deleting the cluster {{ cluster_name }}
   ansible.builtin.command:
     argv:
       - kops

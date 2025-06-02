@@ -40,16 +40,25 @@ sudo dnf install jq
 
 1. Install Python dependencies. (Working directory is `remote_cluster`.)
 ```bash
-python -m pip install -r requirements-dev.txt
+python3.12 -m pip install -r requirements-dev.txt
 ```
 
 2. Create the group variables for the development host. The `kops_cluster.yaml` file contains the configuration needed to customize the kops deployment.
 ```bash
 make group_vars
-vim group_vars/development/kops_cluster.yaml
 ```
 
-3. Set up AWS credentials by running the following command. Enter the AWS access key ID and security access key when requested.
+3. The following variables are to be set in `group_vars/development/kops_cluster.yaml`
+```
+cluster:
+  s3:
+    bucket_name: "" # Bucket to which kOps will post cluster configurations in; bucket will be created if it does not exist
+  ssh:
+    public_key_path: "" # Public SSH key to be placed on the cluster nodes allowing for the nodes to be SSHed into; must be set if clusters are to be created.
+```
+A guide to creating SSH keys can be found [here](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent).
+
+4. Set up AWS credentials by running the following command. Enter the AWS access key ID and security access key when requested.
 ```bash
 aws configure
 ```

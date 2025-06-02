@@ -1,5 +1,5 @@
 ---
-- name: Create kops cluster
+- name: Creating kOps cluster {{ cluster_name }}
   ansible.builtin.command:
     argv:
       - kops
@@ -25,7 +25,7 @@
   register: create_kops_output
   changed_when: create_kops_output.rc == 0
 
-- name: Build the Cluster
+- name: Build the kOps cluster {{ cluster_name }}
   ansible.builtin.command:
     argv:
       - kops
@@ -60,7 +60,7 @@
   register: export_kops_output
   changed_when: export_kops_output.rc == 0
 
-- name: Validate the cluster
+- name: Validating the kOps cluster {{ cluster_name }}
   ansible.builtin.command:
     argv:
       - kops
@@ -82,8 +82,8 @@
   when:
     - validate_kops_output.rc == 0
 
-- name: Display ssh information
+- name: Display SSH information
   ansible.builtin.debug:
-    msg: "You can now ssh into any of the machines in the cluster, using {{ kops_cluster.ssh.public_key_path }}"
+    msg: "You can now SSH into any of the nodes of your cluster, (most likely) using {{ kops_cluster.ssh.public_key_path | regex_replace('\\.[^.]*$', '') }}."
   when:
     - validate_kops_output.rc == 0
