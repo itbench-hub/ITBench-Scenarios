@@ -42,3 +42,35 @@ create_awx_stack: ## Creates an AWX stack created by kops
 .PHONY: destroy_awx_stack
 destroy_awx_stack: ## Destroy an AWX stack created by kops
 	ansible-playbook -i inventory.yaml playbooks/manage_awx_stack.yaml --tags "delete"
+
+.PHONY: create
+create: ## DEPRECATED: Use 'make create_kops_cluster' instead. Creates a single cluster
+	@echo "WARNING: 'make create' is deprecated. Please use 'make create_kops_cluster' instead."
+	@echo "This command will be removed in a future version."
+	@echo "Executing 'make create_kops_cluster'..."
+	@echo ""
+	$(MAKE) create_kops_cluster
+
+.PHONY: list_clusters
+list_clusters: ## DEPRECATED: Use 'make list_kops_cluster' instead. List all active clusters created by kOps
+	@echo "WARNING: 'make list_clusters' is deprecated. Please use 'make list_kops_clusters' instead."
+	@echo "This command will be removed in a future version."
+	@echo "Executing 'make list_kops_clusters'..."
+	@echo ""
+	$(MAKE) list_kops_clusters
+
+.PHONY: get_kcfg
+get_kcfg: ## DEPRECATED: Use 'make export_kops_kubeconfig' instead.
+	@echo "WARNING: 'make create' is deprecated. Please use 'make export_kops_kubeconfig' instead."
+	@echo "This command will be removed in a future version."
+	@echo "Executing 'make export_kops_kubeconfig'..."
+	@echo ""
+	$(MAKE) export_kops_kubeconfig $(if $(CLUSTER_NAME),CLUSTER_NAME=$(CLUSTER_NAME))
+
+.PHONY: delete
+delete: ## DEPRECATED: Use 'make destroy_kops_cluster' instead. Deletes a single cluster
+	@echo "WARNING: 'make delete' is deprecated. Please use 'make destroy_kops_cluster' instead."
+	@echo "This command will be removed in a future version."
+	@echo "Executing 'make destroy_kops_cluster'..."
+	@echo ""
+	$(MAKE) destroy_kops_cluster $(if $(CLUSTER_NAME),CLUSTER_NAME=$(CLUSTER_NAME))
