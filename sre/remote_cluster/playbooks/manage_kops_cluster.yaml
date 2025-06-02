@@ -11,15 +11,23 @@
         kops_cluster: "{{ cluster }}"
       tags:
         - always
-  tasks:
-    - name: Creating bucket if it doesn't exist
-      amazon.aws.s3_bucket:
-        name: "{{ cluster.s3.bucket_name }}"
-        region: "{{ cluster.aws.region }}"
-        state: present
+    - name: Import KOps role validation tasks
+      ansible.builtin.import_role:
+        name: kops
+        tasks_from: pre_tasks_list
+      vars:
+        kops_cluster: "{{ cluster }}"
+      tags:
+        - list
+    - name: Import KOps role validation tasks
+      ansible.builtin.import_role:
+        name: kops
+        tasks_from: pre_tasks_create
+      vars:
+        kops_cluster: "{{ cluster }}"
       tags:
         - create
-
+  tasks:
     - name: Import KOps role
       ansible.builtin.import_role:
         name: kops
