@@ -22,7 +22,7 @@ list_kops_clusters: ## Lists all active clusters created by kops
 .PHONY: export_kops_kubeconfig
 export_kops_kubeconfig: ## Exports the kubeconfig of a single cluster created by kops; pass CLUSTER_NAME=<cluster> or defaults to {{ kops_cluster.name_prefix }}-{{ kops_cluster.nodes.worker.instance_type }}-aws.k8s.local based on their values in group_vars/development/kops_cluster.yaml
 ifdef CLUSTER_NAME
-	ansible-playbook -i inventory.yaml playbooks/manage_kops_cluster.yaml --tags "export" --extra-vars "cluster_name=$(CLUSTER_NAME)"
+	ansible-playbook -i inventory.yaml playbooks/manage_kops_cluster.yaml --tags "export" --extra-vars "kops_full_cluster_name_override=$(CLUSTER_NAME)"
 else
 	ansible-playbook -i inventory.yaml playbooks/manage_kops_cluster.yaml --tags "export"
 endif
@@ -30,7 +30,7 @@ endif
 .PHONY: destroy_kops_cluster
 destroy_kops_cluster: ## Deletes a single cluster created by kops; pass CLUSTER_NAME=<cluster> or defaults to {{ kops_cluster.name_prefix }}-{{ kops_cluster.nodes.worker.instance_type }}-aws.k8s.local based on their values in group_vars/development/kops_cluster.yaml
 ifdef CLUSTER_NAME
-	ansible-playbook -i inventory.yaml playbooks/manage_kops_cluster.yaml --tags "delete" --extra-vars "cluster_name=$(CLUSTER_NAME)"
+	ansible-playbook -i inventory.yaml playbooks/manage_kops_cluster.yaml --tags "delete" --extra-vars "kops_full_cluster_name_override=$(CLUSTER_NAME)"
 else
 	ansible-playbook -i inventory.yaml playbooks/manage_kops_cluster.yaml --tags "delete"
 endif
