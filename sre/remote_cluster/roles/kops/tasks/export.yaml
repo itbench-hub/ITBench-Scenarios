@@ -11,13 +11,13 @@
       - --state
       - "{{ state_store }}"
       - --kubeconfig
-      - "{{ kops_kubeconfig_path }}"
+      - /tmp/{{ cluster_name }}.yaml
   register: export_kops_output
   changed_when: export_kops_output.rc == 0
 
 - name: Display file path of kubeconfig
   ansible.builtin.debug:
     msg:
-      - 'The kubeconfig has been exported to: {{ kops_kubeconfig_path }}'
+      - 'The kubeconfig has been exported to: /tmp/{{ cluster_name }}.yaml'
       - 'Run the following command to execute kubectl commands:'
-      - export KUBECONFIG={{ kops_kubeconfig_path }}
+      - export KUBECONFIG=/tmp/{{ cluster_name }}.yaml
