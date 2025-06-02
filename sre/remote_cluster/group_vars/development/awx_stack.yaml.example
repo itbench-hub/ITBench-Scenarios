@@ -1,5 +1,5 @@
 stack:
-  name_prefix: development
+  name_prefix: awx-exp-runner
   runners:
     aws:
       vpc:
