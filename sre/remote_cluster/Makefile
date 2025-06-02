@@ -20,12 +20,20 @@ list_kops_clusters: ## Lists all active clusters created by kops
 	ansible-playbook -i inventory.yaml playbooks/manage_kops_cluster.yaml --tags "list"
 
 .PHONY: export_kops_kubeconfig
-export_kops_kubeconfig: ## Exports the kubeconfig of a single cluster created by kops
+export_kops_kubeconfig: ## Exports the kubeconfig of a single cluster created by kops; pass CLUSTER_NAME=<cluster> or defaults to {{ kops_cluster.name_prefix }}-{{ kops_cluster.nodes.worker.instance_type }}-aws.k8s.local based on their values in group_vars/development/kops_cluster.yaml
+ifdef CLUSTER_NAME
+	ansible-playbook -i inventory.yaml playbooks/manage_kops_cluster.yaml --tags "export" --extra-vars "cluster_name=$(CLUSTER_NAME)"
+else
 	ansible-playbook -i inventory.yaml playbooks/manage_kops_cluster.yaml --tags "export"
+endif
 
 .PHONY: destroy_kops_cluster
-destroy_kops_cluster: ## Deletes a single cluster created by kops
+destroy_kops_cluster: ## Deletes a single cluster created by kops; pass CLUSTER_NAME=<cluster> or defaults to {{ kops_cluster.name_prefix }}-{{ kops_cluster.nodes.worker.instance_type }}-aws.k8s.local based on their values in group_vars/development/kops_cluster.yaml
+ifdef CLUSTER_NAME
+	ansible-playbook -i inventory.yaml playbooks/manage_kops_cluster.yaml --tags "delete" --extra-vars "cluster_name=$(CLUSTER_NAME)"
+else
 	ansible-playbook -i inventory.yaml playbooks/manage_kops_cluster.yaml --tags "delete"
+endif
 
 .PHONY: create_awx_stack
 create_awx_stack: ## Creates an AWX stack created by kops

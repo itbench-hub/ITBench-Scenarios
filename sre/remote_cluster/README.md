@@ -65,65 +65,55 @@ aws configure
 
 ## Cluster Management
 
-1. Run the following command to create a cluster using EC2 resources. If you already have a cluster, you can skip this step. The configuration used for creating the cluster is specified in the `kops_cluster` group variables.
+### 1. Create the Cluster
+Create a new Kubernetes cluster using EC2 resources. Skip this step if you already have a cluster running.
+The cluster configuration is defined in `group_vars/development/kops_cluster.yaml`.
+
 ```bash
 make create_kops_cluster
 ```
 
-2. Update the value of the `kubeconfig` key in the `../group_vars/all.yaml`, with the absolute path that the kubeconfig should be downloaded to
-```shell
+### 2. Export Kubeconfig
+Export the cluster's kubeconfig to access the remote Kubernetes cluster:
+
+```bash
+make export_kops_kubeconfig [CLUSTER_NAME=<cluster-name>]
+```
+
+If no `CLUSTER_NAME` is specified, it defaults to the cluster created with the `name_prefix` and `instance_type` of the worker node(s) from your configuration (e.g., `development-m5.xlarge-aws.k8s.local`).
+
+### 3. Verify Cluster Access
+Test your connection to the cluster:
+
+```bash
+export KUBECONFIG=/tmp/<cluster_name>.yaml
+kubectl get pods --all-namespaces
+```
+
+**Example:**
+```bash
+export KUBECONFIG="/tmp/development-m5.xlarge-aws.k8s.local.yaml"
+kubectl get pods --all-namespaces
+```
+
+### 4. Update Global Configuration
+Update the `kubeconfig` path in your global configuration:
+
+```bash
 vim ../group_vars/all.yaml
 ```
 
+Set the absolute path where the kubeconfig should be downloaded:
 ```yaml
-kubeconfig: "<path to kubeconfig>"
+kubeconfig: "/absolute/path/to/kubeconfig.yaml"
 ```
 
-3. Run the following command to download the kubeconfig for the created cluster. Changing the value of the `cluster.name_prefix` to the prefix of an already created cluster allows the command to export that kubeconfig instead.
-```bash
-make export_kops_kubeconfig
-```
-
-4. Access remote k8s cluster
-```bash
-export KUBECONFIG=<path to downloaded yaml>
-kubectl get pod --all-namespaces
-```
-
-5. Now let's head back to the [parent README](../README.md) to deploy the incidents.
-
-6. Once done with the experiment runs, to destroy the cluster, run the following command:
-```bash
-make destroy_kops_cluster
-```
-
-_Note_: For a full list of `make` commands, run the following command:
-```bash
-make help
+**Example:**
+```yaml
+kubeconfig: "/tmp/development-m5-xlarge-aws.k8s.local.yaml"
 ```
 
 ## FAQ
-
-### How do I access the observability stack's frontends?
-
-Once you have deployed the observability stack, run the following command to find the Ingress address for deployed frontends:
-
-```bash
-kubectl get ingress -A
-```
-
-To access the Opencost dashboard, copy the address for the `opencost-ingress` ingress resource from the terminal and paste it into the browser.
-
-To access the Jaeger dashboard, copy the address for the `jaeger` ingress resource from the terminal and paste it into the browser with the following prefix: `/jaeger`.
-
-To access the Prometheus dashboard, copy the address for the `prometheus` ingress resource from the terminal and paste it into the browser with the following prefix: `/prometheus/query`.
-
-
-```console
-http://<jaeger address>/jaeger
-http://<opencost-ingress address>
-http://<prometheus address>/prometheus/query
-```
 
 ### How do I get the `kubeconfig` for a specific cluster?
 
@@ -138,5 +128,6 @@ make list_kops_clusters
 Then, copy the name of the cluster from the table and run the following command:
 
 ```console
-ansible-playbook -i inventory.yaml playbooks/manage_kops_cluster.yaml --tags "export" --extra-vars "kops_full_cluster_name_override=<name of cluster>"
+make export_kops_kubeconfig CLUSTER_NAME=<name_of_cluster>
 ```
+e.g. `make export_kops_kubeconfig CLUSTER_NAME=development-m5.xlarge-aws.k8s.local`
