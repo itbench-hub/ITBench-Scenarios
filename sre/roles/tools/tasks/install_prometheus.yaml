@@ -36,6 +36,9 @@
             matchLabels:
               it-bench/monitoring: "true"
           serviceMonitorSelectorNilUsesHelmValues: false
+          additionalArgs:
+            - name: web.enable-otlp-receiver
+              value: ""
     wait: true
   when:
     - tools_cluster.platform == "kubernetes"
