@@ -11,15 +11,8 @@
         kops_cluster: "{{ cluster }}"
       tags:
         - always
-    - name: Import kOps role validation tasks
-      ansible.builtin.import_role:
-        name: kops
-        tasks_from: pre_tasks_list
-      vars:
-        kops_cluster: "{{ cluster }}"
-      tags:
-        - list
-    - name: Import kOps role validation tasks
+
+    - name: Import kOps role pre tasks for create tasks
       ansible.builtin.import_role:
         name: kops
         tasks_from: pre_tasks_create
@@ -27,6 +20,17 @@
         kops_cluster: "{{ cluster }}"
       tags:
         - create
+
+    - name: Import kOps role pre tasks for list, export, and delete tasks
+      ansible.builtin.import_role:
+        name: kops
+        tasks_from: pre_tasks_general
+      vars:
+        kops_cluster: "{{ cluster }}"
+      tags:
+        - list
+        - export
+        - delete
   tasks:
     - name: Import kOps role
       ansible.builtin.import_role:

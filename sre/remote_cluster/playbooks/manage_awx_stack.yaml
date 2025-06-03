@@ -12,15 +12,25 @@
         awx_stack: "{{ stack }}"
       tags:
         - always
-  tasks:
-    - name: Create bucket if it doesn't exist
-      amazon.aws.s3_bucket:
-        name: "{{ cluster.s3.bucket_name }}"
-        region: "{{ cluster.aws.region }}"
-        state: present
+
+    - name: Import kOps role pre tasks for create tasks
+      ansible.builtin.import_role:
+        name: kops
+        tasks_from: pre_tasks_create
+      vars:
+        kops_cluster: "{{ cluster }}"
       tags:
         - create
 
+    - name: Import kOps role pre tasks for delete tasks
+      ansible.builtin.import_role:
+        name: kops
+        tasks_from: pre_tasks_general
+      vars:
+        kops_cluster: "{{ cluster }}"
+      tags:
+        - delete
+  tasks:
     - name: Import AWX role
       ansible.builtin.import_role:
         name: awx
