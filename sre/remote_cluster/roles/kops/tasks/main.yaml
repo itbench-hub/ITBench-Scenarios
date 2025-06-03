@@ -14,25 +14,25 @@
   when:
     - kops_full_cluster_name_override is defined
 
-- name: Import KOps cluster creation tasks
+- name: Import kOps cluster creation tasks
   ansible.builtin.import_tasks:
     file: create.yaml
   tags:
     - create
 
-- name: Import KOps cluster list tasks
+- name: Import kOps cluster list tasks
   ansible.builtin.import_tasks:
     file: list.yaml
   tags:
     - list
 
-- name: Import KOps cluster export tasks
+- name: Import kOps cluster export tasks
   ansible.builtin.import_tasks:
     file: export.yaml
   tags:
     - export
 
-- name: Import KOps cluster deletion tasks
+- name: Import kOps cluster deletion tasks
   ansible.builtin.import_tasks:
     file: delete.yaml
   tags:

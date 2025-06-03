@@ -1,5 +1,5 @@
 ---
-- name: Asynchronously delete KOps clusters
+- name: Asynchronously delete kOps clusters
   ansible.builtin.command:
     argv:
       - kops
@@ -30,7 +30,7 @@
     jid: "{{ item.ansible_job_id }}"
   loop: "{{ async_delete_results.results }}"
 
-- name: Find all route tables associated with kops clusters
+- name: Find all route tables associated with kOps clusters
   amazon.aws.ec2_vpc_route_table_info:
     filters:
       "tag:Name": "{{ awx_stack.name_prefix }}-public-route-table"

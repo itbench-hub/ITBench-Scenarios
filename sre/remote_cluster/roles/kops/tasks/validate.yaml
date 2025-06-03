@@ -1,31 +1,31 @@
 ---
-- name: Check for kops
+- name: Check for kOps
   ansible.builtin.command:
     cmd: which kops
   register: system_kops_path
   changed_when: false
 
-- name: Validate that kops exists
+- name: Validate that kOps exists
   ansible.builtin.assert:
     that: system_kops_path.stdout_lines | length > 0
-    fail_msg: kops is not installed. Please install kops.
-    success_msg: Using kops at {{ system_kops_path.stdout_lines[0] }}
+    fail_msg: kOps is not installed. Please install kops.
+    success_msg: Using kOps at {{ system_kops_path.stdout_lines[0] }}
 
-- name: Check kops version
+- name: Check kOps version
   ansible.builtin.command:
     cmd: "{{ system_kops_path.stdout_lines[0] }} version --short"
   register: raw_kops_version
   changed_when: false
 
-- name: Parse kops verion
+- name: Parse kOps verion
   ansible.builtin.set_fact:
     system_kops_version: "{{ raw_kops_version.stdout }}"
 
-- name: Validate the kops version
+- name: Validate the kOps version
   ansible.builtin.assert:
     that: "'1.31' is version_compare(system_kops_version, '<=')"
-    fail_msg: "KOps version for system {{ system_kops_version }} must be at least 1.31 or later."
-    success_msg: "KOps version {{ system_kops_version }} (>= 1.31) is OK."
+    fail_msg: "kOps version for system {{ system_kops_version }} must be at least 1.31 or later."
+    success_msg: "kOps version {{ system_kops_version }} (>= 1.31) is OK."
 
 - name: Gather all regions
   amazon.aws.aws_region_info:

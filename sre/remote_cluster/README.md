@@ -15,7 +15,7 @@ _Note: The following setup guide presumes that the required software listed [her
 ## Required Software
 
 - [awscli](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) (v2)
-- [kops](https://kops.sigs.k8s.io/getting_started/install/)
+- [kOps](https://kops.sigs.k8s.io/getting_started/install/)
 
 ### Installing Required Software via Homebrew (for MacOS)
 
@@ -119,7 +119,7 @@ kubeconfig: "/tmp/development-m5-xlarge-aws.k8s.local.yaml"
 
 This is particularly common to get the `kubeconfig` of a head or runner cluster that is part of the AWX stack.
 
-First, list the created KOps clusters:
+First, list the created kOps clusters:
 
 ```console
 make list_kops_clusters

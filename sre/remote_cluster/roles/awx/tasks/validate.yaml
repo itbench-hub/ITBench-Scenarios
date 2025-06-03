@@ -1,12 +1,12 @@
 ---
-- name: Validate awx kops cluster count
+- name: Validate awx kOps cluster count
   ansible.builtin.assert:
     that:
       - awx_stack.runners.count > 0
-    fail_msg: Invalid number of kops clusters set. Must be greater than 0.
-    success_msg: Valid number of kops clusters configured.
+    fail_msg: Invalid number of kOps clusters set. Must be greater than 0.
+    success_msg: Valid number of kOps clusters configured.
 
-- name: Import KOps role validation tasks
+- name: Import kOps role validation tasks
   ansible.builtin.import_role:
     name: kops
     tasks_from: validate.yaml

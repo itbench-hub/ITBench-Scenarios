@@ -1,5 +1,5 @@
 ---
-- name: Create VPC for KOps clusters
+- name: Create VPC for kOps clusters
   amazon.aws.ec2_vpc_net:
     name: "{{ awx_stack.name_prefix }}-vpc"
     cidr_block: "{{ awx_stack.runners.aws.vpc.cidr }}"
@@ -46,7 +46,7 @@
       Creator: "ansible"
     state: present
 
-- name: Asynchronously create KOps clusters
+- name: Asynchronously create kOps clusters
   ansible.builtin.command:
     argv:
       - kops
@@ -97,7 +97,7 @@
     jid: "{{ item.ansible_job_id }}"
   loop: "{{ async_create_results.results }}"
 
-- name: Asynchronously build KOps clusters
+- name: Asynchronously build kOps clusters
   ansible.builtin.command:
     argv:
       - kops
@@ -147,7 +147,7 @@
   register: export_kops_output
   changed_when: export_kops_output.rc == 0
 
-- name: Asynchronously validate KOps cluster
+- name: Asynchronously validate kOps cluster
   ansible.builtin.command:
     argv:
       - kops

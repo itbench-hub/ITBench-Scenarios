@@ -1,5 +1,5 @@
 ---
-- name: Run kops get clusters to list all clusters
+- name: Run kOps get clusters to list all clusters
   ansible.builtin.command:
     argv:
       - kops

@@ -21,8 +21,8 @@ argument_specs:
     short_description: Entry point for AWX configuration validation tasks
     description:
       - This is a collection of validation tasks needed to run the various other tasks.
-      - These tasks include verfying the existence of the KOps cli and the S3 bucket where
-        the KOps cluster states will be stored and validating the configuration used in the
+      - These tasks include verfying the existence of the kOps cli and the S3 bucket where
+        the kOps cluster states will be stored and validating the configuration used in the
         other tasks for managing the various clusters.
       - These tasks should be run as a pre-task in playbooks which invoke this role.
     author:
