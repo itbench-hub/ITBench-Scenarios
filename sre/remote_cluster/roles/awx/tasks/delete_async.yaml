@@ -37,7 +37,7 @@
     region: "{{ awx_cluster.aws.region }}"
   register: route_tables_info
 
-- name: Find all subnets associated with route tables' vpcs
+- name: Find all subnets associated with route tables' VPCs
   amazon.aws.ec2_vpc_subnet_info:
     filters:
       vpc-id: "{{ item.vpc_id }}"
