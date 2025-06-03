@@ -39,8 +39,8 @@
         kubernetesEvents:
           enabled: true
       image:
-        repository: otel/opentelemetry-collector-contrib
-        tag: 0.123.0
+        repository: ghcr.io/open-telemetry/opentelemetry-collector-releases/opentelemetry-collector-contrib
+        tag: 0.127.0
       podAnnotations:
         openshift.io/required-scc: restricted-v2
       ports:
