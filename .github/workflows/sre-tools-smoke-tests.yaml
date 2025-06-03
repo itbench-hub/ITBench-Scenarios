@@ -14,11 +14,11 @@ jobs:
     name: Ingress Smoke Tests
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-python@v5.6.0
         with:
           python-version: '3.12'
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v5.5.0
         with:
           go-version-file: sre/local_cluster/go.mod
           cache-dependency-path: sre/local_cluster/go.sum
@@ -50,11 +50,11 @@ jobs:
     name: Jaeger and OpenSearch Smoke Tests
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-python@v5.6.0
         with:
           python-version: '3.12'
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v5.5.0
         with:
           go-version-file: sre/local_cluster/go.mod
           cache-dependency-path: sre/local_cluster/go.sum
@@ -86,11 +86,11 @@ jobs:
     name: Kubernetes Topology Monitor Smoke Tests
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-python@v5.6.0
         with:
           python-version: '3.12'
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v5.5.0
         with:
           go-version-file: sre/local_cluster/go.mod
           cache-dependency-path: sre/local_cluster/go.sum
@@ -122,11 +122,11 @@ jobs:
     name: OpenCost and Prometheus Smoke Tests
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-python@v5.6.0
         with:
           python-version: '3.12'
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v5.5.0
         with:
           go-version-file: sre/local_cluster/go.mod
           cache-dependency-path: sre/local_cluster/go.sum
@@ -158,11 +158,11 @@ jobs:
     name: Alinity Clickhouse and OpenTelemetry Collector Smoke Tests
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-python@v5.6.0
         with:
           python-version: '3.12'
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v5.5.0
         with:
           go-version-file: sre/local_cluster/go.mod
           cache-dependency-path: sre/local_cluster/go.sum
@@ -194,11 +194,11 @@ jobs:
     name: Chaos Mesh Smoke Tests
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-python@v5.6.0
         with:
           python-version: '3.12'
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v5.5.0
         with:
           go-version-file: sre/local_cluster/go.mod
           cache-dependency-path: sre/local_cluster/go.sum
@@ -230,11 +230,11 @@ jobs:
     name: Kubernetes Metrics Server Smoke Tests
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-python@v5.6.0
         with:
           python-version: '3.12'
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v5.5.0
         with:
           go-version-file: sre/local_cluster/go.mod
           cache-dependency-path: sre/local_cluster/go.sum
