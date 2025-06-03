@@ -15,7 +15,7 @@
   kubernetes.core.helm:
     chart_ref: altinity-clickhouse-operator
     chart_repo_url: https://docs.altinity.com/clickhouse-operator/
-    chart_version: 0.24.5
+    chart_version: 0.25.0
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     release_name: "{{ helm_releases.operator.name }}"
     release_namespace: "{{ helm_releases.operator.namespace }}"
@@ -92,6 +92,8 @@
     wait: true
   register: clickhouse_installation_info
   until:
+    - clickhouse_installation_info.resources | length > 0
+    - clickhouse_installation_info.resources[0].status is defined
     - clickhouse_installation_info.resources[0].status.status is defined
     - clickhouse_installation_info.resources[0].status.status == 'Completed'
   retries: 10
