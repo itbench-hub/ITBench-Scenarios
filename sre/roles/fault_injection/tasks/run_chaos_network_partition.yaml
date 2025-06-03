@@ -21,26 +21,32 @@
     kubeconfig: "{{ kubeconfig }}"
     definition:
       apiVersion: chaos-mesh.org/v1alpha1
-      kind: NetworkChaos
+      kind: Schedule
       metadata:
-        name: "{{ target_namespace_name }}-{{ target_label_name1 }}"
+        name: "schedule-networkpartition-{{ target_namespace_name }}-{{ target_label_name1 }}"
         namespace: "{{ chaos_mesh_namespace_project_name }}"
       spec:
-        action: partition
-        mode: one
-        selector:
-          namespaces:
-            - "{{ target_namespace_name }}"
-          labelSelectors:
-            "app.kubernetes.io/component": "{{ target_label_name1 }}"
-        direction: to
-        target:
-          mode: one
+        schedule: "* * * * *"
+        historyLimit: 1
+        concurrencyPolicy: "Forbid"
+        type: "NetworkChaos"
+        networkChaos:
+          action: partition
+          mode: all
           selector:
             namespaces:
               - "{{ target_namespace_name }}"
             labelSelectors:
-              "app.kubernetes.io/component": "{{ target_label_name2 }}"
+              "app.kubernetes.io/component": "{{ target_label_name1 }}"
+          direction: to
+          target:
+            mode: all
+            selector:
+              namespaces:
+                - "{{ target_namespace_name }}"
+              labelSelectors:
+                "app.kubernetes.io/component": "{{ target_label_name2 }}"
+          duration: "55s"
   register: fault_injection_status
   tags: chaos_mesh
   when: is_network_partition_chaos and is_fault_injection
@@ -51,26 +57,10 @@
     kubeconfig: "{{ kubeconfig }}"
     definition:
       apiVersion: chaos-mesh.org/v1alpha1
-      kind: NetworkChaos
+      kind: Schedule
       metadata:
-        name: "{{ target_namespace_name }}-{{ target_label_name1 }}"
+        name: "schedule-networkpartition-{{ target_namespace_name }}-{{ target_label_name1 }}"
         namespace: "{{ chaos_mesh_namespace_project_name }}"
-      spec:
-        action: partition
-        mode: one
-        selector:
-          namespaces:
-            - "{{ target_namespace_name }}"
-          labelSelectors:
-            "app.kubernetes.io/component": "{{ target_label_name1 }}"
-        direction: to
-        target:
-          mode: one
-          selector:
-            namespaces:
-              - "{{ target_namespace_name }}"
-            labelSelectors:
-              "app.kubernetes.io/component": "{{ target_label_name2 }}"
   register: fault_removal_status
   tags: chaos_mesh
   when: is_network_partition_chaos and is_fault_removal
