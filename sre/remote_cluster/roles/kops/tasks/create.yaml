@@ -22,6 +22,10 @@
       - "{{ kops_cluster.networking.mode }}"
       - --state
       - "{{ state_store }}"
+      - --channel
+      - stable
+      - --kubernetes-version
+      - "{{ kops_cluster.kubernetes_version }}"
   register: create_kops_output
   changed_when: create_kops_output.rc == 0
 

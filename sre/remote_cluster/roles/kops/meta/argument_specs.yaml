@@ -48,7 +48,10 @@ argument_specs:
                 required: true
                 type: list
           name_prefix:
-            required: false
+            required: true
+            type: str
+          kubernetes_version:
+            required: true
             type: str
           networking:
             required: true

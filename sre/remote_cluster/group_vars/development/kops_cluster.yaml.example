@@ -4,6 +4,7 @@ cluster:
     zones:
       - us-east-1a
   name_prefix: development
+  kubernetes_version: 1.32.4
   networking:
     mode: cilium
   nodes:
