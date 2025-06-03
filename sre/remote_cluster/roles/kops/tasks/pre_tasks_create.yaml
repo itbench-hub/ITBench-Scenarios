@@ -1,4 +1,19 @@
 ---
+- name: Validate control node configuration
+  ansible.builtin.assert:
+    that:
+      - kops_cluster.nodes.control.count > 0
+      - kops_cluster.nodes.control.count % 2 == 1
+    fail_msg: Invalid number of control nodes set. Must be an odd number and greater than 0.
+    success_msg: Valid number of control nodes configured.
+
+- name: Validate worker node configuration
+  ansible.builtin.assert:
+    that:
+      - kops_cluster.nodes.worker.count > 0
+    fail_msg: Invalid number of worker nodes set. Must be greater than 0.
+    success_msg: Valid number of worker nodes configured.
+
 - name: Creating bucket if it doesn't exist
   amazon.aws.s3_bucket:
     name: "{{ cluster.s3.bucket_name }}"

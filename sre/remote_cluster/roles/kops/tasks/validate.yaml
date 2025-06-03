@@ -57,20 +57,3 @@
     that: kops_cluster.aws.zones | difference(available_zones) | length == 0
     fail_msg: 'At least one zone is not available. Please select from available zones: {{ available_zones }}'
     success_msg: All zones in region are available.
-
-- name: Validate control node configuration
-  ansible.builtin.assert:
-    that:
-      - kops_cluster.nodes.control.count > 0
-      - kops_cluster.nodes.control.count < 10
-      - kops_cluster.nodes.control.count % 2 == 1
-    fail_msg: Invalid number of control nodes set. Must be an odd number between the range of 0 > x < 10.
-    success_msg: Valid number of control nodes configured.
-
-- name: Validate worker node configuration
-  ansible.builtin.assert:
-    that:
-      - kops_cluster.nodes.worker.count > 0
-      - kops_cluster.nodes.worker.count < 10
-    fail_msg: Invalid number of worker nodes set. Must be between the range of 0 > x < 10.
-    success_msg: Valid number of worker nodes configured.

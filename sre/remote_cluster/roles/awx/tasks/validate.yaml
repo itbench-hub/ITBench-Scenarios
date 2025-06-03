@@ -3,8 +3,7 @@
   ansible.builtin.assert:
     that:
       - awx_stack.runners.count > 0
-      - awx_stack.runners.count < 100
-    fail_msg: Invalid number of kops clusters set. Must be between the range of 0 > x < 100.
+    fail_msg: Invalid number of kops clusters set. Must be greater than 0.
     success_msg: Valid number of kops clusters configured.
 
 - name: Import KOps role validation tasks
