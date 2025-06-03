@@ -9,5 +9,5 @@
   ansible.builtin.assert:
     that:
       - cluster.s3.bucket_name in (bucket_info.buckets | map(attribute='name') | list)
-    fail_msg: "S3 bucket '{{ cluster.s3.bucket_name }}' does not exist. Please check the value associated with cluster.s3.bucket_name at group_vars/development/kops_cluster.yaml."
-    success_msg: "S3 bucket '{{ cluster.s3.bucket_name }}' exists."
+    fail_msg: S3 bucket {{ cluster.s3.bucket_name }} does not exist. Please check the 'cluster.s3.bucket_name' value in group_vars/development/kops_cluster.yaml
+    success_msg: S3 bucket {{ cluster.s3.bucket_name }} exists.

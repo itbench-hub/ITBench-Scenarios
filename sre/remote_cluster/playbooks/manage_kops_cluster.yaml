@@ -1,5 +1,5 @@
 ---
-- name: kOps (Kubernetes Operations) Cluster Management
+- name: KOps (Kubernetes Operations) Cluster Management
   hosts:
     - development
   pre_tasks:

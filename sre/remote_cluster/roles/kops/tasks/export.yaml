@@ -18,6 +18,6 @@
 - name: Display file path of kubeconfig
   ansible.builtin.debug:
     msg:
-      - 'The kubeconfig has been exported to: /tmp/{{ cluster_name }}.yaml'
-      - 'Run the following command to execute kubectl commands:'
+      - "The kubeconfig has been exported to: /tmp/{{ cluster_name }}.yaml"
+      - "Run the following command to execute kubectl commands:"
       - export KUBECONFIG=/tmp/{{ cluster_name }}.yaml

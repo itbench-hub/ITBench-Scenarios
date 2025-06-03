@@ -20,16 +20,16 @@
     region: "{{ cluster.aws.region }}"
     state: present
 
-- name: Check if the public SSH key file path is set (on creating clusters)
+- name: Retrieve the file stats of the public SSH key file
   ansible.builtin.stat:
     path: "{{ cluster.ssh.public_key_path }}"
   register: ssh_public_key_file_path
 
-- name: Check if the private SSH key file path is valid
+- name: Check if the public SSH key file path is valid
   ansible.builtin.assert:
     that:
       - ssh_public_key_file_path.stat.exists
       - ssh_public_key_file_path.stat.isreg
       - ssh_public_key_file_path.stat.size > 0
-    fail_msg: "Public SSH key file path is missing. Please check the value associated with cluster.ssh.public_key_path at group_vars/development/kops_cluster.yaml."
-    success_msg: "Public SSH key file path is set."
+    fail_msg: Public SSH key file path is invalid. Please check the 'cluster.ssh.public_key_path' value in group_vars/development/kops_cluster.yaml
+    success_msg: Public SSH key file path is valid.
