@@ -27,14 +27,13 @@
   when:
     - tools_enabled.opentelemetry or tools_enabled.jaeger
 
-# # To-be Implemented
-# - name: Import OpenCost reinitialization tasks
-#   ansible.builtin.import_tasks:
-#     file: reinit_opencost.yaml
-#   vars:
-#     helm_release: "{{ tools_helm_releases.opencost }}"
-#   when:
-#     - tools_enabled.opencost
+- name: Import OpenCost reinitialization tasks
+  ansible.builtin.import_tasks:
+    file: reinit_opencost.yaml
+  vars:
+    helm_release: "{{ tools_helm_releases.opencost }}"
+  when:
+    - tools_enabled.opencost
 
 - name: Import Chaos Mesh reinitialization tasks
   ansible.builtin.import_tasks:
@@ -50,15 +49,14 @@
   when:
     - tools_cluster.platform == "kubernetes"
 
-# # To-be Implemented
-# - name: Import Kubernetes Metrics Server reinitialization tasks
-#   ansible.builtin.import_tasks:
-#     file: reinit_kubernetes_metrics_server.yaml
-#   vars:
-#     helm_release: "{{ tools_helm_releases.kubernetes_metrics_server }}"
-#   when:
-#     - tools_enabled.kubernetes_metrics_server
-#     - tools_cluster.platform == "kubernetes"
+- name: Import Kubernetes Metrics Server reinitialization tasks
+  ansible.builtin.import_tasks:
+    file: reinit_kubernetes_metrics_server.yaml
+  vars:
+    helm_release: "{{ tools_helm_releases.kubernetes_metrics_server }}"
+  when:
+    - tools_enabled.kubernetes_metrics_server
+    - tools_cluster.platform == "kubernetes"
 
 - name: Import Kubernetes Topology Monitor reinitialization tasks
   ansible.builtin.import_tasks:
