@@ -1,0 +1,24 @@
+---
+- name: Scale down jaeger-collector deployment
+  kubernetes.core.k8s:
+    api_version: apps/v1
+    kind: Deployment
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    name: "jaeger-collector"
+    namespace: "{{ helm_releases.collectors.namespace }}"
+    resource_definition:
+      spec:
+        replicas: 0
+    wait: true
+
+- name: Scale up jaeger-collector deployment
+  kubernetes.core.k8s:
+    api_version: apps/v1
+    kind: Deployment
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    name: "jaeger-collector"
+    namespace: "{{ helm_releases.collectors.namespace }}"
+    resource_definition:
+      spec:
+        replicas: 1
+    wait: true

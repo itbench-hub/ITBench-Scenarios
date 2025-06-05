@@ -1,0 +1,18 @@
+---
+- name: Scale down Prometheus statefulsets to reset data
+  kubernetes.core.k8s:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    api_version: apps/v1
+    kind: StatefulSet
+    name: "{{ item }}"
+    namespace: "{{ helm_release.namespace }}"
+    resource_definition:
+      spec:
+        replicas: 0
+    wait: true
+  loop:
+    - "alertmanager-prometheus-kube-prometheus-alertmanager"
+    - "prometheus-prometheus-kube-prometheus-prometheus"
+
+# # NOTE: Not needed as installation triggers scale up
+# - name: Scale up Prometheus statefulsets

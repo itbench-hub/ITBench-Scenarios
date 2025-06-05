@@ -1,0 +1,3 @@
+---
+- name: Delete events across namespaces
+  ansible.builtin.shell: "KUBECONFIG={{ tools_cluster.kubeconfig }} kubectl delete events --all"
