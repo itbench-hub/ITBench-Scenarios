@@ -11,16 +11,20 @@
     loop_var: item
 
 - name: Assign a dynamic port if one is available
-  set_fact:
+  ansible.builtin.set_fact:
     dynamic_port: "{{ (lsof_check.results | selectattr('stdout', 'equalto', 'available') | map(attribute='item') | list | first) }}"
 
 - name: Kubectl port-forward on/for OpenSearch service with dynamic port
-  ansible.builtin.shell: "KUBECONFIG={{ tools_cluster.kubeconfig }} kubectl -n {{ helm_release.namespace }} port-forward svc/opensearch-cluster-master {{ dynamic_port }}:9200 --request-timeout=10m"
+  ansible.builtin.command: >
+    kubectl -n {{ helm_release.namespace }} port-forward svc/opensearch-cluster-master {{ dynamic_port }}:9200 --request-timeout=10m
+  environment:
+    KUBECONFIG: "{{ tools_cluster.kubeconfig }}"
   async: 600
   poll: 0
+  changed_when: false
 
 - name: Wait for port-forward to be available
-  wait_for_connection:
+  ansible.builtin.wait_for_connection:
     delay: 5
     timeout: 30
 
