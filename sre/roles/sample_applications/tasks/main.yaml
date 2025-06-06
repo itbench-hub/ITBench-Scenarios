@@ -46,3 +46,10 @@
     
 - ansible.builtin.import_tasks: 
     file: register_deployment_failure.yaml
+
+- ansible.builtin.import_tasks: 
+    file: import_focus_data_clickhouse.yaml
+  tags:
+    - install_sample_applications
+  when:
+    - sample_application == "finops_sample_data"

@@ -1,0 +1,81 @@
+- name: Get Clickhouse credentials from secret
+  kubernetes.core.k8s_info:
+    kind: Secret
+    name: clickhouse-credentials
+    namespace: "{{ clickhouse_namespace_project_name }}"
+    kubeconfig: "{{ kubeconfig }}"
+    wait: true
+  register: clickhouse_secrets_info
+
+- name: Extract Clickhouse credentials from secret data
+  ansible.builtin.set_fact:
+    clickhouse_user: "{{ clickhouse_secrets_info.resources[0].data.user | b64decode }}"
+    clickhouse_password: "{{ clickhouse_secrets_info.resources[0].data.password | b64decode }}"
+    database: itbench
+    table: focus
+    local_csv_dir: /Users/bekir/Documents/finops/ITBench-Scenarios/sre/roles/sample_applications/dataset/
+    remote_csv_dir: /var/lib/clickhouse/user_files/csv_imports
+
+- name: Get ClickHouse pod name
+  ansible.builtin.command: >
+    kubectl get pods -n {{clickhouse_namespace_project_name}}
+    -o jsonpath="{.items[0].metadata.name}"
+  register: clickhouse_pod_name
+  changed_when: false
+
+- name: Create temp directory in pod
+  ansible.builtin.command: >
+    kubectl exec -n {{ clickhouse_namespace_project_name }} {{ clickhouse_pod_name.stdout }} -- mkdir -p {{ remote_csv_dir }}
+  changed_when: false
+
+- name: Find all CSV files in {{ local_csv_dir }}
+  ansible.builtin.find:
+    paths: "{{ local_csv_dir }}"
+    patterns: "*.csv.gz"
+  register: csv_files
+
+- name: Copy all CSVs to the pod
+  ansible.builtin.command: >
+    kubectl cp {{ item.path }} {{ clickhouse_namespace_project_name }}/{{ clickhouse_pod_name.stdout }}:{{ remote_csv_dir }}/{{ item.path | basename }}
+  loop: "{{ csv_files.files }}"
+  loop_control:
+    label: "{{ item.path | basename }}"
+  changed_when: false
+
+- name: Create ClickHouse database if not exists
+  ansible.builtin.command: >
+    kubectl exec -n {{ clickhouse_namespace_project_name }} {{ clickhouse_pod_name.stdout }} -- 
+    clickhouse-client 
+    --query="CREATE DATABASE IF NOT EXISTS {{ database }};"
+  changed_when: true
+
+- name: Create table from schema of first file
+  ansible.builtin.command: >
+    kubectl exec -n {{ clickhouse_namespace_project_name }} {{ clickhouse_pod_name.stdout }} -- 
+    clickhouse-client --query="
+      CREATE TABLE IF NOT EXISTS {{ database }}.{{ table }}
+      ENGINE = MergeTree
+      ORDER BY tuple()
+      AS SELECT * FROM file('{{ remote_csv_dir }}/{{ csv_files.files[0].path | basename }}', 'CSVWithNames');"
+  changed_when: true
+
+- name: Insert each CSV file into the same table
+  ansible.builtin.command: >
+    kubectl exec -n {{ clickhouse_namespace_project_name }} {{ clickhouse_pod_name.stdout }} -- 
+    /bin/sh -c "zcat {{ remote_csv_dir }}/{{ item.path | basename }} | tail -n +2 | clickhouse-client --query='INSERT INTO {{ database }}.{{ table }} FORMAT CSV'"
+  loop: "{{ csv_files.files }}"
+  loop_control:
+    label: "{{ item.path | basename }}"
+  changed_when: true
+
+- name: Confirm data import by selecting row count
+  ansible.builtin.command: >
+    kubectl exec -n {{ clickhouse_namespace_project_name }} {{ clickhouse_pod_name.stdout }} -- 
+    clickhouse-client 
+    --query="SELECT count() FROM {{ database }}.{{ table }};"
+  register: query_result
+  changed_when: false
+
+- name: Show row count from ClickHouse
+  ansible.builtin.debug:
+    msg: "Imported rows: {{ query_result.stdout }}"

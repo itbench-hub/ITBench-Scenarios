@@ -81,6 +81,11 @@ undeploy_elasticsearch: ## Undeploys the Elasticsearch cluster
 	ansible-playbook -v base.yaml --tags "uninstall_sample_applications" \
 		--extra-vars "sample_application=elasticsearch"
 
+.PHONY: deploy_finops_sample_data
+deploy_finops_sample_data: ## Deploys the Astronomy Shop application
+	ansible-playbook -v base.yaml --tags "install_sample_applications" \
+		--extra-vars "sample_application=finops_sample_data"
+
 .PHONY: install_chaos_mesh
 install_chaos_mesh: ## Installs a Chaos mesh to the cluster
 	ansible-playbook -v base.yaml --tags "chaos_mesh_installation" \

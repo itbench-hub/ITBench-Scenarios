@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cluster-autoscaler
+  namespace: kube-system
+  labels:
+    app: cluster-autoscaler
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cluster-autoscaler
+  template:
+    metadata:
+      labels:
+        app: cluster-autoscaler
+    spec:
+      serviceAccountName: cluster-autoscaler
+      containers:
+        - name: cluster-autoscaler
+          image: registry.k8s.io/autoscaling/cluster-autoscaler:v1.29.0
+          command:
+            - ./cluster-autoscaler
+          args:
+            - --cloud-provider=aws
+            - --nodes=1:5:nodes-us-east-2a.finops-cs-m4.xlarge-aws.k8s.local
+            - --skip-nodes-with-local-storage=false
+            - --expander=least-waste
+            - --balance-similar-node-groups
+            - --skip-nodes-with-system-pods=false
+            - --aws-use-static-instance-list=false
+            - --node-group-auto-discovery=asg:tag=k8s.io/cluster-autoscaler/enabled,k8s.io/cluster-autoscaler/finops-cs-m4.xlarge-aws.k8s.local
+            - --scale-down-enabled=true
+            - --scale-down-unneeded-time=1m
+            - --scale-down-utilization-threshold=0.5
+          resources:
+            limits:
+              cpu: 100m
+              memory: 300Mi
+            requests:
+              cpu: 100m
+              memory: 300Mi
+          volumeMounts:
+            - name: ssl-certs
+              mountPath: /etc/ssl/certs/ca-certificates.crt
+              readOnly: true
+      volumes:
+        - name: ssl-certs
+          hostPath:
+            path: /etc/ssl/certs/ca-certificates.crt
+            type: File
+      hostNetwork: true
+      dnsPolicy: ClusterFirstWithHostNet

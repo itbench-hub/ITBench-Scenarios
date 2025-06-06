@@ -1,0 +1,16 @@
+apiVersion: kops.k8s.io/v1alpha2
+kind: InstanceGroup
+metadata:
+  name: nodes-us-east-2a
+  labels:
+    kops.k8s.io/cluster: finops-cs-m4.xlarge-aws.k8s.local
+spec:
+  role: Node
+  machineType: m4.xlarge
+  minSize: 3
+  maxSize: 10
+  subnets:
+    - us-east-2a
+  cloudLabels:
+    k8s.io/cluster-autoscaler/enabled: "true"
+    k8s.io/cluster-autoscaler/finops-cs-m4.large-aws.k8s.local: "owned"

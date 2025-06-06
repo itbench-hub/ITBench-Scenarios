@@ -1,0 +1,46 @@
+---
+- name: Update IAM inline policy on node role
+  hosts: localhost
+  gather_facts: no
+  vars:
+    iam_role_name: "nodes.finops-cs-m4.xlarge-aws.k8s.local"
+    inline_policy_name: "nodes.finops-cs-m4.xlarge-aws.k8s.local"
+    inline_policy_document: |
+      {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Action": [
+              "autoscaling:DescribeAutoScalingInstances",
+              "autoscaling:DescribeAutoScalingGroups",
+              "autoscaling:SetDesiredCapacity",
+              "autoscaling:TerminateInstanceInAutoScalingGroup",
+              "ec2:DescribeLaunchTemplateVersions",
+              "ec2:DescribeInstanceTypes",
+              "ec2:DescribeInstances",
+              "ec2:DescribeRegions",
+              "ecr:BatchCheckLayerAvailability",
+              "ecr:BatchGetImage",
+              "ecr:DescribeRepositories",
+              "ecr:GetAuthorizationToken",
+              "ecr:GetDownloadUrlForLayer",
+              "ecr:GetRepositoryPolicy",
+              "ecr:ListImages",
+              "iam:GetServerCertificate",
+              "iam:ListServerCertificates",
+              "kms:GenerateRandom"
+            ],
+            "Resource": "*"
+          }
+        ]
+      }
+
+  tasks:
+    - name: Update inline policy on IAM role
+      amazon.aws.iam_policy:
+        iam_type: role
+        iam_name: "{{ iam_role_name }}"
+        policy_name: "{{ inline_policy_name }}"
+        state: present
+        policy_json: "{{ inline_policy_document }}"
