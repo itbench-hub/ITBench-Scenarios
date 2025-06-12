@@ -27,14 +27,6 @@
   when:
     - tools_enabled.opentelemetry or tools_enabled.jaeger
 
-- name: Import OpenCost reinitialization tasks
-  ansible.builtin.import_tasks:
-    file: reinit_opencost.yaml
-  vars:
-    helm_release: "{{ tools_helm_releases.opencost }}"
-  when:
-    - tools_enabled.opencost
-
 - name: Import Chaos Mesh reinitialization tasks
   ansible.builtin.import_tasks:
     file: reinit_chaos_mesh.yaml
@@ -42,12 +34,6 @@
     helm_release: "{{ tools_helm_releases.chaos_mesh }}"
   when:
     - tools_enabled.chaos_mesh
-
-- name: Import Kubernetes Events reinitialization tasks
-  ansible.builtin.import_tasks:
-    file: reinit_kubernetes_events.yaml
-  when:
-    - tools_cluster.platform == "kubernetes"
 
 - name: Import Kubernetes Metrics Server reinitialization tasks
   ansible.builtin.import_tasks:
@@ -75,3 +61,14 @@
       operator: "{{ tools_helm_releases.clickhouse_operator }}"
   when:
     - tools_enabled.clickhouse or tools_enabled.opentelemetry
+
+- name: Delete events across namespaces
+  ansible.builtin.command:
+    cmd: kubectl delete events --all-namespaces --all --ignore-not-found=true
+  environment:
+    KUBECONFIG: "{{ tools_cluster.kubeconfig }}"
+  register: delete_events_result
+  changed_when: delete_events_result.rc == 0
+  failed_when: delete_events_result.rc not in [0, 1]
+  when:
+    - tools_cluster.platform == "kubernetes"

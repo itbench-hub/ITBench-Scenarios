@@ -118,12 +118,12 @@ jobs:
         run: |
           make -C sre group_vars
           echo "tools: { kubernetes_topology_monitor: true }" > sre/group_vars/environment/tools.yaml
-      - name: Run re-initialization smoke test
-        run: |
-          make -C sre reinit_environment_tools
       - name: Run installation smoke test
         run: |
           make -C sre deploy_environment_tools
+      - name: Run re-initialization smoke test
+        run: |
+          make -C sre reinit_environment_tools
       - name: Run uninstallation smoke test
         run: |
           make -C sre undeploy_environment_tools
@@ -156,7 +156,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          echo "tools: { opencost: true,  prometheus: true }" > sre/group_vars/environment/tools.yaml
+          echo "tools: { opencost: true, prometheus: true }" > sre/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
           make -C sre deploy_environment_tools
@@ -195,7 +195,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          echo "tools: { clickhouse: true,  opentelemetry: true }" > sre/group_vars/environment/tools.yaml
+          echo "tools: { clickhouse: true, opentelemetry: true }" > sre/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
           make -C sre deploy_environment_tools
