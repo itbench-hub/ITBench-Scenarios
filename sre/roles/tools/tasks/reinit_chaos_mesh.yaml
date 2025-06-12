@@ -7,7 +7,7 @@
   register: all_crds
 
 - name: Extract chaos-mesh resource types - CRDs
-  set_fact:
+  ansible.builtin.set_fact:
     chaos_mesh_crds: "{{ all_crds.resources | selectattr('spec.group', 'search', 'chaos-mesh') | list }}"
 
 - name: Get all instances of each chaos-mesh resource type
@@ -20,7 +20,7 @@
   failed_when: false
 
 - name: Flatten all chaos-mesh instances into single list
-  set_fact:
+  ansible.builtin.set_fact:
     chaos_mesh_instances: "{{ chaos_mesh_resources_info.results | selectattr('resources', 'defined') | map(attribute='resources') | flatten | list }}"
 
 - name: Remove finalizers from chaos-mesh resources

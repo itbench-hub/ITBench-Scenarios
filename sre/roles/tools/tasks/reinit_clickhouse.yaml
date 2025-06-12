@@ -8,7 +8,7 @@
   register: clickhouse_default_tables_result
 
 - name: Display all tables in the default database
-  debug:
+  ansible.builtin.debug:
     msg: "{{ clickhouse_default_tables_result.stdout_lines }}"
 
 - name: Empty-drain-truncate ClickHouse tables

@@ -56,4 +56,3 @@
 
 # # NOTE: Not needed as installation triggers scale up
 # - name: Scale up OpenShift monitoring and user workload monitoring-related statefulsets
-
