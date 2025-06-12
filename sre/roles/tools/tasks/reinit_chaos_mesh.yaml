@@ -18,6 +18,7 @@
   loop: "{{ chaos_mesh_crds }}"
   register: chaos_mesh_resources_info
   failed_when: false
+  no_log: true
 
 - name: Flatten all chaos-mesh instances into single list
   ansible.builtin.set_fact:
