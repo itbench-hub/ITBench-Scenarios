@@ -28,7 +28,7 @@ jobs:
         with:
           args: |
             playbooks/manage_applications.yaml playbooks/manage_tools.yaml
-            roles/applications roles/common roles/tools
+            roles/applications roles/common roles/tools roles/environment roles/faults
           setup_python: "false"
           working_directory: sre/dev/remote_cluster
           requirements_file: ../../requirements.yaml
