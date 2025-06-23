@@ -1,0 +1,23 @@
+---
+metadata:
+  complexity: Medium
+  id: 3
+  name: Ad Service CPU
+  platform: kubernetes
+  technologies:
+    - Java
+    - Node.js
+spec:
+  environment:
+    applications:
+      - otel_demo
+    kubernetes:
+      additions: []
+      modifications: []
+    tools:
+      category: sre
+      selected: []
+  faults:
+    - otel_demo:
+        flags:
+          - adHighCpu

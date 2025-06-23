@@ -1,0 +1,33 @@
+---
+metadata:
+  complexity: Medium
+  id: 37
+  name: Recommendation Service Cache
+  platform: kubernetes
+  technologies:
+    - Python
+    - Node.js
+spec:
+  environment:
+    applications:
+      - otel_demo
+    kubernetes:
+      additions:
+        horizontal_pod_autoscalers:
+          - name: frontend
+            namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+            max-replicas: 5
+            target:
+              kind: Deployment
+              name: frontend
+          - name: recommendation
+            namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+            max-replicas: 5
+            target:
+              kind: Deployment
+              name: recommendation
+      modifications: []
+    tools:
+      category: finops
+      selected: []
+  faults: []
