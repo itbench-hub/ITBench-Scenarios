@@ -1,0 +1,27 @@
+---
+metadata:
+  complexity: Low
+  id: 23
+  name: checkoutservice Corrupt Image
+  platform: kubernetes
+  technologies:
+    - Python
+    - Node.js
+spec:
+  environment:
+    applications:
+      - otel_demo
+    kubernetes:
+      additions: []
+      modifications: []
+    tools:
+      category: sre
+      selected: []
+  faults:
+    - custom:
+        name: unsupported-image
+        target:
+          workload_managers:
+            - kind: Deployment
+              name: checkout
+              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"

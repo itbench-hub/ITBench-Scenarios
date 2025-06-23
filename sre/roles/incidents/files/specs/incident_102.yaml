@@ -1,0 +1,28 @@
+---
+metadata:
+  complexity: Medium
+  id: 102
+  name: Recommendation Service Cache
+  platform: kubernetes
+  technologies:
+    - Python
+    - Node.js
+spec:
+  environment:
+    applications:
+      - otel_demo
+    kubernetes:
+      additions:
+        - resource_quotas:
+            namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+            memory: 1Gi
+      modifications:
+        scale:
+          - kind: Deployment
+            name: frontend
+            namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+            replicas: 2
+    tools:
+      category: sre
+      selected: []
+  faults: []
