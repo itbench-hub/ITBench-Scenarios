@@ -1,11 +1,11 @@
 ---
-- name: Import Chaos Mesh uninstallation tasks
+- name: Import Kubernetes Topology Monitor uninstallation tasks
   ansible.builtin.import_tasks:
-    file: uninstall_chaos_mesh.yaml
+    file: uninstall_kubernetes_topology_monitor.yaml
   vars:
-    helm_release: "{{ tools_helm_releases.chaos_mesh }}"
+    helm_release: "{{ tools_helm_releases.kubernetes_topology_monitor }}"
   when:
-    - tools_enabled.chaos_mesh
+    - tools_enabled.kubernetes_topology_monitor
 
 - name: Import Kubernetes Metrics Server uninstallation tasks
   ansible.builtin.import_tasks:
@@ -16,13 +16,13 @@
     - tools_enabled.kubernetes_metrics_server
     - tools_cluster.platform == "kubernetes"
 
-- name: Import Kubernetes Topology Monitor uninstallation tasks
+- name: Import Chaos Mesh uninstallation tasks
   ansible.builtin.import_tasks:
-    file: uninstall_kubernetes_topology_monitor.yaml
+    file: uninstall_chaos_mesh.yaml
   vars:
-    helm_release: "{{ tools_helm_releases.kubernetes_topology_monitor }}"
+    helm_release: "{{ tools_helm_releases.chaos_mesh }}"
   when:
-    - tools_enabled.kubernetes_topology_monitor
+    - tools_enabled.chaos_mesh
 
 - name: Import OpenCost uninstallation tasks
   ansible.builtin.import_tasks:
