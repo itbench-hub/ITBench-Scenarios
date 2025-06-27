@@ -58,14 +58,6 @@ create_environment: deploy_tools deploy_applications ## Deploys tools and applic
 .PHONY: destroy_environment
 destroy_environment: undeploy_applications undeploy_tools ## Undeploys tools and applications to cluster
 
-.PHONY: fault_unit_tests
-fault_unit_tests: ## Runs unit tests for faults against a cluster
-	ansible-playbook -i inventory.yaml test_manage_faults.yaml
-
-.PHONY: unit_tests
-unit_tests: fault_unit_tests ## Runs unit tests for against a cluster
-
-
 .PHONY: deploy_observability_stack
 deploy_observability_stack: ## Deploys the observability tools to cluster
 	@echo "WARNING: 'make deploy_observability_stack' is deprecated. Please use 'make deploy_environment_tools' instead."
