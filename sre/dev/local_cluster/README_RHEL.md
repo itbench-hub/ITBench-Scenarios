@@ -60,19 +60,19 @@ kubeconfig: "<path to kubeconfig>"
 kubectl apply -f rancher-storageclass.yaml
 ```
 
-5. The cluster has been set up. Now let's head back to the [parent README](../README.md) to deploy the incidents.
+5. The cluster has been set up. Now let's head back to the [parent README](../../README.md) to deploy the incidents.
 
 # Troubleshooting
 ### 1. For other Kind-related issues you may want to take a look [here](https://kind.sigs.k8s.io/docs/user/known-issues/).
 
 ### 2. "CrashLoopBackOff" in Chaos-Controller Manager Pods on Red Hat Enterprise Linux (RHEL) 9.5**
 
-**Problem:**  While testing on RHEL OS, the `chaos-controller-manager` pods in kind cluster may enter a `CrashLoopBackOff` state due to the error:  
+**Problem:**  While testing on RHEL OS, the `chaos-controller-manager` pods in kind cluster may enter a `CrashLoopBackOff` state due to the error:
 ```
 "too many files open"
 ```
 
-This is related to inotify resource limits, which can be exhausted in kind clusters, especially when there are many files being watched. This can impact the RHEL-based deployment of chaos mesh related scenarios. 
+This is related to inotify resource limits, which can be exhausted in kind clusters, especially when there are many files being watched. This can impact the RHEL-based deployment of chaos mesh related scenarios.
 
-**Solution:** 
-Fix for this problem is given in [kind - Known Issues - Pod Errors Due to Too Many Open Files](https://kind.sigs.k8s.io/docs/user/known-issues/#pod-errors-due-to-too-many-open-files). 
+**Solution:**
+Fix for this problem is given in [kind - Known Issues - Pod Errors Due to Too Many Open Files](https://kind.sigs.k8s.io/docs/user/known-issues/#pod-errors-due-to-too-many-open-files).

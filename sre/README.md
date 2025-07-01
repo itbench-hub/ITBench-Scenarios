@@ -87,12 +87,12 @@ _Note: Depending on what kind of cluster setup is needed, further dependencies m
 
 #### Local Cluster
 
-For instruction on how to create a kind cluster on MacOS, please see the instructions [here](./local_cluster/README.md).
-For instruction on how to create a kind cluster on Red Hat Enterprise Linux (RHEL) virtual machine (VM) or bare-metal instance, please see the instructions [here](./local_cluster/README_RHEL.md).
+For instruction on how to create a kind cluster on MacOS, please see the instructions [here](./dev/local_cluster/README.md).
+For instruction on how to create a kind cluster on Red Hat Enterprise Linux (RHEL) virtual machine (VM) or bare-metal instance, please see the instructions [here](./dev/local_cluster/README_RHEL.md).
 
 #### Remote Cluster
 
-For instruction on how to create an cloud provider based Kubernetes cluster, please see the instructions [here](./remote_cluster/README.md).
+For instruction on how to create an cloud provider based Kubernetes cluster, please see the instructions [here](./dev/remote_cluster/README.md).
 
 Currently, only AWS is supported. AWS clusters are provisioned using [kOps](https://kops.sigs.k8s.io/).
 

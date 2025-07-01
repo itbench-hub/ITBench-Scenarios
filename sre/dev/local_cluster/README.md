@@ -61,4 +61,4 @@ kubeconfig: "<path to kubeconfig>"
 kubectl apply -f rancher-storageclass.yaml
 ```
 
-8. The cluster has been set up. Now let's head back to the [parent README](../README.md) to deploy the incidents.
+8. The cluster has been set up. Now let's head back to the [parent README](../../README.md) to deploy the incidents.
