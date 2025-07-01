@@ -20,8 +20,8 @@ jobs:
           python-version: '3.12'
       - uses: actions/setup-go@v5.5.0
         with:
-          go-version-file: sre/local_cluster/go.mod
-          cache-dependency-path: sre/local_cluster/go.sum
+          go-version-file: sre/dev/local_cluster/go.mod
+          cache-dependency-path: sre/dev/local_cluster/go.sum
       - name: Install Helm
         run: |
           curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
@@ -35,7 +35,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -59,8 +59,8 @@ jobs:
           python-version: '3.12'
       - uses: actions/setup-go@v5.5.0
         with:
-          go-version-file: sre/local_cluster/go.mod
-          cache-dependency-path: sre/local_cluster/go.sum
+          go-version-file: sre/dev/local_cluster/go.mod
+          cache-dependency-path: sre/dev/local_cluster/go.sum
       - name: Install Helm
         run: |
           curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
@@ -74,7 +74,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -98,8 +98,8 @@ jobs:
           python-version: '3.12'
       - uses: actions/setup-go@v5.5.0
         with:
-          go-version-file: sre/local_cluster/go.mod
-          cache-dependency-path: sre/local_cluster/go.sum
+          go-version-file: sre/dev/local_cluster/go.mod
+          cache-dependency-path: sre/dev/local_cluster/go.sum
       - name: Install Helm
         run: |
           curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
@@ -113,7 +113,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -137,8 +137,8 @@ jobs:
           python-version: '3.12'
       - uses: actions/setup-go@v5.5.0
         with:
-          go-version-file: sre/local_cluster/go.mod
-          cache-dependency-path: sre/local_cluster/go.sum
+          go-version-file: sre/dev/local_cluster/go.mod
+          cache-dependency-path: sre/dev/local_cluster/go.sum
       - name: Install Helm
         run: |
           curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
@@ -152,7 +152,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -176,8 +176,8 @@ jobs:
           python-version: '3.12'
       - uses: actions/setup-go@v5.5.0
         with:
-          go-version-file: sre/local_cluster/go.mod
-          cache-dependency-path: sre/local_cluster/go.sum
+          go-version-file: sre/dev/local_cluster/go.mod
+          cache-dependency-path: sre/dev/local_cluster/go.sum
       - name: Install Helm
         run: |
           curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
@@ -191,7 +191,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -215,8 +215,8 @@ jobs:
           python-version: '3.12'
       - uses: actions/setup-go@v5.5.0
         with:
-          go-version-file: sre/local_cluster/go.mod
-          cache-dependency-path: sre/local_cluster/go.sum
+          go-version-file: sre/dev/local_cluster/go.mod
+          cache-dependency-path: sre/dev/local_cluster/go.sum
       - name: Install Helm
         run: |
           curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
@@ -230,7 +230,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -254,8 +254,8 @@ jobs:
           python-version: '3.12'
       - uses: actions/setup-go@v5.5.0
         with:
-          go-version-file: sre/local_cluster/go.mod
-          cache-dependency-path: sre/local_cluster/go.sum
+          go-version-file: sre/dev/local_cluster/go.mod
+          cache-dependency-path: sre/dev/local_cluster/go.sum
       - name: Install Helm
         run: |
           curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
@@ -269,7 +269,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
