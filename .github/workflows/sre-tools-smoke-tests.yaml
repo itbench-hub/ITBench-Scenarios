@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - sre/manage_tools.yaml
+      - sre/playbooks/manage_tools.yaml
       - sre/roles/tools/*
       - sre/tools/kubernetes-topology-monitor/charts/kubernetes-topology-monitor/*
 
