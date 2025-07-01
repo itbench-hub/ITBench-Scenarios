@@ -22,13 +22,9 @@ jobs:
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
-      - name: Install Helm
-        run: |
-          curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-          sudo apt-get install apt-transport-https --yes
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-          sudo apt-get update
-          sudo apt-get install helm
+      - uses: azure/setup-helm@v4.3.0
+        with:
+          version: v3.18.3
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -61,13 +57,9 @@ jobs:
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
-      - name: Install Helm
-        run: |
-          curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-          sudo apt-get install apt-transport-https --yes
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-          sudo apt-get update
-          sudo apt-get install helm
+      - uses: azure/setup-helm@v4.3.0
+        with:
+          version: v3.18.3
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -100,13 +92,9 @@ jobs:
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
-      - name: Install Helm
-        run: |
-          curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-          sudo apt-get install apt-transport-https --yes
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-          sudo apt-get update
-          sudo apt-get install helm
+      - uses: azure/setup-helm@v4.3.0
+        with:
+          version: v3.18.3
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -139,13 +127,9 @@ jobs:
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
-      - name: Install Helm
-        run: |
-          curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-          sudo apt-get install apt-transport-https --yes
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-          sudo apt-get update
-          sudo apt-get install helm
+      - uses: azure/setup-helm@v4.3.0
+        with:
+          version: v3.18.3
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -178,13 +162,9 @@ jobs:
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
-      - name: Install Helm
-        run: |
-          curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-          sudo apt-get install apt-transport-https --yes
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-          sudo apt-get update
-          sudo apt-get install helm
+      - uses: azure/setup-helm@v4.3.0
+        with:
+          version: v3.18.3
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -217,13 +197,9 @@ jobs:
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
-      - name: Install Helm
-        run: |
-          curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-          sudo apt-get install apt-transport-https --yes
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-          sudo apt-get update
-          sudo apt-get install helm
+      - uses: azure/setup-helm@v4.3.0
+        with:
+          version: v3.18.3
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -256,13 +232,9 @@ jobs:
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
-      - name: Install Helm
-        run: |
-          curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
-          sudo apt-get install apt-transport-https --yes
-          echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
-          sudo apt-get update
-          sudo apt-get install helm
+      - uses: azure/setup-helm@v4.3.0
+        with:
+          version: v3.18.3
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
