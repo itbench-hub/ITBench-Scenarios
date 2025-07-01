@@ -6,6 +6,13 @@
     - name: Import common role
       ansible.builtin.import_role:
         name: common
+        tasks_from: check_helm_version
+      tags:
+        - always
+
+    - name: Import common role
+      ansible.builtin.import_role:
+        name: common
         tasks_from: set_cluster_platform
       tags:
         - always
