@@ -1,0 +1,47 @@
+---
+- name: Manage SRE and FinOps Incident Environment Tool Stack
+  hosts:
+    - environment
+  pre_tasks:
+    - name: Import common role
+      ansible.builtin.import_role:
+        name: common
+        tasks_from: set_cluster_platform
+      tags:
+        - always
+      vars:
+        common_cluster:
+          kubeconfig: "{{ cluster.kubeconfig }}"
+
+    - name: Import common role
+      ansible.builtin.import_role:
+        name: common
+        tasks_from: set_cluster_provider
+      tags:
+        - always
+      vars:
+        common_cluster:
+          kubeconfig: "{{ cluster.kubeconfig }}"
+  tasks:
+    # - name: Load variables from incident
+    # - name: Overwrite variables using incident spec
+
+    - name: Import tools role
+      ansible.builtin.import_role:
+        name: tools
+      vars:
+        tools_cluster:
+          cloud_provider: "{{ cluster_provider }}"
+          kubeconfig: "{{ cluster.kubeconfig }}"
+          platform: "{{ cluster_platform }}"
+        tools_enabled:
+          chaos_mesh: "{{ tools.chaos_mesh | default(false) }}"
+          clickhouse: "{{ tools.clickhouse | default(false) }}"
+          ingress: "{{ tools.ingress | default(false) }}"
+          jaeger: "{{ tools.jaeger | default(false) }}"
+          kubernetes_metrics_server: "{{ tools.kubernetes_metrics_server | default(false) }}"
+          kubernetes_topology_monitor: "{{ tools.kubernetes_topology_monitor | default(false) }}"
+          opencost: "{{ tools.opencost | default(false) }}"
+          opensearch: "{{ tools.opensearch | default(false) }}"
+          opentelemetry: "{{ tools.opentelemetry | default(false) }}"
+          prometheus: "{{ tools.prometheus | default(false) }}"

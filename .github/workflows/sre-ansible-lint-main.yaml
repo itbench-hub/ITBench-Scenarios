@@ -24,7 +24,7 @@ jobs:
       - name: Run ansible-lint
         uses: ansible/ansible-lint@v25.5.0
         with:
-          args: manage_applications.yaml roles/applications
+          args: playbooks/manage_applications.yaml roles/applications roles/common
           setup_python: "false"
           working_directory: sre
           requirements_file: requirements.yaml
@@ -42,7 +42,7 @@ jobs:
       - name: Run ansible-lint
         uses: ansible/ansible-lint@v25.5.0
         with:
-          args: manage_tools.yaml roles/tools
+          args: playbooks/manage_tools.yaml roles/tools roles/common
           setup_python: "false"
           working_directory: sre
           requirements_file: requirements.yaml

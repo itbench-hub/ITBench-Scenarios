@@ -1,0 +1,38 @@
+---
+- name: Manage SRE and FinOps Incident Environment Sample Application Stack
+  hosts:
+    - environment
+  pre_tasks:
+    - name: Import common role
+      ansible.builtin.import_role:
+        name: common
+        tasks_from: set_cluster_platform
+      tags:
+        - always
+      vars:
+        common_cluster:
+          kubeconfig: "{{ cluster.kubeconfig }}"
+
+    - name: Import common role
+      ansible.builtin.import_role:
+        name: common
+        tasks_from: set_cluster_provider
+      tags:
+        - always
+      vars:
+        common_cluster:
+          kubeconfig: "{{ cluster.kubeconfig }}"
+  tasks:
+    # - name: Load variables from incident
+    # - name: Overwrite variables using incident spec
+
+    - name: Import applications role
+      ansible.builtin.import_role:
+        name: applications
+      vars:
+        applications_cluster:
+          kubeconfig: "{{ cluster.kubeconfig }}"
+          platform: "{{ cluster_platform }}"
+          provider: "{{ cluster_provider }}"
+        applications_enabled:
+          otel_demo: "{{ applications.otel_demo | default(false) }}"
