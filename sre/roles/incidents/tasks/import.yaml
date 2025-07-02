@@ -1,0 +1,35 @@
+---
+- name: Include Helm Release variables from applications role
+  ansible.builtin.include_vars:
+    file: ../applications/defaults/main/helm_releases.yaml
+
+- name: Load sample incident spec from file
+  ansible.builtin.set_fact:
+    incident_spec: "{{ lookup('ansible.builtin.template', 'files/specs/sample_{{ incidents_incident.id | int | abs }}.yaml') | from_yaml }}"
+  when:
+    - (incidents_incident.id | int) < 0
+
+- name: Load incident spec from file
+  ansible.builtin.set_fact:
+    incident_spec: "{{ lookup('ansible.builtin.template', 'files/specs/incident_{{ incidents_incidents.id }}.yaml') | from_yaml }}"
+  when:
+    - (incidents_incident.id | int) > 0
+
+- name: Create tools_enabled dictionary for tools role
+  ansible.builtin.set_fact:
+    tools_enabled:
+      chaos_mesh: "{{ 'chaos-mesh' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category != '' }}"
+      clickhouse: "{{ 'clickhouse' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category != '' }}"
+      ingress: "{{ 'ingress' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category != '' }}"
+      jaeger: "{{ 'jaeger' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category != '' }}"
+      kubernetes_metrics_server: "{{ 'kubernetes-metrics-server' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category == 'finops' }}"
+      kubernetes_topology_monitor: "{{ 'kubernetes-topology-monitor' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category != '' }}"
+      opencost: "{{ 'kubernetes-metrics-server' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category == 'finops' }}"
+      opensearch: "{{ 'opensearch' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category != '' }}"
+      opentelemetry: "{{ 'opentelemetry' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category != '' }}"
+      prometheus: "{{ 'prometheus' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category != '' }}"
+
+- name: Create applications_enabled dictionary for applications role
+  ansible.builtin.set_fact:
+    applications_enabled:
+      otel_demo: "{{ 'otel-demo' in incident_spec.spec.environment.applications }}"

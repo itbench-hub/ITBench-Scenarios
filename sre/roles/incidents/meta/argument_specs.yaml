@@ -1,0 +1,16 @@
+---
+argument_specs:
+  import:
+    short_description: Entry point for the import tasks
+    description:
+      - This loads a spec of a incident denoted by an identifier.
+    author:
+      - Gerard Vanloo
+    options:
+      incidents_incident:
+        required: true
+        type: dict
+        options:
+          id:
+            required: true
+            type: int

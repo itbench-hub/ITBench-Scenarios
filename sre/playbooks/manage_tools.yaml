@@ -29,18 +29,21 @@
       vars:
         common_cluster:
           kubeconfig: "{{ cluster.kubeconfig }}"
-  tasks:
-    # - name: Load variables from incident
-    # - name: Overwrite variables using incident spec
 
-    - name: Import tools role
+    - name: Import variables for incident
       ansible.builtin.import_role:
-        name: tools
+        name: incidents
+        tasks_from: import
+      tags:
+        - always
       vars:
-        tools_cluster:
-          cloud_provider: "{{ cluster_provider }}"
-          kubeconfig: "{{ cluster.kubeconfig }}"
-          platform: "{{ cluster_platform }}"
+        incidents_incident:
+          id: "{{ incident.id }}"
+      when:
+        - incident.id != 0
+
+    - name: Create tools_enabled dictionary
+      ansible.builtin.set_fact:
         tools_enabled:
           chaos_mesh: "{{ tools.chaos_mesh | default(false) }}"
           clickhouse: "{{ tools.clickhouse | default(false) }}"
@@ -52,3 +55,16 @@
           opensearch: "{{ tools.opensearch | default(false) }}"
           opentelemetry: "{{ tools.opentelemetry | default(false) }}"
           prometheus: "{{ tools.prometheus | default(false) }}"
+      tags:
+        - always
+      when:
+        - incident.id == 0
+  tasks:
+    - name: Import tools role
+      ansible.builtin.import_role:
+        name: tools
+      vars:
+        tools_cluster:
+          cloud_provider: "{{ cluster_provider }}"
+          kubeconfig: "{{ cluster.kubeconfig }}"
+          platform: "{{ cluster_platform }}"
