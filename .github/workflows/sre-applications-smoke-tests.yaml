@@ -1,4 +1,4 @@
-name: Perform smoke tests for tools
+name: Perform smoke tests for applications
 
 on:
   pull_request:
