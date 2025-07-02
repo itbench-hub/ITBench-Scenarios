@@ -46,7 +46,7 @@ undeploy_tools: ## Undeploys the observability and fault tools to cluster
 
 .PHONY: deploy_applications
 deploy_applications: ## Deploys the applications to cluster
-	ansible-playbook -vvv -i inventory.yaml playbooks/manage_applications.yaml --tags "install_applications"
+	ansible-playbook -i inventory.yaml playbooks/manage_applications.yaml --tags "install_applications"
 
 .PHONY: undeploy_applications
 undeploy_applications: ## Undeploys the applications to cluster
