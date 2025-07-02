@@ -275,37 +275,7 @@
       opensearch:
         enabled: false
       opentelemetry-collector:
-        config:
-          connectors:
-            spanmetrics:
-              dimensions:
-                - name: namespace
-                  default: "{{ helm_releases.otel_demo.namespace }}"
-          exporters:
-            clickhouse:
-              username: "{{ clickhouse_secrets_info.resources[0].data.user | b64decode }}"
-              password: "{{ clickhouse_secrets_info.resources[0].data.password | b64decode }}"
-              endpoint: http://{{ helm_releases.clickhouse.name }}-clickhouse.{{ helm_releases.clickhouse.namespace }}.svc.cluster.local:8123
-              logs_table_name: otel_demo_logs
-            opensearch:
-              http:
-                endpoint: http://{{ helm_releases.opensearch.name }}-master.{{ helm_releases.opensearch.namespace }}.svc.cluster.local:9200
-            otlp:
-              endpoint: http://jaeger-collector.{{ helm_releases.collectors.namespace }}.svc.cluster.local:4317
-            otlphttp/prometheus:
-              endpoint: "{{ prometheus_url }}/api/v1/otlp"
-            prometheus:
-              endpoint: 0.0.0.0:8889
-          service:
-            pipelines:
-              logs:
-                exporters:
-                  - clickhouse
-                  - debug
-              metrics:
-                exporters:
-                  - debug
-                  - prometheus
+        config: "{{ lookup('template', 'otel-collector-config-default.yaml.j2') | from_yaml }}"
         serviceMonitor:
           enabled: true
           metricsEndpoints:
