@@ -43,6 +43,14 @@
     wait: true
   register: clickhouse_secrets_info
 
+# TODO: To-be made optional when support for APMs is enabled
+- name: Validate existence of Clickhouse credentials
+  ansible.builtin.assert:
+    that:
+      - clickhouse_secrets_info.resources | length > 0
+    fail_msg: "Clickhouse credentials secret not found"
+    success_msg: "Clickhouse credentials secret found"
+
 - name: Retrieve Prometheus route
   kubernetes.core.k8s_info:
     api_version: route.openshift.io/v1
@@ -59,6 +67,26 @@
     prometheus_url: https://{{ prometheus_k8s_route_info.resources[0].spec.host }}
   when:
     - applications_cluster.platform == "openshift"
+
+- name: Verify Prometheus service exists
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Service
+    name: "{{ helm_releases.prometheus.name }}-kube-prometheus-prometheus"
+    namespace: "{{ helm_releases.prometheus.namespace }}"
+  register: prometheus_service
+  when:
+    - applications_cluster.platform == "kubernetes"
+
+# TODO: To-be made optional when support for APMs is enabled
+- name: Validate relevant Prometheus service exists
+  ansible.builtin.assert:
+    that:
+      - prometheus_service.resources | length > 0
+    fail_msg: "Prometheus service not found in namespace {{ helm_releases.prometheus.namespace }}"
+    success_msg: "Prometheus service {{ helm_releases.prometheus.name }}-kube-prometheus-prometheus found in namespace {{ helm_releases.prometheus.namespace }}"
+  when:
+    - applications_cluster.platform == "kubernetes"
 
 - name: Set Prometheus internal service url
   ansible.builtin.set_fact:
@@ -177,7 +205,7 @@
               memory: 25Mi
         kafka:
           imageOverride:
-            tag: 2.0.2
+            tag: 2.0.2-kafka
           podAnnotations:
             openshift.io/required-scc: restricted-v2
           resources:
