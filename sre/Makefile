@@ -32,16 +32,16 @@ group_vars: ## Generates the group variables
 	cp group_vars/environment/cluster.yaml.example group_vars/environment/cluster.yaml
 	cp group_vars/environment/tools.yaml.example group_vars/environment/tools.yaml
 
-.PHONY: deploy_environment_tools
-deploy_environment_tools: ## Deploys the observability and fault tools to cluster
+.PHONY: deploy_tools
+deploy_tools: ## Deploys the observability and fault tools to cluster
 	ansible-playbook -i inventory.yaml playbooks/manage_tools.yaml --tags "install_tools"
 
-.PHONY: reinit_environment_tools
-reinit_environment_tools: ## Re-initialize observability and fault tools to cluster
+.PHONY: reinit_tools
+reinit_tools: ## Re-initialize observability and fault tools to cluster
 	ansible-playbook -i inventory.yaml playbooks/manage_tools.yaml --tags "reinit_tools"
 
-.PHONY: undeploy_environment_tools
-undeploy_environment_tools: ## Undeploys the observability and fault tools to cluster
+.PHONY: undeploy_tools
+undeploy_tools: ## Undeploys the observability and fault tools to cluster
 	ansible-playbook -i inventory.yaml playbooks/manage_tools.yaml --tags "uninstall_tools"
 
 .PHONY: deploy_applications
@@ -53,18 +53,18 @@ undeploy_applications: ## Undeploys the applications to cluster
 	ansible-playbook -i inventory.yaml playbooks/manage_applications.yaml --tags "uninstall_applications"
 
 .PHONY: create_environment
-create_environment: deploy_environment_tools deploy_applications ## Deploys tools and applications to cluster
+create_environment: deploy_tools deploy_applications ## Deploys tools and applications to cluster
 
 .PHONY: destroy_environment
-destroy_environment: undeploy_applications undeploy_environment_tools ## Undeploys tools and applications to cluster
+destroy_environment: undeploy_applications undeploy_tools ## Undeploys tools and applications to cluster
 
 .PHONY: deploy_observability_stack
 deploy_observability_stack: ## Deploys the observability tools to cluster
 	@echo "WARNING: 'make deploy_observability_stack' is deprecated. Please use 'make deploy_environment_tools' instead."
 	@echo "This command will be removed in a future version."
-	@echo "Executing 'make deploy_environment_tools'..."
+	@echo "Executing 'make deploy_tools'..."
 	@echo ""
-	$(MAKE) deploy_environment_tools
+	$(MAKE) deploy_tools
 
 .PHONY: undeploy_observability_stack
 undeploy_observability_stack: ## Undeploys observability tools to cluster
@@ -72,7 +72,7 @@ undeploy_observability_stack: ## Undeploys observability tools to cluster
 	@echo "This command will be removed in a future version."
 	@echo "Executing 'make undeploy_environment_tools'..."
 	@echo ""
-	$(MAKE) undeploy_environment_tools
+	$(MAKE) undeploy_tools
 
 .PHONY: deploy_finops_stack
 deploy_finops_stack: ## Deploys the finops tools to cluster
@@ -80,7 +80,7 @@ deploy_finops_stack: ## Deploys the finops tools to cluster
 	@echo "This command will be removed in a future version."
 	@echo "Executing 'make deploy_environment_tools'..."
 	@echo ""
-	$(MAKE) deploy_environment_tools
+	$(MAKE) deploy_tools
 
 .PHONY: undeploy_finops_stack
 undeploy_finops_stack: ## Undeploys finops tools to cluster
@@ -88,7 +88,7 @@ undeploy_finops_stack: ## Undeploys finops tools to cluster
 	@echo "This command will be removed in a future version."
 	@echo "Executing 'make undeploy_environment_tools'..."
 	@echo ""
-	$(MAKE) undeploy_environment_tools
+	$(MAKE) undeploy_tools
 
 .PHONY: deploy_astronomy_shop
 deploy_astronomy_shop: ## Deploys the Astronomy Shop application

@@ -1,4 +1,4 @@
-# ITBench: SRE Sample Applications
+# ITBench: SRE Applications
 
 ## [OpenTelemetry's Astronomy Shop](https://github.com/open-telemetry/opentelemetry-demo)
 
@@ -8,11 +8,11 @@ An architectural diagram for the same can be found [here](https://opentelemetry.
 ### Installing OpenTelemetry's Astronomy Shop
 To install the application run:
 ```bash
-make deploy_environment_applications
+make deploy_applications
 ```
 
 ### Uninstalling OpenTelemetry's Astronomy Shop
 To uninstall the application run:
 ```bash
-make undeploy_environment_applications
+make undeploy_applications
 ```

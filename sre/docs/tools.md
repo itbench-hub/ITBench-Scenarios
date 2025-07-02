@@ -20,11 +20,11 @@ Depending on the scenario domain (SRE or FinOps), the following tools are deploy
 ### Installing observability tools for SRE scenarios
 Run:
 ```bash
-make deploy_environment_tools
+make deploy_tools
 ```
 
 ### Uninstalling observability tools for SRE scenarios
 Run:
 ```bash
-make undeploy_environment_tools
+make undeploy_tools
 ```
