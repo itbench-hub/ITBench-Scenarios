@@ -1,4 +1,4 @@
----    
+---
 - name: Record Deployment time
   kubernetes.core.k8s:
     kubeconfig: "{{ kubeconfig }}"

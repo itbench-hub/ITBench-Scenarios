@@ -5,7 +5,7 @@ on:
     branches:
       - main
     paths:
-      - sre/manage_tools.yaml
+      - sre/playbooks/manage_tools.yaml
       - sre/roles/tools/*
       - sre/tools/kubernetes-topology-monitor/charts/kubernetes-topology-monitor/*
 
@@ -38,13 +38,13 @@ jobs:
           echo "tools: { ingress: true }" > sre/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
-          make -C sre deploy_environment_tools
+          make -C sre deploy_tools
       - name: Run re-initialization smoke test
         run: |
-          make -C sre reinit_environment_tools
+          make -C sre reinit_tools
       - name: Run uninstallation smoke test
         run: |
-          make -C sre undeploy_environment_tools
+          make -C sre undeploy_tools
   jaeger-opensearch:
     name: Jaeger and OpenSearch Smoke Tests
     runs-on: ubuntu-24.04
@@ -73,13 +73,13 @@ jobs:
           echo "tools: { jaeger: true, opensearch: true }" > sre/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
-          make -C sre deploy_environment_tools
+          make -C sre deploy_tools
       - name: Run re-initialization smoke test
         run: |
-          make -C sre reinit_environment_tools
+          make -C sre reinit_tools
       - name: Run uninstallation smoke test
         run: |
-          make -C sre undeploy_environment_tools
+          make -C sre undeploy_tools
   kubernetes-topology-monitor:
     name: Kubernetes Topology Monitor Smoke Tests
     runs-on: ubuntu-24.04
@@ -108,13 +108,13 @@ jobs:
           echo "tools: { kubernetes_topology_monitor: true }" > sre/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
-          make -C sre deploy_environment_tools
+          make -C sre deploy_tools
       - name: Run re-initialization smoke test
         run: |
-          make -C sre reinit_environment_tools
+          make -C sre reinit_tools
       - name: Run uninstallation smoke test
         run: |
-          make -C sre undeploy_environment_tools
+          make -C sre undeploy_tools
   opencost-prometheus:
     name: OpenCost and Prometheus Smoke Tests
     runs-on: ubuntu-24.04
@@ -143,13 +143,13 @@ jobs:
           echo "tools: { opencost: true, prometheus: true }" > sre/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
-          make -C sre deploy_environment_tools
+          make -C sre deploy_tools
       - name: Run re-initialization smoke test
         run: |
-          make -C sre reinit_environment_tools
+          make -C sre reinit_tools
       - name: Run uninstallation smoke test
         run: |
-          make -C sre undeploy_environment_tools
+          make -C sre undeploy_tools
   clickhouse-opentelemtry:
     name: Alinity Clickhouse and OpenTelemetry Collector Smoke Tests
     runs-on: ubuntu-24.04
@@ -178,13 +178,13 @@ jobs:
           echo "tools: { clickhouse: true, opentelemetry: true }" > sre/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
-          make -C sre deploy_environment_tools
+          make -C sre deploy_tools
       - name: Run re-initialization smoke test
         run: |
-          make -C sre reinit_environment_tools
+          make -C sre reinit_tools
       - name: Run uninstallation smoke test
         run: |
-          make -C sre undeploy_environment_tools
+          make -C sre undeploy_tools
   chaos-mesh:
     name: Chaos Mesh Smoke Tests
     runs-on: ubuntu-24.04
@@ -213,13 +213,13 @@ jobs:
           echo "tools: { chaos_mesh: true }" > sre/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
-          make -C sre deploy_environment_tools
+          make -C sre deploy_tools
       - name: Run re-initialization smoke test
         run: |
-          make -C sre reinit_environment_tools
+          make -C sre reinit_tools
       - name: Run uninstallation smoke test
         run: |
-          make -C sre undeploy_environment_tools
+          make -C sre undeploy_tools
   kubernetes_metrics_server:
     name: Kubernetes Metrics Server Smoke Tests
     runs-on: ubuntu-24.04
@@ -248,10 +248,10 @@ jobs:
           echo "tools: { kubernetes_metrics_server: true }" > sre/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
-          make -C sre deploy_environment_tools
+          make -C sre deploy_tools
       - name: Run re-initialization smoke test
         run: |
-          make -C sre reinit_environment_tools
+          make -C sre reinit_tools
       - name: Run uninstallation smoke test
         run: |
-          make -C sre undeploy_environment_tools
+          make -C sre undeploy_tools

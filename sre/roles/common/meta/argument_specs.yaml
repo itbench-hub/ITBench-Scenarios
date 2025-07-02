@@ -22,3 +22,25 @@ argument_specs:
           namespace:
             required: true
             type: str
+  set_cluster_platform:
+    author:
+      - Gerard Vanloo
+    options:
+      common_cluster:
+        required: true
+        type: dict
+        options:
+          kubeconfig:
+            required: true
+            type: str
+  set_cluster_provider:
+    author:
+      - Gerard Vanloo
+    options:
+      common_cluster:
+        required: true
+        type: dict
+        options:
+          kubeconfig:
+            required: true
+            type: str
