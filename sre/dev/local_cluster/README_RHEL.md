@@ -66,12 +66,7 @@ vim ../group_vars/all.yaml
 kubeconfig: "<path to kubeconfig>"
 ```
 
-4. Run the following command to create a new StorageClass named "default" using the local-path provisioner from Rancher (aimed to mimic the standard storage class from Kind).
-```shell
-kubectl apply -f rancher-storageclass.yaml
-```
-
-5. The cluster has been set up. Now let's head back to the [parent README](../../README.md) to deploy the incidents.
+4. The cluster has been set up. Now let's head back to the [parent README](../README.md) to deploy the incidents.
 
 # Troubleshooting
 ### 1. For other Kind-related issues you may want to take a look [here](https://kind.sigs.k8s.io/docs/user/known-issues/).
