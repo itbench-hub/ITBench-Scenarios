@@ -3,14 +3,14 @@
   hosts:
     - environment
   pre_tasks:
-    - name: Import common role to check Helm version
+    - name: Import common role for Helm version check
       ansible.builtin.import_role:
         name: common
         tasks_from: check_helm_version
       tags:
         - always
 
-    - name: Import common role to identify the clusster plaform
+    - name: Import common role for platform configuration
       ansible.builtin.import_role:
         name: common
         tasks_from: set_cluster_platform
@@ -20,7 +20,7 @@
         common_cluster:
           kubeconfig: "{{ cluster.kubeconfig }}"
 
-    - name: Import common role to identify the cluster provider
+    - name: Import common role for provider configuration
       ansible.builtin.import_role:
         name: common
         tasks_from: set_cluster_provider
