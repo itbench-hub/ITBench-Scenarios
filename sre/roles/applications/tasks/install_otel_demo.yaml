@@ -42,14 +42,17 @@
     namespace: "{{ helm_releases.clickhouse.namespace }}"
     wait: true
   register: clickhouse_secrets_info
+  when:
+    - not applications_tools_enabled.external.enabled
 
-# TODO: To-be made optional when support for APMs is enabled
 - name: Validate existence of Clickhouse credentials
   ansible.builtin.assert:
     that:
       - clickhouse_secrets_info.resources | length > 0
     fail_msg: "Clickhouse credentials secret not found"
     success_msg: "Clickhouse credentials secret found"
+  when:
+    - not applications_tools_enabled.external.enabled
 
 - name: Retrieve Prometheus route
   kubernetes.core.k8s_info:
@@ -61,12 +64,14 @@
   register: prometheus_k8s_route_info
   when:
     - applications_cluster.platform == "openshift"
+    - not applications_tools_enabled.external.enabled
 
 - name: Parse Prometheus hostname
   ansible.builtin.set_fact:
     prometheus_url: https://{{ prometheus_k8s_route_info.resources[0].spec.host }}
   when:
     - applications_cluster.platform == "openshift"
+    - not applications_tools_enabled.external.enabled
 
 - name: Verify Prometheus service exists
   kubernetes.core.k8s_info:
@@ -77,8 +82,8 @@
   register: prometheus_service
   when:
     - applications_cluster.platform == "kubernetes"
+    - not applications_tools_enabled.external.enabled
 
-# TODO: To-be made optional when support for APMs is enabled
 - name: Validate relevant Prometheus service exists
   ansible.builtin.assert:
     that:
@@ -87,12 +92,14 @@
     success_msg: "Prometheus service {{ helm_releases.prometheus.name }}-kube-prometheus-prometheus found in namespace {{ helm_releases.prometheus.namespace }}"
   when:
     - applications_cluster.platform == "kubernetes"
+    - not applications_tools_enabled.external.enabled
 
 - name: Set Prometheus internal service url
   ansible.builtin.set_fact:
     prometheus_url: http://{{ helm_releases.prometheus.name }}-kube-prometheus-prometheus.{{ helm_releases.prometheus.namespace }}.svc.cluster.local:9090
   when:
     - applications_cluster.platform == "kubernetes"
+    - not applications_tools_enabled.external.enabled
 
 - name: Install OpenTelemetry Demo (Astronomy Shop)
   kubernetes.core.helm:
@@ -275,37 +282,12 @@
       opensearch:
         enabled: false
       opentelemetry-collector:
-        config:
-          connectors:
-            spanmetrics:
-              dimensions:
-                - name: namespace
-                  default: "{{ helm_releases.otel_demo.namespace }}"
-          exporters:
-            clickhouse:
-              username: "{{ clickhouse_secrets_info.resources[0].data.user | b64decode }}"
-              password: "{{ clickhouse_secrets_info.resources[0].data.password | b64decode }}"
-              endpoint: http://{{ helm_releases.clickhouse.name }}-clickhouse.{{ helm_releases.clickhouse.namespace }}.svc.cluster.local:8123
-              logs_table_name: otel_demo_logs
-            opensearch:
-              http:
-                endpoint: http://{{ helm_releases.opensearch.name }}-master.{{ helm_releases.opensearch.namespace }}.svc.cluster.local:9200
-            otlp:
-              endpoint: http://jaeger-collector.{{ helm_releases.collectors.namespace }}.svc.cluster.local:4317
-            otlphttp/prometheus:
-              endpoint: "{{ prometheus_url }}/api/v1/otlp"
-            prometheus:
-              endpoint: 0.0.0.0:8889
-          service:
-            pipelines:
-              logs:
-                exporters:
-                  - clickhouse
-                  - debug
-              metrics:
-                exporters:
-                  - debug
-                  - prometheus
+        config: |
+          {{
+            lookup('template', 'otel-collector-config-default.yaml.j2') | from_yaml
+            if not (applications_tools_enabled.external.enabled | default(false))
+            else applications_tools_enabled.external.otel_collector_configuration
+          }}
         serviceMonitor:
           enabled: true
           metricsEndpoints:
@@ -335,6 +317,8 @@
     namespace: "{{ helm_releases.otel_demo.namespace }}"
     state: present
     src: files/rules/workload.yaml
+  when:
+    - not applications_tools_enabled.external.enabled
 
 - name: Create Alerting Prometheus Rules
   kubernetes.core.k8s:
@@ -342,3 +326,5 @@
     namespace: "{{ helm_releases.otel_demo.namespace }}"
     state: present
     src: files/rules/otel-demo.yaml
+  when:
+    - not applications_tools_enabled.external.enabled
