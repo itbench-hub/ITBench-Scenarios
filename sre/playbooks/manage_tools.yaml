@@ -33,14 +33,13 @@
     - name: Import variables for incident
       ansible.builtin.import_role:
         name: incidents
-        tasks_from: import
+        tasks_from: load
       tags:
         - always
       vars:
-        incidents_incident:
-          id: "{{ incident.id }}"
+        incidents_file: "{{ incident.file }}"
       when:
-        - incident.id != 0
+        - incident.file is defined
 
     - name: Create tools_enabled dictionary
       ansible.builtin.set_fact:
@@ -58,7 +57,7 @@
       tags:
         - always
       when:
-        - incident.id == 0
+        - incident.file is undefined
   tasks:
     - name: Import tools role
       ansible.builtin.import_role:

@@ -25,5 +25,5 @@
 - name: Validate helm version
   ansible.builtin.assert:
     that: "'3.16' is version_compare(system_helm_version, '<=')"
-    fail_msg: "Helm version for system {{ system_helm_path }} must be 3.16 or later. Got {{ system_helm_version }}"
-    success_msg: "Helm version {{ system_helm_version }} (>= 3.16) is OK."
+    fail_msg: Helm version for system {{ system_helm_path }} must be 3.16 or later. Got {{ system_helm_version }}
+    success_msg: Helm version {{ system_helm_version }} (>= 3.16) is OK.

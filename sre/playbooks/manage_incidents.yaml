@@ -1,8 +1,14 @@
 ---
-- name: Manage SRE and FinOps Incident Environment Sample Application Stack
+- name: Manage SRE and FinOps Incident Environment Tool Stack
   hosts:
     - environment
   pre_tasks:
+    - name: Ensure incident file is defined
+      ansible.builtin.assert:
+        that: incident.file is defined
+        fail_msg: Incident file information is not defined. Please define the `file` field in incident.yaml
+        success_msg: Incident file information is defined.
+
     - name: Import common role for Helm version check
       ansible.builtin.import_role:
         name: common
@@ -20,16 +26,6 @@
         common_cluster:
           kubeconfig: "{{ cluster.kubeconfig }}"
 
-    - name: Import common role for provider configuration
-      ansible.builtin.import_role:
-        name: common
-        tasks_from: set_cluster_provider
-      tags:
-        - always
-      vars:
-        common_cluster:
-          kubeconfig: "{{ cluster.kubeconfig }}"
-
     - name: Import variables for incident
       ansible.builtin.import_role:
         name: incidents
@@ -38,23 +34,12 @@
         - always
       vars:
         incidents_file: "{{ incident.file }}"
-      when:
-        - incident.file is defined
-
-    - name: Create applications_enabled dictionary
-      ansible.builtin.set_fact:
-        applications_enabled:
-          otel_demo: "{{ applications.otel_demo | default(false) }}"
-      tags:
-        - always
-      when:
-        - incident.file is undefined
   tasks:
-    - name: Import applications role
+    - name: Import incidents role
       ansible.builtin.import_role:
-        name: applications
+        name: incidents
       vars:
-        applications_cluster:
+        incidents_cluster:
           kubeconfig: "{{ cluster.kubeconfig }}"
           platform: "{{ cluster_platform }}"
-          provider: "{{ cluster_provider }}"
+        incidents_spec: "{{ incident_spec }}"

@@ -5,20 +5,8 @@ USE_JAEGER_QUERY_ENDPOINT ?= true
 
 INCIDENT_NUMBER ?= 1
 NUMBER_OF_RUNS = 1
-# TODO: Re-think the end to end experience
-
-FINOPS_SCENARIOS := 37
-HOTEL_RESERVATION_SCENARIOS := 102
-
-IS_DEBUG_SCENARIO ?= true
-IS_FINOPS_SCENARIO := $(shell echo "$(FINOPS_SCENARIOS)" | grep -w "$(INCIDENT_NUMBER)" > /dev/null && echo "true" || echo "false")
-IS_HOTEL_RESERVATION_SCENARIO := $(shell echo "$(HOTEL_RESERVATION_SCENARIOS)" | grep -w "$(INCIDENT_NUMBER)" > /dev/null && echo "true" || echo "false")
 
 SAMPLE_APPLICATION := otel_astronomy_shop
-ifeq ($(IS_HOTEL_RESERVATION_SCENARIO),true)
-SAMPLE_APPLICATION := dsb_hotel_reservation
-else
-endif
 
 .PHONY: help
 help: ## Display this help.
@@ -133,69 +121,17 @@ undeploy_elasticsearch: ## Undeploys the Elasticsearch cluster
 
 .PHONY: inject_incident_fault
 inject_incident_fault: ## Injects the fault used in a specific incident
-ifeq ($(IS_DEBUG_SCENARIO),true)
-	ansible-playbook -v base.yaml --tags "incident_$(INCIDENT_NUMBER)" \
-		--extra-vars "debug=true" \
-		--extra-vars "is_fault_injection=true" \
-		--extra-vars "incident_number=$(INCIDENT_NUMBER)" \
-		--extra-vars "sample_application=$(SAMPLE_APPLICATION)"
-else
-	ansible-playbook -v base.yaml --tags "incident_$(INCIDENT_NUMBER)" \
-		--extra-vars "is_fault_injection=true" \
-		--extra-vars "incident_number=$(INCIDENT_NUMBER)" \
-		--extra-vars "sample_application=$(SAMPLE_APPLICATION)"
-endif
-	ansible-playbook -v base.yaml --tags "post_fault_injection"
+	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "create_objects,inject_fault"
 
 .PHONY: remove_incident_fault
 remove_incident_fault: ## Removes the fault used in a specific incident
-	ansible-playbook -v base.yaml --tags "pre_fault_removal"
-ifeq ($(IS_DEBUG_SCENARIO),true)
-	ansible-playbook -v base.yaml --tags "incident_$(INCIDENT_NUMBER)" \
-		--extra-vars "debug=true" \
-		--extra-vars "is_fault_removal=true" \
-		--extra-vars "incident_number=$(INCIDENT_NUMBER)" \
-		--extra-vars "sample_application=$(SAMPLE_APPLICATION)"
-else
-	ansible-playbook -v base.yaml --tags "incident_$(INCIDENT_NUMBER)" \
-		--extra-vars "is_fault_removal=true" \
-		--extra-vars "incident_number=$(INCIDENT_NUMBER)" \
-		--extra-vars "sample_application=$(SAMPLE_APPLICATION)"
-endif
-
-.PHONY: deploy_scenario_application
-ifeq ($(IS_HOTEL_RESERVATION_SCENARIO),true)
-deploy_scenario_application: deploy_hotel_reservation
-else
-deploy_scenario_application: deploy_astronomy_shop
-endif
-
-.PHONY: undeploy_scenario_application
-ifeq ($(IS_HOTEL_RESERVATION_SCENARIO),true)
-undeploy_scenario_application: undeploy_hotel_reservation
-else
-undeploy_scenario_application: undeploy_astronomy_shop
-endif
-
-.PHONY: deploy_scenario_tools
-ifeq ($(IS_FINOPS_SCENARIO),true)
-deploy_scenario_tools: deploy_finops_stack
-else
-deploy_scenario_tools: deploy_observability_stack
-endif
-
-.PHONY: undeploy_scenario_tools
-ifeq ($(IS_FINOPS_SCENARIO),true)
-undeploy_scenario_tools: undeploy_finops_stack
-else
-undeploy_scenario_tools: undeploy_observability_stack
-endif
+	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "delete_objects,remove_fault"
 
 .PHONY: start_incident
-start_incident: deploy_scenario_tools deploy_scenario_application inject_incident_fault ## Starts an incident by deploying a stack, application, and fault for an incident
+start_incident: create_environment inject_incident_fault ## Starts an incident by deploying a stack, application, and fault for an incident
 
 .PHONY: stop_incident
-stop_incident: remove_incident_fault undeploy_scenario_application undeploy_scenario_tools ## Stops an incident by undeploying a stack, application, and fault for an incident
+stop_incident: remove_incident_fault destroy_environment ## Stops an incident by undeploying a stack, application, and fault for an incident
 
 .PHONY: awx_configure_init
 awx_configure_init:

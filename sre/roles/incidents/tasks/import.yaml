@@ -3,17 +3,17 @@
   ansible.builtin.include_vars:
     file: ../applications/defaults/main/helm_releases.yaml
 
-- name: Load sample incident spec from file
-  ansible.builtin.set_fact:
-    incident_spec: "{{ lookup('ansible.builtin.template', 'files/specs/sample_{{ incidents_incident.id | int | abs }}.yaml') | from_yaml }}"
-  when:
-    - (incidents_incident.id | int) < 0
-
 - name: Load incident spec from file
   ansible.builtin.set_fact:
-    incident_spec: "{{ lookup('ansible.builtin.template', 'files/specs/incident_{{ incidents_incidents.id }}.yaml') | from_yaml }}"
+    incident_spec: "{{ lookup('ansible.builtin.template', 'files/specs/incident_{{ incidents_file.id }}.yaml') | from_yaml }}"
   when:
-    - (incidents_incident.id | int) > 0
+    - not incidents_file.is_test
+
+- name: Load test spec from file
+  ansible.builtin.set_fact:
+    incident_spec: "{{ lookup('ansible.builtin.template', 'files/tests/test_{{ incidents_file.id | int | abs }}.yaml') | from_yaml }}"
+  when:
+    - incidents_file.is_test
 
 - name: Create tools_enabled dictionary for tools role
   ansible.builtin.set_fact:
