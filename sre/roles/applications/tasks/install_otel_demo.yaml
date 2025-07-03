@@ -45,7 +45,6 @@
   when:
     - not applications_tools_enabled.external.enabled
 
-# TODO: To-be made optional when support for APMs is enabled
 - name: Validate existence of Clickhouse credentials
   ansible.builtin.assert:
     that:
@@ -85,7 +84,6 @@
     - applications_cluster.platform == "kubernetes"
     - not applications_tools_enabled.external.enabled
 
-# TODO: To-be made optional when support for APMs is enabled
 - name: Validate relevant Prometheus service exists
   ansible.builtin.assert:
     that:
