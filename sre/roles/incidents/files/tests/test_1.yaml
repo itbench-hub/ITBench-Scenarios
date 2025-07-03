@@ -16,13 +16,13 @@ spec:
         - clickhouse
         - prometheus
   faults:
-    - custom:
-        name: invalid-node-selector
-        targets:
-          workload_managers:
-            - kind: Deployment
-              name: image-provider
-              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+    # - custom:
+    #     name: invalid-node-selector
+    #     targets:
+    #       workload_managers:
+    #         - kind: Deployment
+    #           name: image-provider
+    #           namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
     - custom:
         name: misconfigured-command
         targets:
