@@ -1,8 +1,8 @@
 ---
-- name: Include fault role
+- name: Include faults role
   ansible.builtin.include_role:
-    name: fault
-  loop: "{{ incidents_spec.faults }}"
+    name: faults
+  loop: "{{ incidents_spec.spec.faults }}"
   vars:
     faults_cluster:
       kubeconfig: "{{ incidents_cluster.kubeconfig }}"
