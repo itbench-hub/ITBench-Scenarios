@@ -9,3 +9,6 @@ tools:
   opensearch: false
   opentelemetry: false
   prometheus: false
+  external:
+    enabled: false
+    otel_collector_configuration: {}

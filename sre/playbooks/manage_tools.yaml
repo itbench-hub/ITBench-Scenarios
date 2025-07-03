@@ -52,3 +52,4 @@
           opensearch: "{{ tools.opensearch | default(false) }}"
           opentelemetry: "{{ tools.opentelemetry | default(false) }}"
           prometheus: "{{ tools.prometheus | default(false) }}"
+          external: "{{ tools.external | default(dict(enabled=False)) }}"

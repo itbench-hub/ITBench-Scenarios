@@ -29,6 +29,39 @@
       vars:
         common_cluster:
           kubeconfig: "{{ cluster.kubeconfig }}"
+
+    - name: Validate external tools configuration
+      ansible.builtin.validate_argument_spec:
+        argument_spec: "{{ lookup('file', playbook_dir + '/../roles/tools/meta/argument_specs.yaml') | from_yaml | json_query('argument_specs.main.options.tools_enabled.options.external.options') }}"
+        provided_arguments: "{{ tools.external | default({'enabled': false}) }}"
+      tags:
+        - always
+
+    - name: Enforce conditional requirement - otel_collector_configuration required when enabled is true
+      ansible.builtin.fail:
+        msg: |
+          Validation Error: otel_collector_configuration is required when external.enabled is true
+
+          Current configuration:
+            external.enabled: {{ tools.external.enabled | default(false) }}
+            external.otel_collector_configuration: {{ 'present' if tools.external.otel_collector_configuration is defined else 'MISSING' }}
+
+          To fix this, add the required configuration:
+          tools:
+            external:
+              enabled: true
+              otel_collector_configuration:
+                processors: {...}
+                exporters: {...}
+                # ... your OTEL config
+      when:
+        - tools.external is defined
+        - tools.external.enabled | default(false) | bool
+        - tools.external.otel_collector_configuration is not defined
+        - tools.external.otel_collector_configuration is defined and tools.external.otel_collector_configuration | length > 0
+      tags:
+        - always
+
   tasks:
     # - name: Load variables from incident
     # - name: Overwrite variables using incident spec
@@ -43,3 +76,5 @@
           provider: "{{ cluster_provider }}"
         applications_enabled:
           otel_demo: "{{ applications.otel_demo | default(false) }}"
+        tools_enabled:
+          external: "{{ tools.external | default(dict(enabled=False)) }}"

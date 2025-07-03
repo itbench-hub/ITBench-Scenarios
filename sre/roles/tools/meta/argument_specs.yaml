@@ -71,3 +71,15 @@ argument_specs:
             default: false
             required: false
             type: bool
+          external:
+            default: dict(enabled=False)
+            required: false
+            type: dict
+            options:
+              enabled:
+                type: bool
+                required: false
+                default: false
+              otel_collector_configuration:
+                type: dict
+                required: false
