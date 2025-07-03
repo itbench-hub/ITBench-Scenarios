@@ -10,10 +10,11 @@
       apiVersion: chaos-mesh.org/v1alpha1
       kind: Schedule
       metadata:
-        name: "{{ item.name }}"
+        name: "{{ experiment.name }}"
         namespace: "{{ tools_helm_releases.chaos_mesh.namespace }}"
-      spec: "{{ item.spec }}"
+      spec: "{{ experiment.spec }}"
     state: present
   loop: "{{ experiments }}"
   loop_control:
-    label: "{{ item.name }}"
+    label: "{{ experiment.name }}"
+    loop_var: experiment

@@ -17,9 +17,11 @@
     enabled_config: |
       {{
         (enabled_config | default({})) |
-        combine({ item: { 'defaultVariant': 'on' } }, recursive=true)
+        combine({ flag: { 'defaultVariant': 'on' } }, recursive=true)
       }}
   loop: "{{ flags }}"
+  loop_control:
+    loop_var: flag
 
 - name: Replace the flagd config with the modified config (inject fault)
   kubernetes.core.k8s_json_patch:

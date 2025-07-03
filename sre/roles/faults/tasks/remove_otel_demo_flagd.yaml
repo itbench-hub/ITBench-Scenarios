@@ -21,9 +21,11 @@
     disabled_config: |
       {{
         (disabled_config | default({})) |
-        combine({ item: { 'defaultVariant': 'off' } }, recursive=true)
+        combine({ flag: { 'defaultVariant': 'off' } }, recursive=true)
       }}
   loop: "{{ fault.flags }}"
+  loop_control:
+    loop_var: flag
 
 - name: Replace the flagd config with the modified config (remove fault)
   kubernetes.core.k8s_json_patch:
