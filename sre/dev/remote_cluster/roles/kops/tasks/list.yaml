@@ -14,7 +14,7 @@
   ansible.builtin.shell:
     cmd: |
       set -o pipefail
-      echo "{{ clusters_output.stdout.split("\n") | join('\n') }}" | column -t
+      echo "{{ clusters_output.stdout | split('\n') | join('\n') }}" | column -t
   register: formatted_output
   changed_when: false
 

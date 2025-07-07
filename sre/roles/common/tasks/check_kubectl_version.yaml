@@ -22,8 +22,12 @@
   ansible.builtin.set_fact:
     system_kubectl_version: "{{ raw_kubectl_version_out.stdout | from_json }}"
 
+- name: Parse kubectl client version
+  ansible.builtin.set_fact:
+    kubectl_client_version: "{{ system_kubectl_version.clientVersion.gitVersion | split('v') | last }}"
+
 - name: Validate helm version
   ansible.builtin.assert:
-    that: "'1.33' is version_compare(system_kubectl_version.clientVersion.gitVersion, '<=')"
-    fail_msg: Helm version for system {{ system_kubectl_path }} must be 1.33 or later. Got {{ system_kubectl_version.clientVersion.gitVersion }}
-    success_msg: Helm version {{ system_kubectl_version.clientVersion.gitVersion }} (>= 1.33) is OK.
+    that: "'1.33' is version_compare(kubectl_client_version, '<=')"
+    fail_msg: Helm version for system {{ system_kubectl_path }} must be 1.33 or later. Got {{ kubectl_client_version }}
+    success_msg: Helm version {{ kubectl_client_version }} (>= 1.33) is OK.
