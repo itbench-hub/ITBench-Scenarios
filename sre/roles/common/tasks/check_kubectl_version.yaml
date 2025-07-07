@@ -14,7 +14,7 @@
 
 - name: Get kubectl client version
   ansible.builtin.command:
-    cmd: "{{ system_kubectl_path.stdout }} --client=true -o json"
+    cmd: "{{ system_kubectl_path.stdout }} version --client=true -o json"
   register: raw_kubectl_version_out
   changed_when: false
 
