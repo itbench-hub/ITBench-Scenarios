@@ -17,7 +17,7 @@
     volumes: |
       {{
         (volumes | default([])) +
-        [[resource_target[1], lookup('ansible.utils.index_of', resource_target[0].resources[0].spec.containers[0].volumes, 'eq', 'invalid-volume', 'name')]
+        [resource_target[1], lookup('ansible.utils.index_of', resource_target[0].resources[0].spec.containers[0].volumes, 'eq', 'invalid-volume', 'name')]
       }}
   loop: "{{ managers_info.results | zip(targets) | list }}"
   loop_control:

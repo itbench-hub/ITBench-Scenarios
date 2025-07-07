@@ -1,0 +1,29 @@
+---
+- name: Check for kubectl
+  ansible.builtin.command:
+    cmd: which kubectl
+  register: system_kubectl_path
+  changed_when: false
+  failed_when: false
+
+- name: Validate kubectl exists
+  ansible.builtin.assert:
+    that: system_kubectl_path.rc == 0
+    fail_msg: "Unable to find kubectl. Please install kubectl by following README.md instructions"
+    success_msg: "kubectl is installed."
+
+- name: Get kubectl client version
+  ansible.builtin.command:
+    cmd: "{{ system_kubectl_path.stdout }} --client=true -o json"
+  register: raw_kubectl_version_out
+  changed_when: false
+
+- name: Convert kubectl version to JSON
+  ansible.builtin.set_fact:
+    system_kubectl_version: "{{ raw_kubectl_version_out.stdout | from_json }}"
+
+- name: Validate helm version
+  ansible.builtin.assert:
+    that: "'1.33' is version_compare(system_kubectl_version.clientVersion.gitVersion, '<=')"
+    fail_msg: Helm version for system {{ system_kubectl_path }} must be 1.33 or later. Got {{ system_kubectl_version.clientVersion.gitVersion }}
+    success_msg: Helm version {{ system_kubectl_version.clientVersion.gitVersion }} (>= 1.33) is OK.
