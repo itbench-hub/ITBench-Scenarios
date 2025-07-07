@@ -7,7 +7,7 @@
     name: "{{ manager.name }}"
     namespace: "{{ manager.namespace }}"
     patch:
-      - op: replace
+      - op: add
         path: /spec/template/spec/nodeSelector
         value: "{'kubernetes.io/hostname': 'invalid-node'}"
   loop: "{{ targets }}"
