@@ -14,7 +14,9 @@
 
 - name: Get kubectl client version
   ansible.builtin.command:
-    cmd: "{{ system_kubectl_path.stdout }} version --client=true -o json"
+    cmd: "{{ system_kubectl_path.stdout }} version -o json"
+  environment:
+    KUBECONFIG: "{{ common_cluster.kubeconfig }}"
   register: raw_kubectl_version_out
   changed_when: false
 
@@ -22,12 +24,19 @@
   ansible.builtin.set_fact:
     system_kubectl_version: "{{ raw_kubectl_version_out.stdout | from_json }}"
 
-- name: Parse kubectl client version
+- name: Parse kubectl version
   ansible.builtin.set_fact:
     kubectl_client_version: "{{ system_kubectl_version.clientVersion.gitVersion | split('v') | last }}"
+    kubectl_server_version: "{{ system_kubectl_version.serverVersion.gitVersion | split('v') | last }}"
 
-- name: Validate helm version
+- name: Validate kubectl client version
   ansible.builtin.assert:
     that: "'1.33' is version_compare(kubectl_client_version, '<=')"
-    fail_msg: Helm version for system {{ system_kubectl_path }} must be 1.33 or later. Got {{ kubectl_client_version }}
-    success_msg: Helm version {{ kubectl_client_version }} (>= 1.33) is OK.
+    fail_msg: kubectl client for system {{ system_kubectl_path }} must be 1.33 or later. Got {{ kubectl_client_version }}
+    success_msg: kubectl client version {{ kubectl_client_version }} (>= 1.33) is OK.
+
+- name: Validate kubectl server version
+  ansible.builtin.assert:
+    that: "'1.32' is version_compare(kubectl_server_version, '<=')"
+    fail_msg: kubernetes server version for cluster must be 1.32 or later. Got {{ kubectl_server_version }}
+    success_msg: kubernetes server version {{ kubectl_server_version }} (>= 1.32) is OK.

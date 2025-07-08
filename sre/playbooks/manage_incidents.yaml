@@ -8,6 +8,8 @@
         that: incident.file is defined
         fail_msg: Incident file information is not defined. Please define the `file` field in incident.yaml
         success_msg: Incident file information is defined.
+      tags:
+        - always
 
     - name: Import common role for kubectl version check
       ansible.builtin.import_role:
@@ -15,6 +17,9 @@
         tasks_from: check_kubectl_version
       tags:
         - always
+      vars:
+        common_cluster:
+          kubeconfig: "{{ cluster.kubeconfig }}"
 
     - name: Import common role for platform configuration
       ansible.builtin.import_role:
