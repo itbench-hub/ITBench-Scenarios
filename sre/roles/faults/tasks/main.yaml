@@ -1,16 +1,28 @@
 ---
-- name: Import injection tasks
-  ansible.builtin.import_tasks:
+- name: Include injection tasks
+  ansible.builtin.include_tasks:
     file: inject.yaml
-  vars:
-    fault: "{{ faults_spec }}"
+    apply:
+      tags:
+        - inject_faults
+  loop: "{{ faults_specs }}"
+  loop_control:
+    loop_var: fault_spec
   tags:
     - inject_faults
-
-- name: Import removal tasks
-  ansible.builtin.import_tasks:
-    file: remove.yaml
   vars:
-    fault: "{{ faults_spec }}"
+    fault: "{{ fault_spec }}"
+
+- name: Include removal tasks
+  ansible.builtin.include_tasks:
+    file: remove.yaml
+    apply:
+      tags:
+        - remove_faults
+  loop: "{{ faults_specs }}"
+  loop_control:
+    loop_var: fault_spec
   tags:
     - remove_faults
+  vars:
+    fault: "{{ fault_spec }}"

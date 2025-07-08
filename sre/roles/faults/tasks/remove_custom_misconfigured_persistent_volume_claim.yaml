@@ -17,29 +17,27 @@
     volumes: |
       {{
         (volumes | default([])) +
-        [resource_target[1], lookup('ansible.utils.index_of', resource_target[0].resources[0].spec.containers[0].volumes, 'eq', 'invalid-volume', 'name')]
+        [item[1], lookup('ansible.utils.index_of', item[0].resources[0].spec.containers[0].volumes, 'eq', 'invalid-volume', 'name')]
       }}
   loop: "{{ managers_info.results | zip(targets) | list }}"
   loop_control:
-    label: "{{ resource_target[1].name }}"
-    loop_var: resource_target
+    label: "{{ item[1].name }}"
   when:
-    - resource_target[0].resources | length > 0
+    - item[0].resources | length > 0
 
 - name: Inject fault (misconfigured persistent volume claim)
   kubernetes.core.k8s_json_patch:
     api_version: apps/v1
-    kind: "{{ resource_target[0].kind }}"
+    kind: "{{ item[0].kind }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ resource_target[0].name }}"
-    namespace: "{{ resource_target[0].namespace }}"
+    name: "{{ item[0].name }}"
+    namespace: "{{ item[0].namespace }}"
     patch:
       - op: remove
-        path: /spec/containers/0/volumes/{{ resource_target[1] }}
+        path: /spec/containers/0/volumes/{{ item[1] }}
   loop: "{{ indexes }}"
   loop_control:
-    label: "{{ resource_target[0].name }}"
-    loop_var: resource_target
+    label: "{{ item[0].name }}"
 
 - name: Remove invalid Persistent Volume Claim
   kubernetes.core.k8s:
@@ -51,6 +49,6 @@
         name: it-bench-invalid
         namespace: "{{ namespace }}"
     state: absent
-  loop: "{{ targets | community.general.json_query('[*].namespace') | unique }}"
+  loop: "{{ (targets | default([])) | community.general.json_query('[*].namespace') | unique }}"
   loop_control:
     loop_var: namespace

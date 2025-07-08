@@ -2,13 +2,7 @@
 - name: Import start tasks
   ansible.builtin.import_tasks:
     file: start.yaml
-  tags:
-    - inject_faults
-    - create_objects
 
 - name: Import stop tasks
   ansible.builtin.import_tasks:
     file: stop.yaml
-  tags:
-    - remove_faults
-    - delete_objects

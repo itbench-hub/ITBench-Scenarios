@@ -41,11 +41,25 @@ deploy_applications: ## Deploys the applications to cluster
 undeploy_applications: ## Undeploys the applications to cluster
 	ansible-playbook -i inventory.yaml playbooks/manage_applications.yaml --tags "uninstall_applications"
 
+.PHONY: inject_incident_fault
+inject_incident_fault: ## Injects the fault used in a specific incident
+	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "create_objects,inject_faults"
+
+.PHONY: remove_incident_fault
+remove_incident_fault: ## Removes the fault used in a specific incident
+	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "delete_objects,remove_faults"
+
 .PHONY: create_environment
 create_environment: deploy_tools deploy_applications ## Deploys tools and applications to cluster
 
 .PHONY: destroy_environment
 destroy_environment: undeploy_applications undeploy_tools ## Undeploys tools and applications to cluster
+
+.PHONY: start_incident
+start_incident: create_environment inject_incident_fault ## Starts an incident by deploying a stack, application, and fault for an incident
+
+.PHONY: stop_incident
+stop_incident: remove_incident_fault destroy_environment ## Stops an incident by undeploying a stack, application, and fault for an incident
 
 .PHONY: deploy_observability_stack
 deploy_observability_stack: ## Deploys the observability tools to cluster
@@ -118,20 +132,6 @@ deploy_elasticsearch: ## Deploys the Elasticsearch cluster
 undeploy_elasticsearch: ## Undeploys the Elasticsearch cluster
 	ansible-playbook -v base.yaml --tags "uninstall_sample_applications" \
 		--extra-vars "sample_application=elasticsearch"
-
-.PHONY: inject_incident_fault
-inject_incident_fault: ## Injects the fault used in a specific incident
-	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "create_objects,inject_fault"
-
-.PHONY: remove_incident_fault
-remove_incident_fault: ## Removes the fault used in a specific incident
-	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "delete_objects,remove_fault"
-
-.PHONY: start_incident
-start_incident: create_environment inject_incident_fault ## Starts an incident by deploying a stack, application, and fault for an incident
-
-.PHONY: stop_incident
-stop_incident: remove_incident_fault destroy_environment ## Stops an incident by undeploying a stack, application, and fault for an incident
 
 .PHONY: awx_configure_init
 awx_configure_init:

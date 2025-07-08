@@ -16,9 +16,10 @@ argument_specs:
             default: ~/.kube/config
             required: false
             type: str
-      faults_spec:
+      faults_specs:
+        elements: dict
         required: true
-        type: dict
+        type: list
         options:
           chaos_mesh:
             required: false
@@ -82,18 +83,25 @@ argument_specs:
             type: dict
             options:
               flags:
-                choices:
-                  - adHighCpu
-                  - adFailure
-                  - adManualGc
-                  - cartFailure
-                  - imageSlowLoad
-                  - kafkaQueueProblems
-                  - loadGeneratorFloodHomepage
-                  - paymentFailure
-                  - paymentUnreachable
-                  - productCatalogFailure
-                  - recommendationCacheFailure
-                elements: str
+                elements: dict
                 required: true
                 type: list
+                options:
+                  name:
+                    choices:
+                      - adHighCpu
+                      - adFailure
+                      - adManualGc
+                      - cartFailure
+                      - imageSlowLoad
+                      - kafkaQueueProblems
+                      - loadGeneratorFloodHomepage
+                      - paymentFailure
+                      - paymentUnreachable
+                      - productCatalogFailure
+                      - recommendationCacheFailure
+                    required: true
+                    type: str
+                  state:
+                    required: true
+                    type: str

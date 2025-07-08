@@ -16,7 +16,7 @@
             storage: 25Mi
         storageClassName: invalid-class-name
     state: present
-  loop: "{{ targets | community.general.json_query('[*].namespace') | unique }}"
+  loop: "{{ (targets | default([])) | community.general.json_query('[*].namespace') | unique }}"
   loop_control:
     loop_var: namespace
 
@@ -31,7 +31,7 @@
       - op: add
         path: /spec/containers/0/volumes
         value: "{'persistentVolumeClaim': {'claimName': 'it-bench-invalid'}, 'name': 'invalid-volume'}"
-  loop: "{{ indexes }}"
+  loop: "{{ targets }}"
   loop_control:
     label: "{{ manager.kind }}/{{ manager.name }}"
     loop_var: manager

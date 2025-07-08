@@ -17,23 +17,25 @@
     enabled_config: |
       {{
         (enabled_config | default({})) |
-        combine({ flag: { 'defaultVariant': 'on' } }, recursive=true)
+        combine({ flag.name: { 'defaultVariant': flag.state } }, recursive=true)
       }}
   loop: "{{ flags }}"
   loop_control:
+    label: "{{ flag.name }}"
     loop_var: flag
 
 - name: Replace the flagd config with the modified config (inject fault)
-  kubernetes.core.k8s_json_patch:
-    api_version: v1
-    kind: ConfigMap
+  kubernetes.core.k8s:
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: flagd-config
-    namespace: "{{ helm_release.namespace }}"
-    patch:
-      - op: replace
-        path: /data/demo.flagd.json/
-        value: "{{ flagd_config_json | combine({'flags': enabled_config}, recursive=true) | to_json }}"
+    resource_definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: flagd-config
+        namespace: "{{ helm_release.namespace }}"
+      data:
+        "demo.flagd.json": "{{ flagd_config_json | combine({'flags': enabled_config}, recursive=true) | to_json }}"
+    state: patched
 
 - name: Restart all deployments to enable changes
   ansible.builtin.command:
