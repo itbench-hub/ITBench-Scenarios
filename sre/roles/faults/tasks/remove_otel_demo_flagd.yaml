@@ -1,8 +1,4 @@
 ---
-- name: Include Helm Release variables from applications role
-  ansible.builtin.include_vars:
-    file: ../applications/defaults/main/helm_releases.yaml
-
 - name: Retrieve the ConfigMap for flagd deployment
   kubernetes.core.k8s_info:
     api_version: v1
@@ -23,7 +19,7 @@
         (disabled_config | default({})) |
         combine({ flag: { 'defaultVariant': 'off' } }, recursive=true)
       }}
-  loop: "{{ fault.flags }}"
+  loop: "{{ flags }}"
   loop_control:
     loop_var: flag
 
@@ -41,7 +37,7 @@
 
 - name: Restart all deployments to enable changes
   ansible.builtin.command:
-    cmd: kubectl rollout restart deployment -n {{ helm_release.namespace }}
+    cmd: kubectl -n {{ helm_release.namespace }} rollout restart deployment
   environment:
     KUBECONFIG: "{{ faults_cluster.kubeconfig }}"
   register: rollout_restart_output
