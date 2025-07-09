@@ -47,6 +47,8 @@ jobs:
           make -C sre undeploy_tools
   clickhouse:
     name: Alinity Clickhouse Smoke Tests
+    needs:
+      - ingress
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4.2.2
@@ -70,7 +72,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          echo "tools: { clickhouse: true }" > sre/group_vars/environment/tools.yaml
+          echo "tools: { clickhouse: true, ingress: true }" > sre/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
@@ -118,6 +120,7 @@ jobs:
   jaeger:
     name: Jaeger Smoke Tests
     needs:
+      - ingress
       - opensearch
     runs-on: ubuntu-24.04
     steps:
@@ -142,7 +145,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          echo "tools: { jaeger: true }" > sre/group_vars/environment/tools.yaml
+          echo "tools: { ingress: true, jaeger: true }" > sre/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
@@ -189,6 +192,8 @@ jobs:
           make -C sre undeploy_tools
   kubernetes-topology-monitor:
     name: Kubernetes Topology Monitor Smoke Tests
+    needs:
+      - ingress
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4.2.2
@@ -212,7 +217,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          echo "tools: { kubernetes_topology_monitor: true }" > sre/group_vars/environment/tools.yaml
+          echo "tools: { ingress: true, kubernetes_topology_monitor: true }" > sre/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
@@ -225,6 +230,7 @@ jobs:
   opencost:
     name: OpenCost Smoke Tests
     needs:
+      - ingress
       - prometheus
     runs-on: ubuntu-24.04
     steps:
@@ -249,7 +255,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          echo "tools: { opencost: true }" > sre/group_vars/environment/tools.yaml
+          echo "tools: { ingress: true, opencost: true }" > sre/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
@@ -370,6 +376,8 @@ jobs:
           make -C sre undeploy_applications
   prometheus:
     name: Prometheus Smoke Tests
+    needs:
+      - ingress
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4.2.2
@@ -393,7 +401,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          echo "tools: { prometheus: true }" > sre/group_vars/environment/tools.yaml
+          echo "tools: { ingress: true, prometheus: true }" > sre/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
