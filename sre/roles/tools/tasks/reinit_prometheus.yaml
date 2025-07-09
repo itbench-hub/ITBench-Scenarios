@@ -4,13 +4,10 @@
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     api_version: apps/v1
     kind: StatefulSet
-    name: "{{ item }}"
+    name: "{{ helm_release.name }}-prometheus-kube-prometheus-prometheus"
     namespace: "{{ helm_release.namespace }}"
     replicas: 0
     wait: true
-  loop:
-    - alertmanager-prometheus-kube-prometheus-alertmanager
-    - prometheus-prometheus-kube-prometheus-prometheus
   when:
     - tools_cluster.platform == "kubernetes"
 
@@ -43,7 +40,6 @@
     wait: true
   loop:
     - prometheus-user-workload
-    - alertmanager-user-workload
     - thanos-ruler-user-workload
   when:
     - tools_cluster.platform == "openshift"

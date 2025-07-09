@@ -16,5 +16,4 @@ metadata:
 data:
   config.yaml: |
     alertmanager:
-      enabled: true
-      enableAlertmanagerConfig: true
+      enabled: false
