@@ -148,7 +148,7 @@
   kubernetes.core.helm:
     chart_ref: opentelemetry-operator
     chart_repo_url: https://open-telemetry.github.io/opentelemetry-helm-charts
-    chart_version: 0.85.0
+    chart_version: 0.90.4
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     release_name: "{{ helm_releases.operator.name }}"
     release_namespace: "{{ helm_releases.operator.namespace }}"
@@ -156,8 +156,6 @@
     timeout: 10m0s
     values:
       manager:
-        collectorImage:
-          repository: otel/opentelemetry-collector-k8s
         podAnnotations:
           openshift.io/required-scc: restricted-v2
         serviceMonitor:
@@ -198,7 +196,7 @@
         name: jaeger
         namespace: "{{ helm_releases.collectors.namespace }}"
       spec:
-        image: jaegertracing/jaeger:2.6.0
+        image: jaegertracing/jaeger:2.8.0
         mode: deployment
         observability:
           metrics:
