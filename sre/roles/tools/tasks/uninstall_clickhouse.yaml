@@ -7,7 +7,7 @@
     namespace: "{{ helm_releases.instance.namespace }}"
   register: clickhouse_installation_info
 
-- name: Delete all installation instances in the release namespace
+- name: Delete all Clickhouse Installation instances in the release namespace
   kubernetes.core.k8s:
     api_version: clickhouse.altinity.com/v1
     delete_all: true
@@ -19,7 +19,7 @@
   when:
     - clickhouse_installation_info.resources | length > 0
 
-- name: Retrieve all installation template instances in the release namespace
+- name: Retrieve all Clickhouse Installation Template instances in the release namespace
   kubernetes.core.k8s_info:
     api_version: clickhouse.altinity.com/v1
     kind: ClickHouseInstallationTemplate

@@ -186,6 +186,17 @@
     - tools_enabled.jaeger
     - tools_cluster.platform == "openshift"
 
+- name: Wait for OpenTelemetry CRD to be installed
+  kubernetes.core.k8s_info:
+    api_version: apiextensions.k8s.io/v1
+    kind: CustomResourceDefinition
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    name: opentelemetrycollectors.opentelemetry.io
+    wait: true
+  when:
+    - tools_enabled.jaeger
+    - tools_cluster.platform == "openshift"
+
 - name: Install Jaeger
   kubernetes.core.k8s:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
