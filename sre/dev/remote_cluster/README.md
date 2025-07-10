@@ -67,6 +67,7 @@ aws configure
 
 ### 1. Create the Cluster
 Create a new Kubernetes cluster using EC2 resources. Skip this step if you already have a cluster running.
+
 The cluster configuration is defined in `group_vars/development/kops_cluster.yaml`.
 
 ```bash
@@ -77,10 +78,20 @@ make create_kops_cluster
 Export the cluster's kubeconfig to access the remote Kubernetes cluster:
 
 ```bash
-make export_kops_kubeconfig [CLUSTER_NAME=<cluster-name>]
+make export_kops_kubeconfig
 ```
 
-If no `CLUSTER_NAME` is specified, it defaults to the cluster created with the `name_prefix` and `instance_type` of the worker node(s) from your configuration (e.g., `development-m5.xlarge-aws.k8s.local`).
+To export a cluster other than the one defined in `group_vars/development/kops_cluster.yaml`, get the full name of the cluster by running the following command:
+
+```bash
+make list_kops_clusters
+```
+
+Then, run the following command with the CLUSTER_NAME argument:
+
+```bash
+CLUSTER_NAME=<full name of cluster> make export_kops_kubeconfig
+```
 
 ### 3. Verify Cluster Access
 Test your connection to the cluster:
@@ -100,7 +111,7 @@ kubectl get pods --all-namespaces
 Update the `kubeconfig` path in your global configuration:
 
 ```bash
-vim ../group_vars/all.yaml
+vim ../group_vars/environment/cluster.yaml
 ```
 
 Set the absolute path where the kubeconfig should be downloaded:
@@ -113,21 +124,21 @@ kubeconfig: "/absolute/path/to/kubeconfig.yaml"
 kubeconfig: "/tmp/development-m5-xlarge-aws.k8s.local.yaml"
 ```
 
-## FAQ
+### Delete the Cluster
+To delete the cluster, run the following command:
 
-### How do I get the `kubeconfig` for a specific cluster?
+```bash
+make destroy_kops_cluster
+```
 
-This is particularly common to get the `kubeconfig` of a head or runner cluster that is part of the AWX stack.
+To delete a cluster other than the one defined in `group_vars/development/kops_cluster.yaml`, get the full name of the cluster by running the following command:
 
-First, list the created kOps clusters:
-
-```console
+```bash
 make list_kops_clusters
 ```
 
-Then, copy the name of the cluster from the table and run the following command:
+Then, run the following command with the CLUSTER_NAME argument:
 
-```console
-make export_kops_kubeconfig CLUSTER_NAME=<name_of_cluster>
+```bash
+CLUSTER_NAME=<full name of cluster> make destroy_kops_cluster
 ```
-e.g. `make export_kops_kubeconfig CLUSTER_NAME=development-m5.xlarge-aws.k8s.local`
