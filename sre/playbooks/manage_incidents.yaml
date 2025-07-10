@@ -5,9 +5,11 @@
   pre_tasks:
     - name: Ensure incident file is defined
       ansible.builtin.assert:
-        that: incident.file is defined
-        fail_msg: Incident file information is not defined. Please define the `file` field in incident.yaml
-        success_msg: Incident file information is defined.
+        that:
+          - incident is defined
+          - incident.id is defined
+        fail_msg: Incident variable is not defined.
+        success_msg: Incident is defined.
       tags:
         - always
 
@@ -38,7 +40,8 @@
       tags:
         - always
       vars:
-        incidents_file: "{{ incident.file }}"
+        incidents_file:
+          id: "{{ incident.id }}"
   tasks:
     - name: Import incidents role
       ansible.builtin.import_role:

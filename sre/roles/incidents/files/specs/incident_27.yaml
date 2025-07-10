@@ -17,7 +17,9 @@ environment:
     modifications: []
   tools:
     category: sre
-    selected: []
+    selected:
+      - chaos-mesh
+      - kubernetes-topology-monitor
   faults:
     - chaos_mesh:
         experiments:

@@ -24,5 +24,6 @@ spec:
             replicas: 2
     tools:
       category: sre
-      selected: []
+      selected:
+        - kubernetes-topology-monitor
   faults: []

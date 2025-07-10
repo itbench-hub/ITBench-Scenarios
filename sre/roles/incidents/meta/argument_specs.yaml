@@ -14,9 +14,6 @@ argument_specs:
           id:
             required: true
             type: int
-          is_test:
-            required: true
-            type: bool
   main:
     short_description: Main entry point for tools role
     description:

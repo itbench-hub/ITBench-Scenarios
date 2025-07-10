@@ -37,9 +37,10 @@
       tags:
         - always
       vars:
-        incidents_file: "{{ incident.file }}"
+        incidents_file:
+          id: "{{ incident.id }}"
       when:
-        - incident.file is defined
+        - incident is defined
 
     - name: Create tools_enabled dictionary
       ansible.builtin.set_fact:
@@ -57,7 +58,7 @@
       tags:
         - always
       when:
-        - incident.file is undefined
+        - incident is undefined
   tasks:
     # - name: Import e2e role
     #   ansible.builtin.import_role:
