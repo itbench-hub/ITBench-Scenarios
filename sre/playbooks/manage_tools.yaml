@@ -29,18 +29,20 @@
       vars:
         common_cluster:
           kubeconfig: "{{ cluster.kubeconfig }}"
-  tasks:
-    # - name: Load variables from incident
-    # - name: Overwrite variables using incident spec
 
-    - name: Import tools role
+    - name: Import variables for incident
       ansible.builtin.import_role:
-        name: tools
+        name: incidents
+        tasks_from: load
+      tags:
+        - always
       vars:
-        tools_cluster:
-          cloud_provider: "{{ cluster_provider }}"
-          kubeconfig: "{{ cluster.kubeconfig }}"
-          platform: "{{ cluster_platform }}"
+        incidents_file: "{{ incident.file }}"
+      when:
+        - incident.file is defined
+
+    - name: Create tools_enabled dictionary
+      ansible.builtin.set_fact:
         tools_enabled:
           chaos_mesh: "{{ tools.chaos_mesh | default(false) }}"
           clickhouse: "{{ tools.clickhouse | default(false) }}"
@@ -52,3 +54,34 @@
           opensearch: "{{ tools.opensearch | default(false) }}"
           opentelemetry: "{{ tools.opentelemetry | default(false) }}"
           prometheus: "{{ tools.prometheus | default(false) }}"
+      tags:
+        - always
+      when:
+        - incident.file is undefined
+  tasks:
+    # - name: Import e2e role
+    #   ansible.builtin.import_role:
+    #     name: e2e
+    #     tasks_from: initialize_assertion_json
+    #   tags:
+    #     - install_tools
+    #   when:
+    #     - incident.runner != 'local'
+
+    - name: Import tools role
+      ansible.builtin.import_role:
+        name: tools
+      vars:
+        tools_cluster:
+          cloud_provider: "{{ cluster_provider }}"
+          kubeconfig: "{{ cluster.kubeconfig }}"
+          platform: "{{ cluster_platform }}"
+
+    # - name: Import e2e role
+    #   ansible.builtin.import_role:
+    #     name: e2e
+    #     tasks_from: finalize_assertion_json
+    #   tags:
+    #     - uninstall_tools
+    #   when:
+    #     - incident.runner != 'local'

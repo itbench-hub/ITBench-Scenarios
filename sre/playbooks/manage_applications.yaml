@@ -29,10 +29,27 @@
       vars:
         common_cluster:
           kubeconfig: "{{ cluster.kubeconfig }}"
-  tasks:
-    # - name: Load variables from incident
-    # - name: Overwrite variables using incident spec
 
+    - name: Import variables for incident
+      ansible.builtin.import_role:
+        name: incidents
+        tasks_from: load
+      tags:
+        - always
+      vars:
+        incidents_file: "{{ incident.file }}"
+      when:
+        - incident.file is defined
+
+    - name: Create applications_enabled dictionary
+      ansible.builtin.set_fact:
+        applications_enabled:
+          otel_demo: "{{ applications.otel_demo | default(false) }}"
+      tags:
+        - always
+      when:
+        - incident.file is undefined
+  tasks:
     - name: Import applications role
       ansible.builtin.import_role:
         name: applications
@@ -41,5 +58,21 @@
           kubeconfig: "{{ cluster.kubeconfig }}"
           platform: "{{ cluster_platform }}"
           provider: "{{ cluster_provider }}"
-        applications_enabled:
-          otel_demo: "{{ applications.otel_demo | default(false) }}"
+
+    # - name: Import e2e role
+    #   ansible.builtin.import_role:
+    #     name: e2e
+    #     tasks_from: register_deployment_time
+    #   tags:
+    #     - install_applications
+    #   when:
+    #     - incident.runner != 'local'
+
+    # - name: Import e2e role
+    #   ansible.builtin.import_role:
+    #     name: e2e
+    #     tasks_from: register_deployment_failure
+    #   tags:
+    #     - capture_failed_deployment_state
+    #   when:
+    #     - incident.runner != 'local'

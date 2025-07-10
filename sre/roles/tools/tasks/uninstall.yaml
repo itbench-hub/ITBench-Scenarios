@@ -75,9 +75,3 @@
     helm_release: "{{ tools_helm_releases.ingress }}"
   when:
     - tools_enabled.ingress
-
-- name: Import Assertion JSON finalization tasks
-  ansible.builtin.import_tasks:
-    file: finalize_assertion_json.yaml
-  when:
-    - (sre_bench_runner | default(false))

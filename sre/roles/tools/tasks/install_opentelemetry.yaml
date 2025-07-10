@@ -266,7 +266,7 @@
   register: jaeger_collector_info
   until:
     - jaeger_collector_info.resources[0].status.scale is defined
-    - jaeger_collector_info.resources[0].status.scale.statusReplicas.split('/') | unique | length == 1
+    - jaeger_collector_info.resources[0].status.scale.statusReplicas | split('/') | unique | length == 1
   retries: 10
   delay: 30
   when:
