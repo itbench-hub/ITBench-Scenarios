@@ -16,7 +16,7 @@
   ansible.builtin.command:
     cmd: "{{ system_kubectl_path.stdout }} version -o json"
   environment:
-    KUBECONFIG: "{{ common_cluster.kubeconfig }}"
+    KUBECONFIG: "{{ common_cluster.kubeconfig | ansible.builtin.expanduser }}"
   register: raw_kubectl_version_out
   changed_when: false
 
