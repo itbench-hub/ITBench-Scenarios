@@ -297,7 +297,7 @@ jobs:
       - name: Run uninstallation smoke test
         run: |
           make -C sre undeploy_tools
-  opentelemtry:
+  opentelemetry:
     name: OpenTelemetry Collector Smoke Tests
     needs:
       - clickhouse
@@ -414,6 +414,8 @@ jobs:
   sre-incident-3:
     name: SRE Incident 3 Smoke Test
     needs:
+      - kubernetes-topology-monitor
+      - opentelemetry
       - otel-demo
     runs-on: ubuntu-24.04
     steps:
