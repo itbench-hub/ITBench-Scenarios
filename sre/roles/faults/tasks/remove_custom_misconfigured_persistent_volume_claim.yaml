@@ -1,44 +1,4 @@
 ---
-- name: Retrieve managers from cluster
-  kubernetes.core.k8s_info:
-    api_version: apps/v1
-    kind: "{{ manager.kind }}"
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ manager.name }}"
-    namespace: "{{ manager.namespace }}"
-  register: managers_info
-  loop: "{{ targets }}"
-  loop_control:
-    label: "{{ manager.kind }}/{{ manager.name }}"
-    loop_var: manager
-
-- name: Create volume list of indexes with invalid persisten volume claim
-  ansible.builtin.set_fact:
-    volumes: |
-      {{
-        (volumes | default([])) +
-        [item[1], lookup('ansible.utils.index_of', item[0].resources[0].spec.containers[0].volumes, 'eq', 'invalid-volume', 'name')]
-      }}
-  loop: "{{ managers_info.results | zip(targets) | list }}"
-  loop_control:
-    label: "{{ item[1].name }}"
-  when:
-    - item[0].resources | length > 0
-
-- name: Inject fault (misconfigured persistent volume claim)
-  kubernetes.core.k8s_json_patch:
-    api_version: apps/v1
-    kind: "{{ item[0].kind }}"
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ item[0].name }}"
-    namespace: "{{ item[0].namespace }}"
-    patch:
-      - op: remove
-        path: /spec/containers/0/volumes/{{ item[1] }}
-  loop: "{{ indexes }}"
-  loop_control:
-    label: "{{ item[0].name }}"
-
 - name: Remove invalid Persistent Volume Claim
   kubernetes.core.k8s:
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
@@ -52,3 +12,7 @@
   loop: "{{ (targets | default([])) | community.general.json_query('[*].namespace') | unique }}"
   loop_control:
     loop_var: namespace
+
+- name: Print help message
+  ansible.builtin.debug:
+    msg: To finish removing this fault, please uninstall and reinstall the application it was injected into.
