@@ -1,12 +1,9 @@
 # Makefile to run Ansible playbooks
 
 EXECUTE_CHECKS_IN_BACKGROUND ?= false
-USE_JAEGER_QUERY_ENDPOINT ?= true
 
-INCIDENT_NUMBER ?= 1
 NUMBER_OF_RUNS = 1
 
-SAMPLE_APPLICATION := otel_astronomy_shop
 
 .PHONY: help
 help: ## Display this help.
@@ -23,7 +20,12 @@ group_vars: ## Generates the group variables
 
 .PHONY: deploy_tools
 deploy_tools: ## Deploys the observability and fault tools to cluster
+ifdef INCIDENT_NUMBER
+	ansible-playbook -i inventory.yaml playbooks/manage_tools.yaml --tags "install_tools" \
+		--extra-vars "incident={ 'id': $(INCIDENT_NUMBER) }"
+else
 	ansible-playbook -i inventory.yaml playbooks/manage_tools.yaml --tags "install_tools"
+endif
 
 .PHONY: reinit_tools
 reinit_tools: ## Re-initialize observability and fault tools to cluster
@@ -31,23 +33,48 @@ reinit_tools: ## Re-initialize observability and fault tools to cluster
 
 .PHONY: undeploy_tools
 undeploy_tools: ## Undeploys the observability and fault tools to cluster
+ifdef INCIDENT_NUMBER
+	ansible-playbook -i inventory.yaml playbooks/manage_tools.yaml --tags "uninstall_tools" \
+		--extra-vars "incident={ 'id': $(INCIDENT_NUMBER) }"
+else
 	ansible-playbook -i inventory.yaml playbooks/manage_tools.yaml --tags "uninstall_tools"
+endif
 
 .PHONY: deploy_applications
 deploy_applications: ## Deploys the applications to cluster
+ifdef INCIDENT_NUMBER
+	ansible-playbook -i inventory.yaml playbooks/manage_applications.yaml --tags "install_applications" \
+		--extra-vars "incident={ 'id': $(INCIDENT_NUMBER) }"
+else
 	ansible-playbook -i inventory.yaml playbooks/manage_applications.yaml --tags "install_applications"
+endif
 
 .PHONY: undeploy_applications
 undeploy_applications: ## Undeploys the applications to cluster
+ifdef INCIDENT_NUMBER
+	ansible-playbook -i inventory.yaml playbooks/manage_applications.yaml --tags "uninstall_applications" \
+		--extra-vars "incident={ 'id': $(INCIDENT_NUMBER) }"
+else
 	ansible-playbook -i inventory.yaml playbooks/manage_applications.yaml --tags "uninstall_applications"
+endif
 
 .PHONY: inject_incident_fault
 inject_incident_fault: ## Injects the fault used in a specific incident
-	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "create_objects,inject_faults"
+ifdef INCIDENT_NUMBER
+	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "create_objects,inject_faults" \
+		--extra-vars "incident={ 'id': $(INCIDENT_NUMBER) }"
+else
+	@echo "Missing INCIDENT_NUMBER argument. Please run this command with this variable."
+endif
 
 .PHONY: remove_incident_fault
 remove_incident_fault: ## Removes the fault used in a specific incident
-	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "delete_objects,remove_faults"
+ifdef INCIDENT_NUMBER
+	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "delete_objects,remove_faults" \
+		--extra-vars "incident={ 'id': $(INCIDENT_NUMBER) }"
+else
+	@echo "Missing INCIDENT_NUMBER argument. Please run this command with this variable."
+endif
 
 .PHONY: create_environment
 create_environment: deploy_tools deploy_applications ## Deploys tools and applications to cluster
@@ -67,7 +94,7 @@ deploy_observability_stack: ## Deploys the observability tools to cluster
 	@echo "This command will be removed in a future version."
 	@echo "Executing 'make deploy_tools'..."
 	@echo ""
-	$(MAKE) deploy_tools
+	$(MAKE) deploy_tools $(if $(INCIDENT_NUMBER),INCIDENT_NUMBER=$(INCIDENT_NUMBER))
 
 .PHONY: undeploy_observability_stack
 undeploy_observability_stack: ## Undeploys observability tools to cluster
@@ -75,7 +102,7 @@ undeploy_observability_stack: ## Undeploys observability tools to cluster
 	@echo "This command will be removed in a future version."
 	@echo "Executing 'make undeploy_environment_tools'..."
 	@echo ""
-	$(MAKE) undeploy_tools
+	$(MAKE) undeploy_tools $(if $(INCIDENT_NUMBER),INCIDENT_NUMBER=$(INCIDENT_NUMBER))
 
 .PHONY: deploy_finops_stack
 deploy_finops_stack: ## Deploys the finops tools to cluster
@@ -83,7 +110,7 @@ deploy_finops_stack: ## Deploys the finops tools to cluster
 	@echo "This command will be removed in a future version."
 	@echo "Executing 'make deploy_environment_tools'..."
 	@echo ""
-	$(MAKE) deploy_tools
+	$(MAKE) deploy_tools $(if $(INCIDENT_NUMBER),INCIDENT_NUMBER=$(INCIDENT_NUMBER))
 
 .PHONY: undeploy_finops_stack
 undeploy_finops_stack: ## Undeploys finops tools to cluster
@@ -91,7 +118,7 @@ undeploy_finops_stack: ## Undeploys finops tools to cluster
 	@echo "This command will be removed in a future version."
 	@echo "Executing 'make undeploy_environment_tools'..."
 	@echo ""
-	$(MAKE) undeploy_tools
+	$(MAKE) undeploy_tools $(if $(INCIDENT_NUMBER),INCIDENT_NUMBER=$(INCIDENT_NUMBER))
 
 .PHONY: deploy_astronomy_shop
 deploy_astronomy_shop: ## Deploys the Astronomy Shop application
@@ -99,7 +126,7 @@ deploy_astronomy_shop: ## Deploys the Astronomy Shop application
 	@echo "This command will be removed in a future version."
 	@echo "Executing 'make deploy_applications'..."
 	@echo ""
-	$(MAKE) deploy_applications
+	$(MAKE) deploy_applications $(if $(INCIDENT_NUMBER),INCIDENT_NUMBER=$(INCIDENT_NUMBER))
 
 .PHONY: undeploy_astronomy_shop
 undeploy_astronomy_shop: ## Undeploys the Astronomy Shop application
@@ -107,7 +134,7 @@ undeploy_astronomy_shop: ## Undeploys the Astronomy Shop application
 	@echo "This command will be removed in a future version."
 	@echo "Executing 'make undeploy_applications'..."
 	@echo ""
-	$(MAKE) undeploy_applications
+	$(MAKE) undeploy_applications $(if $(INCIDENT_NUMBER),INCIDENT_NUMBER=$(INCIDENT_NUMBER))
 
 .PHONY: deploy_hotel_reservation
 deploy_hotel_reservation: ## Deploys the Hotel Reservation application

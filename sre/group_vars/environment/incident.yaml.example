@@ -1,5 +1,0 @@
-incident:
-  # file:
-  #   id: 1
-  #   is_test: false
-  runner: local

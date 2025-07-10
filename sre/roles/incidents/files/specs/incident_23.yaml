@@ -16,7 +16,8 @@ spec:
       modifications: []
     tools:
       category: sre
-      selected: []
+      selected:
+        - kubernetes-topology-monitor
   faults:
     - custom:
         name: unsupported-image

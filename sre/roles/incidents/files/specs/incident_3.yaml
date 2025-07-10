@@ -16,7 +16,8 @@ spec:
       modifications: []
     tools:
       category: sre
-      selected: []
+      selected:
+        - kubernetes-topology-monitor
   faults:
     - otel_demo:
         flags:
