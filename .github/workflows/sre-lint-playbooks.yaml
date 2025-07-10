@@ -26,13 +26,10 @@ jobs:
       - name: Run ansible-lint
         uses: ansible/ansible-lint@v25.5.0
         with:
-          args: |
-            playbooks/manage_applications.yaml
-            playbooks/manage_tools.yaml
-            playbooks/manage_incidents.yaml
+          args: playbooks/manage_applications.yaml playbooks/manage_tools.yaml playbooks/manage_incidents.yaml
           setup_python: "false"
           working_directory: sre
-          requirements_file: ../../requirements.yaml
+          requirements_file: requirements.yaml
   lint-remote-cluster-playbooks:
     name: Lint playbooks and roles in remote cluster directory
     runs-on: ubuntu-24.04
@@ -48,9 +45,6 @@ jobs:
       - name: Run ansible-lint
         uses: ansible/ansible-lint@v25.5.0
         with:
-          args: |
-            playbooks/manage_awx_stack.yaml
-            playbooks/manage_kops_stack.yaml
           setup_python: "false"
           working_directory: sre/dev/remote_cluster
           requirements_file: ../../requirements.yaml
