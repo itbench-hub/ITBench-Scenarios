@@ -111,27 +111,23 @@ undeploy_astronomy_shop: ## Undeploys the Astronomy Shop application
 
 .PHONY: deploy_hotel_reservation
 deploy_hotel_reservation: ## Deploys the Hotel Reservation application
-	@echo "WARNING: Use of Hotel Reservation is deprecated."
+	@echo "WARNING: Hotel Reservation has been removed. Please use a pre-release version of ITBench to run scenarios with this application."
 	@echo "This command will be removed in a future version."
-	ansible-playbook -v base.yaml --tags "install_sample_applications" \
-		--extra-vars "sample_application=dsb_hotel_reservation"
 
 .PHONY: undeploy_hotel_reservation
 undeploy_hotel_reservation: ## Undeploys the Hotel Reservation application
-	ansible-playbook -v base.yaml --tags "uninstall_sample_applications" \
-		--extra-vars "sample_application=dsb_hotel_reservation"
+	@echo "WARNING: Hotel Reservation has been removed. Please use a pre-release version of ITBench to run scenarios with this application."
+	@echo "This command will be removed in a future version."
 
 .PHONY: deploy_elasticsearch
 deploy_elasticsearch: ## Deploys the Elasticsearch cluster
-	@echo "WARNING: Use of Elasticsearch is deprecated."
+	@echo "WARNING: Elasticsearch has been removed. Please use a pre-release version of ITBench to run scenarios with this application."
 	@echo "This command will be removed in a future version."
-	ansible-playbook -v base.yaml --tags "install_sample_applications" \
-		--extra-vars "sample_application=elasticsearch"
 
 .PHONY: undeploy_elasticsearch
 undeploy_elasticsearch: ## Undeploys the Elasticsearch cluster
-	ansible-playbook -v base.yaml --tags "uninstall_sample_applications" \
-		--extra-vars "sample_application=elasticsearch"
+	@echo "WARNING: Elasticsearch has been removed. Please use a pre-release version of ITBench to run scenarios with this application."
+	@echo "This command will be removed in a future version."
 
 .PHONY: awx_configure_init
 awx_configure_init:
