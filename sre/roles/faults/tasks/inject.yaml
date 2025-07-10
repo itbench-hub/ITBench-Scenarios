@@ -19,11 +19,3 @@
     file: inject_otel_demo.yaml
   when:
     - fault.otel_demo is defined
-
-# TODO: Remove when refactoring e2e
-
-# - name: Import fault injection time tasks
-#   ansible.builtin.import_tasks:
-#     file: register_fault_injection_time.yaml
-#   when:
-#     - false

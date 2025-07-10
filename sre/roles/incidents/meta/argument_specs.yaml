@@ -3,9 +3,7 @@ argument_specs:
   load:
     short_description: Entry point for the load tasks
     description:
-      - This set of tasks loads a file containing an incident spec. The spec
-        is then used to generate the relevant variables required for code
-        execution.
+      - This set of tasks loads a file containing an incident spec. The spec is then used to generate the relevant variables required for code execution.
     author:
       - Gerard Vanloo
     options:

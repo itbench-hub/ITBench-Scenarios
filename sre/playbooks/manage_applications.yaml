@@ -58,3 +58,21 @@
           kubeconfig: "{{ cluster.kubeconfig }}"
           platform: "{{ cluster_platform }}"
           provider: "{{ cluster_provider }}"
+
+    # - name: Import e2e role
+    #   ansible.builtin.import_role:
+    #     name: e2e
+    #     tasks_from: register_deployment_time
+    #   tags:
+    #     - install_applications
+    #   when:
+    #     - incident.runner != 'local'
+
+    # - name: Import e2e role
+    #   ansible.builtin.import_role:
+    #     name: e2e
+    #     tasks_from: register_deployment_failure
+    #   tags:
+    #     - capture_failed_deployment_state
+    #   when:
+    #     - incident.runner != 'local'

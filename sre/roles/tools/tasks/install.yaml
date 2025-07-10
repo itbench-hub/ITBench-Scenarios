@@ -1,10 +1,4 @@
 ---
-- name: Import Assertion JSON initialization tasks
-  ansible.builtin.import_tasks:
-    file: initialize_assertion_json.yaml
-  when:
-    - (sre_bench_runner | default(false))
-
 - name: Import Prometheus installation tasks
   ansible.builtin.import_tasks:
     file: install_prometheus.yaml

@@ -27,8 +27,9 @@ jobs:
         uses: ansible/ansible-lint@v25.5.0
         with:
           args: |
-            playbooks/manage_applications.yaml playbooks/manage_tools.yaml playbooks/manage_incidents.yaml
-            roles/applications roles/common roles/tools roles/environment roles/kubernetes role/incidents
+            playbooks/manage_applications.yaml
+            playbooks/manage_tools.yaml
+            playbooks/manage_incidents.yaml
           setup_python: "false"
           working_directory: sre
           requirements_file: ../../requirements.yaml
@@ -47,6 +48,9 @@ jobs:
       - name: Run ansible-lint
         uses: ansible/ansible-lint@v25.5.0
         with:
+          args: |
+            playbooks/manage_awx_stack.yaml
+            playbooks/manage_kops_stack.yaml
           setup_python: "false"
           working_directory: sre/dev/remote_cluster
           requirements_file: ../../requirements.yaml

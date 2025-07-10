@@ -59,6 +59,15 @@
       when:
         - incident.file is undefined
   tasks:
+    # - name: Import e2e role
+    #   ansible.builtin.import_role:
+    #     name: e2e
+    #     tasks_from: initialize_assertion_json
+    #   tags:
+    #     - install_tools
+    #   when:
+    #     - incident.runner != 'local'
+
     - name: Import tools role
       ansible.builtin.import_role:
         name: tools
@@ -67,3 +76,12 @@
           cloud_provider: "{{ cluster_provider }}"
           kubeconfig: "{{ cluster.kubeconfig }}"
           platform: "{{ cluster_platform }}"
+
+    # - name: Import e2e role
+    #   ansible.builtin.import_role:
+    #     name: e2e
+    #     tasks_from: finalize_assertion_json
+    #   tags:
+    #     - uninstall_tools
+    #   when:
+    #     - incident.runner != 'local'

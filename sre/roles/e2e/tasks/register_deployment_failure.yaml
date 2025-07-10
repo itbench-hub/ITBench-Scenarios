@@ -8,8 +8,6 @@
             status: False
             lastTransitionTime: "{{ now(utc=True, fmt='%Y-%m-%dT%H:%M:%SZ') }}"
   when: sre_bench_runner
-  tags:
-    - capture_failed_deployment_state
 
 - name: Create a JSON with application deployment details
   copy:
@@ -17,8 +15,6 @@
     dest: "/tmp/assertion.json"
     mode: "0644"
   when: sre_bench_runner
-  tags:
-    - capture_failed_deployment_state
 
 - name: Upload the JSON with application deployment details to S3
   amazon.aws.s3_object:
@@ -30,5 +26,3 @@
   when:
     - sre_bench_runner
     - run_uuid is defined and scenario_number is defined and run_number is defined
-  tags:
-    - capture_failed_deployment_state

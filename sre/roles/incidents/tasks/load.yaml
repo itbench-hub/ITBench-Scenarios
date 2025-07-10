@@ -15,21 +15,25 @@
   when:
     - incidents_file.is_test
 
+- name: Extract environment configuration from spec
+  ansible.builtin.set_fact:
+    env_configuration: "{{ incident_spec.spec.environment }}"
+
 - name: Create tools_enabled dictionary for tools role
   ansible.builtin.set_fact:
     tools_enabled:
-      chaos_mesh: "{{ 'chaos-mesh' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category != '' }}"
-      clickhouse: "{{ 'clickhouse' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category != '' }}"
-      ingress: "{{ 'ingress' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category != '' }}"
-      jaeger: "{{ 'jaeger' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category != '' }}"
-      kubernetes_metrics_server: "{{ 'kubernetes-metrics-server' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category == 'finops' }}"
-      kubernetes_topology_monitor: "{{ 'kubernetes-topology-monitor' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category != '' }}"
-      opencost: "{{ 'kubernetes-metrics-server' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category == 'finops' }}"
-      opensearch: "{{ 'opensearch' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category != '' }}"
-      opentelemetry: "{{ 'opentelemetry' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category != '' }}"
-      prometheus: "{{ 'prometheus' in incident_spec.spec.environment.tools.selected or incident_spec.spec.environment.tools.category != '' }}"
+      chaos_mesh: "{{ 'chaos-mesh' in env_configuration.tools.selected or env_configuration.tools.category != '' }}"
+      clickhouse: "{{ 'clickhouse' in env_configuration.tools.selected or env_configuration.tools.category != '' }}"
+      ingress: "{{ 'ingress' in env_configuration.tools.selected or env_configuration.tools.category != '' }}"
+      jaeger: "{{ 'jaeger' in env_configuration.tools.selected or env_configuration.tools.category != '' }}"
+      kubernetes_metrics_server: "{{ 'kubernetes-metrics-server' in env_configuration.tools.selected or env_configuration.tools.category == 'finops' }}"
+      kubernetes_topology_monitor: "{{ 'kubernetes-topology-monitor' in env_configuration.tools.selected or env_configuration.tools.category != '' }}"
+      opencost: "{{ 'kubernetes-metrics-server' in env_configuration.tools.selected or env_configuration.tools.category == 'finops' }}"
+      opensearch: "{{ 'opensearch' in env_configuration.tools.selected or env_configuration.tools.category != '' }}"
+      opentelemetry: "{{ 'opentelemetry' in env_configuration.tools.selected or env_configuration.tools.category != '' }}"
+      prometheus: "{{ 'prometheus' in env_configuration.tools.selected or env_configuration.tools.category != '' }}"
 
 - name: Create applications_enabled dictionary for applications role
   ansible.builtin.set_fact:
     applications_enabled:
-      otel_demo: "{{ 'otel-demo' in incident_spec.spec.environment.applications }}"
+      otel_demo: "{{ 'otel-demo' in env_configuration.applications }}"
