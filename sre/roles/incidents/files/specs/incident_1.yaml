@@ -21,4 +21,5 @@ spec:
   faults:
     - otel_demo:
         flags:
-          - recommendationCacheFailure
+          - name: recommendationCacheFailure
+            state: 'on'

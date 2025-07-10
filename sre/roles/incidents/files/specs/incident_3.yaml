@@ -21,4 +21,5 @@ spec:
   faults:
     - otel_demo:
         flags:
-          - adHighCpu
+          - name: adHighCpu
+            state: 'on'
