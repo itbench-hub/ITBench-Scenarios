@@ -1,1 +1,2 @@
+kubeconfig: ~/.kube/config
 s3_endpoint_url: "https://s3.us-east-2.amazonaws.com"
