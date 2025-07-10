@@ -1,21 +1,11 @@
 ---
 - name: Apply tags to tasks within included file
-  ansible.builtin.include_tasks:
+  ansible.builtin.import_tasks:
     file: leverage_ingress.yaml
-    apply:
-      tags:
-        - pre_fault_removal
-  tags:
-    - pre_fault_removal
 
 - name: Apply tags to tasks within included file
-  ansible.builtin.include_tasks:
+  ansible.builtin.import_tasks:
     file: leverage_port_forwarding.yaml
-    apply:
-      tags:
-        - pre_fault_removal
-  tags:
-    - pre_fault_removal
 
 - name: Call the Topology APIs
   uri:
@@ -34,24 +24,18 @@
   retries: 10
   delay: 5
   until: topology_responses is succeeded
-  tags:
-    - pre_fault_removal
 
 - name: Ensure topology_information directory exists
   ansible.builtin.file:
     path: "/runner/topology_information"
     state: directory
-  tags:
-    - pre_fault_removal
   when: run_uuid is defined and scenario_number is defined and run_number is defined
 
 - name: Copy content to file(s)
   ansible.builtin.copy:
     content: "{{ item.content | to_json }}"
-    dest: "/runner/topology_information/end_{{ item.item }}_{{now(utc=true,fmt='%Y-%m-%dT%H:%M:%S.%f')}}.json"
+    dest: "/runner/topology_information/start_{{ item.item }}_{{now(utc=true,fmt='%Y-%m-%dT%H:%M:%S.%f')}}.json"
   with_items: "{{ topology_responses.results }}"
-  tags:
-    - pre_fault_removal
   when: run_uuid is defined and scenario_number is defined and run_number is defined
 
 - name: Upload structured-unstructured outputs to S3
@@ -60,6 +44,4 @@
     file_root: "/runner/topology_information"
     key_prefix: "{{ sre_agent_name__version_number }}/{{run_uuid}}/{{scenario_number}}/{{run_number}}/topology_information"
     region: "us-east-2"
-  tags:
-    - pre_fault_removal
   when: run_uuid is defined and scenario_number is defined and run_number is defined
