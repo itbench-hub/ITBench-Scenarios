@@ -21,7 +21,7 @@ group_vars: ## Generates the group variables
 deploy_tools: ## Deploys the observability and fault tools to cluster
 ifdef INCIDENT_NUMBER
 	ansible-playbook -i inventory.yaml playbooks/manage_tools.yaml --tags "install_tools" \
-		--extra-vars "incident={ 'id': $(INCIDENT_NUMBER) }"
+		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
 else
 	ansible-playbook -i inventory.yaml playbooks/manage_tools.yaml --tags "install_tools"
 endif
@@ -34,7 +34,7 @@ reinit_tools: ## Re-initialize observability and fault tools to cluster
 undeploy_tools: ## Undeploys the observability and fault tools to cluster
 ifdef INCIDENT_NUMBER
 	ansible-playbook -i inventory.yaml playbooks/manage_tools.yaml --tags "uninstall_tools" \
-		--extra-vars "incident={ 'id': $(INCIDENT_NUMBER) }"
+		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
 else
 	ansible-playbook -i inventory.yaml playbooks/manage_tools.yaml --tags "uninstall_tools"
 endif
@@ -43,7 +43,7 @@ endif
 deploy_applications: ## Deploys the applications to cluster
 ifdef INCIDENT_NUMBER
 	ansible-playbook -i inventory.yaml playbooks/manage_applications.yaml --tags "install_applications" \
-		--extra-vars "incident={ 'id': $(INCIDENT_NUMBER) }"
+		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
 else
 	ansible-playbook -i inventory.yaml playbooks/manage_applications.yaml --tags "install_applications"
 endif
@@ -52,7 +52,7 @@ endif
 undeploy_applications: ## Undeploys the applications to cluster
 ifdef INCIDENT_NUMBER
 	ansible-playbook -i inventory.yaml playbooks/manage_applications.yaml --tags "uninstall_applications" \
-		--extra-vars "incident={ 'id': $(INCIDENT_NUMBER) }"
+		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
 else
 	ansible-playbook -i inventory.yaml playbooks/manage_applications.yaml --tags "uninstall_applications"
 endif
@@ -61,7 +61,7 @@ endif
 inject_incident_fault: ## Injects the fault used in a specific incident
 ifdef INCIDENT_NUMBER
 	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "create_objects,inject_faults" \
-		--extra-vars "incident={ 'id': $(INCIDENT_NUMBER) }"
+		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
 else
 	@echo "Missing INCIDENT_NUMBER argument. Please run this command with this variable."
 endif
@@ -70,7 +70,7 @@ endif
 remove_incident_fault: ## Removes the fault used in a specific incident
 ifdef INCIDENT_NUMBER
 	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "delete_objects,remove_faults" \
-		--extra-vars "incident={ 'id': $(INCIDENT_NUMBER) }"
+		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
 else
 	@echo "Missing INCIDENT_NUMBER argument. Please run this command with this variable."
 endif

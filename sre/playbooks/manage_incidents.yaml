@@ -5,11 +5,9 @@
   pre_tasks:
     - name: Ensure incident file is defined
       ansible.builtin.assert:
-        that:
-          - incident is defined
-          - incident.id is defined
-        fail_msg: Incident variable is not defined.
-        success_msg: Incident is defined.
+        that: incident_id is defined
+        fail_msg: incident_id is not defined. Please run playbook with variable defined via CLI arguments.
+        success_msg: incident_id is defined.
       tags:
         - always
 
@@ -41,7 +39,7 @@
         - always
       vars:
         incidents_file:
-          id: "{{ incident.id }}"
+          id: "{{ incident_id }}"
   tasks:
     - name: Import incidents role
       ansible.builtin.import_role:
