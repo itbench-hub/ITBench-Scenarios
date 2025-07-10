@@ -1,15 +1,4 @@
 ---
-- name: Remove fault (node selector)
-  kubernetes.core.k8s_json_patch:
-    api_version: apps/v1
-    kind: "{{ manager.kind }}"
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ manager.name }}"
-    namespace: "{{ manager.namespace }}"
-    patch:
-      - op: remove
-        path: /spec/template/spec/nodeSelector
-  loop: "{{ targets }}"
-  loop_control:
-    label: "{{ manager.kind | lower }}/{{ manager.name }}"
-    loop_var: manager
+- name: Print help message
+  ansible.builtin.debug:
+    msg: To remove this fault, please uninstall and reinstall the application it was injected into.
