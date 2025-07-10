@@ -11,7 +11,7 @@
       kind: Schedule
       metadata:
         name: "{{ experiment.name }}"
-        namespace: "{{ tools.helm_releases.chaos_mesh.namespace }}"
+        namespace: "{{ tools_helm_releases.chaos_mesh.namespace }}"
     state: absent
   loop: "{{ experiments }}"
   loop_control:

@@ -11,7 +11,7 @@ metadata:
     - Tonic
 environment:
   applications:
-    - otel_demo
+    - otel-demo
   kubernetes:
     additions: []
     modifications: []

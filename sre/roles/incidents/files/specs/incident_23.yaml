@@ -10,7 +10,7 @@ metadata:
 spec:
   environment:
     applications:
-      - otel_demo
+      - otel-demo
     kubernetes:
       additions: []
       modifications: []
@@ -21,7 +21,7 @@ spec:
   faults:
     - custom:
         name: unsupported-image
-        target:
+        targets:
           workload_managers:
             - kind: Deployment
               name: checkout

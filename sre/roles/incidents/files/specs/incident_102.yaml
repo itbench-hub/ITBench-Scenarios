@@ -10,7 +10,7 @@ metadata:
 spec:
   environment:
     applications:
-      - otel_demo
+      - otel-demo
     kubernetes:
       additions:
         - resource_quotas:
