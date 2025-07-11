@@ -25,7 +25,7 @@ argument_specs:
             required: false
             type: dict
             options:
-              experiments:
+              schedules:
                 elements: dict
                 required: true
                 type: list
