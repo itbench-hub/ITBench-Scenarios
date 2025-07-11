@@ -29,6 +29,16 @@
     - fault.custom.targets.workload_managers is defined
     - fault.custom.targets.workload_managers | length > 0
 
+- name: Import misconfigured resource quota injection tasks
+  ansible.builtin.import_tasks:
+    file: inject_custom_misconfigured_resource_quota.yaml
+  vars:
+    targets: "{{ fault.custom.targets.namespaces }}"
+  when:
+    - fault.custom.name == 'misconfigured-resource-quota'
+    - fault.custom.targets.namespaces is defined
+    - fault.custom.targets.namespaces | length > 0
+
 - name: Import misconfigured service port injection tasks
   ansible.builtin.import_tasks:
     file: inject_custom_misconfigured_service_port.yaml

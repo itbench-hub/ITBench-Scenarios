@@ -36,10 +36,6 @@ argument_specs:
                 required: false
                 type: list
                 elements: dict
-              resource_quotas:
-                required: false
-                type: list
-                elements: dict
           modify:
             required: false
             type: dict
@@ -82,24 +78,6 @@ argument_specs:
               name:
                 required: true
                 type: str
-  manage_resource_quotas:
-    short_description: Manages the lifecycle of a ResourceQuota object
-    description:
-      - Creates or deletes a ResourceQuota object.
-    author:
-      - Gerard Vanloo
-    options:
-      namespaces:
-        required: true
-        type: list
-        elements: dict
-        options:
-          namespace:
-            required: true
-            type: str
-          memory:
-            required: true
-            type: str
   modify_replicas:
     short_description: Sets a new replica count for a Kubernetes resource replica
     description:
