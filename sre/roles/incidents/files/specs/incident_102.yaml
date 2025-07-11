@@ -12,18 +12,15 @@ spec:
     applications:
       - otel-demo
     kubernetes:
-      additions:
-        - resource_quotas:
-            namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
-            memory: 1Gi
-      modifications:
-        scale:
-          - kind: Deployment
-            name: frontend
-            namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
-            replicas: 2
+      additions: []
+      modifications: []
     tools:
       category: sre
       selected:
         - kubernetes-topology-monitor
-  faults: []
+  faults:
+    - custom:
+        name: misconfigured-resource-quota
+        targets:
+          namespaces:
+            - name: "{{ applications_helm_releases.otel_demo.namespace }}"

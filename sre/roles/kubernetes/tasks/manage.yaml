@@ -1,9 +1,9 @@
 ---
-- name: Import resource quota management tasks
+- name: Import horizontal pod autoscaler management tasks
   ansible.builtin.import_tasks:
-    file: manage_resource_quotas.yaml
+    file: manage_horizontal_pod_autoscalers.yaml
   vars:
-    resource_quotas: "{{ kubernetes_actions.manage.resource_quotas }}"
+    horizontal_pod_autoscalers: "{{ kubernetes_actions.manage.horizontal_pod_autoscalers }}"
   when:
-    - kubernetes_actions.manage.resource_quotas is defined
-    - kubernetes_actions.manage.resource_quotas | length > 0
+    - kubernetes_actions.manage.horizontal_pod_autoscalers is defined
+    - kubernetes_actions.manage.horizontal_pod_autoscalers | length > 0

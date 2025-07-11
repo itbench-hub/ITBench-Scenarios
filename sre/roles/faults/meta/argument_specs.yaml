@@ -38,6 +38,7 @@ argument_specs:
                   - invalid-node-selector
                   - misconfigured-command
                   - misconfigured-persitent-volume-claim
+                  - misconfigured-resource-quota
                   - misconfigured-service-port
                   - unsupported-image
                 required: true
@@ -46,6 +47,14 @@ argument_specs:
                 required: true
                 type: dict
                 options:
+                  namespaces:
+                    elements: dict
+                    required: false
+                    type: list
+                    options:
+                      name:
+                        required: true
+                        type: str
                   services:
                     elements: dict
                     required: false
