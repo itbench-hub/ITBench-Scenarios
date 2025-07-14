@@ -1,3 +1,4 @@
+---
 applications_otel_demo_configuration:
   accounting:
     autoscaling: false

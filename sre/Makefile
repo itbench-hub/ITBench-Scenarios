@@ -60,7 +60,7 @@ endif
 .PHONY: inject_incident_fault
 inject_incident_fault: ## Injects the fault used in a specific incident
 ifdef INCIDENT_NUMBER
-	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "create_objects,inject_faults" \
+	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "inject_faults" \
 		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
 else
 	@echo "Missing INCIDENT_NUMBER argument. Please run this command with this variable."
@@ -69,7 +69,7 @@ endif
 .PHONY: remove_incident_fault
 remove_incident_fault: ## Removes the fault used in a specific incident
 ifdef INCIDENT_NUMBER
-	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "delete_objects,remove_faults" \
+	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "remove_faults" \
 		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
 else
 	@echo "Missing INCIDENT_NUMBER argument. Please run this command with this variable."

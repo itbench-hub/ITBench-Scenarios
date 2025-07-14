@@ -247,38 +247,38 @@ groups:
     kind: ConfigMap
     namespace: otel-demo
     filter:
-    - flagd-config\b
+      - flagd-config\b
     root_cause: true
   - id: flagd-pod-1
     kind: Pod
     namespace: otel-demo
     filter:
-    - flagd-.*
+      - flagd-.*
   - id: flagd-service-1
     kind: Service
     namespace: otel-demo
     filter:
-    - flagd\b
+      - flagd\b
   - id: ad-pod-1
     kind: Pod
     filter:
-    - adservice-.*
+      - adservice-.*
     namespace: otel-demo
   - id: ad-service-1
     kind: Service
     filter:
-    - adservice\b
+      - adservice\b
     namespace: otel-demo
   - id: frontend-service-1
     kind: Service
     filter:
-    - frontend\b
+      - frontend\b
     namespace: otel-demo
   - id: frontend-pod-1
     kind: Pod
     namespace: otel-demo
     filter:
-    - frontend-.*
+      - frontend-.*
 aliases:
   - - flagd-pod-1
     - flagd-service-1

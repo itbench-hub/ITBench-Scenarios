@@ -23,9 +23,9 @@ environment:
         schedules:
           - name: otel-demo-quote-http-chaos-abort
             spec:
-              schedule: "* * * * *"  # Run every minute
-              historyLimit: 1  # Only keep record of the latest experiment
-              concurrencyPolicy: Forbid  # Don't start a new one if previous is still running
+              schedule: "* * * * *" # Run every minute
+              historyLimit: 1 # Only keep record of the latest experiment
+              concurrencyPolicy: Forbid # Don't start a new one if previous is still running
               type: HTTPChaos
               httpChaos:
                 mode: all
@@ -37,6 +37,6 @@ environment:
                 target: Request
                 port: 8080
                 method: POST
-                path: '*'
+                path: "*"
                 abort: true
                 duration: "55s"

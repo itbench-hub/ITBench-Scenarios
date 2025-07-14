@@ -16,13 +16,13 @@ groups:
   - id: checkout-pod-1
     kind: Pod
     filter:
-    - checkout-.*
+      - checkout-.*
     namespace: otel-demo
     root_cause: true
   - id: checkout-service-1
     kind: Service
     filter:
-    - checkout\b
+      - checkout\b
     namespace: otel-demo
 aliases:
   - - checkout-service-1

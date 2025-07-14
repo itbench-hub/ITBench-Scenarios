@@ -21,23 +21,23 @@ groups:
   - id: search-service-1
     kind: Service
     filter:
-    - .*search-.*
+      - .*search-.*
     namespace: hotel-reservations
   - id: search-deployment-1
     kind: Deployment
     filter:
-    - .*search-.*
+      - .*search-.*
     namespace: hotel-reservations
   - id: frontend-service-1
     kind: Service
     filter:
-    - .*frontend-.*
+      - .*frontend-.*
     namespace: hotel-reservations
   - id: frontend-pod
     kind: Pod
     namespace: hotel-reservations
     filter:
-    - .*frontend-.*
+      - .*frontend-.*
 aliases:
   - - search-deployment-1
     - search-service-1
@@ -52,8 +52,8 @@ recommended_actions:
   - solution:
       id: increase_memory_resource_limit
       actions:
-      - increase memory resource limit
+        - increase memory resource limit
   - solution:
       id: reduce_memory_on_deployment_pods
       actions:
-      - patch deployments or pods to reduce the requested memory
+        - patch deployments or pods to reduce the requested memory

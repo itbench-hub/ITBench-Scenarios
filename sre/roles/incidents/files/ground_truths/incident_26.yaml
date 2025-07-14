@@ -20,13 +20,13 @@ groups:
   - id: tamper-body-otel-demo-emailservice-1
     kind: HttpChaos
     filter:
-    - .*emailservice
+      - .*emailservice
     namespace: chaos-mesh
     root_cause: true
   - id: send_order_confirmation-endpoint-1
     kind: ServiceOperation
     filter:
-    - emailservice-.*_send_order_confirmation
+      - emailservice-.*_send_order_confirmation
     namespace: otel-demo
   - id: email-service-1
     kind: Service
@@ -41,7 +41,7 @@ groups:
   - id: checkout-service-1
     kind: Service
     filter:
-        - checkout\b
+      - checkout\b
     namespace: otel-demo
   - id: email-pod-1
     kind: Pod
@@ -57,19 +57,15 @@ aliases:
 propagations:
   - source: tamper-body-otel-demo-emailservice-1
     target: send_order_confirmation-endpoint-1
-    condition: tamper-body-otel-demo-emailservice httpchaos tamper body of /api/send_order_confirmation
-      emailservice set http-request-failure on emailservice
-    effect: send_order_confirmation endpoint payload of /api/send_order_confirmation
-      POST request is corrupted
+    condition: tamper-body-otel-demo-emailservice httpchaos tamper body of /api/send_order_confirmation emailservice set http-request-failure on emailservice
+    effect: send_order_confirmation endpoint payload of /api/send_order_confirmation POST request is corrupted
   - source: send_order_confirmation-endpoint-1
     target: email-service-1
-    condition: send_order_confirmation endpoint payload of /api/send_order_confirmation
-      POST request is corrupted
+    condition: send_order_confirmation endpoint payload of /api/send_order_confirmation POST request is corrupted
     effect: email service Error Rate is Above Threshold
   - source: email-service-1
     target: checkout-service-1
-    condition: send_order_confirmation endpoint payload of /api/send_order_confirmation
-      POST request is corrupted
+    condition: send_order_confirmation endpoint payload of /api/send_order_confirmation POST request is corrupted
     effect: checkoutservice Error Rate is Above Threshold
 recommended_actions:
   - solution:

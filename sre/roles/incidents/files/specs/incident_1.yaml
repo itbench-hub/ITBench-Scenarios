@@ -20,4 +20,4 @@ spec:
     - otel_demo:
         flags:
           - name: recommendationCacheFailure
-            state: 'on'
+            state: "on"
