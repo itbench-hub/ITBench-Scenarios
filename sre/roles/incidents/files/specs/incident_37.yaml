@@ -10,7 +10,8 @@ metadata:
 spec:
   environment:
     applications:
-      - otel-demo
+      otel_demo:
+        enabled: true
     kubernetes:
       additions:
         horizontal_pod_autoscalers:

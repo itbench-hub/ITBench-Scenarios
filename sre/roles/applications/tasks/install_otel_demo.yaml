@@ -103,6 +103,7 @@
     release_name: "{{ helm_releases.otel_demo.name }}"
     release_namespace: "{{ helm_releases.otel_demo.namespace }}"
     release_state: present
+    timeout: 10m0s
     values:
       default:
         image:
@@ -114,6 +115,7 @@
           podSecurityContext:
             runAsNonRoot: true
             runAsUser: 1654
+          replicas: "{{ configuration.accounting.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -123,6 +125,7 @@
         ad:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.ad.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -132,6 +135,7 @@
         cart:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.cart.replicas }}"
           resources:
             requests:
               cpu: 25m
@@ -139,6 +143,7 @@
         checkout:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.checkout.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -148,6 +153,7 @@
         currency:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.currency.replicas }}"
           resources:
             requests:
               cpu: 25m
@@ -155,6 +161,7 @@
         email:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.email.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -171,6 +178,7 @@
         fraud-detection:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.fraud_detection.replicas }}"
           resources:
             requests:
               cpu: 25m
@@ -180,6 +188,7 @@
         frontend:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.frontend.replicas }}"
           resources:
             requests:
               cpu: 300m
@@ -187,6 +196,7 @@
         frontend-proxy:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.frontend_proxy.replicas }}"
           resources:
             requests:
               cpu: 75m
@@ -199,6 +209,7 @@
           podSecurityContext:
             runAsNonRoot: true
             runAsUser: 101
+          replicas: "{{ configuration.image_provider.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -208,6 +219,7 @@
             tag: 2.0.2-kafka
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.kafka.replicas }}"
           resources:
             requests:
               cpu: 25m
@@ -227,6 +239,7 @@
         payment:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.payment.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -234,6 +247,7 @@
         product-catalog:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.product_catalog.replicas }}"
           resources:
             requests:
               cpu: 50m
@@ -243,6 +257,7 @@
         quote:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.quote.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -250,6 +265,7 @@
         recommendation:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.recommendation.replicas }}"
           resources:
             requests:
               cpu: 50m
@@ -257,6 +273,7 @@
         shipping:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.shipping.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -264,6 +281,7 @@
         valkey-cart:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.valkey_cart.replicas }}"
           resources:
             requests:
               cpu: 10m
