@@ -1,0 +1,37 @@
+applications_otel_demo_configuration:
+  accounting:
+    replicas: 1
+  ad:
+    replicas: 1
+  cart:
+    replicas: 1
+  checkout:
+    replicas: 1
+  currency:
+    replicas: 1
+  email:
+    replicas: 1
+  fraud_detection:
+    replicas: 1
+  frontend:
+    replicas: 1
+  frontend_proxy:
+    replicas: 1
+  image_provider:
+    replicas: 1
+  kafka:
+    replicas: 1
+  load_generator: {}
+  otel_collector: {}
+  payment:
+    replicas: 1
+  product_catalog:
+    replicas: 1
+  quote:
+    replicas: 1
+  recommendation:
+    replicas: 1
+  shipping:
+    replicas: 1
+  valkey_cart:
+    replicas: 1
