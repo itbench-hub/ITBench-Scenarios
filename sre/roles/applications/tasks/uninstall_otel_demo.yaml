@@ -1,4 +1,14 @@
 ---
+- name: Remove Horizontal Pod Autoscalers
+  kubernetes.core.k8s:
+    api_version: autoscaling/v2
+    delete_all: true
+    kind: HorizontalPodAutoscaler
+    kubeconfig: "{{ applications_cluster.kubeconfig }}"
+    namespace: "{{ helm_release.namespace }}"
+    state: absent
+    wait: true
+
 - name: Remove Alerting Prometheus Rules
   kubernetes.core.k8s:
     kubeconfig: "{{ applications_cluster.kubeconfig }}"

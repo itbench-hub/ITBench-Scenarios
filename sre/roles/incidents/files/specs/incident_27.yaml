@@ -13,9 +13,6 @@ environment:
   applications:
     otel_demo:
       enabled: true
-  kubernetes:
-    additions: []
-    modifications: []
   tools:
     category: sre
     selected:
