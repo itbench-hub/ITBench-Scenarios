@@ -21,7 +21,9 @@ applications_otel_demo_configuration:
     replicas: 1
   kafka:
     replicas: 1
-  load_generator: {}
+  load_generator:
+    spawn_rate: 1
+    users: 10
   otel_collector: {}
   payment:
     replicas: 1

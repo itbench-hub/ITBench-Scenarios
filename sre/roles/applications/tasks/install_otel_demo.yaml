@@ -18,6 +18,9 @@
 #       (>=2.0.3). This is a temporary fix to keep kafka working without making too many
 #       additional edits that need to be reverted in the configuration.
 
+# TODO: Find a fix for Ansible converting the replica counts in the configuration into strings
+#       regardless of their actual type.
+
 - name: Create the release namespace
   kubernetes.core.k8s:
     kubeconfig: "{{ applications_cluster.kubeconfig }}"
@@ -115,7 +118,7 @@
           podSecurityContext:
             runAsNonRoot: true
             runAsUser: 1654
-          replicas: "{{ configuration.accounting.replicas }}"
+          # replicas: "{{ configuration.accounting.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -125,7 +128,7 @@
         ad:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
-          replicas: "{{ configuration.ad.replicas }}"
+          # replicas: "{{ configuration.ad.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -135,7 +138,7 @@
         cart:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
-          replicas: "{{ configuration.cart.replicas }}"
+          # replicas: "{{ configuration.cart.replicas }}"
           resources:
             requests:
               cpu: 25m
@@ -143,7 +146,7 @@
         checkout:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
-          replicas: "{{ configuration.checkout.replicas }}"
+          # replicas: "{{ configuration.checkout.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -153,7 +156,7 @@
         currency:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
-          replicas: "{{ configuration.currency.replicas }}"
+          # replicas: "{{ configuration.currency.replicas }}"
           resources:
             requests:
               cpu: 25m
@@ -161,7 +164,7 @@
         email:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
-          replicas: "{{ configuration.email.replicas }}"
+          # replicas: "{{ configuration.email.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -178,7 +181,7 @@
         fraud-detection:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
-          replicas: "{{ configuration.fraud_detection.replicas }}"
+          # replicas: "{{ configuration.fraud_detection.replicas }}"
           resources:
             requests:
               cpu: 25m
@@ -188,7 +191,7 @@
         frontend:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
-          replicas: "{{ configuration.frontend.replicas }}"
+          # replicas: "{{ configuration.frontend.replicas }}"
           resources:
             requests:
               cpu: 300m
@@ -196,7 +199,7 @@
         frontend-proxy:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
-          replicas: "{{ configuration.frontend_proxy.replicas }}"
+          # replicas: "{{ configuration.frontend_proxy.replicas }}"
           resources:
             requests:
               cpu: 75m
@@ -209,7 +212,7 @@
           podSecurityContext:
             runAsNonRoot: true
             runAsUser: 101
-          replicas: "{{ configuration.image_provider.replicas }}"
+          # replicas: "{{ configuration.image_provider.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -219,7 +222,7 @@
             tag: 2.0.2-kafka
           podAnnotations:
             openshift.io/required-scc: restricted-v2
-          replicas: "{{ configuration.kafka.replicas }}"
+          # replicas: "{{ configuration.kafka.replicas }}"
           resources:
             requests:
               cpu: 25m
@@ -230,6 +233,10 @@
           envOverrides:
             - name: LOCUST_BROWSER_TRAFFIC_ENABLED
               value: "false"
+            - name: LOCUST_SPAWN_RATE
+              value: "{{ configuration.load_generator.spawn_rate }}"
+            - name: LOCUST_USERS
+              value: "{{ configuration.load_generator.users }}"
           podAnnotations:
             openshift.io/required-scc: restricted-v2
           resources:
@@ -239,7 +246,7 @@
         payment:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
-          replicas: "{{ configuration.payment.replicas }}"
+          # replicas: "{{ configuration.payment.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -247,7 +254,7 @@
         product-catalog:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
-          replicas: "{{ configuration.product_catalog.replicas }}"
+          # replicas: "{{ configuration.product_catalog.replicas }}"
           resources:
             requests:
               cpu: 50m
@@ -257,7 +264,7 @@
         quote:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
-          replicas: "{{ configuration.quote.replicas }}"
+          # replicas: "{{ configuration.quote.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -265,7 +272,7 @@
         recommendation:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
-          replicas: "{{ configuration.recommendation.replicas }}"
+          # replicas: "{{ configuration.recommendation.replicas }}"
           resources:
             requests:
               cpu: 50m
@@ -273,7 +280,7 @@
         shipping:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
-          replicas: "{{ configuration.shipping.replicas }}"
+          # replicas: "{{ configuration.shipping.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -281,7 +288,7 @@
         valkey-cart:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
-          replicas: "{{ configuration.valkey_cart.replicas }}"
+          # replicas: "{{ configuration.valkey_cart.replicas }}"
           resources:
             requests:
               cpu: 10m
