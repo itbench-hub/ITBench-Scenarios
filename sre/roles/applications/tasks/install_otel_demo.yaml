@@ -412,5 +412,4 @@
   loop_control:
     label: horizontalpodautoscaler/{{ item | regex_replace('_', '-') }}
   when:
-    - item != 'load_generator' and item != 'otel_collector'
-    - configuration[item].autoscaling
+    - configuration[item].autoscaling | default(false)

@@ -31,7 +31,7 @@ spec:
                 target: Request
                 port: 8080
                 method: POST
-                path: '*'
+                path: "*"
                 selector:
                   namespaces:
                     - "{{ applications_helm_releases.otel_demo.namespace }}"

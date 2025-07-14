@@ -24,49 +24,49 @@ groups:
   - id: http-abort-otel-demo-quoteservice-1
     kind: HttpChaos
     filter:
-    - quote\b
+      - quote\b
     namespace: chaos-mesh
     root_cause: true
   - id: quote-service-1
     kind: Service
     filter:
-    - quote\b
+      - quote\b
     namespace: otel-demo
   - id: checkout-service-1
     kind: Service
     filter:
-    - checkout\b
+      - checkout\b
     namespace: otel-demo
   - id: shipping-service-1
     kind: Service
     filter:
-    - shipping\b
+      - shipping\b
     namespace: otel-demo
   - id: frontend-service-1
     kind: Service
     filter:
-    - frontend\b
+      - frontend\b
     namespace: otel-demo
   - id: frontend-pod-1
     kind: Pod
     namespace: otel-demo
     filter:
-    - frontend-.*
+      - frontend-.*
   - id: checkout-pod-1
     kind: Pod
     namespace: otel-demo
     filter:
-    - checkout-.*
+      - checkout-.*
   - id: quote-pod-1
     kind: Pod
     namespace: otel-demo
     filter:
-    - quote-.*
+      - quote-.*
   - id: shipping-pod-1
     kind: Pod
     namespace: otel-demo
     filter:
-    - shipping-.*
+      - shipping-.*
 aliases:
   - - frontend-service-1
     - frontend-pod-1
@@ -79,8 +79,7 @@ aliases:
 propagations:
   - source: http-abort-otel-demo-quoteservice-1
     target: quote-service-1
-    condition: http-abort-otel-demo-quoteservice httpchaos Aborts all POST request to
-      quoteservice /getquote
+    condition: http-abort-otel-demo-quoteservice httpchaos Aborts all POST request to quoteservice /getquote
     effect: quote service Error Rate is Above Threshold
   - source: quote-service-1
     target: checkout-service-1
