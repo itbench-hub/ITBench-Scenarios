@@ -12,22 +12,43 @@ spec:
     applications:
       otel_demo:
         enabled: true
-    kubernetes:
-      additions:
-        horizontal_pod_autoscalers:
-          - name: frontend
-            namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
-            max-replicas: 5
-            target:
-              kind: Deployment
-              name: frontend
-          - name: recommendation
-            namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
-            max-replicas: 5
-            target:
-              kind: Deployment
-              name: recommendation
-      modifications: []
+        configuration:
+          accounting:
+            autoscaling: true
+          ad:
+            autoscaling: true
+          cart:
+            autoscaling: true
+          checkout:
+            autoscaling: true
+          currency:
+            autoscaling: true
+          email:
+            autoscaling: true
+          fraud_detection:
+            autoscaling: true
+          frontend:
+            autoscaling: true
+          frontend_proxy:
+            autoscaling: true
+          image_provider:
+            autoscaling: true
+          kafka:
+            autoscaling: true
+          load_generator:
+            users: 30
+          payment:
+            autoscaling: true
+          product_catalog:
+            autoscaling: true
+          quote:
+            autoscaling: true
+          recommendation:
+            autoscaling: true
+          shipping:
+            autoscaling: true
+          valkey_cart:
+            autoscaling: true
     tools:
       category: finops
       selected:
