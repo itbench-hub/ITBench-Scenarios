@@ -52,6 +52,6 @@ spec:
     tools:
       category: finops
       selected:
-        - kubernetes-metrics-server
+        # - kubernetes-metrics-server
         - kubernetes-topology-monitor
   faults: []
