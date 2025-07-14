@@ -19,6 +19,16 @@
     - fault.custom.targets.workload_managers is defined
     - fault.custom.targets.workload_managers | length > 0
 
+- name: Import misconfigured horizontal pod autoscaler injection tasks
+  ansible.builtin.import_tasks:
+    file: inject_custom_misconfigured_horizontal_pod_autoscaler.yaml
+  vars:
+    targets: "{{ fault.custom.targets.horizontal_pod_autoscalers }}"
+  when:
+    - fault.custom.name == 'misconfigured-horizontal-pod-autoscaler'
+    - fault.custom.targets.horizontal_pod_autoscalers is defined
+    - fault.custom.targets.horizontal_pod_autoscalers | length > 0
+
 - name: Import misconfigured persistent volume claim injection tasks
   ansible.builtin.import_tasks:
     file: inject_custom_misconfigured_persistent_volume_claim.yaml
