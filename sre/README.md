@@ -32,6 +32,7 @@ The playbook run is configured using variables defined in `group\_vars`.
 - [Python3](https://www.python.org/downloads/) (v3.12.Z)
 - [Helm](https://helm.sh/docs/intro/install/) (v3.16+)
 - [Kubectl](https://kubernetes.io/docs/tasks/tools/)
+- [OpenShift CLI](https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html/cli_tools/openshift-cli-oc) (Required Only for OpenShift)
 
 ### Installing Required Software via Homebrew (for MacOS)
 
@@ -41,6 +42,7 @@ The playbook run is configured using variables defined in `group\_vars`.
 brew install helm
 brew install kubectl
 brew install python@3.12
+brew install openshift-cli
 ```
 
 ### Installing Required Software (for Red Hat Enterprise Linux -- RHEL)
@@ -51,6 +53,7 @@ brew install python@3.12
 ```bash
 sudo dnf install python3.12
 ```
+4. Install the OpenShift CLI by following the instructions [here](https://docs.redhat.com/en/documentation/openshift_container_platform/4.18/html/cli_tools/openshift-cli-oc#cli-installing-cli_cli-developer-commands)
 
 ## Getting Started – Deploying an Incident Scenario
 
@@ -84,12 +87,12 @@ _Note: Depending on what kind of cluster setup is needed, further dependencies m
 
 #### Local Cluster
 
-For instruction on how to create a kind cluster on MacOS, please see the instructions [here](./local_cluster/README.md).
-For instruction on how to create a kind cluster on Red Hat Enterprise Linux (RHEL) virtual machine (VM) or bare-metal instance, please see the instructions [here](./local_cluster/README_RHEL.md).
+For instruction on how to create a kind cluster on MacOS, please see the instructions [here](./dev/local_cluster/README.md).
+For instruction on how to create a kind cluster on Red Hat Enterprise Linux (RHEL) virtual machine (VM) or bare-metal instance, please see the instructions [here](./dev/local_cluster/README_RHEL.md).
 
 #### Remote Cluster
 
-For instruction on how to create an cloud provider based Kubernetes cluster, please see the instructions [here](./remote_cluster/README.md).
+For instruction on how to create an cloud provider based Kubernetes cluster, please see the instructions [here](./dev/remote_cluster/README.md).
 
 Currently, only AWS is supported. AWS clusters are provisioned using [kOps](https://kops.sigs.k8s.io/).
 

@@ -1,0 +1,16 @@
+---
+- name: Include faults role
+  ansible.builtin.include_role:
+    name: faults
+  loop: "{{ incidents_spec.spec.faults }}"
+  vars:
+    faults_cluster:
+      kubeconfig: "{{ incidents_cluster.kubeconfig }}"
+    faults_spec: "{{ item }}"
+
+# - name: Import kubernetes role
+#   ansible.builtin.import_role:
+#     name: kubernetes
+#   vars:
+#     kubernetes_cluster:
+#       kubeconfig: "{{ incidents_cluster.kubeconfig }}"

@@ -1,0 +1,12 @@
+---
+- name: Attempt fault removal (misconfigured command)
+  ansible.builtin.command:
+    cmd: kubectl rollout undo -n {{ manager.namespace }} {{ manager.kind | lower }}/{{ manager.name }}
+  environment:
+    KUBECONFIG: "{{ faults_cluster.kubeconfig }}"
+  register: rollout_undo_output
+  changed_when: rollout_undo_output.rc == 0
+  loop: "{{ targets }}"
+  loop_control:
+    label: "{{ manager.kind | lower }}/{{ manager.name }}"
+    loop_var: manager
