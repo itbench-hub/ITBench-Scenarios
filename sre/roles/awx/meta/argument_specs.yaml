@@ -1,0 +1,29 @@
+---
+argument_specs:
+  main:
+    short_description: Main entry point for awx role
+    description:
+      - This is the main entry point for the awx role.
+      - This role is responsible for installing and uninstalling awx and services.
+    author:
+      - Gerard Vanloo
+    options:
+      awx_cluster:
+        required: false
+        type: dict
+        options:
+          cloud_provider:
+            default: kind
+            required: false
+            type: str
+          kubeconfig:
+            default: ~/.kube/config
+            required: false
+            type: str
+          platform:
+            choices:
+              - kubernetes
+              - openshift
+            default: kubernetes
+            required: false
+            type: str
