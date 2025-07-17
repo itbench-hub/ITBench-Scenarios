@@ -38,7 +38,6 @@ FinOps scenarios are located [here](./sre) along-side SRE scenarios.
 - [ITBench](https://github.com/ITBench-Hub/ITBench): Central repository providing an overview of the ITBench ecosystem, the ITBench Leaderboard, related announcements, and publications.
 - [CISO-CAA Agent](https://github.com/ITBench-Hub/ITBench-CISO-CAA-Agent): CISO (Chief Information Security Officer) agents that automate compliance assessments by generating policies from natural language, collecting evidence, integrating with GitOps workflows, and deploying policies for assessment.
 - [SRE Agent](https://github.com/ITBench-Hub/ITBench-SRE-Agent): SRE (Site Reliability Engineering) agents designed to diagnose and remediate problems in Kubernetes-based environments. Leverage logs, metrics, traces, and Kubernetes states/events from the IT enviroment.
-- [ITBench Leaderboard](https://github.com/ITBench-Hub/ITBench-Leaderboard): Service that handles scenario deployment, agent evaluation, and maintains a public leaderboard for comparing agent performance on ITOps use cases.
 - [ITBench Utilities](https://github.com/ITBench-Hub/ITBench-Utilities): Collection of supporting tools and utilities for participants in the ITBench ecosystem and leaderboard challenges.
 - [ITBench Tutorials](https://github.com/ITBench-Hub/ITBench-Tutorials): Repository containing the latest tutorials, workshops, and educational content for getting started with ITBench.
 
