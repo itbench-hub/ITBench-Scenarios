@@ -1,16 +1,18 @@
 ---
-- name: Remove invalid Persistent Volume Claim
+- name: Delete ResourceQuota
   kubernetes.core.k8s:
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
     resource_definition:
       apiVersion: v1
-      kind: PersistentVolumeClaim
+      kind: ResourceQuota
       metadata:
-        name: it-bench-invalid
-        namespace: "{{ namespace }}"
+        name: "{{ namespace.name }}-resource-quota"
+        namespace: "{{ namespace.name }}"
     state: absent
-  loop: "{{ (targets | default([])) | community.general.json_query('[*].namespace') | unique }}"
+    wait: true
+  loop: "{{ targets }}"
   loop_control:
+    label: "namespace/{{ namespace.name }}"
     loop_var: namespace
 
 - name: Print help message

@@ -1,0 +1,23 @@
+---
+metadata:
+  complexity: Medium
+  id: 1
+  name: Recommendation Service Cache
+  platform: kubernetes
+  technologies:
+    - Python
+    - Node.js
+spec:
+  environment:
+    applications:
+      otel_demo:
+        enabled: true
+    tools:
+      category: sre
+      selected:
+        - kubernetes-topology-monitor
+  faults:
+    - otel_demo:
+        flags:
+          - name: recommendationCacheFailure
+            state: "on"

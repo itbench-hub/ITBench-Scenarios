@@ -1,12 +1,4 @@
 ---
-- name: Attempt fault removal (unsupported image)
-  ansible.builtin.command:
-    cmd: kubectl rollout undo -n {{ manager.namespace }} {{ manager.kind | lower }}/{{ manager.name }}
-  environment:
-    KUBECONFIG: "{{ faults_cluster.kubeconfig }}"
-  register: rollout_undo_output
-  changed_when: rollout_undo_output.rc == 0
-  loop: "{{ targets }}"
-  loop_control:
-    label: "{{ manager.kind | lower }}/{{ manager.name }}"
-    loop_var: manager
+- name: Print help message
+  ansible.builtin.debug:
+    msg: To remove this fault, please uninstall and reinstall the application it was injected into.

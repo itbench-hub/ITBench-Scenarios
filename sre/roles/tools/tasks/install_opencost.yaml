@@ -18,6 +18,8 @@
 - name: Create bearer token
   ansible.builtin.command:
     cmd: oc whoami -t
+  environment:
+    KUBECONFIG: "{{ common_cluster.kubeconfig | ansible.builtin.expanduser }}"
   register: oc_whoami_output
   changed_when: false
   when:

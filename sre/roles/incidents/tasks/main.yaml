@@ -1,8 +1,8 @@
 ---
-- name: Import start tasks
-  ansible.builtin.import_tasks:
-    file: start.yaml
-
-- name: Import stop tasks
-  ansible.builtin.import_tasks:
-    file: stop.yaml
+- name: Import faults role
+  ansible.builtin.import_role:
+    name: faults
+  vars:
+    faults_cluster:
+      kubeconfig: "{{ incidents_cluster.kubeconfig }}"
+    faults_specs: "{{ incidents_spec.spec.faults }}"
