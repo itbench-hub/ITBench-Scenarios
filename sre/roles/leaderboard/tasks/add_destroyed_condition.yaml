@@ -1,0 +1,48 @@
+---
+- name: Get assertion json file from S3 bucket
+  amazon.aws.s3_object:
+    bucket: "{{ leaderboard_storage.s3.bucket_name }}"
+    dest: /tmp/assertion.json
+    endpoint_url: "{{ leaderboard_storage.s3.endpoint_url }}"
+    mode: get
+    object: "{{ leaderboard_experiment.agent.version }}/{{ leaderboard_experiment.trial.id }}/{{ leaderboard_experiment.trial.incident }}/{{ leaderboard_experiment.trail.run
+      }}/assertion.json"
+
+- name: Extract status conditions from JSON
+  ansible.builtin.set_fact:
+    status_conditions: |
+      {{
+        lookup('ansible.builtin.file', '/tmp/assertion.json') |
+        from_json |
+        comminity.general.json_query('status.conditions')
+      }}
+
+- name: Update assertion JSON with deletion status
+  ansible.builtin.set_fact:
+    assertion_json:
+      status:
+        conditions: |
+          {{
+            status_conditions + [
+              {
+                "type": "Destroyed",
+                "status": "true",
+                "lastTransitionTime": now(utc=True, fmt='%Y-%m-%dT%H:%M:%SZ')
+              }
+            ]
+          }}
+
+- name: Create assertion JSON file
+  ansible.builtin.copy:
+    content: "{{ assertion_json | to_nice_json(indent=2) }}"
+    dest: /tmp/assertion.json
+    mode: "0644"
+
+- name: Upload assertion JSON file to S3 bucket
+  amazon.aws.s3_object:
+    bucket: "{{ leaderboard_storage.s3.bucket_name }}"
+    endpoint_url: "{{ leaderboard_storage.s3.endpoint_url }}"
+    mode: put
+    object: "{{ leaderboard_experiment.agent.version }}/{{ leaderboard_experiment.trial.id }}/{{ leaderboard_experiment.trial.incident }}/{{ leaderboard_experiment.trail.run
+      }}/assertion.json"
+    src: /tmp/assertion.json

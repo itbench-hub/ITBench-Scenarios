@@ -1,0 +1,47 @@
+---
+argument_specs:
+  main:
+    short_description: Main entry point for leaderboard role
+    description:
+      - This is the main entry point for the leaderboard role.
+      - This role is responsible for managing the assertion json which acts like a state machine.
+    author:
+      - Gerard Vanloo
+    options:
+      leaderboard_experiment:
+        required: true
+        type: dict
+        options:
+          agent:
+            required: true
+            type: dict
+            options:
+              version: true
+              type: str
+          trial:
+            required: true
+            type: dict
+            options:
+              id:
+                required: true
+                type: int
+              incident:
+                required: true
+                type: int
+              run:
+                required: true
+                type: int
+      leaderboard_storage:
+        required: true
+        type: dict
+        options:
+          s3:
+            required: true
+            type: dict
+            options:
+              bucket_name:
+                required: true
+                type: str
+              endpoint_url:
+                required: true
+                type: str

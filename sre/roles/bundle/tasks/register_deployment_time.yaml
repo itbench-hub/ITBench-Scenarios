@@ -1,0 +1,17 @@
+---
+- name: Record Deployment time
+  kubernetes.core.k8s:
+    kubeconfig: "{{ applications_cluster.kubeconfig }}"
+    resource_definition:
+      kind: ConfigMap
+      apiVersion: v1
+      metadata:
+        name: bundle-alert-timestamps
+        namespace: "{{ item.namespace }}"
+      data:
+        deployment_time: "{{ now(utc=True, fmt='%Y-%m-%dT%H:%M:%SZ') }}"
+  loop:
+    - enabled: "{{ applications_enabled.otel_demo }}"
+      namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+  when:
+    - item.enabled

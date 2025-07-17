@@ -1,0 +1,15 @@
+---
+- name: Create empty assertion json
+  ansible.builtin.copy:
+    content: "{{ {'status': {'conditions': []}} | to_nice_json(indent=2) }}"
+    dest: /tmp/assertion.json
+    mode: "0644"
+
+- name: Upload the file to S3 bucket
+  amazon.aws.s3_object:
+    bucket: "{{ leaderboard_storage.s3.bucket_name }}"
+    endpoint_url: "{{ leaderboard_storage.s3.endpoint_url }}"
+    mode: put
+    object: "{{ leaderboard_experiment.agent.version }}/{{ leaderboard_experiment.trial.id }}/{{ leaderboard_experiment.trial.incident }}/{{ leaderboard_experiment.trail.run
+      }}/assertion.json"
+    src: /tmp/assertion.json

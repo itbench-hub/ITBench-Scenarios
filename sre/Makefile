@@ -16,6 +16,7 @@ help: ## Display this help.
 group_vars: ## Generates the group variables
 	mkdir -p group_vars/all
 	echo "ansible_python_interpreter: $(shell which python)" > group_vars/all/ansible.yaml
+	cp group_vars/all/storage.yaml.example group_vars/all/storage.yaml
 	cp group_vars/environment/applications.yaml.example group_vars/environment/applications.yaml
 	cp group_vars/environment/cluster.yaml.example group_vars/environment/cluster.yaml
 	cp group_vars/environment/incident.yaml.example group_vars/environment/incident.yaml

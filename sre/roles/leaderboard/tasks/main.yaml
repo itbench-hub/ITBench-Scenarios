@@ -1,0 +1,24 @@
+---
+- name: Import file creation tasks
+  ansible.builtin.import_tasks:
+    file: create_assertion_json.yaml
+  tags:
+    - install_tools
+
+- name: Import file update tasks
+  ansible.builtin.import_tasks:
+    file: add_deployment_success_condition.yaml
+  tags:
+    - install_applications
+
+- name: Import file update tasks
+  ansible.builtin.import_tasks:
+    file: add_deployment_failure_condition.yaml
+  tags:
+    - capture_failed_deployment_state
+
+- name: Import file update tasks
+  ansible.builtin.import_tasks:
+    file: add_destroyed_condition.yaml
+  tags:
+    - uninstall_tools

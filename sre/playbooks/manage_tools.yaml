@@ -59,15 +59,6 @@
       when:
         - incident.file is undefined
   tasks:
-    # - name: Import e2e role
-    #   ansible.builtin.import_role:
-    #     name: e2e
-    #     tasks_from: initialize_assertion_json
-    #   tags:
-    #     - install_tools
-    #   when:
-    #     - incident.runner != 'local'
-
     - name: Import tools role
       ansible.builtin.import_role:
         name: tools
@@ -77,11 +68,23 @@
           kubeconfig: "{{ cluster.kubeconfig }}"
           platform: "{{ cluster_platform }}"
 
-    # - name: Import e2e role
-    #   ansible.builtin.import_role:
-    #     name: e2e
-    #     tasks_from: finalize_assertion_json
-    #   tags:
-    #     - uninstall_tools
-    #   when:
-    #     - incident.runner != 'local'
+    - name: Import leaderboard role
+      ansible.builtin.import_role:
+        name: leaderboard
+      vars:
+        leaderboard_experiment:
+          agent:
+            version: "{{ agent_version | default('v0.0.0') }}"
+          trial:
+            id: "{{ trial_id | default(-1) }}"
+            incident: "{{ incident_id | default(-1) }}"
+            run: "{{ trial_run | default(-1) }}"
+        leaderboard_storage:
+          s3:
+            bucket_name: "{{ storage.s3.bucket_name }}"
+            endpoint_url: "{{ storage.s3.endpoint_url }}"
+      when:
+        - agent_version is defined
+        - incident_id is defined
+        - trail_id is defined
+        - trail_run is defined
