@@ -9,7 +9,7 @@ argument_specs:
       - Gerard Vanloo
     options:
       awx_cluster:
-        required: false
+        required: true
         type: dict
         options:
           cloud_provider:
@@ -20,10 +20,55 @@ argument_specs:
             default: ~/.kube/config
             required: false
             type: str
-          platform:
-            choices:
-              - kubernetes
-              - openshift
-            default: kubernetes
+      awx_credentials:
+        required: false
+        type: dict
+        options:
+          aws:
             required: false
-            type: str
+            type: dict
+            options:
+              access_key_id:
+                required: true
+                type: str
+              secret_access_key:
+                required: true
+                type: str
+      awx_github:
+        required: true
+        type: dict
+        options:
+          it_bench:
+            required: true
+            type: dict
+            options:
+              ssh:
+                required: false
+                type: dict
+                options:
+                  private_key_passphrase:
+                    required: true
+                    type: str
+                  private_key_path:
+                    required: true
+                    type: str
+              url:
+                required: true
+                type: str
+          llm_agent:
+            required: true
+            type: dict
+            options:
+              ssh:
+                required: false
+                type: dict
+                options:
+                  private_key_passphrase:
+                    required: true
+                    type: str
+                  private_key_path:
+                    required: true
+                    type: str
+              url:
+                required: true
+                type: str

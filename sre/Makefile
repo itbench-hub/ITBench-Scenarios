@@ -14,13 +14,15 @@ help: ## Display this help.
 
 .PHONY: group_vars
 group_vars: ## Generates the group variables
-	mkdir -p group_vars/all
 	echo "ansible_python_interpreter: $(shell which python)" > group_vars/all/ansible.yaml
 	cp group_vars/all/storage.yaml.example group_vars/all/storage.yaml
 	cp group_vars/environment/applications.yaml.example group_vars/environment/applications.yaml
 	cp group_vars/environment/cluster.yaml.example group_vars/environment/cluster.yaml
 	cp group_vars/environment/incident.yaml.example group_vars/environment/incident.yaml
 	cp group_vars/environment/tools.yaml.example group_vars/environment/tools.yaml
+	cp group_vars/runner/credentials.yaml.example group_vars/runner/credentials.yaml
+	cp group_vars/runner/github.yaml.example group_vars/runner/github.yaml
+	cp group_vars/runner/stack.yaml.example group_vars/runner/stack.yaml
 
 .PHONY: deploy_tools
 deploy_tools: ## Deploys the observability and fault tools to cluster
@@ -134,13 +136,29 @@ undeploy_elasticsearch: ## Undeploys the Elasticsearch cluster
 	ansible-playbook -v base.yaml --tags "uninstall_sample_applications" \
 		--extra-vars "sample_application=elasticsearch"
 
+.PHONY: deploy_awx_tower
+deploy_awx_tower: ## Deploys AWX to a cluster
+	ansible-playbook -i inventory.yaml playbooks/manage_awx_runner.yaml --tags "install_tools"
+
+.PHONY: undeploy_awx_tower
+undeploy_awx_tower: ## Undeploys AWX to a cluster
+	ansible-playbook -i inventory.yaml playbooks/manage_awx_runner.yaml --tags "uninstall_tools"
+
 .PHONY: awx_configure_init
 awx_configure_init:
-	ansible-playbook -vvv base.yaml --tags "awx_configuration" --extra-vars "state=present"
+	@echo "WARNING: 'make awx_configure_init' is deprecated. Please use 'make deploy_awx_tower' instead."
+	@echo "This command will be removed in a future version."
+	@echo "Executing 'make deploy_awx_tower'..."
+	@echo ""
+	$(MAKE) deploy_awx_tower
 
 .PHONY: awx_configure_deinit
 awx_configure_deinit:
-	ansible-playbook -vvv base.yaml --tags "awx_configuration" --extra-vars "state=absent"
+	@echo "WARNING: 'make awx_configure_deinit' is deprecated. Please use 'make undeploy_awx_tower' instead."
+	@echo "This command will be removed in a future version."
+	@echo "Executing 'make undeploy_awx_tower'..."
+	@echo ""
+	$(MAKE) undeploy_awx_tower
 
 # TODO: See why the OBJC_DISABLE_INITIALIZE_FORK_SAFETY is needed
 

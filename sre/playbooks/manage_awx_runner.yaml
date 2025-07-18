@@ -9,16 +9,6 @@
       tags:
         - always
 
-    - name: Import common role for platform configuration
-      ansible.builtin.import_role:
-        name: common
-        tasks_from: set_cluster_platform
-      tags:
-        - always
-      vars:
-        common_cluster:
-          kubeconfig: "{{ stack.awx.kubeconfig }}"
-
     - name: Import common role for provider configuration
       ansible.builtin.import_role:
         name: common
@@ -36,4 +26,12 @@
         awx_cluster:
           cloud_provider: "{{ cluster_provider }}"
           kubeconfig: "{{ stack.awx.kubeconfig }}"
-          platform: "{{ cluster_platform }}"
+        awx_credentials:
+          aws: "{{ github.credentials.aws | default(omit) }}"
+        awx_github:
+          it_bench:
+            ssh: "{{ github.it_bench.ssh | default(omit) }}"
+            url: "{{ github.it_bench.url }}"
+          llm_agent:
+            ssh: "{{ github.llm_agent.ssh | default(omit) }}"
+            url: "{{ github.llm_agent.url }}"
