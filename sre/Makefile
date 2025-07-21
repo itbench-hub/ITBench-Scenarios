@@ -11,11 +11,16 @@ help: ## Display this help.
 
 .PHONY: group_vars
 group_vars: ## Generates the group variables
-	mkdir -p group_vars/all
 	echo "ansible_python_interpreter: $(shell which python)" > group_vars/all/ansible.yaml
+	cp group_vars/all/storage.yaml.example group_vars/all/storage.yaml
 	cp group_vars/environment/applications.yaml.example group_vars/environment/applications.yaml
 	cp group_vars/environment/cluster.yaml.example group_vars/environment/cluster.yaml
 	cp group_vars/environment/tools.yaml.example group_vars/environment/tools.yaml
+	cp group_vars/runner/agent.yaml.example group_vars/runner/agent.yaml
+	cp group_vars/runner/credentials.yaml.example group_vars/runner/credentials.yaml
+	cp group_vars/runner/experiments.yaml.example group_vars/runner/experiments.yaml
+	cp group_vars/runner/github.yaml.example group_vars/runner/github.yaml
+	cp group_vars/runner/stack.yaml.example group_vars/runner/stack.yaml
 
 .PHONY: deploy_tools
 deploy_tools: ## Deploys the observability and fault tools to cluster
@@ -155,13 +160,36 @@ undeploy_elasticsearch: ## Undeploys the Elasticsearch cluster
 	@echo "WARNING: Elasticsearch has been removed. Please use a pre-release version of ITBench to run scenarios with this application."
 	@echo "This command will be removed in a future version."
 
+.PHONY: deploy_awx_stack
+deploy_awx_stack: ## Deploys AWX to a cluster
+	ansible-playbook -i inventory.yaml playbooks/manage_awx.yaml --tags "install_tools"
+
+.PHONY: undeploy_awx_stack
+undeploy_awx_stack: ## Undeploys AWX to a cluster
+	ansible-playbook -i inventory.yaml playbooks/manage_awx.yaml --tags "uninstall_tools"
+
+.PHONY: launch_start_incident_workflow
+launch_start_workflow: ## Launches the AWX workflow's equivalent of make start_incident
+	ansible-playbook -i inventory.yaml playbooks/manage_awx.yaml --tags "launch_start_workflow"
+
+launch_stop_workflow: ## Launches the AWX workflow's equivalent of make stop_incident
+	ansible-playbook -i inventory.yaml playbooks/manage_awx.yaml --tags "launch_stop_workflow"
+
 .PHONY: awx_configure_init
 awx_configure_init:
-	ansible-playbook -vvv base.yaml --tags "awx_configuration" --extra-vars "state=present"
+	@echo "WARNING: 'make awx_configure_init' is deprecated. Please use 'make deploy_awx_stack' instead."
+	@echo "This command will be removed in a future version."
+	@echo "Executing 'make deploy_awx_stack'..."
+	@echo ""
+	$(MAKE) deploy_awx_stack
 
 .PHONY: awx_configure_deinit
 awx_configure_deinit:
-	ansible-playbook -vvv base.yaml --tags "awx_configuration" --extra-vars "state=absent"
+	@echo "WARNING: 'make awx_configure_deinit' is deprecated. Please use 'make undeploy_awx_stack' instead."
+	@echo "This command will be removed in a future version."
+	@echo "Executing 'make undeploy_awx_stack'..."
+	@echo ""
+	$(MAKE) undeploy_awx_stack
 
 # TODO: See why the OBJC_DISABLE_INITIALIZE_FORK_SAFETY is needed
 
@@ -203,20 +231,20 @@ fetch_alerts:
 		> /tmp/fetch.out 2>&1 &
 
 .PHONY: e2e_awx_init_stage_one
-e2e_awx_init_stage_one: ## Given an incident number, run_uuid intitialize the scenario run leveraging an AWX node
-	kops export kubecfg --admin --name=${AWX_CLUSTERNAME} --state=s3://${S3_BUCKET_NAME} --kubeconfig /tmp/${AWX_CLUSTERNAME}.yaml
-	# Get cluster to be used configuration
-	KOPS_STATE_STORE=s3://${S3_BUCKET_NAME} kops export kubecfg ${CLUSTER_ASSIGNED_NAME} --admin --kubeconfig /tmp/${CLUSTER_ASSIGNED_NAME}.yaml; \
-        ansible-playbook -v base.yaml --tags "awx_scenario_setup" --extra-vars "relevant_kubeconfig_file_path=/tmp/${CLUSTER_ASSIGNED_NAME}.yaml scenario_number=${INCIDENT_NUMBER} state=present sample_application=${SAMPLE_APPLICATION} awx_kubeconfig=${AWX_KUBECONFIG} s3_bucket_name_for_results='sre-runner-with-awx' sre_bench_runner=true domain=sre"; \
-	ansible-playbook -v base.yaml --tags "workflow_setup_stage_one" --extra-vars "scenario_number=${INCIDENT_NUMBER} state=present sample_application=${SAMPLE_APPLICATION} awx_kubeconfig=${AWX_KUBECONFIG} sre_bench_runner=true domain=sre s3_endpoint_url='https://s3.us-east-2.amazonaws.com'"; \
-	ansible-playbook -v base.yaml --tags "workflow_launch_stage_one" --extra-vars "run_uuid=${RUN_UUID} sre_agent_name__version_number=${PARTICIPANT_AGENT_UUID} scenario_number=${INCIDENT_NUMBER} number_of_runs=${NUMBER_OF_RUNS} state=present sample_application=${SAMPLE_APPLICATION} awx_kubeconfig=${AWX_KUBECONFIG} s3_bucket_name_for_results='sre-runner-with-awx' sre_bench_runner=true domain=sre s3_endpoint_url='https://s3.us-east-2.amazonaws.com'";
+e2e_awx_init_stage_one: ## DEPRECATED: Given an incident number, run_uuid intitialize the scenario run leveraging an AWX node
+	@echo "WARNING: 'make e2e_awx_init_stage_one' is deprecated. Please use 'make launch_start_workflow' instead."
+	@echo "This command will be removed in a future version."
+	@echo "Executing 'make launch_start_workflow'..."
+	@echo ""
+	$(MAKE) launch_start_workflow
 
 .PHONY: e2e_awx_stage_three
-e2e_awx_stage_three: ## Given an incident number, run_uuid end the scenario run leveraging an AWX node
-	# Get cluster to be used configuration
-	KOPS_STATE_STORE=s3://${S3_BUCKET_NAME} kops export kubecfg ${CLUSTER_ASSIGNED_NAME} --admin --kubeconfig /tmp/${CLUSTER_ASSIGNED_NAME}.yaml; \
-	ansible-playbook -v base.yaml --tags "workflow_setup_stage_three" --extra-vars "scenario_number=${INCIDENT_NUMBER} state=present sample_application=${SAMPLE_APPLICATION} awx_kubeconfig=${AWX_KUBECONFIG} sre_bench_runner=true domain=sre s3_endpoint_url='https://s3.us-east-2.amazonaws.com'"; \
-	ansible-playbook -v base.yaml --tags "workflow_launch_stage_three" --extra-vars "run_uuid=${RUN_UUID} sre_agent_name__version_number=${PARTICIPANT_AGENT_UUID} scenario_number=${INCIDENT_NUMBER} number_of_runs=${NUMBER_OF_RUNS} state=present sample_application=${SAMPLE_APPLICATION} awx_kubeconfig=${AWX_KUBECONFIG} s3_bucket_name_for_results='sre-runner-with-awx' sre_bench_runner=true domain=sre s3_endpoint_url='https://s3.us-east-2.amazonaws.com'";
+e2e_awx_stage_three: ## DEPRECATED: Given an incident number, run_uuid end the scenario run leveraging an AWX node
+	@echo "WARNING: 'make e2e_awx_stage_three' is deprecated. Please use 'make launch_stop_workflow' instead."
+	@echo "This command will be removed in a future version."
+	@echo "Executing 'make launch_stop_workflow'..."
+	@echo ""
+	$(MAKE) launch_stop_workflow
 
 .PHONY: evaluation
 .SILENT: evaluation

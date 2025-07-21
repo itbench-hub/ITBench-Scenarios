@@ -1,0 +1,214 @@
+---
+- name: Install AWX operator
+  kubernetes.core.helm:
+    chart_ref: awx-operator
+    chart_repo_url: https://ansible-community.github.io/awx-operator-helm
+    chart_version: 3.1.0
+    create_namespace: true
+    kubeconfig: "{{ awx_cluster.kubeconfig }}"
+    release_name: "{{ awx_helm_releases.awx_operator.name }}"
+    release_namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
+    release_state: present
+    timeout: 10m0s
+    wait: true
+
+- name: Install AWX
+  kubernetes.core.k8s:
+    kubeconfig: "{{ awx_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: awx.ansible.com/v1beta1
+      kind: AWX
+      metadata:
+        name: awx-deployment
+        namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
+      spec:
+        service_type: "{{ 'nodeport' if (awx_cluster.cloud_provider == 'kind') else 'loadbalancer' }}"
+        postgres_data_volume_init: true
+        postgres_init_container_commands: |
+          chown 26:0 /var/lib/pgsql/data
+          chmod 700 /var/lib/pgsql/data
+        postgres_storage_requirements:
+          requests:
+            storage: 32Gi
+    state: present
+    wait: true
+    wait_condition:
+      reason: Successful
+      status: "True"
+      type: Successful
+    wait_timeout: 900
+
+- name: Import common role to import AWX controller variables
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: set_awx_controller_host
+  vars:
+    common_awx:
+      namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
+    common_cluster:
+      kubeconfig: "{{ awx_cluster.kubeconfig }}"
+
+- name: Import common role to import AWX controller variables
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: set_awx_controller_password
+  vars:
+    common_awx:
+      namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
+    common_cluster:
+      kubeconfig: "{{ awx_cluster.kubeconfig }}"
+
+- name: Create kubeconfig credential type
+  awx.awx.credential_type:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    description: Credentials type for Kubeconfig
+    inputs:
+      fields:
+        - id: kubeconfig
+          type: string
+          label: kubeconfig
+          secret: true
+          multiline: true
+      required:
+        - kubeconfig
+    injectors:
+      file:
+        template.kubeconfig: "\\{\\{ kubeconfig \\}\\}"
+      extra_vars:
+        cluster:
+          kubeconfig: "\\{\\{ tower.filename.kubeconfig \\}\\}"
+    kind: cloud
+    name: Kubeconfig
+    state: present
+
+- name: Create kubeconfig credentials for each runner
+  awx.awx.credential:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credential_type: Kubeconfig
+    description: Kubeconfig file for a Kubernetes cluster
+    inputs:
+      cluster:
+        kubeconfig: "{{ lookup('ansible.builtin.file', item) }}"
+    name: Cluster-{{ runner_index + 1 }}-Kubeconfig
+    organization: Default
+  loop: "{{ awx_runners.kubeconfigs }}"
+  loop_control:
+    index_var: runner_index
+
+- name: Create credentials for ITBench Repository
+  awx.awx.credential:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credential_type: Source Control
+    description: SSH Credentials for ITBench GitHub repository
+    inputs:
+      ssh_key_data: "{{ lookup('ansible.builtin.file', awx_github.it_bench.ssh.private_key_path) }}"
+      ssh_key_unlock: "{{ awx_github.it_bench.ssh.private_key_passphrase }}"
+    name: GitHub-IT-Bench
+    organization: Default
+    state: present
+  when:
+    - awx_github.it_bench.ssh is defined
+    - awx_github.it_bench.ssh.private_key_path is file
+
+- name: Create credentials for LLM Agent
+  awx.awx.credential:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credential_type: Source Control
+    description: SSH Credentials for LLM agent repository
+    inputs:
+      ssh_key_data: "{{ lookup('ansible.builtin.file', awx_github.agent.ssh.private_key_path) }}"
+      ssh_key_unlock: "{{ awx_github.agent.ssh.private_key_passphrase }}"
+    name: GitHub-LLM-Agent
+    organization: Default
+    state: present
+  when:
+    - awx_github.agent.ssh is defined
+    - awx_github.agent.ssh.private_key_path is file
+
+- name: Create credentials for AWS
+  awx.awx.credential:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credential_type: Amazon Web Services
+    description: Credentials for AWS
+    inputs:
+      username: "{{ awx_credentials.aws.access_key_id }}"
+      password: "{{ awx_credentials.aws.secret_access_key }}" # pragma: allowlist secret
+    name: AWS
+    organization: Default
+    state: present
+  when:
+    - awx_credentials.aws is defined
+
+# TODO: Remove this credential once the cronjobs are refactored
+
+- name: Add/Remove AWX credentials
+  awx.awx.credential:
+    # (Hack): As the value set using set_fact controller_host is not picked up
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    name: Credential-AWX
+    description: Credential-AWX
+    organization: Default
+    credential_type: Red Hat Ansible Automation Platform
+    inputs:
+      host: "{{ awx_controller_host }}"
+      username: admin
+      password: "{{ awx_controller_password }}" # pragma: allowlist secret
+
+- name: Create project for ITBench Repository
+  awx.awx.project:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credential: "{{ 'GitHub-IT-Bench' if awx_github.it_bench.ssh is defined else omit }}"
+    description: ITBench GitHub repository
+    name: GitHub-ITBench
+    organization: Default
+    scm_allow_override: true
+    scm_branch: main
+    scm_clean: true
+    scm_delete_on_update: true
+    scm_track_submodules: false
+    scm_type: git
+    scm_url: "{{ awx_github.it_bench.url }}"
+    state: present
+
+- name: Create project for LLM Agent Repository
+  awx.awx.project:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credential: "{{ 'GitHub-LLM-Agent' if awx_github.agent.ssh is defined else omit }}"
+    description: LLM Agent GitHub repository
+    name: GitHub-LLM-Agent
+    organization: Default
+    scm_allow_override: true
+    scm_branch: main
+    scm_clean: true
+    scm_delete_on_update: true
+    scm_track_submodules: false
+    scm_type: git
+    scm_url: "{{ awx_github.agent.url }}"
+    state: present
+
+- name: Create execution environment
+  awx.awx.execution_environment:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    description: Custom environment for running ITBench scenarios
+    image: quay.io/arorar/awx-ee
+    name: AWX-EE-Custom
+    organization: Default
+    pull: always

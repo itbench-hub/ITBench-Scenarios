@@ -1,0 +1,73 @@
+---
+- name: Create workflow launch list
+  ansible.builtin.set_fact:
+    workflows: "{{ awx_experiments.incidents | product(range(1, (awx_experiments.trials + 1))) }}"
+  tags:
+    - launch_start_workflow
+    - launch_stop_workflow
+
+- name: Import common role to import AWX controller variables
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: set_awx_controller_host
+  tags:
+    - launch_start_workflow
+    - launch_stop_workflow
+  vars:
+    common_awx:
+      namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
+    common_cluster:
+      kubeconfig: "{{ awx_cluster.kubeconfig }}"
+
+- name: Import common role to import AWX controller variables
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: set_awx_controller_password
+  tags:
+    - launch_start_workflow
+    - launch_stop_workflow
+  vars:
+    common_awx:
+      namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
+    common_cluster:
+      kubeconfig: "{{ awx_cluster.kubeconfig }}"
+
+# TODO: Replace the fake UUID with a real generated one
+
+- name: Launch the workflow
+  awx.awx.workflow_launch:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    workflow_template: "Start Incident {{ item[0] }}"
+    extra_vars:
+      run_uuid: this-is-a-fake-id
+      scenario_number: "{{ item[0] }}"
+      run_number: "{{ item[1] }}"
+      sre_agent_name__version_number: "{{ awx_agent.version }}"
+      s3_bucket_name_for_results: "{{ awx_experiments.storage.s3.bucket_name | default('') }}"
+      s3_endpoint_url: "{{ awx_experiments.storage.s3.endpoint_url | default('') }}"
+      sre_bench_runner: "{{ sre_bench_runner | default(true) }}"
+    wait: False
+  loop: "{{ workflows }}"
+  tags:
+    - launch_start_workflow
+
+- name: Launch the workflow - Stage One
+  awx.awx.workflow_launch:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    workflow_template: "Stop Incident {{ item[0] }}"
+    extra_vars:
+      run_uuid: this-is-a-fake-id
+      scenario_number: "{{ item[0] }}"
+      run_number: "{{ item[1] }}"
+      sre_agent_name__version_number: "{{ awx_agent.version }}"
+      s3_bucket_name_for_results: "{{ awx_experiments.storage.s3.bucket_name | default('') }}"
+      s3_endpoint_url: "{{ awx_experiments.storage.s3.endpoint_url | default('') }}"
+      sre_bench_runner: "{{ sre_bench_runner | default(true) }}"
+    wait: False
+  loop: "{{ workflows }}"
+  tags:
+    - launch_stop_workflow

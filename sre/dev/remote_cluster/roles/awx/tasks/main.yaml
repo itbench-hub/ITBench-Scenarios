@@ -55,14 +55,6 @@
   tags:
     - create
 
-- name: Import AWX installation tasks
-  ansible.builtin.import_tasks:
-    file: install_awx.yaml
-  vars:
-    cluster_name: "{{ awx_head_cluster_name }}"
-  tags:
-    - create
-
 - name: Import asynchronous AWX stack deletion tasks
   ansible.builtin.import_tasks:
     file: delete_async.yaml
