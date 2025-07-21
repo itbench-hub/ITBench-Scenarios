@@ -22,10 +22,11 @@ _Note: The following setup guide presumes that the required software listed [her
 
 3. Set up `Kind` by following the instructions [here](https://kind.sigs.k8s.io/docs/user/quick-start/#installing-from-release-binaries)
 
-4. To avoid seeing `Pod errors due to “too many open files"` error in the future, edit the file /etc/sysctl.conf and add the following lines:
+4. To avoid seeing `Pod errors due to “too many open files"` or `vm.max_map_count` error in the future, edit the file /etc/sysctl.conf and add the following lines:
 ```
 fs.inotify.max_user_watches = 524288
 fs.inotify.max_user_instances = 512
+vm.max_map_count = 262144
 ```
 
 5. To apply the change made in the previous step, run
