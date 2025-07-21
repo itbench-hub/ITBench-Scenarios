@@ -1,0 +1,40 @@
+---
+- name: Manage SRE and FinOps Incident Bundle
+  hosts:
+    - environment
+    - runner
+  pre_tasks:
+    - name: Validate if the bucket exists
+      amazon.aws.s3_bucket_info:
+        endpoint_url: "{{ storage.s3.endpoint_url }}"
+        name: "{{ storage.s3.bucket_name }}"
+      register: bucket_info
+      tags:
+        - always
+
+    - name: Assert bucket exists
+      ansible.builtin.assert:
+        that:
+          - bucket_info.buckets | length == 1
+        fail_msg: S3 bucket {{ storage.s3.bucket_name }} does not exist.
+        success_msg: S3 bucket {{ storage.s3.bucket_name }} exists.
+      tags:
+        - always
+  tasks:
+    - name: Import bundle role
+      ansible.builtin.import_role:
+        name: bundle
+      vars:
+        bundle_cluster:
+          kubeconfig: "{{ cluster.kubeconfig }}"
+        bundle_experiment:
+          agent:
+            version: "{{ agent_version | default('v0.0.0') }}"
+          trial:
+            id: "{{ trial_id | default(-1) }}"
+            incident: "{{ incident_id | default(-1) }}"
+            run: "{{ trial_run | default(-1) }}"
+        bundle_storage:
+          s3:
+            bucket_name: "{{ storage.s3.bucket_name }}"
+            endpoint_url: "{{ storage.s3.endpoint_url }}"

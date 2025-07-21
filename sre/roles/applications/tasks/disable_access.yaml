@@ -1,0 +1,12 @@
+---
+- name: Remove RBAC from namespace
+  kubernetes.core.k8s:
+    kubeconfig: "{{ applications_cluster.kubeconfig }}"
+    template: templates/agent-rbac.j2
+    state: absent
+  loop: "{{ applications }}"
+  loop_control:
+    label: namespace/{{ application.namespace }}
+    loop_var: application
+  when:
+    - application.enabled

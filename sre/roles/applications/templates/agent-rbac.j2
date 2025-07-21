@@ -1,0 +1,76 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: llm-agent
+  namespace: "{{ application.namespace }}"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: restricted-llm-agent
+  namespace: "{{ application.namespace }}"
+rules:
+  # Allow access to all core resources, excluding pods/log
+  - apiGroups: [""]
+    resources:
+      - pods
+      - services
+      - configmaps
+      - secrets
+      - endpoints
+      - persistentvolumeclaims
+      - nodes
+      - namespaces
+      - events
+      - persistentvolumes
+      - pods/exec
+      - pods/attach
+      - pods/portforward
+      - resourcequotas
+    verbs: ["*"]
+  - apiGroups: ["apps"]
+    resources:
+      - deployments
+      - replicasets
+      - daemonsets
+      - statefulsets
+    verbs: ["*"]
+  - apiGroups: ["batch"]
+    resources:
+      - jobs
+      - cronjobs
+    verbs: ["*"]
+  - apiGroups: ["autoscaling"]
+    resources:
+      - horizontalpodautoscalers
+    verbs: ["*"]
+  - apiGroups: ["rbac.authorization.k8s.io"]
+    resources:
+      - roles
+      - rolebindings
+    verbs: ["*"]
+  - apiGroups: ["policy"]
+    resources:
+      - poddisruptionbudgets
+    verbs: ["*"]
+  - apiGroups: ["networking.k8s.io"]
+    resources:
+      - networkpolicies
+      - ingresses
+    verbs: ["*"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: restricted-llm-agent
+  namespace: "{{ application.namespace }}"
+subjects:
+  - kind: ServiceAccount
+    name: llm-agent
+    namespace: "{{ application.namespace }}"
+roleRef:
+  kind: Role
+  name: restricted-llm-agent
+  apiGroup: rbac.authorization.k8s.io

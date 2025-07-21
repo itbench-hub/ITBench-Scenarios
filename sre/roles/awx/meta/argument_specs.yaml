@@ -72,3 +72,11 @@ argument_specs:
               url:
                 required: true
                 type: str
+      awx_runners:
+        required: true
+        type: dict
+        options:
+          kubeconfigs:
+            elements: str
+            required: true
+            type: list

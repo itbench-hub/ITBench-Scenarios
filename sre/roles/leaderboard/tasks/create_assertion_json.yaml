@@ -10,6 +10,5 @@
     bucket: "{{ leaderboard_storage.s3.bucket_name }}"
     endpoint_url: "{{ leaderboard_storage.s3.endpoint_url }}"
     mode: put
-    object: "{{ leaderboard_experiment.agent.version }}/{{ leaderboard_experiment.trial.id }}/{{ leaderboard_experiment.trial.incident }}/{{ leaderboard_experiment.trail.run
-      }}/assertion.json"
+    object: "{{ leaderboard_experiment.agent.version }}/{{ leaderboard_experiment.trial.id }}/{{ leaderboard_experiment.trial.incident }}/{{ leaderboard_experiment.trail.run }}/assertion.json"
     src: /tmp/assertion.json

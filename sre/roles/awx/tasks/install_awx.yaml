@@ -77,10 +77,27 @@
       file:
         template.kubeconfig: "\\{\\{ kubeconfig \\}\\}"
       extra_vars:
-        kubeconfig: "\\{\\{ tower.filename.kubeconfig \\}\\}"
+        cluster:
+          kubeconfig: "\\{\\{ tower.filename.kubeconfig \\}\\}"
     kind: cloud
     name: Kubeconfig
     state: present
+
+- name: Create kubeconfig credentials for each runner
+  awx.awx.credential:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credential_type: Kubeconfig
+    description: Kubeconfig file for a Kubernetes cluster
+    inputs:
+      cluster:
+        kubeconfig: "{{ lookup('ansible.builtin.file', item) }}"
+    name: Cluster-{{ runner_index + 1 }}-Kubeconfig
+    organization: Default
+  loop: "{{ awx_runners.kubeconfigs }}"
+  loop_control:
+    index_var: runner_index
 
 - name: Create credentials for ITBench Repository
   awx.awx.credential:
@@ -147,7 +164,7 @@
     scm_delete_on_update: true
     scm_track_submodules: false
     scm_type: git
-    scm_url: awx_github.it_bench.url
+    scm_url: "{{ awx_github.it_bench.url }}"
     state: present
 
 - name: Create project for LLM Agent Repository
@@ -165,7 +182,7 @@
     scm_delete_on_update: true
     scm_track_submodules: false
     scm_type: git
-    scm_url: awx_github.agent.url
+    scm_url: "{{ awx_github.agent.url }}"
     state: present
 
 - name: Create execution environment

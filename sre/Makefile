@@ -21,6 +21,7 @@ group_vars: ## Generates the group variables
 	cp group_vars/environment/incident.yaml.example group_vars/environment/incident.yaml
 	cp group_vars/environment/tools.yaml.example group_vars/environment/tools.yaml
 	cp group_vars/runner/credentials.yaml.example group_vars/runner/credentials.yaml
+	cp group_vars/runner/experiments.yaml.example group_vars/runner/experiments.yaml
 	cp group_vars/runner/github.yaml.example group_vars/runner/github.yaml
 	cp group_vars/runner/stack.yaml.example group_vars/runner/stack.yaml
 

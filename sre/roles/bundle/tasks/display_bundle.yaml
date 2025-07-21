@@ -1,0 +1,35 @@
+---
+- name: Include Helm Release variables from tools role
+  ansible.builtin.include_vars:
+    file: ../tools/defaults/main/helm_releases.yaml
+
+- name: Import common role for ingress hostname
+  ansible.builtin.import_role:
+    name: common
+    tasks_from: set_ingress_hostname
+  tags:
+    - always
+  vars:
+    common_cluster:
+      kubeconfig: "{{ cluster.kubeconfig }}"
+    common_ingress:
+      name: "{{ tools_helm_releases.prometheus.name }}"
+      namespace: "{{ tools_helm_releases.prometheus.namespace }}"
+
+- name: Retrieve kubeconfig used for experiment trial
+  amazon.aws.s3_object:
+    bucket: "{{ leaderboard_storage.s3.bucket_name }}"
+    endpoint_url: "{{ leaderboard_storage.s3.endpoint_url }}"
+    mode: get
+    object: "{{ leaderboard_experiment.agent.version }}/{{ leaderboard_experiment.trial.id }}/{{ leaderboard_experiment.trial.incident }}/{{ leaderboard_experiment.trail.run }}/kubeconfig.j2"
+    dest: /tmp/kubeconfig.j2
+
+- name: Create bundle variable
+  ansible.builtin.set_fact:
+    experiment_bundle:
+      kubeconfig: "{{ lookup('ansible.builtin.file', '/tmp/kubeconfig.j2') | from_yaml }}"
+      prometheus_url: http://{{ ingress_hostname }}/{{ tools_helm_releases.prometheus.namespace }}
+
+- name: Display bundle
+  ansible.builtin.debug:
+    var: experiment_bundle

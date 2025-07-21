@@ -1,7 +1,29 @@
 ---
+- name: Confirm there are enough runners for incidents
+  ansible.builtin.assert:
+    that:
+      - (awx_experiments.incidents | length) == (awx_runners.kubeconfigs | length)
+    fail_msg: "Error: Not enough clusters. Please ensure the number of runners and incidents are the same."
+    success_msg: Valid number of runners.
+  tags:
+    - install_tools
+
 - name: Import AWX installation tasks
   ansible.builtin.import_tasks:
     file: install_awx.yaml
+  tags:
+    - install_tools
+
+- name: Include Job Template installation tasks
+  ansible.builtin.include_tasks:
+    file: install_jobs.yaml
+    apply:
+      tags:
+        - install_tools
+  loop: "{{ awx_experiments.incidents }}"
+  loop_control:
+    loop_var: incident
+    index_var: incident_index
   tags:
     - install_tools
 
