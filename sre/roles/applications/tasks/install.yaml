@@ -16,6 +16,14 @@
   when:
     - applications_enabled.otel_demo
 
+- name: Enable access to applications for LLM agent
+  ansible.builtin.import_tasks:
+    file: enable_access.yaml
+  vars:
+    applications:
+      - enabled: "{{ applications_enabled.otel_demo }}"
+        namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+
 # TODO: Enable these tasks during the refactor of the e2e
 
 # - name: Import Deployment Time tasks

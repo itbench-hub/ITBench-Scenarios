@@ -1,0 +1,6 @@
+---
+- name: Import bundle display tasks
+  ansible.builtin.import_tasks:
+    file: display_bundle.yaml
+  tags:
+    - display_bundle

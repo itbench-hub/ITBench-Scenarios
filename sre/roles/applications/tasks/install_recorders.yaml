@@ -1,0 +1,50 @@
+---
+- name: Retrieve Prometheus route
+  kubernetes.core.k8s_info:
+    api_version: route.openshift.io/v1
+    kind: Route
+    kubeconfig: "{{ applications_cluster.kubeconfig }}"
+    name: prometheus-k8s
+    namespace: openshift-monitoring
+  register: prometheus_k8s_route_info
+  when:
+    - applications_cluster.platform == "openshift"
+
+- name: Parse Prometheus hostname
+  ansible.builtin.set_fact:
+    prometheus_url: https://{{ prometheus_k8s_route_info.resources[0].spec.host }}
+  when:
+    - applications_cluster.platform == "openshift"
+
+- name: Set Prometheus internal service url
+  ansible.builtin.set_fact:
+    prometheus_url: http://{{ helm_releases.prometheus.name }}-kube-prometheus-prometheus:9090
+  when:
+    - applications_cluster.platform == "kubernetes"
+
+- name: Create CronJob to record alerts
+  kubernetes.core.k8s:
+    kubeconfig: "{{ applications_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: batch/v1
+      kind: CronJob
+      metadata:
+        name: "{{ item.name }}"
+        namespace: "{{ helm_releases.prometheus.namespace }}"
+      schedule: "* * * * *"
+      jobTemplate:
+        spec:
+          template:
+            spec:
+              containers:
+                - name: recorder
+                  image: registry.access.redhat.com/ubi9/ubi-minimal:9.5-1745855087
+                  command:
+                    - curl
+                    - -H
+                    - \"application/json\"
+                    - --create-dirs
+                    - --output
+                    - ~/alerts/$(date +%s).json
+                    - http://{{ prometheus_url }}/api/v1/alerts
+              restartPolicy: Never

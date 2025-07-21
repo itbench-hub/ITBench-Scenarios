@@ -1,4 +1,12 @@
 ---
+- name: Disable access to applications for LLM agent
+  ansible.builtin.import_tasks:
+    file: disable_access.yaml
+  vars:
+    applications:
+      - enabled: "{{ applications_enabled.otel_demo }}"
+        namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+
 - name: Import OpenTelemetry Demo uninstallation tasks
   ansible.builtin.import_tasks:
     file: uninstall_otel_demo.yaml

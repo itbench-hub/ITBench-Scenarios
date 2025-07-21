@@ -1,0 +1,4 @@
+roles/leaderboard/tasks/add_deployment_failure_condition.yaml yaml[line-length]
+roles/leaderboard/tasks/add_deployment_success_condition.yaml yaml[line-length]
+roles/leaderboard/tasks/add_destroyed_condition.yaml yaml[line-length]
+roles/leaderboard/tasks/create_assertion_json.yaml yaml[line-length]

@@ -1,0 +1,11 @@
+---
+- name: Delete CronJob to record alerts
+  kubernetes.core.k8s:
+    kubeconfig: "{{ applications_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: batch/v1
+      kind: CronJob
+      metadata:
+        name: "{{ item.name }}"
+        namespace: "{{ helm_releases.prometheus.namespace }}"
+    state: absent
