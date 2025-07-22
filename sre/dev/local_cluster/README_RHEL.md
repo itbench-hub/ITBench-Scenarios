@@ -67,7 +67,7 @@ cluster:
   kubeconfig: "<path to kubeconfig>"
 ```
 
-4. The cluster has been set up. Now let's head back to the [parent README](../../README.md) to deploy the incidents.
+4. The cluster has been set up. Now let's head back to the [parent README](../../README.md#running-the-incident-scenarios) to deploy the incidents.
 
 # Troubleshooting
 ### 1. For other Kind-related issues you may want to take a look [here](https://kind.sigs.k8s.io/docs/user/known-issues/).
