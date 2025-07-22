@@ -22,7 +22,7 @@
 
 # TODO: Replace the fake UUID with a real generated one
 
-- name: Launch the workflow
+- name: Launch the workflow for `Start Incident`
   awx.awx.workflow_launch:
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
@@ -41,7 +41,7 @@
   tags:
     - launch_start_workflow
 
-- name: Launch the workflow - Stage One
+- name: Launch the workflow for `Stop Incident`
   awx.awx.workflow_launch:
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret

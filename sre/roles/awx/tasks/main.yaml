@@ -5,28 +5,9 @@
   tags:
     - install_tools
 
-- name: Include AWX job installation tasks
-  ansible.builtin.include_tasks:
-    file: install_jobs.yaml
-    apply:
-      tags:
-        - install_tools
-  loop: "{{ awx_experiments.incidents }}"
-  loop_control:
-    loop_var: incident
-    index_var: incident_index
-  tags:
-    - install_tools
-
-- name: Import AWX workflow installation tasks
-  ansible.builtin.include_tasks:
-    file: install_workflows.yaml
-    apply:
-      tags:
-        - install_tools
-  loop: "{{ awx_experiments.incidents }}"
-  loop_control:
-    loop_var: incident
+- name: Import AWX configuration tasks
+  ansible.builtin.import_tasks:
+    file: configure_awx.yaml
   tags:
     - install_tools
 
