@@ -26,21 +26,11 @@
         awx_cluster:
           cloud_provider: "{{ cluster_provider }}"
           kubeconfig: "{{ stack.awx.kubeconfig }}"
-        awx_credentials:
-          aws: "{{ github.credentials.aws | default(omit) }}"
+        awx_credentials: "{{ credentials }}"
         awx_experiments:
           incidents: "{{ experiments.incidents }}"
-          storage:
-            s3:
-              bucket_name: "{{ storage.s3.bucket_name | default(omit) }}"
-              endpoint_url: "{{ storage.s3.endpoint_url| default(omit) }}"
+          storage: "{{ storage }}"
           trials: "{{ experiments.trials }}"
-        awx_github:
-          it_bench:
-            ssh: "{{ github.it_bench.ssh | default(omit) }}"
-            url: "{{ github.it_bench.url }}"
-          llm_agent:
-            ssh: "{{ github.llm_agent.ssh | default(omit) }}"
-            url: "{{ github.llm_agent.url }}"
+        awx_github: "{{ github }}"
         awx_runners:
-          kubeconfigs: "{{ stack.awx.runners.kubeconfigs }}"
+          kubeconfigs: "{{ stack.runners.kubeconfigs }}"

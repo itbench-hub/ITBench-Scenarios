@@ -18,11 +18,11 @@
     execution_environment: AWX-EE-Custom
     extra_vars:
       incident_id: "{{ incident }}"
-    inventory: sre/inventory.yaml
+    inventory: IT-Bench-SRE
     job_tags: install_tools
     job_type: run
     name: "Incident {{ incident }}: Deploy Tools"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/playbooks/manage_tools.yaml
     project: GitHub-ITBench
     state: present
@@ -38,11 +38,11 @@
     execution_environment: AWX-EE-Custom
     extra_vars:
       incident_id: "{{ incident }}"
-    inventory: sre/inventory.yaml
+    inventory: IT-Bench-SRE
     job_tags: uninstall_tools
     job_type: run
     name: "Incident {{ incident }}: Undeploy Tools"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/playbooks/manage_tools.yaml
     project: GitHub-ITBench
     state: present
@@ -58,11 +58,11 @@
     execution_environment: AWX-EE-Custom
     extra_vars:
       incident_id: "{{ incident }}"
-    inventory: sre/inventory.yaml
+    inventory: IT-Bench-SRE
     job_tags: install_applications
     job_type: run
     name: "Incident {{ incident }}: Deploy Applications"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/playbooks/manage_applications.yaml
     project: GitHub-ITBench
     state: present
@@ -78,11 +78,11 @@
     execution_environment: AWX-EE-Custom
     extra_vars:
       incident_id: "{{ incident }}"
-    inventory: sre/inventory.yaml
+    inventory: IT-Bench-SRE
     job_tags: uninstall_applications
     job_type: run
     name: "Incident {{ incident }}: Undeploy Applications"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/playbooks/manage_applications.yaml
     project: GitHub-ITBench
     state: present
@@ -98,11 +98,11 @@
     execution_environment: AWX-EE-Custom
     extra_vars:
       incident_id: "{{ incident }}"
-    inventory: sre/inventory.yaml
+    inventory: IT-Bench-SRE
     job_tags: inject_faults
     job_type: run
     name: "Incident {{ incident }}: Inject Faults"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/playbooks/manage_incidents.yaml
     project: GitHub-ITBench
     state: present
@@ -118,11 +118,11 @@
     execution_environment: AWX-EE-Custom
     extra_vars:
       incident_id: "{{ incident }}"
-    inventory: sre/inventory.yaml
+    inventory: IT-Bench-SRE
     job_tags: remove_faults
     job_type: run
     name: "Incident {{ incident }}: Remove Faults"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/playbooks/manage_incidents.yaml
     project: GitHub-ITBench
     state: present
@@ -147,7 +147,7 @@
     job_tags: telemetry_access
     job_type: run
     name: "Scenario-{{ incident }}--Setup-For-Telemetry-Access"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/base.yaml
     project: GitHub-ITBench
     state: present
@@ -164,7 +164,7 @@
     job_tags: telemetry_access
     job_type: run
     name: "Scenario-{{ incident }}--Trace-Gathering"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/cron_jobs/trace_recorder.yaml
     project: GitHub-ITBench
     state: present
@@ -181,7 +181,7 @@
     job_tags: post_fault_injection
     job_type: run
     name: "Scenario-{{ incident }}--Post-Fault-Injection"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/base.yaml
     project: GitHub-ITBench
     state: present
@@ -198,7 +198,7 @@
     job_tags: pre_fault_removal
     job_type: run
     name: "Scenario-{{ incident }}--Post-Fault-Injection"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/base.yaml
     project: GitHub-ITBench
     state: present
@@ -215,7 +215,7 @@
     job_tags: capture_failed_deployment_state
     job_type: run
     name: "Scenario-{{ incident }}--Capture-Failed-Deployment"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/base.yaml
     project: GitHub-ITBench
     state: present
@@ -232,7 +232,7 @@
     job_tags: capture_failed_fault_injection_state
     job_type: run
     name: "Scenario-{{ incident }}--Capture-Failed-Fault-Injection"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/base.yaml
     project: GitHub-ITBench
     state: present
@@ -246,7 +246,7 @@
     job_tags: sre_agent
     job_type: run
     name: "Scenario-{{ incident }}--Node-Pause"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/base.yaml
     project: GitHub-ITBench
     state: present
@@ -262,7 +262,7 @@
     job_tags: uninstall_sre_agent
     job_type: run
     name: "Scenario-{{ incident }}--Uninstalling-K8s-Resources-Default-Namespace"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/base.yaml
     project: GitHub-ITBench
     state: present
@@ -278,7 +278,7 @@
     execution_environment: AWX-EE-Custom
     job_type: run
     name: "Scenario-{{ incident }}--Check-for-Alerts"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/cron_jobs/alert_recorder.yaml
     project: GitHub-ITBench
     state: present
@@ -297,7 +297,7 @@
       scenario_number: "{{ incident }}"
     job_type: run
     name: "Scenario-{{ incident }}--Alert-Recorder-On"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/cron_jobs/alert_recorder_init.yaml
     project: GitHub-ITBench
     state: present
@@ -316,7 +316,7 @@
       scenario_number: "{{ incident }}"
     job_type: run
     name: "Scenario-{{ incident }}--Alert-Recorder-Off"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/cron_jobs/alert_recorder_deinit.yaml
     project: GitHub-ITBench
     state: present
@@ -334,7 +334,7 @@
     job_tags: handover_to_agent
     job_type: run
     name: "Scenario-{{ incident }}--Handover-To-Agent"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/base.yaml
     project: GitHub-ITBench
     state: present
@@ -352,7 +352,7 @@
     job_tags: handover_from_agent
     job_type: run
     name: "Scenario-{{ incident }}--Handover-From-Agent"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: sre/base.yaml
     project: GitHub-ITBench
     state: present
@@ -369,7 +369,7 @@
     job_tags: sre_agent
     job_type: run
     name: "Scenario-{{ incident }}--Run-SRE-Agent"
-    organization: Default
+    organization: ITBench-Scenarios
     playbook: deployments/ansible/base.yaml
     project: GitHub-LLM-Agent
     state: present

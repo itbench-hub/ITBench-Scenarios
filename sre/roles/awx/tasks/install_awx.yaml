@@ -65,10 +65,18 @@
       file:
         template.kubeconfig: "\\{\\{ kubeconfig \\}\\}"
       extra_vars:
-        cluster:
-          kubeconfig: "\\{\\{ tower.filename.kubeconfig \\}\\}"
+        kubeconfig: "\\{\\{ tower.filename.kubeconfig \\}\\}"
     kind: cloud
     name: Kubeconfig
+    state: present
+
+- name: Create IT-Bench organization
+  awx.awx.organization:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    description: Organization for IT-Bench
+    name: IT-Bench
     state: present
 
 - name: Create kubeconfig credentials for each runner
@@ -79,10 +87,9 @@
     credential_type: Kubeconfig
     description: Kubeconfig file for a Kubernetes cluster
     inputs:
-      cluster:
-        kubeconfig: "{{ lookup('ansible.builtin.file', item) }}"
+      kubeconfig: "{{ lookup('ansible.builtin.file', item) }}"
     name: Cluster-{{ runner_index + 1 }}-Kubeconfig
-    organization: Default
+    organization: IT-Bench
   loop: "{{ awx_runners.kubeconfigs }}"
   loop_control:
     index_var: runner_index
@@ -98,7 +105,7 @@
       ssh_key_data: "{{ lookup('ansible.builtin.file', awx_github.it_bench.ssh.private_key_path) }}"
       ssh_key_unlock: "{{ awx_github.it_bench.ssh.private_key_passphrase }}"
     name: GitHub-IT-Bench
-    organization: Default
+    organization: IT-Bench
     state: present
   when:
     - awx_github.it_bench.ssh is defined
@@ -112,14 +119,14 @@
     credential_type: Source Control
     description: SSH Credentials for LLM agent repository
     inputs:
-      ssh_key_data: "{{ lookup('ansible.builtin.file', awx_github.agent.ssh.private_key_path) }}"
-      ssh_key_unlock: "{{ awx_github.agent.ssh.private_key_passphrase }}"
+      ssh_key_data: "{{ lookup('ansible.builtin.file', awx_github.llm_agent.ssh.private_key_path) }}"
+      ssh_key_unlock: "{{ awx_github.llm_agent.ssh.private_key_passphrase }}"
     name: GitHub-LLM-Agent
-    organization: Default
+    organization: IT-Bench
     state: present
   when:
-    - awx_github.agent.ssh is defined
-    - awx_github.agent.ssh.private_key_path is file
+    - awx_github.llm_agent.ssh is defined
+    - awx_github.llm_agent.ssh.private_key_path is file
 
 - name: Create credentials for AWS
   awx.awx.credential:
@@ -132,7 +139,7 @@
       username: "{{ awx_credentials.aws.access_key_id }}"
       password: "{{ awx_credentials.aws.secret_access_key }}" # pragma: allowlist secret
     name: AWS
-    organization: Default
+    organization: IT-Bench
     state: present
   when:
     - awx_credentials.aws is defined
@@ -147,7 +154,7 @@
     controller_username: admin
     name: Credential-AWX
     description: Credential-AWX
-    organization: Default
+    organization: IT-Bench
     credential_type: Red Hat Ansible Automation Platform
     inputs:
       host: "{{ awx_controller_host }}"
@@ -162,9 +169,9 @@
     credential: "{{ 'GitHub-IT-Bench' if awx_github.it_bench.ssh is defined else omit }}"
     description: ITBench GitHub repository
     name: GitHub-ITBench
-    organization: Default
+    organization: IT-Bench
     scm_allow_override: true
-    scm_branch: main
+    scm_branch: v1-refactor
     scm_clean: true
     scm_delete_on_update: true
     scm_track_submodules: false
@@ -177,17 +184,41 @@
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    credential: "{{ 'GitHub-LLM-Agent' if awx_github.agent.ssh is defined else omit }}"
+    credential: "{{ 'GitHub-LLM-Agent' if awx_github.llm_agent.ssh is defined else omit }}"
     description: LLM Agent GitHub repository
     name: GitHub-LLM-Agent
-    organization: Default
+    organization: IT-Bench
     scm_allow_override: true
     scm_branch: main
     scm_clean: true
     scm_delete_on_update: true
     scm_track_submodules: false
     scm_type: git
-    scm_url: "{{ awx_github.agent.url }}"
+    scm_url: "{{ awx_github.llm_agent.url }}"
+    state: present
+
+- name: Create ITBench-Scenarios inventory
+  awx.awx.inventory:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    description: Inventory for IT-Bench SRE Scenarios
+    name: ITBench-Scenarios
+    organization: IT-Bench
+    state: present
+
+- name: Create SRE inventory source
+  awx.awx.inventory_source:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    description: Inventory for IT-Bench SRE Scenarios
+    inventory: ITBench-Scenarios
+    name: SRE
+    organization: IT-Bench
+    source: scm
+    source_path: sre/inventory.yaml
+    source_project: GitHub-ITBench
     state: present
 
 - name: Create execution environment
@@ -198,5 +229,5 @@
     description: Custom environment for running ITBench scenarios
     image: quay.io/arorar/awx-ee
     name: AWX-EE-Custom
-    organization: Default
+    organization: IT-Bench
     pull: always
