@@ -30,6 +30,8 @@
                   - DELETE
                   - http://opensearch-cluster-master:9200/{{ item.index }}
             restartPolicy: Never
+        ttlSecondsAfterFinished: 60
+    state: present
   loop: "{{ opensearch_deletion_jobs }}"
   loop_control:
     label: job/{{ item.name }}
@@ -39,40 +41,12 @@
     api_version: batch/v1
     kind: Job
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    name: opensearch-{{ item.name }}-index-deleter
+    name: "{{ item.name }}"
     namespace: "{{ helm_release.namespace }}"
     wait: true
     wait_condition:
       type: Complete
       status: "True"
-  loop: "{{ opensearch_deletion_jobs }}"
-  loop_control:
-    label: job/{{ item.name }}
-
-- name: Delete all jobs
-  kubernetes.core.k8s:
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: batch/v1
-      kind: Job
-      metadata:
-        name: opensearch-{{ item.name }}-index-deleter
-        namespace: "{{ helm_release.namespace }}"
-    state: absent
-  loop: "{{ opensearch_deletion_jobs }}"
-  loop_control:
-    label: job/{{ item.name }}
-
-- name: Delete all job pods
-  kubernetes.core.k8s:
-    delete_all: true
-    kind: Pod
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    label_selectors:
-      - job-name=opensearch-{{ item.name }}-index-deleter
-    namespace: "{{ helm_release.namespace }}"
-    state: absent
-    wait: true
   loop: "{{ opensearch_deletion_jobs }}"
   loop_control:
     label: job/{{ item.name }}
