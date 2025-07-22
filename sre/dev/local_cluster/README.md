@@ -47,13 +47,14 @@ _Note: To delete the cluster, run this command: `make delete_cluster`_
 make start_provider
 ```
 
-6. Update the value of the `kubeconfig` key in the `../group_vars/all.yaml`, with the absolute path to the kubeconfig (located at `$HOME/.kube/config`).
+6. Update the value of the `kubeconfig` key in the `../../group_vars/environment/cluster.yaml`, with the absolute path to the kubeconfig (located at `$HOME/.kube/config`).
 ```shell
-vim ../group_vars/all.yaml
+vim ../../group_vars/environment/cluster.yaml
 ```
 
 ```yaml
-kubeconfig: "<path to kubeconfig>"
+cluster:
+  kubeconfig: "<path to kubeconfig>"
 ```
 
-7. The cluster has been set up. Now let's head back to the [parent README](../README.md) to deploy the incidents.
+7. The cluster has been set up. Now let's head back to the [parent README](../../README.md) to deploy the incidents.

@@ -75,9 +75,9 @@ python -m pip install -r requirements.txt
 ansible-galaxy install -r requirements.yaml
 ```
 
-4. Create the `all.yaml` file from the template.
+4. Create the relevant environment variable files by running
 ```bash
-cp group_vars/all.yaml.example group_vars/all.yaml
+make group_vars
 ```
 
 _Note: These steps only need to be done once upon the initial set up._

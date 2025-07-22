@@ -57,16 +57,17 @@ _Note: To delete the cluster, run this command: `make delete_cluster`_
 make start_provider
 ```
 
-3. Update the value of the `kubeconfig` key in the `../group_vars/all.yaml`, with the absolute path to the kubeconfig (located at `$HOME/.kube/config` e.g. /home/rhel/.kube/config).
+3. Update the `kubeconfig` value in the `../../group_vars/environment/cluster.yaml`, with the absolute path to the kubeconfig (located at `$HOME/.kube/config` e.g. /home/rhel/.kube/config).
 ```shell
-vim ../group_vars/all.yaml
+vim ../../group_vars/environment/cluster.yaml
 ```
 
 ```yaml
-kubeconfig: "<path to kubeconfig>"
+cluster:
+  kubeconfig: "<path to kubeconfig>"
 ```
 
-4. The cluster has been set up. Now let's head back to the [parent README](../README.md) to deploy the incidents.
+4. The cluster has been set up. Now let's head back to the [parent README](../../README.md) to deploy the incidents.
 
 # Troubleshooting
 ### 1. For other Kind-related issues you may want to take a look [here](https://kind.sigs.k8s.io/docs/user/known-issues/).
