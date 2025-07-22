@@ -5,11 +5,11 @@
     namespace: "{{ helm_releases.instance.namespace }}"
     pod: chi-clickhouse-clickhouse-0-0-0
     command: clickhouse-client --query="SHOW TABLES FROM default FORMAT TSV"
-  register: clickhouse_default_tables_result
+  register: tools_clickhouse_default_tables_result
 
 - name: Display all tables in the default database
   ansible.builtin.debug:
-    msg: "{{ clickhouse_default_tables_result.stdout_lines }}"
+    msg: "{{ tools_clickhouse_default_tables_result.stdout_lines }}"
 
 - name: Empty-drain-truncate ClickHouse tables
   kubernetes.core.k8s_exec:
@@ -20,5 +20,5 @@
       clickhouse-client --query="
       TRUNCATE TABLE default.{{ item }};
       "
-  loop: "{{ clickhouse_default_tables_result.stdout_lines }}"
-  when: clickhouse_default_tables_result | length > 0
+  loop: "{{ tools_clickhouse_default_tables_result.stdout_lines }}"
+  when: tools_clickhouse_default_tables_result | length > 0

@@ -1,7 +1,7 @@
 ---
 - name: Create list of OpenSearch job names
   ansible.builtin.set_fact:
-    opensearch_deletion_jobs:
+    tools_opensearch_deletion_jobs:
       - name: delete-index-jaeger-service
         index: jaeger-service-*
       - name: delete-index-jaeger-span
@@ -32,7 +32,7 @@
             restartPolicy: Never
         ttlSecondsAfterFinished: 60
     state: present
-  loop: "{{ opensearch_deletion_jobs }}"
+  loop: "{{ tools_opensearch_deletion_jobs }}"
   loop_control:
     label: job/{{ item.name }}
 
@@ -47,6 +47,6 @@
     wait_condition:
       type: Complete
       status: "True"
-  loop: "{{ opensearch_deletion_jobs }}"
+  loop: "{{ tools_opensearch_deletion_jobs }}"
   loop_control:
     label: job/{{ item.name }}

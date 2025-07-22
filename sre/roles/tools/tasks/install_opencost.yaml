@@ -18,7 +18,9 @@
 - name: Create bearer token
   ansible.builtin.command:
     cmd: oc whoami -t
-  register: oc_whoami_output
+  environment:
+    KUBECONFIG: "{{ tools_cluster.kubeconfig | ansible.builtin.expanduser }}"
+  register: tools_prometheus_token
   changed_when: false
   when:
     - tools_cluster.platform == "openshift"
@@ -30,13 +32,13 @@
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     name: prometheus-k8s
     namespace: openshift-monitoring
-  register: prometheus_k8s_route_info
+  register: tools_prometheus_k8s_route_info
   when:
     - tools_cluster.platform == "openshift"
 
 - name: Parse Prometheus hostname
   ansible.builtin.set_fact:
-    prometheus_url: https://{{ prometheus_k8s_route_info.resources[0].spec.host }}
+    tools_prometheus_k8s_url: https://{{ tools_prometheus_k8s_route_info.resources[0].spec.host }}
   when:
     - tools_cluster.platform == "openshift"
 
@@ -78,10 +80,10 @@
           openshift:
             enabled: "{{ tools_cluster.platform == 'openshift' }}"
         prometheus:
-          bearer_token: "{{ oc_whoami_output.stdout if tools_cluster.platform == 'openshift' else omit }}"
+          bearer_token: "{{ tools_prometheus_token.stdout if tools_cluster.platform == 'openshift' else omit }}"
           external:
             enabled: "{{ tools_cluster.platform == 'openshift' }}"
-            url: "{{ prometheus_url if prometheus_url is defined else omit }}"
+            url: "{{ tools_prometheus_k8s_url | default(omit) }}"
           internal:
             enabled: "{{ tools_cluster.platform == 'kubernetes' }}"
             serviceName: "{{ tools_helm_releases.prometheus.name }}-kube-prometheus-prometheus"

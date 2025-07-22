@@ -18,7 +18,7 @@
     name: "{{ helm_releases.clickhouse.name }}-credentials"
     namespace: "{{ helm_releases.clickhouse.namespace }}"
     wait: true
-  register: clickhouse_secrets_info
+  register: tools_clickhouse_secrets_info
   when:
     - tools_enabled.opentelemetry
 
@@ -59,8 +59,8 @@
       config:
         exporters:
           clickhouse:
-            username: "{{ clickhouse_secrets_info.resources[0].data.user | b64decode }}"
-            password: "{{ clickhouse_secrets_info.resources[0].data.password | b64decode }}"
+            username: "{{ tools_clickhouse_secrets_info.resources[0].data.user | b64decode }}"
+            password: "{{ tools_clickhouse_secrets_info.resources[0].data.password | b64decode }}"
             endpoint: http://{{ helm_releases.clickhouse.name }}-clickhouse.{{ helm_releases.clickhouse.namespace }}.svc.cluster.local:8123
             logs_table_name: kubernetes_events
         service:
@@ -177,9 +177,9 @@
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     namespace: openshift-opentelemetry-operator
     wait: true
-  register: csv_info
+  register: tools_csv_info
   until:
-    - csv_info.resources | community.general.json_query('[*].status.phase') | difference(['Succeeded']) | length == 0
+    - tools_csv_info.resources | community.general.json_query('[*].status.phase') | difference(['Succeeded']) | length == 0
   retries: 10
   delay: 30
   when:
@@ -263,10 +263,10 @@
     name: jaeger
     namespace: "{{ helm_releases.collectors.namespace }}"
     wait: true
-  register: jaeger_collector_info
+  register: tools_jaeger_collector_info
   until:
-    - jaeger_collector_info.resources[0].status.scale is defined
-    - jaeger_collector_info.resources[0].status.scale.statusReplicas | split('/') | unique | length == 1
+    - tools_jaeger_collector_info.resources[0].status.scale is defined
+    - tools_jaeger_collector_info.resources[0].status.scale.statusReplicas | split('/') | unique | length == 1
   retries: 10
   delay: 30
   when:
