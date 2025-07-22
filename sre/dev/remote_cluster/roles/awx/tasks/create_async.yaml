@@ -86,8 +86,8 @@
   ansible.builtin.async_status:
     jid: "{{ item.ansible_job_id }}"
   loop: "{{ awx_async_create_results.results }}"
-  register: async_create_poll_results
-  until: async_create_poll_results.finished
+  register: awx_async_create_poll_results
+  until: awx_async_create_poll_results.finished
   delay: 30
   retries: 20
 
@@ -168,8 +168,8 @@
   ansible.builtin.async_status:
     jid: "{{ item.ansible_job_id }}"
   loop: "{{ awx_async_validate_results.results }}"
-  register: async_validate_poll_results
-  until: async_validate_poll_results.finished
+  register: awx_async_validate_poll_results
+  until: awx_async_validate_poll_results.finished
   delay: 60
   retries: 10
 
