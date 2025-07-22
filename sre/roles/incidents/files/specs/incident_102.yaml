@@ -2,7 +2,7 @@
 metadata:
   complexity: Medium
   id: 102
-  name: Recommendation Service Cache
+  name: Misconfigured resource quota
   platform: kubernetes
   technologies:
     - Python
@@ -22,3 +22,6 @@ spec:
         targets:
           namespaces:
             - name: "{{ applications_helm_releases.otel_demo.namespace }}"
+          deployments:
+            - name: "product-catalog"
+              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"

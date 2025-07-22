@@ -10,21 +10,55 @@
         namespace: "{{ namespace.name }}"
       spec:
         hard:
-          memory: 1Gi
+          memory: 2Gi
     state: present
-  loop: "{{ targets }}"
+  loop: "{{ targets.namespaces }}"
   loop_control:
     label: "namespace/{{ namespace.name }}"
     loop_var: namespace
 
-- name: Restart all deployments to trigger new pod creations
-  ansible.builtin.command:
-    cmd: kubectl -n {{ namespace.name }} rollout restart deployment
+- name: Get current deployment information for specific deployments
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    name: "{{ item.name }}"
+    namespace: "{{ item.namespace }}"
   environment:
     KUBECONFIG: "{{ faults_cluster.kubeconfig | ansible.builtin.expanduser }}"
-  register: rollout_restart_output
-  changed_when: rollout_restart_output.rc == 0
-  loop: "{{ targets }}"
+  register: deployment_info
+  loop: "{{ targets.deployments }}"
   loop_control:
-    label: "namespace/{{ namespace.name }}"
-    loop_var: namespace
+    label: "{{ item.namespace }}/{{ item.name }}"
+
+- name: Scale specific deployments to 0 except otel-collector
+  kubernetes.core.k8s_scale:
+    api_version: apps/v1
+    kind: Deployment
+    name: "{{ item.name }}"
+    namespace: "{{ item.namespace }}"
+    replicas: 0
+    wait: true
+    wait_timeout: 120
+  environment:
+    KUBECONFIG: "{{ faults_cluster.kubeconfig | ansible.builtin.expanduser }}"
+  loop: "{{ targets.deployments }}"
+  when: item.name != 'otel-collector'
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: Scale deployments back to original replica counts except otel-collector
+  kubernetes.core.k8s_scale:
+    api_version: apps/v1
+    kind: Deployment
+    name: "{{ item.name }}"
+    namespace: "{{ item.namespace }}"
+    replicas: "{{ (deployment_info.results | selectattr('item.name', 'equalto', item.name) | first).resources[0].spec.replicas }}"
+    wait: false
+  environment:
+    KUBECONFIG: "{{ faults_cluster.kubeconfig | ansible.builtin.expanduser }}"
+  failed_when: false
+  loop: "{{ targets.deployments }}"
+  when: item.name != 'otel-collector'
+  loop_control:
+    loop_var: item
+    label: "{{ item.name }}: {{ (deployment_info.results | selectattr('item.name', 'equalto', item.name) | first).resources[0].spec.replicas }}"

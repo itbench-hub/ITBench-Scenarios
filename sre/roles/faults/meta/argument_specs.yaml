@@ -67,6 +67,17 @@ argument_specs:
                       name:
                         required: true
                         type: str
+                  deployments:
+                    elements: dict
+                    required: false
+                    type: list
+                    options:
+                      name:
+                        required: true
+                        type: str
+                      namespace:
+                        required: true
+                        type: str
                   services:
                     elements: dict
                     required: false

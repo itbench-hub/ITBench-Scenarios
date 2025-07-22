@@ -43,7 +43,7 @@
   ansible.builtin.import_tasks:
     file: inject_custom_misconfigured_resource_quota.yaml
   vars:
-    targets: "{{ fault.custom.targets.namespaces }}"
+    targets: "{{ fault.custom.targets }}"
   when:
     - fault.custom.name == 'misconfigured-resource-quota'
     - fault.custom.targets.namespaces is defined

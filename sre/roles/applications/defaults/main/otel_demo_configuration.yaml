@@ -34,8 +34,8 @@ applications_otel_demo_configuration:
     autoscaling: false
     replicas: 1
   load_generator:
-    spawn_rate: 1
-    users: 10
+    spawn_rate: 3
+    users: 25
   otel_collector: {}
   payment:
     autoscaling: false
