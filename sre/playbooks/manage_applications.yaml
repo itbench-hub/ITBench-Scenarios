@@ -56,9 +56,9 @@
         name: applications
       vars:
         applications_cluster:
+          cloud_provider: "{{ cluster_provider }}"
           kubeconfig: "{{ cluster.kubeconfig }}"
           platform: "{{ cluster_platform }}"
-          provider: "{{ cluster_provider }}"
 
     # - name: Import e2e role
     #   ansible.builtin.import_role:
