@@ -1,8 +1,8 @@
 ---
 - name: Set variables
   ansible.builtin.set_fact:
-    head_cluster_name: "{{ awx_stack.name_prefix }}-head-aws.k8s.local"
-    runner_cluster_names: |
+    awx_head_cluster_name: "{{ awx_stack.name_prefix }}-head-aws.k8s.local"
+    awx_runner_cluster_names: |
       {{
         [awx_stack.name_prefix + "-runner"] |
         product(range(1, awx_stack.runners.count + 1) | map('string')) |
@@ -10,7 +10,7 @@
         zip_longest([], fillvalue="aws.k8s.local") |
         map('join', '-')
       }}
-    state_store: s3://{{ awx_cluster.s3.bucket_name }}
+    awx_kops_state_store: s3://{{ awx_cluster.s3.bucket_name }}
   tags:
     - always
 
@@ -23,8 +23,8 @@
       - --output
       - json
       - --state
-      - "{{ state_store }}"
-  register: clusters_output
+      - "{{ awx_kops_state_store }}"
+  register: awx_clusters_output
   changed_when: false
   ignore_errors: true
   tags:
@@ -32,25 +32,25 @@
 
 - name: Parse cluster names
   ansible.builtin.set_fact:
-    existing_cluster_names: |
+    awx_existing_cluster_names: |
       {{
-        clusters_output.stdout |
+        awx_clusters_output.stdout |
         from_json |
         community.general.json_query('[*].metadata.name')
       }}
   tags:
     - always
   when:
-    - clusters_output.rc == 0
+    - awx_clusters_output.rc == 0
 
 - name: Import asynchronous AWX stack creation tasks
   ansible.builtin.import_tasks:
     file: create_async.yaml
   vars:
-    cluster_names: |
+    awx_cluster_names: |
       {{
-        (runner_cluster_names + [head_cluster_name]) |
-        difference(existing_cluster_names | default([]))
+        (awx_runner_cluster_names + [awx_head_cluster_name]) |
+        difference(awx_existing_cluster_names | default([]))
       }}
   tags:
     - create
@@ -59,7 +59,7 @@
   ansible.builtin.import_tasks:
     file: install_awx.yaml
   vars:
-    cluster_name: "{{ head_cluster_name }}"
+    cluster_name: "{{ awx_head_cluster_name }}"
   tags:
     - create
 
@@ -67,11 +67,11 @@
   ansible.builtin.import_tasks:
     file: delete_async.yaml
   vars:
-    cluster_names: |
+    awx_cluster_names: |
       {{
-        existing_cluster_names |
+        awx_existing_cluster_names |
         default([]) |
-        intersect((runner_cluster_names + [head_cluster_name]))
+        intersect((awx_runner_cluster_names + [awx_head_cluster_name]))
       }}
   tags:
     - delete

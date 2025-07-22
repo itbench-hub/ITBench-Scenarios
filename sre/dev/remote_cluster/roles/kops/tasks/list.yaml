@@ -6,18 +6,18 @@
       - get
       - clusters
       - --state
-      - "{{ state_store }}"
-  register: clusters_output
+      - "{{ kops_state_store }}"
+  register: kops_clusters_output
   changed_when: false
 
 - name: Format as output table
   ansible.builtin.shell:
     cmd: |
       set -o pipefail
-      echo "{{ clusters_output.stdout | split('\n') | join('\n') }}" | column -t
-  register: formatted_output
+      echo "{{ kops_clusters_output.stdout | split('\n') | join('\n') }}" | column -t
+  register: kops_formatted_output
   changed_when: false
 
 - name: Show all clusters in formatted table
   ansible.builtin.debug:
-    msg: "{{ formatted_output.stdout_lines }}"
+    msg: "{{ kops_formatted_output.stdout_lines }}"

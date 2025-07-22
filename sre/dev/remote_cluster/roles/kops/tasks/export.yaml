@@ -5,19 +5,19 @@
       - kops
       - export
       - --name
-      - "{{ cluster_name }}"
+      - "{{ kops_cluster_name }}"
       - kubecfg
       - --admin
       - --state
-      - "{{ state_store }}"
+      - "{{ kops_state_store }}"
       - --kubeconfig
-      - /tmp/{{ cluster_name }}.yaml
-  register: export_kops_output
-  changed_when: export_kops_output.rc == 0
+      - /tmp/{{ kops_cluster_name }}.yaml
+  register: kops_export_output
+  changed_when: kops_export_output.rc == 0
 
 - name: Display file path of kubeconfig
   ansible.builtin.debug:
     msg:
-      - "The kubeconfig has been exported to: /tmp/{{ cluster_name }}.yaml"
+      - "The kubeconfig has been exported to: /tmp/{{ kops_cluster_name }}.yaml"
       - "Run the following command to execute kubectl commands:"
-      - export KUBECONFIG=/tmp/{{ cluster_name }}.yaml
+      - export KUBECONFIG=/tmp/{{ kops_cluster_name }}.yaml
