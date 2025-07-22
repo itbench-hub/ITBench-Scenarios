@@ -9,7 +9,7 @@
     wait: true
   register: tools_csr_info
   when:
-    - tools_cluster.cloud_provider == 'kind'
+    - tools_cluster.provider == 'kind'
 
 - name: Approve pending certificates
   ansible.builtin.command:
@@ -20,7 +20,7 @@
   changed_when: cert_approve_output.rc == 0
   loop: "{{ tools_csr_info.resources }}"
   when:
-    - tools_cluster.cloud_provider == 'kind'
+    - tools_cluster.provider == 'kind'
     - item.status.conditions is not defined
 
 - name: Wait for approvals to clear
@@ -35,7 +35,7 @@
       status: "True"
   loop: "{{ tools_csr_info.resources }}"
   when:
-    - tools_cluster.cloud_provider == 'kind'
+    - tools_cluster.provider == 'kind'
     - item.status.conditions is not defined
 
 - name: Import Prometheus installation tasks
