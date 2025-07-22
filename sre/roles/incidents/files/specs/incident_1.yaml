@@ -2,22 +2,22 @@
 metadata:
   complexity: Medium
   id: 1
-  name: Recommendation Service Cache
+  name: User bump and thereby request surge with no autoscaling enabled
   platform: kubernetes
   technologies:
-    - Python
-    - Node.js
+    - Envoy
+    - C++
 spec:
   environment:
     applications:
       otel_demo:
         enabled: true
+        configuration:
+          load_generator:
+            spawn_rate: 10
+            users: 350
     tools:
       category: sre
       selected:
         - kubernetes-topology-monitor
-  faults:
-    - otel_demo:
-        flags:
-          - name: recommendationCacheFailure
-            state: "on"
+  faults: []
