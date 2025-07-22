@@ -1,23 +1,11 @@
 ---
-- name: Import common role to import AWX controller variables
-  ansible.builtin.import_role:
-    name: common
-    tasks_from: set_awx_controller_host
-  vars:
-    common_awx:
-      namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
-    common_cluster:
-      kubeconfig: "{{ awx_cluster.kubeconfig }}"
+- name: Import variable setting tasks
+  ansible.builtin.import_tasks:
+    file: set_awx_controller_host.yaml
 
-- name: Import common role to import AWX controller variables
-  ansible.builtin.import_role:
-    name: common
-    tasks_from: set_awx_controller_password
-  vars:
-    common_awx:
-      namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
-    common_cluster:
-      kubeconfig: "{{ awx_cluster.kubeconfig }}"
+- name: Import variable setting tasks
+  ansible.builtin.import_tasks:
+    file: set_awx_controller_password.yaml
 
 - name: Add job template for installing tools
   awx.awx.job_template:
@@ -198,7 +186,7 @@
     project: GitHub-ITBench
     state: present
 
-- name:  Creating/removing job template for pre fault removal task(s)
+- name: Creating/removing job template for pre fault removal task(s)
   awx.awx.job_template:
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret

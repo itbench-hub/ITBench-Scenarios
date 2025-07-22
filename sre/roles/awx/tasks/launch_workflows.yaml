@@ -6,31 +6,19 @@
     - launch_start_workflow
     - launch_stop_workflow
 
-- name: Import common role to import AWX controller variables
-  ansible.builtin.import_role:
-    name: common
-    tasks_from: set_awx_controller_host
+- name: Import variable setting tasks
+  ansible.builtin.import_tasks:
+    file: set_awx_controller_host.yaml
   tags:
     - launch_start_workflow
     - launch_stop_workflow
-  vars:
-    common_awx:
-      namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
-    common_cluster:
-      kubeconfig: "{{ awx_cluster.kubeconfig }}"
 
-- name: Import common role to import AWX controller variables
-  ansible.builtin.import_role:
-    name: common
-    tasks_from: set_awx_controller_password
+- name: Import variable setting tasks
+  ansible.builtin.import_tasks:
+    file: set_awx_controller_password.yaml
   tags:
     - launch_start_workflow
     - launch_stop_workflow
-  vars:
-    common_awx:
-      namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
-    common_cluster:
-      kubeconfig: "{{ awx_cluster.kubeconfig }}"
 
 # TODO: Replace the fake UUID with a real generated one
 
@@ -48,7 +36,7 @@
       s3_bucket_name_for_results: "{{ awx_experiments.storage.s3.bucket_name | default('') }}"
       s3_endpoint_url: "{{ awx_experiments.storage.s3.endpoint_url | default('') }}"
       sre_bench_runner: "{{ sre_bench_runner | default(true) }}"
-    wait: False
+    wait: false
   loop: "{{ workflows }}"
   tags:
     - launch_start_workflow
@@ -67,7 +55,7 @@
       s3_bucket_name_for_results: "{{ awx_experiments.storage.s3.bucket_name | default('') }}"
       s3_endpoint_url: "{{ awx_experiments.storage.s3.endpoint_url | default('') }}"
       sre_bench_runner: "{{ sre_bench_runner | default(true) }}"
-    wait: False
+    wait: false
   loop: "{{ workflows }}"
   tags:
     - launch_stop_workflow

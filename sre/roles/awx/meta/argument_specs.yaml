@@ -65,7 +65,7 @@ argument_specs:
                     type: str
                   endpoint_url:
                     required: true
-                    tyep: str
+                    type: str
           trials:
             required: true
             type: int

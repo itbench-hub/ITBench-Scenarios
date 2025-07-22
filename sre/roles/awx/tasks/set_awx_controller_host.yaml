@@ -2,9 +2,9 @@
 - name: Get AWX service information
   kubernetes.core.k8s_info:
     kind: Service
-    kubeconfig: "{{ common_cluster.kubeconfig }}"
+    kubeconfig: "{{ awx_cluster.kubeconfig }}"
     name: awx-deployment-service
-    namespace: "{{ common_awx.namespace }}"
+    namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
     wait: true
   register: service_info
   until:

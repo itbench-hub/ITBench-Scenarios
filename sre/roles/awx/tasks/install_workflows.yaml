@@ -1,23 +1,11 @@
 ---
-- name: Import common role to import AWX controller variables
-  ansible.builtin.import_role:
-    name: common
-    tasks_from: set_awx_controller_host
-  vars:
-    common_awx:
-      namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
-    common_cluster:
-      kubeconfig: "{{ awx_cluster.kubeconfig }}"
+- name: Import variable setting tasks
+  ansible.builtin.import_tasks:
+    file: set_awx_controller_host.yaml
 
-- name: Import common role to import AWX controller variables
-  ansible.builtin.import_role:
-    name: common
-    tasks_from: set_awx_controller_password
-  vars:
-    common_awx:
-      namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
-    common_cluster:
-      kubeconfig: "{{ awx_cluster.kubeconfig }}"
+- name: Import variable setting tasks
+  ansible.builtin.import_tasks:
+    file: set_awx_controller_password.yaml
 
 - name: Create workflow for starting incidents
   awx.awx.workflow_job_template:
