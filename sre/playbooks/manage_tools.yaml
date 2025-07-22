@@ -74,7 +74,7 @@
         name: tools
       vars:
         tools_cluster:
-          cloud_provider: "{{ cluster_provider }}"
+          provider: "{{ cluster_provider }}"
           kubeconfig: "{{ cluster.kubeconfig }}"
           platform: "{{ cluster_platform }}"
 
