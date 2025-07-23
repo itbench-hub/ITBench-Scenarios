@@ -46,6 +46,8 @@
   loop_control:
     label: "{{ manager.resources[0].kind }}/{{ manager.resources[0].metadata.name }}"
     loop_var: manager
+  when:
+    - manager.resources | length == 1
 
 - name: Scale workload manager replicas back to original count
   kubernetes.core.k8s_scale:
@@ -60,3 +62,5 @@
   loop_control:
     label: "{{ manager.resources[0].kind }}/{{ manager.resources[0].metadata.name }}"
     loop_var: manager
+  when:
+    - manager.resources | length == 1
