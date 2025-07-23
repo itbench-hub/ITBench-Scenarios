@@ -20,8 +20,9 @@ updates:
 
   - package-ecosystem: "docker"
     directories:
+      - "sre/roles/tools/tasks/reinit_opensearch.yaml"
       - "sre/tools/kubernetes-topology-monitor/"
-      - "sre/charts/kubernetes-topology-monitor/templates/"
+      - "sre/tools/kubernetes-topology-monitor/charts/kubernetes-topology-monitor/templates/"
     groups:
       docker-production-dependencies:
         dependency-type: "production"
@@ -30,7 +31,7 @@ updates:
 
   - package-ecosystem: "gomod"
     directories:
-      - "sre/local_cluster/"
+      - "sre/dev/local_cluster/"
     groups:
       go-production-dependencies:
         dependency-type: "production"
@@ -41,7 +42,7 @@ updates:
     directories:
       - "/"
       - "sre/"
-      - "sre/remote_cluster/"
+      - "sre/dev/remote_cluster/"
       - "sre/tools/kubernetes-topology-monitor/"
     groups:
       pip-production-dependencies:

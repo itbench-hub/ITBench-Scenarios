@@ -32,12 +32,9 @@
   when:
     - manager.name != 'otel-collector'
 
-- debug:
-    var: faults_workloads_info.results
-
 - name: Scale workload manager replicas to 0
   kubernetes.core.k8s_scale:
-    api_version: "{{ manager.resources[0].api_version }}"
+    api_version: "{{ manager.resources[0].apiVersion }}"
     kind: "{{ manager.resources[0].kind }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
     name: "{{ manager.resources[0].metadata.name }}"
@@ -54,7 +51,7 @@
 
 - name: Scale workload manager replicas back to original count
   kubernetes.core.k8s_scale:
-    api_version: "{{ manager.resources[0].api_version }}"
+    api_version: "{{ manager.resources[0].apiVersion }}"
     kind: "{{ manager.resources[0].kind }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
     name: "{{ manager.resources[0].metadata.name }}"
