@@ -19,3 +19,12 @@
     - service_info.resources[0].status.loadBalancer.ingress is defined
     - service_info.resources[0].status.loadBalancer.ingress | length > 0
     - service_info.resources[0].status.loadBalancer.ingress[0].hostname is defined
+
+- name: Extract the service loadbalancer ip information
+  ansible.builtin.set_fact:
+    awx_controller_host: "http://{{ service_info.resources[0].status.loadBalancer.ingress[0].ip }}"
+  when:
+    - service_info.resources[0].status.loadBalancer.ingress is defined
+    - service_info.resources[0].status.loadBalancer.ingress | length > 0
+    - service_info.resources[0].status.loadBalancer.ingress[0].hostname is undefined
+    - service_info.resources[0].status.loadBalancer.ingress[0].ip is defined

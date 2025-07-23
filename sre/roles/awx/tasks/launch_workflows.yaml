@@ -1,7 +1,11 @@
 ---
 - name: Create workflow launch list
   ansible.builtin.set_fact:
-    workflows: "{{ awx_experiments.incidents | product(range(1, (awx_experiments.trials + 1))) }}"
+    workflows: |
+      {{
+        awx_experiments.incidents |
+        product(range(1, ((awx_experiments.trials | int) + 1)))
+      }}
   tags:
     - launch_start_workflow
     - launch_stop_workflow
