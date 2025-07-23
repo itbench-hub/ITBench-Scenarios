@@ -32,6 +32,9 @@
   when:
     - manager.name != 'otel-collector'
 
+- debug:
+    var: faults_workloads_info.results
+
 - name: Scale workload manager replicas to 0
   kubernetes.core.k8s_scale:
     api_version: "{{ manager.resources[0].api_version }}"
