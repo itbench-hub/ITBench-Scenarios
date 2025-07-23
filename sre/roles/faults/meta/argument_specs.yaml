@@ -25,7 +25,7 @@ argument_specs:
             required: false
             type: dict
             options:
-              experiments:
+              schedules:
                 elements: dict
                 required: true
                 type: list
@@ -37,7 +37,9 @@ argument_specs:
                 choices:
                   - invalid-node-selector
                   - misconfigured-command
+                  - misconfigured-horizontal-pod-autoscaler
                   - misconfigured-persitent-volume-claim
+                  - misconfigured-resource-quota
                   - misconfigured-service-port
                   - unsupported-image
                 required: true
@@ -46,6 +48,25 @@ argument_specs:
                 required: true
                 type: dict
                 options:
+                  horizontal_pod_autoscalers:
+                    elements: dict
+                    required: false
+                    type: list
+                    options:
+                      name:
+                        required: true
+                        type: str
+                      namespace:
+                        required: true
+                        type: str
+                  namespaces:
+                    elements: dict
+                    required: false
+                    type: list
+                    options:
+                      name:
+                        required: true
+                        type: str
                   services:
                     elements: dict
                     required: false

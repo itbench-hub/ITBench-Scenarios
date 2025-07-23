@@ -22,7 +22,7 @@
     release_name: "{{ helm_release.name }}"
     release_namespace: "{{ helm_release.namespace }}"
     release_state: present
-    timeout: 20m0s
+    timeout: 10m0s
     values:
       controller:
         addHeaders:
@@ -36,7 +36,7 @@
         config:
           server-tokens: "false"
         service:
-          type: "{{ 'NodePort' if (tools_cluster.cloud_provider == 'kind') else 'LoadBalancer' }}"
+          type: "{{ 'NodePort' if (tools_cluster.provider == 'kind') else 'LoadBalancer' }}"
         metrics:
           enabled: "{{ tools_enabled.prometheus }}"
           serviceMonitor:

@@ -5,9 +5,9 @@
   pre_tasks:
     - name: Ensure incident file is defined
       ansible.builtin.assert:
-        that: incident.file is defined
-        fail_msg: Incident file information is not defined. Please define the `file` field in incident.yaml
-        success_msg: Incident file information is defined.
+        that: incident_id is defined
+        fail_msg: incident_id is not defined. Please run playbook with variable defined via CLI arguments.
+        success_msg: incident_id is defined.
       tags:
         - always
 
@@ -38,8 +38,26 @@
       tags:
         - always
       vars:
-        incidents_file: "{{ incident.file }}"
+        incidents_file:
+          id: "{{ incident_id }}"
   tasks:
+    # - name: Pause for 600 seconds pre-fault removal for alert recording
+    #   ansible.builtin.pause:
+    #     seconds: 600
+    #   tags:
+    #     - pre_fault_removal
+    #   when:
+    #     - incident.runner != 'local'
+
+    # - name: Import e2e role
+    #   ansible.builtin.import_role:
+    #     name: e2e
+    #     tasks_from: record_topology_information
+    #   tags:
+    #     - pre_fault_removal
+    #   when:
+    #     - incident.runner != 'local'
+
     - name: Import incidents role
       ansible.builtin.import_role:
         name: incidents
@@ -48,6 +66,15 @@
           kubeconfig: "{{ cluster.kubeconfig }}"
           platform: "{{ cluster_platform }}"
         incidents_spec: "{{ incident_spec }}"
+
+    # - name: Import e2e role
+    #   ansible.builtin.import_role:
+    #     name: e2e
+    #     tasks_from: record_topology_information
+    #   tags:
+    #     - post_fault_injection
+    #   when:
+    #     - incident.runner != 'local'
 
     # - name: Import e2e role
     #   ansible.builtin.import_role:

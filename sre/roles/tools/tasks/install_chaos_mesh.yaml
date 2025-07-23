@@ -24,7 +24,7 @@
         - SYS_ADMIN
         - SYS_CHROOT
         - SYS_PTRACE
-      defaultAddCapabilities: null
+      defaultAddCapabilities:
       fsGroup:
         type: MustRunAs
       runAsUser:
@@ -83,8 +83,7 @@
         runtime: "{{ 'containerd' if tools_cluster.platform == 'kubernetes' else 'crio' }}"
         socketPath: "{{ '/run/containerd/containerd.sock' if tools_cluster.platform == 'kubernetes' else '/var/run/crio/crio.sock' }}"
       dashboard:
-        podAnnotations:
-          openshift.io/required-scc: restricted-v2
+        create: false
       dnsServer:
         create: false
     wait: true

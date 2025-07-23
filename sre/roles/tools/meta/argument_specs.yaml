@@ -12,7 +12,7 @@ argument_specs:
         required: false
         type: dict
         options:
-          cloud_provider:
+          provider:
             default: kind
             required: false
             type: str

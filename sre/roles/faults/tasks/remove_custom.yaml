@@ -19,7 +19,17 @@
     - fault.custom.targets.workload_managers is defined
     - fault.custom.targets.workload_managers | length > 0
 
-- name: Remove misconfigured persistent volume claim injection tasks
+- name: Import misconfigured horizontal pod autoscaler removal tasks
+  ansible.builtin.import_tasks:
+    file: remove_custom_misconfigured_horizontal_pod_autoscaler.yaml
+  vars:
+    targets: "{{ fault.custom.targets.horizontal_pod_autoscalers }}"
+  when:
+    - fault.custom.name == 'misconfigured-horizontal-pod-autoscaler'
+    - fault.custom.targets.horizontal_pod_autoscalers is defined
+    - fault.custom.targets.horizontal_pod_autoscalers | length > 0
+
+- name: Remove misconfigured persistent volume claim removal tasks
   ansible.builtin.import_tasks:
     file: remove_custom_misconfigured_persistent_volume_claim.yaml
   vars:
@@ -28,6 +38,16 @@
     - fault.custom.name == 'misconfigured-persitent-volume-claim'
     - fault.custom.targets.workload_managers is defined
     - fault.custom.targets.workload_managers | length > 0
+
+- name: Import misconfigured resource quota removal tasks
+  ansible.builtin.import_tasks:
+    file: remove_custom_misconfigured_resource_quota.yaml
+  vars:
+    targets: "{{ fault.custom.targets.namespaces }}"
+  when:
+    - fault.custom.name == 'misconfigured-resource-quota'
+    - fault.custom.targets.namespaces is defined
+    - fault.custom.targets.namespaces | length > 0
 
 - name: Import misconfigured service port removal tasks
   ansible.builtin.import_tasks:
