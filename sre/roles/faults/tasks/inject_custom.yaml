@@ -44,7 +44,7 @@
     file: inject_custom_misconfigured_resource_quota.yaml
   vars:
     targets:
-      namespaces: "{{ fault.custom.targets.namespace }}"
+      namespaces: "{{ fault.custom.targets.namespaces }}"
       workload_managers: "{{ fault.custom.targets.workload_managers }}"
   when:
     - fault.custom.name == 'misconfigured-resource-quota'
