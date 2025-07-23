@@ -17,48 +17,46 @@
     label: "namespace/{{ namespace.name }}"
     loop_var: namespace
 
-- name: Get current deployment information for specific deployments
+- name: Retrieve replica information from the workload managers
   kubernetes.core.k8s_info:
     api_version: apps/v1
-    kind: Deployment
-    name: "{{ item.name }}"
-    namespace: "{{ item.namespace }}"
-  environment:
-    KUBECONFIG: "{{ faults_cluster.kubeconfig | ansible.builtin.expanduser }}"
-  register: deployment_info
-  loop: "{{ targets.deployments }}"
+    kind: "{{ manager.kind }}"
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: "{{ manager.name }}"
+    namespace: "{{ manager.namespace }}"
+  register: faults_workloads_info
+  loop: "{{ targets.workload_managers }}"
   loop_control:
-    label: "{{ item.namespace }}/{{ item.name }}"
+    label: "{{ manager.kind | lower }}/{{ manager.name }}"
+    loop_var: manager
+  when:
+    - manager.name != 'otel-collector'
 
-- name: Scale specific deployments to 0 except otel-collector
+- name: Scale workload manager replicas to 0
   kubernetes.core.k8s_scale:
-    api_version: apps/v1
-    kind: Deployment
-    name: "{{ item.name }}"
-    namespace: "{{ item.namespace }}"
+    api_version: "{{ manager.resources[0].api_version }}"
+    kind: "{{ manager.resources[0].kind }}"
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: "{{ manager.resources[0].metadata.name }}"
+    namespace: "{{ manager.resources[0].metadata.namespace }}"
     replicas: 0
     wait: true
-    wait_timeout: 120
-  environment:
-    KUBECONFIG: "{{ faults_cluster.kubeconfig | ansible.builtin.expanduser }}"
-  loop: "{{ targets.deployments }}"
-  when: item.name != 'otel-collector'
+    wait_timeout: 60
+  loop: "{{ faults_workloads_info.results }}"
   loop_control:
-    label: "{{ item.name }}"
+    label: "{{ manager.resources[0].kind }}/{{ manager.resources[0].metadata.name }}"
+    loop_var: manager
 
-- name: Scale deployments back to original replica counts except otel-collector
+- name: Scale workload manager replicas back to original count
   kubernetes.core.k8s_scale:
-    api_version: apps/v1
-    kind: Deployment
-    name: "{{ item.name }}"
-    namespace: "{{ item.namespace }}"
-    replicas: "{{ (deployment_info.results | selectattr('item.name', 'equalto', item.name) | first).resources[0].spec.replicas }}"
+    api_version: "{{ manager.resources[0].api_version }}"
+    kind: "{{ manager.resources[0].kind }}"
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: "{{ manager.resources[0].metadata.name }}"
+    namespace: "{{ manager.resources[0].metadata.namespace }}"
+    replicas: "{{ manager.resources[0].spec.replicas }}"
     wait: false
-  environment:
-    KUBECONFIG: "{{ faults_cluster.kubeconfig | ansible.builtin.expanduser }}"
-  failed_when: false
-  loop: "{{ targets.deployments }}"
-  when: item.name != 'otel-collector'
+  loop: "{{ faults_workloads_info.results }}"
   loop_control:
-    loop_var: item
-    label: "{{ item.name }}: {{ (deployment_info.results | selectattr('item.name', 'equalto', item.name) | first).resources[0].spec.replicas }}"
+    label: "{{ manager.resources[0].kind }}/{{ manager.resources[0].metadata.name }}"
+    loop_var: manager
