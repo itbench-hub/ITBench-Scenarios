@@ -15,11 +15,10 @@ The playbook run is configured using variables defined in `group\_vars`.
 
 | Directory                   | Purpose                                                                                                      |
 |-----------------------------|--------------------------------------------------------------------------------------------------------------|
-| `roles/observability_tools` | Handles  the deployment and removal of observability tools                                                   |
-| `roles/sample_applications` | Handles the deployment and removal of sample applications                                                    |
-| `roles/fault_injection`     | Provides reusable fault injection mechanisms                                                                 |
-| `roles/fault_removal`       | Provides mechanisms to remove (injected) faults from the environment                                         |
-| `roles/incident_`           | Contains scenarios that leverage the fault injection and removal mechanisms defined in the directories above |
+| `roles/tools`               | Handles the deployment and removal of observability/monitoring tools, chaos engineering tools, etc.          |
+| `roles/applications`        | Handles the deployment and removal of sample applications                                                    |
+| `roles/faults`              | Provides reusable fault injection and removal mechanisms                                                     |
+| `roles/incidents`           | Contains scenarios that leverage the fault injection and removal mechanisms defined in the directories above |
 
 ## Recommended Software
 
