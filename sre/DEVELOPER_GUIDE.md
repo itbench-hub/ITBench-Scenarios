@@ -43,7 +43,7 @@ Deploy the default Astronomy Shop application:
 make deploy_applications
 ```
 
-**Additional details:** [Sample applications documentation](./docs/sample_applications.md)
+**Additional details:** [Sample applications documentation](./docs/applications.md)
 
 ### Step 3: Inject Incident Fault
 
