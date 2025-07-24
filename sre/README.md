@@ -61,7 +61,7 @@ sudo dnf install python3.12
 
 1. Create a Python virtual environment
 ```bash
-python3.12 -m venv venv
+python -m venv venv
 source venv/bin/activate
 ```
 
@@ -72,7 +72,7 @@ python -m pip install -r requirements.txt
 
 3. Install Ansible collections.
 ```bash
-ansible-galaxy install -r requirements.yaml
+ansible-galaxy install -r requirements.yaml --force
 ```
 
 4. Create the relevant environment variable files by running
@@ -96,68 +96,152 @@ For instruction on how to create an cloud provider based Kubernetes cluster, ple
 
 Currently, only AWS is supported. AWS clusters are provisioned using [kOps](https://kops.sigs.k8s.io/).
 
-### Running the Incident Scenarios
+### Running Incident Scenarios - Quick Start
 
-Now that our cluster is up and running, let's proceed with the deployment of the observability. monitoring, and chaos engineering tools and application stack, injecting the fault, and monitoring of alerts in the Prometheus dashboard.
+#### 1. Start the Incident Scenario
+Run the following command to deploy observability tools, monitoring stack, chaos engineering tools, application stack, and inject the fault for scenario 1:
 
-1. Deploy tools for observability, monitoring, cost management, and chaos engineering.
+```bash
+INCIDENT_NUMBER=1 make start_incident
+```
+
+#### 2. Set Up Port Forwarding
+Enable access to the Prometheus and Jaeger dashboards:
+
+```bash
+kubectl port-forward svc/ingress-nginx-controller -n ingress-nginx 8080:80 &
+```
+
+#### 3. Access Dashboards
+Navigate to the following URLs in your browser:
+
+```bash
+# View alerts and metrics
+http://localhost:8080/prometheus/alerts
+
+# View traces
+http://localhost:8080/jaeger
+```
+
+#### 4. Monitor Alert States
+The system includes alerts that monitor:
+- Deployment status across namespaces
+- Service latency metrics
+- Error rates across services
+- Kafka connection status for messaging components
+
+**Alert Behavior:**
+- Default state: `Inactive`
+- After a few minutes: `Firing` (indicating fault manifestation)
+
+#### 5. SRE Agent Configuration (Optional)
+If using the [SRE-Agent](https://github.com/IBM/itbench-sre-agent), configure your `.env.tmpl` file:
+
+```env
+OBSERVABILITY_STACK_URL=http://localhost:8080
+TOPOLOGY_URL=http://localhost:8080/topology
+```
+
+#### 6. Cleanup
+When finished, undeploy by running:
+
+```bash
+INCIDENT_NUMBER=1 make stop_incident
+```
+
+### Running Incident Scenarios - Step-by-Step Guide
+This section provides detailed instructions for each phase of running an incident scenario:
+1. **Deploy observability and chaos engineering tools**
+2. **Deploy sample applications**
+3. **Inject fault/failure mechanisms**
+4. **Monitor the outcomes**
+
+#### Step 1: Deploy Observability Stack
+
+Deploy the complete observability, monitoring and chaos engineering toolkit:
 
 ```bash
 make deploy_tools
 ```
-Deploys Prometheus for metrics, ClickHouse for analytics, OpenSearch for logging and Kubernetes events, Jaeger for traces, Chaos Mesh for chaos engineering, Opencost, and Kubernetes metrics server.
 
-To deploy tools for FinOps scenarios in addition to the default tools, prior to running `make deploy_tools` update the configuration in `group_vars/environment/tools.yaml`:
+**What gets deployed:**
+- **Prometheus** - Metrics collection and alerting
+- **ClickHouse** - Analytics database
+- **OpenSearch** - Log aggregation and Kubernetes events
+- **Jaeger** - Tracing
+- **Chaos Mesh** - Chaos engineering platform
+- **OpenCost** - Cost monitoring
+- **Kubernetes Metrics Server** - Resource metrics
+
+##### FinOps Configuration (Optional)
+For financial operations (FinOps) scenarios, update `group_vars/environment/tools.yaml` before deploying:
+
 ```yaml
 tools:
   kubernetes_metrics_server: true
   opencost: true
 ```
-For additional details on the observability tools deployed please head [here](./docs/tools.md).
 
-2. Deploy one of the sample applications i.e. Astronomy Shop by default.
+**Additional details:** [Tools documentation](./docs/tools.md)
+
+#### Step 2: Deploy Sample Application
+
+Deploy the default Astronomy Shop application:
+
 ```bash
 make deploy_applications
 ```
-For additional details on the sample application please head [here](./docs/sample_applications.md).
 
-3. Once all pods are running, inject the fault for an incident.
+**Additional details:** [Sample applications documentation](./docs/sample_applications.md)
+
+#### Step 3: Inject Incident Fault
+
+Once all pods are running, inject the fault for your chosen incident:
+
 ```bash
 INCIDENT_NUMBER=1 make inject_incident_fault
 ```
-Currently the incident scenarios open-sourced are incidents 1, 3, 23, 26, 27, and 102. One can leverage any one of these incidents at this point in time in their own environemnts. Additional details on the incident scenarios themselves and the fault mechanisms can be found [here].
 
-4. After fault injection, to view alerts in the Prometheus dashboard, let's use port forwarding.
+**Open-sourced incident scenarios:** 1, 3, 23, 26, 27, 102
+
+**Additional details:** [Incident scenarios and fault mechanisms](link-placeholder)
+
+#### Step 4. Set Up Port Forwarding
+Enable access to the Prometheus and Jaeger dashboards:
+
 ```bash
 kubectl port-forward svc/ingress-nginx-controller -n ingress-nginx 8080:80 &
 ```
 
-5. Now head over to the following URL:
+#### Step 5. Access Dashboards
+Navigate to the following URLs in your browser:
+
 ```bash
+# View alerts and metrics
 http://localhost:8080/prometheus/alerts
+
+# View traces
+http://localhost:8080/jaeger
 ```
 
-6. Alerts are defined:
-- To track status of deployments across the different namespaces
-- To track `latency` across the different services
-- To track `error` across the different services
-- To track Kafka connection status across the Kafka-related components
-An Alert's default `State` is `Inactive`. After few minutes, the fault `State` changes to `Firing`, indicating fault manifestation. The alert definitions are located [here](roles/observability_tools/templates/prometheus-alerting-rules.j2) and have been curated using this [guide](https://prometheus.io/docs/prometheus/latest/configuration/alerting_rules/).
+#### Step 6. Monitor Alert States
+The system includes alerts that monitor:
+- Deployment status across namespaces
+- Service latency metrics
+- Error rates across services
+- Kafka connection statuses
 
-7. (Optional) You only need to do this if you plan to leverage our [SRE-Agent](https://github.com/IBM/itbench-sre-agent). Leverage the values below for the `.env.tmpl`
-```
-OBSERVABILITY_STACK_URL=http://localhost:8080
-TOPOLOGY_URL=http://localhost:8080/topology
-```
+**Alert Behavior:**
+- Default state: `Inactive`
+- After a few minutes: `Firing` (indicating fault manifestation)
 
-8. To remove the injected fault, run the following `make` command:
+#### Step 7. SRE Agent Configuration (Optional)
+If using the [SRE-Agent](https://github.com/IBM/itbench-sre-agent), configure your `.env.tmpl` file:
 
-```bash
-INCIDENT_NUMBER=1 make remove_incident_fault
-```
-After executing the command, the alert's `State` should change back to `Inactive` from `Firing`, indicating that the fault has been removed.
+#### Step 8: Complete Cleanup
 
-9. Once done you can undeploy the application(s), followed by the tools by running:
+Remove all deployed components:
+
 ```bash
 make undeploy_applications
 make undeploy_tools
