@@ -33,7 +33,7 @@ fs.inotify.max_user_instances = 512
 sudo sysctl -p
 ```
 
-6. A pre-requisite for Chaos-Mesh-based fault mechanisms is to ensure ebtable-related modules are loaded. Add/edit the file and add the following lines:
+6. A pre-requisite for Chaos-Mesh-based fault mechanisms is to ensure ebtable-related modules are loaded. Add/edit the file (/etc/modules-load.d/ebtables.conf) and add the following lines:
 ```bash
 ebtable_broute
 ebtable_nat
