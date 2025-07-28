@@ -18,19 +18,19 @@
     cmd: oc version -o json
   environment:
     KUBECONFIG: "{{ cluster_files.kubeconfig | ansible.builtin.expanduser }}"
-  register: cluster_oc_version
+  register: cluster_raw_oc_version
   changed_when: false
   when:
     - cluster_tools_enabled.oc | bool
 
 - name: Convert version output into JSON object
   ansible.builtin.set_fact:
-    oc_version: "{{ cluster_oc_version.stdout | from_json }}"
+    cluster_oc_version: "{{ cluster_raw_oc_version.stdout | from_json }}"
   when:
     - cluster_tools_enabled.oc | bool
 
 - name: Set cluster platform variable based on version output
   ansible.builtin.set_fact:
-    cluster_platform: "{{ 'openshift' if oc_version.openshiftVersion is defined else 'kubernetes' }}"
+    cluster_platform: "{{ 'openshift' if cluster_oc_version.openshiftVersion is defined else 'kubernetes' }}"
   when:
     - cluster_tools_enabled.oc | bool
