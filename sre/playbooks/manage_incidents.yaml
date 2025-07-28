@@ -11,14 +11,13 @@
       tags:
         - always
 
-    - name: Import common role for kubectl version check
+    - name: Import system role
       ansible.builtin.import_role:
-        name: common
-        tasks_from: check_kubectl_version
+        name: system
       tags:
         - always
       vars:
-        common_cluster:
+        system_cluster:
           kubeconfig: "{{ cluster.kubeconfig }}"
 
     - name: Import common role for platform configuration

@@ -16,13 +16,13 @@
   ansible.builtin.command:
     cmd: "{{ system_kubectl_path.stdout }} version -o json"
   environment:
-    KUBECONFIG: "{{ common_cluster.kubeconfig | ansible.builtin.expanduser }}"
-  register: raw_kubectl_version_out
+    KUBECONFIG: "{{ system_cluster.kubeconfig | ansible.builtin.expanduser }}"
+  register: system_raw_kubectl_version
   changed_when: false
 
 - name: Convert kubectl version to JSON
   ansible.builtin.set_fact:
-    system_kubectl_version: "{{ raw_kubectl_version_out.stdout | from_json }}"
+    system_kubectl_version: "{{ system_raw_kubectl_version.stdout | from_json }}"
 
 - name: Parse kubectl version
   ansible.builtin.set_fact:
