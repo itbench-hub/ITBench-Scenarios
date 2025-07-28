@@ -30,6 +30,16 @@
           kubeconfig: "{{ cluster.kubeconfig }}"
         cluster_tools_enabled:
           oc: "{{ system_oc_exists }}"
+
+    - name: Import variables for incident
+      ansible.builtin.import_role:
+        name: incidents
+        tasks_from: load
+      tags:
+        - always
+      vars:
+        incidents_file:
+          id: "{{ incident_id }}"
   tasks:
     # - name: Pause for 600 seconds pre-fault removal for alert recording
     #   ansible.builtin.pause:
