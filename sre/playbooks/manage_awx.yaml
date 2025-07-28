@@ -11,15 +11,16 @@
         system_cluster:
           kubeconfig: "{{ stack.awx.kubeconfig }}"
 
-    - name: Import common role for provider configuration
+    - name: Import cluster role
       ansible.builtin.import_role:
-        name: common
-        tasks_from: set_cluster_provider
+        name: cluster
       tags:
         - always
       vars:
-        common_cluster:
-          kubeconfig: "{{ stack.awx.kubeconfig }}"
+        cluster_files:
+          kubeconfig: "{{ cluster.kubeconfig }}"
+        cluster_tools_enabled:
+          oc: "{{ system_oc_exists }}"
   tasks:
     - name: Import awx role
       ansible.builtin.import_role:

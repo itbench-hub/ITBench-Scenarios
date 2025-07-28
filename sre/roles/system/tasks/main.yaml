@@ -8,11 +8,7 @@
 - name: Import Helm check tasks
   ansible.builtin.import_tasks:
     file: check_helm_version.yaml
-  tags:
-    - install_tools
 
 - name: Import Kubectl check tasks
   ansible.builtin.import_tasks:
     file: check_kubectl_version.yaml
-  tags:
-    - reinit_tools
