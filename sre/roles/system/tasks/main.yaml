@@ -12,3 +12,7 @@
 - name: Import Kubectl check tasks
   ansible.builtin.import_tasks:
     file: check_kubectl_version.yaml
+
+- name: Import OpenShift CLI check tasks
+  ansible.builtin.import_tasks:
+    file: check_oc_version.yaml
