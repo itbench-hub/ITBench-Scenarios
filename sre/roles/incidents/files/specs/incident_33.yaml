@@ -1,8 +1,8 @@
 ---
 metadata:
   complexity: Low
-  id: 23
-  name: checkoutservice Corrupt Image
+  id: 33
+  name: Invalid node selector on pod
   platform: kubernetes
   technologies:
     - Golang
@@ -17,7 +17,7 @@ spec:
         - kubernetes-topology-monitor
   faults:
     - custom:
-        name: unsupported-image
+        name: invalid-node-selector
         targets:
           workload_managers:
             - kind: Deployment
