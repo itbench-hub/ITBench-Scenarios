@@ -1,8 +1,8 @@
 ---
 metadata:
   complexity: Medium
-  id: 37
-  name: Valid Cost Increase
+  id: 38
+  name: Misconfigured HPA Cost Increase
   platform: kubernetes
   technologies: []
 spec:
@@ -52,4 +52,14 @@ spec:
       selected:
         - kubernetes-metrics-server
         - kubernetes-topology-monitor
-  faults: []
+  faults:
+    - custom:
+        name: misconfigured-horizontal-pod-autoscaler
+        targets:
+          horizontal_pod_autoscalers:
+            - name: fraud-detection
+              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+            - name: frontend
+              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+            - name: image-provider
+              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
