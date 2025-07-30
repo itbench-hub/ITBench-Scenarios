@@ -24,23 +24,21 @@ spec:
       interval: 1m
       rules:
         - alert: CPUSpend
-          expr: sum by (exported_namespace)
-            (exported_container_exported_namespace_node:container_cpu_allocation_cost_per_node:avg5m{exported_container!="load-generator",
-            exported_namespace="otel-demo"}) > 0.03
+          expr: sum by (namespace) (container_namespace_node:container_cpu_allocation_cost_per_node:avg5m{container!="load-generator", namespace="otel-demo"}) >
+            0.03
           for: 1m
           labels:
             severity: warning
           annotations:
-            description: "{{ $labels.exported_namespace }} has exceeded the allocated budget for vCPU for 5m (current: ${{ $value }})"
+            description: "{{ $labels.namespace }} has exceeded the allocated budget for vCPU for 5m (current: ${{ $value }})"
         - alert: MemorySpend
-          expr: sum by (exported_namespace)
-            (exported_container_exported_namespace_node:container_memory_allocation_gigabytes_cost_per_node:avg5m{exported_container!="load-generator",
-            exported_namespace="otel-demo"}) > 0.009
+          expr: sum by (namespace) (container_namespace_node:container_memory_allocation_gigabytes_cost_per_node:avg5m{container!="load-generator",
+            namespace="otel-demo"}) > 0.009
           for: 1m
           labels:
             severity: warning
           annotations:
-            description: "{{ $labels.exported_namespace }} has exceeded the allocated budget for RAM for 5m (current: ${{ $value }})"
+            description: "{{ $labels.namespace }} has exceeded the allocated budget for RAM for 5m (current: ${{ $value }})"
     - name: EfficiencyAlerts
       interval: 1m
       rules:
