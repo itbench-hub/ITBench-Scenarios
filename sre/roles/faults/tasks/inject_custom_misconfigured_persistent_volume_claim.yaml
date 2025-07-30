@@ -18,6 +18,7 @@
     state: present
   loop: "{{ targets | community.general.json_query('[*].namespace') | unique }}"
   loop_control:
+    label: namespace/{{ namespace }}
     loop_var: namespace
 
 - name: Inject fault (misconfigured persistent volume claim)

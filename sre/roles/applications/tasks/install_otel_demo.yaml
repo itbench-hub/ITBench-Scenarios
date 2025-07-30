@@ -71,6 +71,7 @@
           podSecurityContext:
             runAsNonRoot: true
             runAsUser: 1654
+          replicas: "{{ configuration.accounting.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -80,6 +81,7 @@
         ad:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.ad.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -89,6 +91,7 @@
         cart:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.cart.replicas }}"
           resources:
             requests:
               cpu: 25m
@@ -96,6 +99,7 @@
         checkout:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.checkout.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -105,6 +109,7 @@
         currency:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.currency.replicas }}"
           resources:
             requests:
               cpu: 25m
@@ -112,6 +117,7 @@
         email:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.email.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -128,6 +134,7 @@
         fraud-detection:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.fraud_detection.replicas }}"
           resources:
             requests:
               cpu: 25m
@@ -137,6 +144,7 @@
         frontend:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.frontend.replicas }}"
           resources:
             requests:
               cpu: 300m
@@ -144,6 +152,7 @@
         frontend-proxy:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.frontend_proxy.replicas }}"
           resources:
             requests:
               cpu: 75m
@@ -153,6 +162,7 @@
         image-provider:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.image_provider.replicas }}"
           podSecurityContext:
             runAsNonRoot: true
             runAsUser: 101
@@ -165,6 +175,7 @@
             tag: 2.0.2-kafka
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.kafka.replicas }}"
           resources:
             requests:
               cpu: 25m
@@ -176,9 +187,9 @@
             - name: LOCUST_BROWSER_TRAFFIC_ENABLED
               value: "false"
             - name: LOCUST_SPAWN_RATE
-              value: "{{ configuration.load_generator.spawn_rate }}"
+              value: "{{ configuration.load_generator.spawn_rate | string }}"
             - name: LOCUST_USERS
-              value: "{{ configuration.load_generator.users }}"
+              value: "{{ configuration.load_generator.users | string }}"
           podAnnotations:
             openshift.io/required-scc: restricted-v2
           resources:
@@ -188,6 +199,7 @@
         payment:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.payment.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -195,6 +207,7 @@
         product-catalog:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.product_catalog.replicas }}"
           resources:
             requests:
               cpu: 50m
@@ -204,6 +217,7 @@
         quote:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.quote.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -211,6 +225,7 @@
         recommendation:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.recommendation.replicas }}"
           resources:
             requests:
               cpu: 50m
@@ -218,6 +233,7 @@
         shipping:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.shipping.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -225,6 +241,7 @@
         valkey-cart:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
+          replicas: "{{ configuration.valkey_cart.replicas }}"
           resources:
             requests:
               cpu: 10m
@@ -310,24 +327,6 @@
     namespace: "{{ helm_releases.otel_demo.namespace }}"
     state: present
     src: files/rules/otel-demo.yaml
-
-# Since Jinja2 will only template the variables as strings, this scale
-# operation is used instead of setting the replica value in the Helm values.
-
-- name: Scale deployments
-  kubernetes.core.k8s_scale:
-    api_version: apps/v1
-    kind: Deployment
-    kubeconfig: "{{ applications_cluster.kubeconfig }}"
-    name: "{{ item | regex_replace('_', '-') }}"
-    namespace: "{{ helm_releases.otel_demo.namespace }}"
-    replicas: "{{ configuration[item].replicas }}"
-  loop: "{{ configuration.keys() | list }}"
-  loop_control:
-    label: deployment/{{ item | regex_replace('_', '-') }}
-  when:
-    - (configuration[item].replicas | default(1)) > 1
-    - not (configuration[item].autoscaling | default(false))
 
 - name: Create Horizontal Pod Autoscalers
   kubernetes.core.k8s:
