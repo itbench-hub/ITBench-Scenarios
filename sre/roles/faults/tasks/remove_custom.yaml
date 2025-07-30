@@ -1,21 +1,21 @@
 ---
+- name: Import invalid command removal tasks
+  ansible.builtin.import_tasks:
+    file: remove_custom_invalid_command.yaml
+  vars:
+    targets: "{{ fault.custom.targets.workload_managers }}"
+  when:
+    - fault.custom.name == 'invalid-command'
+    - fault.custom.targets.workload_managers is defined
+    - fault.custom.targets.workload_managers | length > 0
+
 - name: Import invalid node selector removal tasks
   ansible.builtin.import_tasks:
     file: remove_custom_invalid_node_selector.yaml
   vars:
-    targets: "{{ fault.custom.targets.workload_managers | default([]) }}"
+    targets: "{{ fault.custom.targets.workload_managers }}"
   when:
     - fault.custom.name == 'invalid-node-selector'
-    - fault.custom.targets.workload_managers is defined
-    - fault.custom.targets.workload_managers | length > 0
-
-- name: Import misconfigured command removal tasks
-  ansible.builtin.import_tasks:
-    file: remove_custom_misconfigured_command.yaml
-  vars:
-    targets: "{{ fault.custom.targets.workload_managers | default([]) }}"
-  when:
-    - fault.custom.name == 'misconfigured-command'
     - fault.custom.targets.workload_managers is defined
     - fault.custom.targets.workload_managers | length > 0
 
@@ -23,7 +23,7 @@
   ansible.builtin.import_tasks:
     file: remove_custom_misconfigured_horizontal_pod_autoscaler.yaml
   vars:
-    targets: "{{ fault.custom.targets.horizontal_pod_autoscalers | default([]) }}"
+    targets: "{{ fault.custom.targets.horizontal_pod_autoscalers }}"
   when:
     - fault.custom.name == 'misconfigured-horizontal-pod-autoscaler'
     - fault.custom.targets.horizontal_pod_autoscalers is defined
@@ -33,7 +33,7 @@
   ansible.builtin.import_tasks:
     file: remove_custom_misconfigured_persistent_volume_claim.yaml
   vars:
-    targets: "{{ fault.custom.targets.workload_managers | default([]) }}"
+    targets: "{{ fault.custom.targets.workload_managers }}"
   when:
     - fault.custom.name == 'misconfigured-persitent-volume-claim'
     - fault.custom.targets.workload_managers is defined
@@ -43,7 +43,7 @@
   ansible.builtin.import_tasks:
     file: remove_custom_misconfigured_resource_quota.yaml
   vars:
-    targets: "{{ fault.custom.targets.namespaces | default([]) }}"
+    targets: "{{ fault.custom.targets.namespaces }}"
   when:
     - fault.custom.name == 'misconfigured-resource-quota'
     - fault.custom.targets.namespaces is defined
@@ -53,7 +53,7 @@
   ansible.builtin.import_tasks:
     file: remove_custom_misconfigured_service_port.yaml
   vars:
-    targets: "{{ fault.custom.targets.services | default([]) }}"
+    targets: "{{ fault.custom.targets.services }}"
   when:
     - fault.custom.name == 'misconfigured-service-port'
     - fault.custom.targets.services is defined
@@ -63,7 +63,7 @@
   ansible.builtin.import_tasks:
     file: remove_custom_unsupported_image.yaml
   vars:
-    targets: "{{ fault.custom.targets.workload_managers | default([]) }}"
+    targets: "{{ fault.custom.targets.workload_managers }}"
   when:
     - fault.custom.name == 'unsupported-image'
     - fault.custom.targets.workload_managers is defined

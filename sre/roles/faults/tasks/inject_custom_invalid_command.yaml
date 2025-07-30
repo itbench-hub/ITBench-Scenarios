@@ -1,5 +1,5 @@
 ---
-- name: Inject fault (misconfigured command)
+- name: Inject fault (invalid command)
   kubernetes.core.k8s_json_patch:
     api_version: apps/v1
     kind: "{{ manager.kind }}"
