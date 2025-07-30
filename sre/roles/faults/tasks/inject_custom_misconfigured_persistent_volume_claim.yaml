@@ -30,7 +30,7 @@
     patch:
       - op: add
         path: /spec/containers/0/volumes
-        value: "{'persistentVolumeClaim': {'claimName': 'it-bench-invalid'}, 'name': 'invalid-volume'}"
+        value: {"persistentVolumeClaim": {"claimName": "it-bench-invalid"}, "name": "invalid-volume"}
   loop: "{{ targets }}"
   loop_control:
     label: "{{ manager.kind }}/{{ manager.name }}"
