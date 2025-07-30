@@ -25,5 +25,5 @@
     state: patched
   loop: "{{ targets }}"
   loop_control:
-    label: hpa/{{ autoscaler.name }}
+    label: fraud-detection/{{ autoscaler.name }}
     loop_var: autoscaler

@@ -9,7 +9,7 @@
   ansible.builtin.import_tasks:
     file: inject_chaos_mesh.yaml
   vars:
-    schedules: "{{ fault.chaos_mesh.schedules }}"
+    schedules: "{{ fault.chaos_mesh.schedules | default([]) }}"
   when:
     - fault.chaos_mesh is defined
     - fault.chaos_mesh.schedules | length > 0

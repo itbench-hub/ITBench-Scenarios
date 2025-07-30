@@ -9,7 +9,7 @@
         name: it-bench-invalid
         namespace: "{{ namespace }}"
     state: absent
-  loop: "{{ (targets | default([])) | community.general.json_query('[*].namespace') | unique }}"
+  loop: "{{ targets | community.general.json_query('[*].namespace') | unique }}"
   loop_control:
     loop_var: namespace
 

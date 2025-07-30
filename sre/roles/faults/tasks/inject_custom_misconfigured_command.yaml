@@ -9,7 +9,7 @@
     patch:
       - op: replace
         path: /spec/template/spec/containers/0/command
-        value: [invalid-command]
+        value: ["invalid-command"]
   loop: "{{ targets }}"
   loop_control:
     label: "{{ manager.kind | lower }}/{{ manager.name }}"
