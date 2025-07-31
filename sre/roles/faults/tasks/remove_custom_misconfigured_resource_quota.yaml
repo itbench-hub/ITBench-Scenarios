@@ -15,6 +15,6 @@
     label: "namespace/{{ namespace.name }}"
     loop_var: namespace
 
-- name: Print help message
+- name: Display fault removal instructions
   ansible.builtin.debug:
-    msg: To finish removing this fault, please uninstall and reinstall the application it was injected into.
+    msg: To remove this fault, please uninstall and reinstall the application it was injected into.
