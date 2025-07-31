@@ -36,6 +36,7 @@ argument_specs:
               name:
                 choices:
                   - invalid-command
+                  - invalid-image
                   - invalid-node-selector
                   - misconfigured-horizontal-pod-autoscaler
                   - misconfigured-persitent-volume-claim
