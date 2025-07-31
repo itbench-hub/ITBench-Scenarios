@@ -5,7 +5,7 @@ metadata:
   name: Invalid node selector on pod
   platform: kubernetes
   technologies:
-    - Golang
+    - Go
 spec:
   environment:
     applications:

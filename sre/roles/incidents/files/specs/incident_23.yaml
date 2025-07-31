@@ -5,7 +5,7 @@ metadata:
   name: checkoutservice Corrupt Image
   platform: kubernetes
   technologies:
-    - Golang
+    - Go
 spec:
   environment:
     applications:
