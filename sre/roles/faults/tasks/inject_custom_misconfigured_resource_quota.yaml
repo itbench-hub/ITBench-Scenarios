@@ -24,7 +24,7 @@
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
     name: "{{ manager.name }}"
     namespace: "{{ manager.namespace }}"
-  register: faults_workloads_info
+  register: faults_manager_workload_info
   loop: "{{ targets.workload_managers }}"
   loop_control:
     label: "{{ manager.kind | lower }}/{{ manager.name }}"
@@ -34,33 +34,33 @@
 
 - name: Scale workload manager replicas to 0
   kubernetes.core.k8s_scale:
-    api_version: "{{ manager.resources[0].apiVersion }}"
-    kind: "{{ manager.resources[0].kind }}"
+    api_version: "{{ info.resources[0].apiVersion }}"
+    kind: "{{ info.resources[0].kind }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ manager.resources[0].metadata.name }}"
-    namespace: "{{ manager.resources[0].metadata.namespace }}"
+    name: "{{ info.resources[0].metadata.name }}"
+    namespace: "{{ info.resources[0].metadata.namespace }}"
     replicas: 0
     wait: true
     wait_timeout: 60
-  loop: "{{ faults_workloads_info.results }}"
+  loop: "{{ faults_manager_workload_info.results }}"
   loop_control:
-    label: "{{ manager.resources[0].kind | lower }}/{{ manager.resources[0].metadata.name }}"
-    loop_var: manager
+    label: "{{ info.resources[0].kind | lower }}/{{ info.resources[0].metadata.name }}"
+    loop_var: info
   when:
-    - manager.resources | length == 1
+    - info.resources | length == 1
 
 - name: Scale workload manager replicas back to original count
   kubernetes.core.k8s_scale:
-    api_version: "{{ manager.resources[0].apiVersion }}"
-    kind: "{{ manager.resources[0].kind }}"
+    api_version: "{{ info.resources[0].apiVersion }}"
+    kind: "{{ info.resources[0].kind }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ manager.resources[0].metadata.name }}"
-    namespace: "{{ manager.resources[0].metadata.namespace }}"
-    replicas: "{{ manager.resources[0].spec.replicas }}"
+    name: "{{ info.resources[0].metadata.name }}"
+    namespace: "{{ info.resources[0].metadata.namespace }}"
+    replicas: "{{ info.resources[0].spec.replicas }}"
     wait: false
-  loop: "{{ faults_workloads_info.results }}"
+  loop: "{{ faults_manager_workload_info.results }}"
   loop_control:
-    label: "{{ manager.resources[0].kind | lower }}/{{ manager.resources[0].metadata.name }}"
-    loop_var: manager
+    label: "{{ info.resources[0].kind | lower }}/{{ info.resources[0].metadata.name }}"
+    loop_var: info
   when:
-    - manager.resources | length == 1
+    - info.resources | length == 1
