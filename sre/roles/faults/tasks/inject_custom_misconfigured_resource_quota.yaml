@@ -17,14 +17,14 @@
     label: "namespace/{{ namespace.name }}"
     loop_var: namespace
 
-- name: Retrieve replica information from the workload managers
+- name: Retrieve replica information from workload managers
   kubernetes.core.k8s_info:
     api_version: apps/v1
     kind: "{{ manager.kind }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
     name: "{{ manager.name }}"
     namespace: "{{ manager.namespace }}"
-  register: faults_manager_workload_info
+  register: faults_workload_managers_info
   loop: "{{ targets.workload_managers }}"
   loop_control:
     label: "{{ manager.kind | lower }}/{{ manager.name }}"
@@ -32,35 +32,37 @@
   when:
     - manager.name != 'otel-collector'
 
-- name: Scale workload manager replicas to 0
+- name: Scale down workloads to 0 replicas
   kubernetes.core.k8s_scale:
-    api_version: "{{ info.resources[0].apiVersion }}"
-    kind: "{{ info.resources[0].kind }}"
+    api_version: "{{ result.resources[0].apiVersion }}"
+    kind: "{{ result.resources[0].kind }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ info.resources[0].metadata.name }}"
-    namespace: "{{ info.resources[0].metadata.namespace }}"
+    name: "{{ result.resources[0].metadata.name }}"
+    namespace: "{{ result.resources[0].metadata.namespace }}"
     replicas: 0
     wait: true
     wait_timeout: 60
-  loop: "{{ faults_manager_workload_info.results }}"
+  loop: "{{ faults_workload_managers_info.results }}"
   loop_control:
-    label: "{{ info.resources[0].kind | lower }}/{{ info.resources[0].metadata.name }}"
-    loop_var: info
+    index_var: workload_index
+    label: workload-{{ workload_index }}
+    loop_var: result
   when:
-    - info.resources | length == 1
+    - result.resources | length == 1
 
-- name: Scale workload manager replicas back to original count
+- name: Scale up workloads to original replica count
   kubernetes.core.k8s_scale:
-    api_version: "{{ info.resources[0].apiVersion }}"
-    kind: "{{ info.resources[0].kind }}"
+    api_version: "{{ result.resources[0].apiVersion }}"
+    kind: "{{ result.resources[0].kind }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ info.resources[0].metadata.name }}"
-    namespace: "{{ info.resources[0].metadata.namespace }}"
-    replicas: "{{ info.resources[0].spec.replicas }}"
+    name: "{{ result.resources[0].metadata.name }}"
+    namespace: "{{ result.resources[0].metadata.namespace }}"
+    replicas: "{{ result.resources[0].spec.replicas }}"
     wait: false
-  loop: "{{ faults_manager_workload_info.results }}"
+  loop: "{{ faults_workload_managers_info.results }}"
   loop_control:
-    label: "{{ info.resources[0].kind | lower }}/{{ info.resources[0].metadata.name }}"
-    loop_var: info
+    index_var: workload_index
+    label: workload-{{ workload_index }}
+    loop_var: result
   when:
-    - info.resources | length == 1
+    - result.resources | length == 1
