@@ -18,7 +18,7 @@ spec:
   faults:
     - custom:
         name: misconfigured-network-policy
-        unsupported_image:
+        misconfigured_network_policy:
           workload:
             kind: Deployment
             name: frontend

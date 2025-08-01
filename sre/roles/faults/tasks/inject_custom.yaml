@@ -8,6 +8,15 @@
     - fault.custom.name == 'invalid-command'
     - fault.custom.invalid_command is defined
 
+- name: Import invalid image injection tasks
+  ansible.builtin.import_tasks:
+    file: inject_custom_invalid_image.yaml
+  vars:
+    spec: "{{ fault.custom.invalid_image }}"
+  when:
+    - fault.custom.name == 'invalid-image
+    - fault.custom.invalid_image is defined
+
 - name: Import invalid node selector injection tasks
   ansible.builtin.import_tasks:
     file: inject_custom_invalid_node_selector.yaml
