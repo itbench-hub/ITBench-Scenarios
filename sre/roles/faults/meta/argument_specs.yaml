@@ -45,7 +45,7 @@ argument_specs:
                   - invalid-image
                   - invalid-node-selector
                   - misconfigured-horizontal-pod-autoscaler
-                  # - misconfigured-network-policy
+                  - misconfigured-network-policy
                   - misconfigured-persitent-volume-claim
                   - misconfigured-resource-quota
                   - misconfigured-service-port
@@ -121,6 +121,26 @@ argument_specs:
                     required: true
                     type: dict
                     options:
+                      name:
+                        required: true
+                        type: str
+                      namespace:
+                        required: true
+                        type: str
+              misconfigured_network_policy:
+                required: false
+                type: dict
+                options:
+                  workload:
+                    required: true
+                    type: dict
+                    options:
+                      kind:
+                        choices:
+                          - Deployment
+                          - StatefulSet
+                        required: true
+                        type: str
                       name:
                         required: true
                         type: str
