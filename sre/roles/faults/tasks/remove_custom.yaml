@@ -14,7 +14,7 @@
   vars:
     spec: "{{ fault.custom.invalid_image }}"
   when:
-    - fault.custom.name == 'invalid-image
+    - fault.custom.name == 'invalid-image'
     - fault.custom.invalid_image is defined
 
 - name: Import invalid node selector removal tasks
