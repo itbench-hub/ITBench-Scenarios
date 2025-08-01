@@ -1,21 +1,20 @@
 ---
-- name: Include custom fault removal tasks
-  ansible.builtin.include_tasks:
+- name: Import custom fault removal tasks
+  ansible.builtin.import_tasks:
     file: remove_custom.yaml
   when:
     - fault.custom is defined
 
-- name: Include Chaos Mesh fault removal tasks
-  ansible.builtin.include_tasks:
+- name: Import Chaos Mesh fault removal tasks
+  ansible.builtin.import_tasks:
     file: remove_chaos_mesh.yaml
   vars:
-    schedules: "{{ fault.chaos_mesh.schedules }}"
+    spec: "{{ fault.chaos_mesh.schedule }}"
   when:
     - fault.chaos_mesh is defined
-    - fault.chaos_mesh.schedules | length > 0
 
-- name: Include Otel Demo fault removal tasks
-  ansible.builtin.include_tasks:
+- name: Import Otel Demo fault removal tasks
+  ansible.builtin.import_tasks:
     file: remove_otel_demo.yaml
   when:
     - fault.otel_demo is defined

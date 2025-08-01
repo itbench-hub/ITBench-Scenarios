@@ -3,8 +3,8 @@
   ansible.builtin.include_vars:
     file: ../applications/defaults/main/helm_releases.yaml
 
-- name: Include flagd injection tasks
-  ansible.builtin.include_tasks:
+- name: Import flagd injection tasks
+  ansible.builtin.import_tasks:
     file: inject_otel_demo_flagd.yaml
   vars:
     spec: "{{ fault.otel_demo.flagd }}"

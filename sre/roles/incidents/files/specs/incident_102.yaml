@@ -19,7 +19,7 @@ spec:
   faults:
     - custom:
         name: misconfigured-resource-quota
-        targets:
+        misconfigured_resource_quota:
           namespace:
             name: "{{ applications_helm_releases.otel_demo.namespace }}"
           workloads:

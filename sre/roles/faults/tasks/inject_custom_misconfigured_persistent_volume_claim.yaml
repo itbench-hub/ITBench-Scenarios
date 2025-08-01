@@ -6,8 +6,8 @@
       apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
-        name: it-bench-invalid
-        namespace: "{{ spec.namespace.name }}"
+        name: "{{ spec.workload.name }}-invalid"
+        namespace: "{{ spec.workload.namespace }}"
       spec:
         accessModes:
           - ReadWriteOnce
@@ -20,15 +20,11 @@
 - name: Inject fault (misconfigured persistent volume claim)
   kubernetes.core.k8s_json_patch:
     api_version: apps/v1
-    kind: "{{ workload.kind }}"
+    kind: "{{ spec.workload.kind }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ workload.name }}"
-    namespace: "{{ spec.namespace.name }}"
+    name: "{{ spec.workload.name }}"
+    namespace: "{{ spec.workload.namespace }}"
     patch:
       - op: add
         path: /spec/containers/0/volumes
-        value: {"persistentVolumeClaim": {"claimName": "it-bench-invalid"}, "name": "invalid-volume"}
-  loop: "{{ spec.workloads }}"
-  loop_control:
-    label: "{{ workload.kind }}/{{ workload.name }}"
-    loop_var: workload
+        value: {"persistentVolumeClaim": {"claimName": "{{ spec.workload.name }}-invalid"}, "name": "invalid-volume"}

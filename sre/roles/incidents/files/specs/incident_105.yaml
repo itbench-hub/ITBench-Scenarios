@@ -19,7 +19,7 @@ spec:
   faults:
     - custom:
         name: invalid-command
-        targets:
+        invalid_command:
           workload:
             kind: Deployment
             name: product-catalog

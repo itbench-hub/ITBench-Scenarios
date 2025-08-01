@@ -6,8 +6,8 @@
       apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
-        name: it-bench-invalid
-        namespace: "{{ spec.namespace.name }}"
+        name: "{{ spec.workload.name }}-invalid"
+        namespace: "{{ spec.workload.namepace }}"
     state: absent
 
 - name: Display fault removal instructions

@@ -43,6 +43,7 @@
     label: "{{ result.resources[0].kind | lower }}/{{ result.resources[0].metadata.name }}"
     loop_var: result
   when:
+    - faults_workloads_info is defined
     - result.resources | length == 1
 
 - name: Scale up workloads to original replica count
@@ -59,4 +60,5 @@
     label: "{{ result.resources[0].kind | lower }}/{{ result.resources[0].metadata.name }}"
     loop_var: result
   when:
+    - faults_workloads_info is defined
     - result.resources | length == 1
