@@ -1,0 +1,12 @@
+---
+- name: Inject fault (remove environment vars)
+  kubernetes.core.k8s_json_patch:
+    api_version: apps/v1
+    kind: "{{ spec.workload.kind }}"
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: "{{ spec.workload.name }}"
+    namespace: "{{ spec.workload.namespace }}"
+    patch:
+      - op: replace
+        path: /spec/template/spec/containers/0/env
+        value: []

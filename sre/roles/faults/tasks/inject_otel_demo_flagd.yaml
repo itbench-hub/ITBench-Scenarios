@@ -19,7 +19,7 @@
         (enabled_config | default({})) |
         combine({ flag.name: { 'defaultVariant': flag.state } }, recursive=true)
       }}
-  loop: "{{ flags }}"
+  loop: "{{ spec.flags }}"
   loop_control:
     label: "{{ flag.name }}"
     loop_var: flag

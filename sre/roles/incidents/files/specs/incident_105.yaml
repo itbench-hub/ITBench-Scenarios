@@ -1,11 +1,12 @@
 ---
 metadata:
-  complexity: Low
-  id: 23
-  name: checkoutservice Corrupt Image
+  complexity: Medium
+  id: 105
+  name: Invalid command executed in pod
   platform: kubernetes
   technologies:
-    - Go
+    - Python
+    - Node.js
 spec:
   environment:
     applications:
@@ -17,9 +18,9 @@ spec:
         - kubernetes-topology-monitor
   faults:
     - custom:
-        name: unsupported-image
-        unsupported_image:
+        name: invalid-command
+        invalid_command:
           workload:
             kind: Deployment
-            name: checkout
+            name: product-catalog
             namespace: "{{ applications_helm_releases.otel_demo.namespace }}"

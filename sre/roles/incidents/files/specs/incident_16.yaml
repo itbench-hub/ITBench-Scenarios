@@ -1,8 +1,8 @@
 ---
 metadata:
-  complexity: Low
-  id: 23
-  name: checkoutservice Corrupt Image
+  complexity: Medium
+  id: 16
+  name: Checkout Service Environment Variables Removed
   platform: kubernetes
   technologies:
     - Go
@@ -17,8 +17,8 @@ spec:
         - kubernetes-topology-monitor
   faults:
     - custom:
-        name: unsupported-image
-        unsupported_image:
+        name: remove-environment-variables
+        remove_environment_variables:
           workload:
             kind: Deployment
             name: checkout

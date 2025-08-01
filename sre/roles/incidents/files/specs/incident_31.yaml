@@ -1,11 +1,11 @@
 ---
 metadata:
-  complexity: Low
-  id: 23
-  name: checkoutservice Corrupt Image
+  # complexity: Low
+  id: 31
+  name: Frontend Network Traffic Blocked
   platform: kubernetes
   technologies:
-    - Go
+    - Node.js
 spec:
   environment:
     applications:
@@ -17,9 +17,9 @@ spec:
         - kubernetes-topology-monitor
   faults:
     - custom:
-        name: unsupported-image
-        unsupported_image:
+        name: misconfigured-network-policy
+        misconfigured_network_policy:
           workload:
             kind: Deployment
-            name: checkout
+            name: frontend
             namespace: "{{ applications_helm_releases.otel_demo.namespace }}"

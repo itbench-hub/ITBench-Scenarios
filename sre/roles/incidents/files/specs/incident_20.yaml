@@ -1,11 +1,12 @@
 ---
 metadata:
   complexity: Low
-  id: 23
-  name: checkoutservice Corrupt Image
+  id: 20
+  name: productcatalogservice Corrupt Image
   platform: kubernetes
   technologies:
     - Go
+    - Node.js
 spec:
   environment:
     applications:
@@ -17,9 +18,9 @@ spec:
         - kubernetes-topology-monitor
   faults:
     - custom:
-        name: unsupported-image
-        unsupported_image:
+        name: invalid-image
+        invalid_image:
           workload:
             kind: Deployment
-            name: checkout
+            name: product-catalog
             namespace: "{{ applications_helm_releases.otel_demo.namespace }}"

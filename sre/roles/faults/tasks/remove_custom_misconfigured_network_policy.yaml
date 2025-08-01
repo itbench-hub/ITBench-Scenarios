@@ -1,13 +1,13 @@
 ---
-- name: Delete ResourceQuota
+- name: Delete NetworkPolicy
   kubernetes.core.k8s:
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
     resource_definition:
-      apiVersion: v1
-      kind: ResourceQuota
+      apiVersion: networking.k8s.io/v1
+      kind: NetworkPolicy
       metadata:
-        name: "{{ spec.namespace.name }}-memory"
-        namespace: "{{ spec.namespace.name }}"
+        name: "{{ spec.workload.name }}-block-all-ports"
+        namespace: "{{ spec.workload.namespace }}"
     state: absent
     wait: true
 
