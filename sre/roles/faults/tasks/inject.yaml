@@ -9,7 +9,7 @@
   ansible.builtin.import_tasks:
     file: inject_chaos_mesh.yaml
   vars:
-    spec: "{{ fault.chaos_mesh.schedule }}"
+    spec: "{{ fault.chaos_mesh }}"
   when:
     - fault.chaos_mesh is defined
 

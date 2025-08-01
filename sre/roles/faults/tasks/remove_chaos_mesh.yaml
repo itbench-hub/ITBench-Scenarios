@@ -59,11 +59,7 @@
       apiVersion: chaos-mesh.org/v1alpha1
       kind: Schedule
       metadata:
-        name: "{{ schedule.name }}"
+        name: "{{ spec.schedule.name }}"
         namespace: "{{ tools_helm_releases.chaos_mesh.namespace }}"
     state: absent
     wait: true
-  loop: "{{ schedules }}"
-  loop_control:
-    label: "{{ schedule.name }}"
-    loop_var: schedule
