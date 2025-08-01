@@ -49,6 +49,7 @@ argument_specs:
                   - misconfigured-persitent-volume-claim
                   - misconfigured-resource-quota
                   - misconfigured-service-port
+                  - remove-environment-variables
                   - unsupported-image
                 required: true
                 type: str
@@ -209,6 +210,26 @@ argument_specs:
                       target_port:
                         required: true
                         type: int
+              remove_environment_variables:
+                required: false
+                type: dict
+                options:
+                  workload:
+                    required: true
+                    type: dict
+                    options:
+                      kind:
+                        choices:
+                          - Deployment
+                          - StatefulSet
+                        required: true
+                        type: str
+                      name:
+                        required: true
+                        type: str
+                      namespace:
+                        required: true
+                        type: str
               unsupported_image:
                 required: false
                 type: dict

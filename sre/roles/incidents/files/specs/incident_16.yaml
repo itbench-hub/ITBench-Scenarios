@@ -1,0 +1,25 @@
+---
+metadata:
+  complexity: Medium
+  id: 16
+  name: Checkout Service Environment Variables Removed
+  platform: kubernetes
+  technologies:
+    - Go
+spec:
+  environment:
+    applications:
+      otel_demo:
+        enabled: true
+    tools:
+      category: sre
+      selected:
+        - kubernetes-topology-monitor
+  faults:
+    - custom:
+        name: remove-environment-variables
+        unsupported_image:
+          workload:
+            kind: Deployment
+            name: checkout
+            namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
