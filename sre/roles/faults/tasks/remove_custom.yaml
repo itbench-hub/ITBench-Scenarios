@@ -1,6 +1,6 @@
 ---
-- name: Import invalid command removal tasks
-  ansible.builtin.import_tasks:
+- name: Include invalid command removal tasks
+  ansible.builtin.include_tasks:
     file: remove_custom_invalid_command.yaml
   vars:
     targets: "{{ fault.custom.targets.workload_managers }}"
@@ -9,8 +9,8 @@
     - fault.custom.targets.workload_managers is defined
     - fault.custom.targets.workload_managers | length > 0
 
-- name: Import invalid node selector removal tasks
-  ansible.builtin.import_tasks:
+- name: Include invalid node selector removal tasks
+  ansible.builtin.include_tasks:
     file: remove_custom_invalid_node_selector.yaml
   vars:
     targets: "{{ fault.custom.targets.workload_managers }}"
@@ -19,8 +19,8 @@
     - fault.custom.targets.workload_managers is defined
     - fault.custom.targets.workload_managers | length > 0
 
-- name: Import misconfigured horizontal pod autoscaler removal tasks
-  ansible.builtin.import_tasks:
+- name: Include misconfigured horizontal pod autoscaler removal tasks
+  ansible.builtin.include_tasks:
     file: remove_custom_misconfigured_horizontal_pod_autoscaler.yaml
   vars:
     targets: "{{ fault.custom.targets.horizontal_pod_autoscalers }}"
@@ -30,7 +30,7 @@
     - fault.custom.targets.horizontal_pod_autoscalers | length > 0
 
 - name: Remove misconfigured persistent volume claim removal tasks
-  ansible.builtin.import_tasks:
+  ansible.builtin.include_tasks:
     file: remove_custom_misconfigured_persistent_volume_claim.yaml
   vars:
     targets: "{{ fault.custom.targets.workload_managers }}"
@@ -39,8 +39,8 @@
     - fault.custom.targets.workload_managers is defined
     - fault.custom.targets.workload_managers | length > 0
 
-- name: Import misconfigured resource quota removal tasks
-  ansible.builtin.import_tasks:
+- name: Include misconfigured resource quota removal tasks
+  ansible.builtin.include_tasks:
     file: remove_custom_misconfigured_resource_quota.yaml
   vars:
     targets: "{{ fault.custom.targets.namespaces }}"
@@ -49,8 +49,8 @@
     - fault.custom.targets.namespaces is defined
     - fault.custom.targets.namespaces | length > 0
 
-- name: Import misconfigured service port removal tasks
-  ansible.builtin.import_tasks:
+- name: Include misconfigured service port removal tasks
+  ansible.builtin.include_tasks:
     file: remove_custom_misconfigured_service_port.yaml
   vars:
     targets: "{{ fault.custom.targets.services }}"
@@ -59,8 +59,8 @@
     - fault.custom.targets.services is defined
     - fault.custom.targets.services | length > 0
 
-- name: Import unsupported image removal tasks
-  ansible.builtin.import_tasks:
+- name: Include unsupported image removal tasks
+  ansible.builtin.include_tasks:
     file: remove_custom_unsupported_image.yaml
   vars:
     targets: "{{ fault.custom.targets.workload_managers }}"

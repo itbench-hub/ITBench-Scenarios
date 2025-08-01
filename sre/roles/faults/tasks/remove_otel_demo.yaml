@@ -3,8 +3,8 @@
   ansible.builtin.include_vars:
     file: ../applications/defaults/main/helm_releases.yaml
 
-- name: Import flagd removal tasks
-  ansible.builtin.import_tasks:
+- name: Include flagd removal tasks
+  ansible.builtin.include_tasks:
     file: remove_otel_demo_flagd.yaml
   vars:
     flags: "{{ fault.otel_demo.flags | default([]) }}"

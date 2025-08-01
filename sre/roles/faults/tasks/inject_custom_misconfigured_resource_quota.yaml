@@ -44,8 +44,7 @@
     wait_timeout: 60
   loop: "{{ faults_workload_managers_info.results }}"
   loop_control:
-    index_var: workload_index
-    label: workload-{{ workload_index }}
+    label: "{{ result.resources[0].kind | lower }}/{{ result.resources[0].metadata.name }}"
     loop_var: result
   when:
     - result.resources | length == 1
@@ -61,8 +60,7 @@
     wait: false
   loop: "{{ faults_workload_managers_info.results }}"
   loop_control:
-    index_var: workload_index
-    label: workload-{{ workload_index }}
+    label: "{{ result.resources[0].kind | lower }}/{{ result.resources[0].metadata.name }}"
     loop_var: result
   when:
     - result.resources | length == 1
