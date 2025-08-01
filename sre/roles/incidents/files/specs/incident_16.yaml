@@ -18,7 +18,7 @@ spec:
   faults:
     - custom:
         name: remove-environment-variables
-        unsupported_image:
+        remove_environment_variables:
           workload:
             kind: Deployment
             name: checkout

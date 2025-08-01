@@ -42,12 +42,7 @@
         name: "{{ experiment.metadata.name }}"
         namespace: "{{ experiment.metadata.namespace }}"
     state: patched
-  loop: |
-    {{
-      (paused_experiments_info.results | default([])) |
-      community.general.json_query('[*].resources') |
-      flatten
-    }}
+  loop: "{{ paused_experiments_info.resources }}"
   loop_control:
     label: "{{ experiment.kind | lower }}/{{ experiment.metadata.name }}"
     loop_var: experiment
