@@ -281,3 +281,32 @@ argument_specs:
                       state:
                         required: true
                         type: str
+          valkey:
+            required: false
+            type: dict
+            options:
+              name:
+                choices:
+                  - invalid-password
+                required: true
+                type: str
+              invalid_password:
+                required: false
+                type: dict
+                options:
+                  workload:
+                    required: true
+                    type: dict
+                    options:
+                      kind:
+                        choices:
+                          - Deployment
+                          - StatefulSet
+                        required: true
+                        type: str
+                      name:
+                        required: true
+                        type: str
+                      namespace:
+                        required: true
+                        type: str

@@ -1,0 +1,87 @@
+---
+fault:
+  - entity:
+      name: valkey-pod-1
+      group_id: valkey-pod-1
+      kind: Pod
+    condition: To Be Specified
+    category: Other
+    fault_mechanism: custom
+alerts:
+  - id: RequestErrorRate
+    group_id: frontend-service-1
+    metadata:
+      description: Error Rate is Above Threshold
+  - id: RequestErrorRate
+    group_id: checkout-service-1
+    metadata:
+      description: Error Rate is Above Threshold
+groups:
+  - id: valkey-pod-1
+    kind: Pod
+    filter:
+      - valkey-cart-.*
+    namespace: otel-demo
+    root_cause: true
+  - id: checkout-service-1
+    kind: Service
+    filter:
+      - checkout\b
+    namespace: otel-demo
+  - id: cart-service-1
+    kind: Service
+    filter:
+      - cart\b
+    namespace: otel-demo
+  - id: frontend-service-1
+    kind: Service
+    filter:
+      - frontend\b
+    namespace: otel-demo
+  - id: valkey-service
+    filter:
+      - valkey-cart\b
+    kind: Service
+    namespace: otel-demo
+  - id: frontend-pod
+    kind: Pod
+    namespace: otel-demo
+    filter:
+      - frontend-.*
+  - id: checkout-pod
+    kind: Pod
+    namespace: otel-demo
+    filter:
+      - checkout-.*
+  - id: cart-pod
+    kind: Pod
+    namespace: otel-demo
+    filter:
+      - cart-.*
+aliases:
+  - - valkey-service
+    - valkey-pod-1
+  - - frontend-service-1
+    - frontend-pod
+  - - checkout-service-1
+    - checkout-pod
+  - - cart-service-1
+    - cart-pod
+propagations:
+  - source: valkey-pod-1
+    target: cart-service-1
+    condition: password change was not propagated to other services
+    effect: incorrect password set for redis
+  - source: cart-service-1
+    target: checkout-service-1
+    condition: password change was not propagated to other services
+    effect: incorrect password set for cart redis
+  - source: checkout-service-1
+    target: frontend-service-1
+    condition: incorrect password set for redis
+    effect: frontend service Error Rate is Above Threshold
+recommended_actions:
+  - solution:
+      id: set_correct_password_in_cart_deployment_for_redis
+      actions:
+        - set correct password in cart deployment for redis
