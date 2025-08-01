@@ -19,8 +19,8 @@ spec:
   faults:
     - custom:
         name: invalid-image
-        targets:
-          workload_managers:
-            - kind: Deployment
-              name: product-catalog
-              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+        invalid_image:
+          workload:
+            kind: Deployment
+            name: product-catalog
+            namespace: "{{ applications_helm_releases.otel_demo.namespace }}"

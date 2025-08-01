@@ -19,8 +19,8 @@ spec:
   faults:
     - custom:
         name: misconfigured-service-port
-        targets:
-          services:
-            - name: ad
-              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
-              targetPort: 8080
+        misconfigured_service_port:
+          service:
+            name: ad
+            namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+            target_port: 8080

@@ -19,7 +19,7 @@ spec:
         - kubernetes-topology-monitor
   faults:
     - chaos_mesh:
-        schedules:
+        schedule:
           - name: otel-demo-email-http-chaos-post-body-tamper
             spec:
               schedule: "* * * * *"

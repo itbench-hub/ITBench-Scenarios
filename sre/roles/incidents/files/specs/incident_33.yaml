@@ -18,8 +18,8 @@ spec:
   faults:
     - custom:
         name: invalid-node-selector
-        targets:
-          workload_managers:
-            - kind: Deployment
-              name: checkout
-              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+        invalid_node_selector:
+          workload:
+            kind: Deployment
+            name: checkout
+            namespace: "{{ applications_helm_releases.otel_demo.namespace }}"

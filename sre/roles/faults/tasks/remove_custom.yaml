@@ -3,68 +3,61 @@
   ansible.builtin.include_tasks:
     file: remove_custom_invalid_command.yaml
   vars:
-    targets: "{{ fault.custom.targets.workload_managers }}"
+    spec: "{{ fault.custom.invalid_command }}"
   when:
     - fault.custom.name == 'invalid-command'
-    - fault.custom.targets.workload_managers is defined
-    - fault.custom.targets.workload_managers | length > 0
+    - fault.custom.invalid_command is defined
 
 - name: Include invalid node selector removal tasks
   ansible.builtin.include_tasks:
     file: remove_custom_invalid_node_selector.yaml
   vars:
-    targets: "{{ fault.custom.targets.workload_managers }}"
+    spec: "{{ fault.custom.invalid_node_selector }}"
   when:
     - fault.custom.name == 'invalid-node-selector'
-    - fault.custom.targets.workload_managers is defined
-    - fault.custom.targets.workload_managers | length > 0
+    - fault.custom.invalid_node_selector is defined
 
 - name: Include misconfigured horizontal pod autoscaler removal tasks
   ansible.builtin.include_tasks:
     file: remove_custom_misconfigured_horizontal_pod_autoscaler.yaml
   vars:
-    targets: "{{ fault.custom.targets.horizontal_pod_autoscalers }}"
+    spec: "{{ fault.custom.misconfigured_horizontal_pod_autoscaler }}"
   when:
     - fault.custom.name == 'misconfigured-horizontal-pod-autoscaler'
-    - fault.custom.targets.horizontal_pod_autoscalers is defined
-    - fault.custom.targets.horizontal_pod_autoscalers | length > 0
+    - fault.custom.misconfigured_horizontal_pod_autoscaler is defined
 
-- name: Remove misconfigured persistent volume claim removal tasks
+- name: Include misconfigured persistent volume claim removal tasks
   ansible.builtin.include_tasks:
     file: remove_custom_misconfigured_persistent_volume_claim.yaml
   vars:
-    targets: "{{ fault.custom.targets.workload_managers }}"
+    spec: "{{ fault.custom.misconfigured_persitent_volume_claim }}"
   when:
     - fault.custom.name == 'misconfigured-persitent-volume-claim'
-    - fault.custom.targets.workload_managers is defined
-    - fault.custom.targets.workload_managers | length > 0
+    - fault.custom.misconfigured_persitent_volume_claim is defined
 
 - name: Include misconfigured resource quota removal tasks
   ansible.builtin.include_tasks:
     file: remove_custom_misconfigured_resource_quota.yaml
   vars:
-    targets: "{{ fault.custom.targets.namespaces }}"
+    spec: "{{ fault.custom.misconfigured_resource_quota }}"
   when:
     - fault.custom.name == 'misconfigured-resource-quota'
-    - fault.custom.targets.namespaces is defined
-    - fault.custom.targets.namespaces | length > 0
+    - fault.custom.misconfigured_resource_quota is defined
 
 - name: Include misconfigured service port removal tasks
   ansible.builtin.include_tasks:
     file: remove_custom_misconfigured_service_port.yaml
   vars:
-    targets: "{{ fault.custom.targets.services }}"
+    targets: "{{ fault.custom.misconfigured_service_port }}"
   when:
     - fault.custom.name == 'misconfigured-service-port'
-    - fault.custom.targets.services is defined
-    - fault.custom.targets.services | length > 0
+    - fault.custom.misconfigured_service_port is defined
 
 - name: Include unsupported image removal tasks
   ansible.builtin.include_tasks:
     file: remove_custom_unsupported_image.yaml
   vars:
-    targets: "{{ fault.custom.targets.workload_managers }}"
+    targets: "{{ fault.custom.unsupported_image }}"
   when:
     - fault.custom.name == 'unsupported-image'
-    - fault.custom.targets.workload_managers is defined
-    - fault.custom.targets.workload_managers | length > 0
+    - fault.custom.unsupported_image is defined

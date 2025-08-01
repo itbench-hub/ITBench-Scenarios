@@ -4,17 +4,13 @@
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
     resource_definition:
       apiVersion: apps/v1
-      kind: "{{ manager.kind }}"
+      kind: "{{ spec.workload.kind }}"
       metadata:
-        name: "{{ manager.name }}"
-        namespace: "{{ manager.namespace }}"
+        name: "{{ spec.workload.name }}"
+        namespace: "{{ spec.workload.namespace }}"
       spec:
         template:
           spec:
             nodeSelector:
               "kubernetes.io/hostname": invalid-node
     state: patched
-  loop: "{{ targets }}"
-  loop_control:
-    label: "{{ manager.kind | lower }}/{{ manager.name }}"
-    loop_var: manager

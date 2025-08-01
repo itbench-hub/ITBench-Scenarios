@@ -25,10 +25,16 @@ argument_specs:
             required: false
             type: dict
             options:
-              schedules:
-                elements: dict
+              schedule:
                 required: true
-                type: list
+                type: dict
+                options:
+                  name:
+                    required: true
+                    type: str
+                  spec:
+                    required: true
+                    type: dict
           custom:
             required: false
             type: dict
@@ -39,20 +45,81 @@ argument_specs:
                   - invalid-image
                   - invalid-node-selector
                   - misconfigured-horizontal-pod-autoscaler
+                  # - misconfigured-network-policy
                   - misconfigured-persitent-volume-claim
                   - misconfigured-resource-quota
                   - misconfigured-service-port
                   - unsupported-image
                 required: true
                 type: str
-              targets:
-                required: true
+              invalid_command:
+                required: false
                 type: dict
                 options:
-                  horizontal_pod_autoscalers:
-                    elements: dict
-                    required: false
-                    type: list
+                  workloads:
+                    required: true
+                    type: dict
+                    options:
+                      kind:
+                        choices:
+                          - Deployment
+                          - StatefulSet
+                        required: true
+                        type: str
+                      name:
+                        required: true
+                        type: str
+                      namespace:
+                        required: true
+                        type: str
+              invalid_image:
+                required: false
+                type: dict
+                options:
+                  workloads:
+                    required: true
+                    type: dict
+                    options:
+                      kind:
+                        choices:
+                          - Deployment
+                          - StatefulSet
+                        required: true
+                        type: str
+                      name:
+                        required: true
+                        type: str
+                      namespace:
+                        required: true
+                        type: str
+              invalid_node_selector:
+                required: false
+                type: dict
+                options:
+                  workload:
+                    required: true
+                    type: dict
+                    options:
+                      kind:
+                        choices:
+                          - Deployment
+                          - StatefulSet
+                        required: true
+                        type: str
+                      name:
+                        required: true
+                        type: str
+                      namespace:
+                        required: true
+                        type: str
+                      port:
+              misconfigured_horizontal_pod_autoscaler:
+                required: false
+                type: dict
+                options:
+                  autoscaler:
+                    required: true
+                    type: dict
                     options:
                       name:
                         required: true
@@ -60,37 +127,84 @@ argument_specs:
                       namespace:
                         required: true
                         type: str
-                  namespaces:
-                    elements: dict
+              misconfigured_persitent_volume_claim:
+                required: false
+                type: dict
+                options:
+                  namespace:
                     required: false
-                    type: list
+                    type: dict
                     options:
                       name:
                         required: true
                         type: str
-                  services:
+                  workloads:
                     elements: dict
-                    required: false
-                    type: list
-                    options:
-                      name:
-                        required: true
-                        type: str
-                      namespace:
-                        required: true
-                        type: str
-                      targetPort:
-                        required: true
-                        type: int
-                  workload_managers:
-                    elements: dict
-                    required: false
+                    required: true
                     type: list
                     options:
                       kind:
                         choices:
                           - Deployment
-                          - ReplicaSet
+                          - StatefulSet
+                        required: true
+                        type: str
+                      name:
+                        required: true
+                        type: str
+              misconfigured_resource_quota:
+                required: false
+                type: dict
+                options:
+                  namespace:
+                    required: false
+                    type: dict
+                    options:
+                      name:
+                        required: true
+                        type: str
+                  workloads:
+                    elements: dict
+                    required: true
+                    type: list
+                    options:
+                      kind:
+                        choices:
+                          - Deployment
+                          - StatefulSet
+                        required: true
+                        type: str
+                      name:
+                        required: true
+                        type: str
+              misconfigured_service_port:
+                required: false
+                type: dict
+                options:
+                  service:
+                    required: false
+                    type: dict
+                    options:
+                      name:
+                        required: true
+                        type: str
+                      namespace:
+                        required: true
+                        type: str
+                      target_port:
+                        required: true
+                        type: int
+              unsupported_image:
+                required: false
+                type: dict
+                options:
+                  workload:
+                    required: true
+                    type: dict
+                    options:
+                      kind:
+                        choices:
+                          - Deployment
                           - StatefulSet
                         required: true
                         type: str
@@ -104,26 +218,30 @@ argument_specs:
             required: false
             type: dict
             options:
-              flags:
-                elements: dict
-                required: true
-                type: list
+              flagd:
+                required: false
+                type: dict
                 options:
-                  name:
-                    choices:
-                      - adHighCpu
-                      - adFailure
-                      - adManualGc
-                      - cartFailure
-                      - imageSlowLoad
-                      - kafkaQueueProblems
-                      - loadGeneratorFloodHomepage
-                      - paymentFailure
-                      - paymentUnreachable
-                      - productCatalogFailure
-                      - recommendationCacheFailure
+                  flags:
+                    elements: dict
                     required: true
-                    type: str
-                  state:
-                    required: true
-                    type: str
+                    type: list
+                    options:
+                      name:
+                        choices:
+                          - adHighCpu
+                          - adFailure
+                          - adManualGc
+                          - cartFailure
+                          - imageSlowLoad
+                          - kafkaQueueProblems
+                          - loadGeneratorFloodHomepage
+                          - paymentFailure
+                          - paymentUnreachable
+                          - productCatalogFailure
+                          - recommendationCacheFailure
+                        required: true
+                        type: str
+                      state:
+                        required: true
+                        type: str

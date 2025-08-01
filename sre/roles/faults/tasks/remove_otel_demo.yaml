@@ -6,8 +6,5 @@
 - name: Include flagd removal tasks
   ansible.builtin.include_tasks:
     file: remove_otel_demo_flagd.yaml
-  vars:
-    flags: "{{ fault.otel_demo.flags | default([]) }}"
-    helm_release: "{{ applications_helm_releases.otel_demo }}"
   when:
-    - fault.otel_demo.flags | length > 0
+    - fault.otel_demo.flagd is defined

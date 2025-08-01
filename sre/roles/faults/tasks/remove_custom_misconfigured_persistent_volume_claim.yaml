@@ -7,11 +7,8 @@
       kind: PersistentVolumeClaim
       metadata:
         name: it-bench-invalid
-        namespace: "{{ namespace }}"
+        namespace: "{{ spec.namespace.name }}"
     state: absent
-  loop: "{{ targets | community.general.json_query('[*].namespace') | unique }}"
-  loop_control:
-    loop_var: namespace
 
 - name: Display fault removal instructions
   ansible.builtin.debug:

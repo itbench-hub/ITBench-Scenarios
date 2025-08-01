@@ -4,38 +4,33 @@
     api_version: v1
     kind: Service
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ service.name }}"
-    namespace: "{{ service.namespace }}"
-  register: services_info
-  loop: "{{ targets }}"
-  loop_control:
-    label: service/{{ service.name }}
-    loop_var: service
+    name: "{{ spec.service.name }}"
+    namespace: "{{ spec.service.namespace }}"
+  register: faults_services_info
 
 - name: Create list of indicies of target port in service definition
   ansible.builtin.set_fact:
-    indexes: |
+    target_port_index: |
       {{
-        (indexes | default([])) +
-        [[item[1],  lookup('ansible.utils.index_of', item[0].resources[0].spec.ports, 'eq', item[1].targetPort, 'targetPort')]]
+        lookup(
+          'ansible.utils.index_of',
+          faults_services_info.resources[0].spec.ports,
+          'eq',
+          spec.service.target_port,
+          'targetPort'
+        )
       }}
-  loop: "{{ services_info.results | zip(targets) | list }}"
-  loop_control:
-    label: service/{{ item[1].name }}
   when:
-    - item[0].resources | length > 0
+    - faults_services_info.resources | length > 0
 
 - name: Inject fault (misconfigured service port)
   kubernetes.core.k8s_json_patch:
     api_version: v1
     kind: Service
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ item[0].name }}"
-    namespace: "{{ item[0].namespace }}"
+    name: "{{ spec.service.name }}"
+    namespace: "{{ spec.service.namespace }}"
     patch:
       - op: replace
-        path: /spec/ports/{{ item[1] }}/targetPort
+        path: /spec/ports/{{ target_port_index }}/targetPort
         value: 9999
-  loop: "{{ indexes }}"
-  loop_control:
-    label: service/{{ item[0].name }}

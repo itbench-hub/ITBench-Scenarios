@@ -18,8 +18,8 @@ spec:
   faults:
     - custom:
         name: unsupported-image
-        targets:
-          workload_managers:
-            - kind: Deployment
-              name: checkout
-              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+        unsupported_image:
+          workload:
+            kind: Deployment
+            name: checkout
+            namespace: "{{ applications_helm_releases.otel_demo.namespace }}"

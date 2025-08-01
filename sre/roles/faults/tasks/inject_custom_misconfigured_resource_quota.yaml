@@ -6,31 +6,27 @@
       apiVersion: v1
       kind: ResourceQuota
       metadata:
-        name: "{{ namespace.name }}-resource-quota"
-        namespace: "{{ namespace.name }}"
+        name: "{{ spec.namespace.name }}-memory"
+        namespace: "{{ spec.namespace.name }}"
       spec:
         hard:
           memory: 2Gi
     state: present
-  loop: "{{ targets.namespaces }}"
-  loop_control:
-    label: "namespace/{{ namespace.name }}"
-    loop_var: namespace
 
-- name: Retrieve replica information from workload managers
+- name: Retrieve workload replica information
   kubernetes.core.k8s_info:
     api_version: apps/v1
-    kind: "{{ manager.kind }}"
+    kind: "{{ workload.kind }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ manager.name }}"
-    namespace: "{{ manager.namespace }}"
-  register: faults_workload_managers_info
-  loop: "{{ targets.workload_managers }}"
+    name: "{{ workload.name }}"
+    namespace: "{{ spec.namespace.name }}"
+  register: faults_workloads_info
+  loop: "{{ spec.workloads }}"
   loop_control:
-    label: "{{ manager.kind | lower }}/{{ manager.name }}"
-    loop_var: manager
+    label: "{{ workload.kind | lower }}/{{ workload.name }}"
+    loop_var: workload
   when:
-    - manager.name != 'otel-collector'
+    - workload.name != 'otel-collector'
 
 - name: Scale down workloads to 0 replicas
   kubernetes.core.k8s_scale:
@@ -42,7 +38,7 @@
     replicas: 0
     wait: true
     wait_timeout: 60
-  loop: "{{ faults_workload_managers_info.results }}"
+  loop: "{{ faults_workloads_info.results }}"
   loop_control:
     label: "{{ result.resources[0].kind | lower }}/{{ result.resources[0].metadata.name }}"
     loop_var: result
@@ -58,7 +54,7 @@
     namespace: "{{ result.resources[0].metadata.namespace }}"
     replicas: "{{ result.resources[0].spec.replicas }}"
     wait: false
-  loop: "{{ faults_workload_managers_info.results }}"
+  loop: "{{ faults_workloads_info.results }}"
   loop_control:
     label: "{{ result.resources[0].kind | lower }}/{{ result.resources[0].metadata.name }}"
     loop_var: result

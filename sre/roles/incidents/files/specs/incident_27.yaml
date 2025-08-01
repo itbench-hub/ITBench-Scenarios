@@ -20,7 +20,7 @@ environment:
       - kubernetes-topology-monitor
   faults:
     - chaos_mesh:
-        schedules:
+        schedule:
           - name: otel-demo-quote-http-chaos-abort
             spec:
               schedule: "* * * * *" # Run every minute

@@ -2,15 +2,11 @@
 - name: Inject fault (invalid image)
   kubernetes.core.k8s_json_patch:
     api_version: apps/v1
-    kind: "{{ manager.kind }}"
+    kind: "{{ spec.workload.kind }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ manager.name }}"
-    namespace: "{{ manager.namespace }}"
+    name: "{{ spec.workload.name }}"
+    namespace: "{{ spec.workload.namespace }}"
     patch:
       - op: replace
         path: /spec/template/spec/containers/0/image
         value: quay.io/it-bench/hello-bench-invalid:1.0.0
-  loop: "{{ targets }}"
-  loop_control:
-    label: "{{ manager.kind | lower }}/{{ manager.name }}"
-    loop_var: manager

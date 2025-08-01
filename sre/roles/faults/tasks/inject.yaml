@@ -9,10 +9,9 @@
   ansible.builtin.include_tasks:
     file: inject_chaos_mesh.yaml
   vars:
-    schedules: "{{ fault.chaos_mesh.schedules }}"
+    spec: "{{ fault.chaos_mesh.schedule }}"
   when:
     - fault.chaos_mesh is defined
-    - fault.chaos_mesh.schedules | length > 0
 
 - name: Include Otel Demo fault injection tasks
   ansible.builtin.include_tasks:
