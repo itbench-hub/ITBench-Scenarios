@@ -97,6 +97,9 @@
               cpu: 25m
               memory: 100Mi
         checkout:
+          envOverrides:
+            - name: SHIPPING_ADDR
+              value: http://shipping:8080
           podAnnotations:
             openshift.io/required-scc: restricted-v2
           replicas: "{{ configuration.checkout.replicas }}"
@@ -142,6 +145,9 @@
             limits:
               memory: 512Mi
         frontend:
+          envOverrides:
+            - name: SHIPPING_ADDR
+              value: http://shipping:8080
           podAnnotations:
             openshift.io/required-scc: restricted-v2
           replicas: "{{ configuration.frontend.replicas }}"
