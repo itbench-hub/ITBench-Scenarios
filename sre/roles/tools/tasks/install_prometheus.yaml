@@ -43,7 +43,7 @@
               value: ""
       defaultRules:
         rules:
-          alertmanger: false
+          alertmanager: false
     wait: true
   when:
     - tools_cluster.platform == "kubernetes"
