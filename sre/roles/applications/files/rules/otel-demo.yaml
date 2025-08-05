@@ -20,6 +20,12 @@ spec:
             severity: critical
           annotations:
             description: "Pods in pending state in namespace {{ $labels.namespace }} above 0 (current: {{ $value }})"
+        - alert: CrashLoopBackOffPodsDetected
+          expr: sum by (namespace) (kube_pod_container_status_waiting_reason{namespace="otel-demo",reason="CrashLoopBackOff"}) > 0
+          labels:
+            severity: critical
+          annotations:
+            description: "Pods in CrashLoopBackOff state in namespace {{ $labels.namespace }} above 0 (current: {{ $value }})"
     - name: CostAlerts
       interval: 1m
       rules:
