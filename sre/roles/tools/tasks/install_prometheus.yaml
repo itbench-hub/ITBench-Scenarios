@@ -42,8 +42,8 @@
             - name: web.enable-otlp-receiver
               value: ""
       defaultRules:
-        rules:
-          alertmanager: false
+        disabled:
+          PrometheusNotConnectedToAlertmanagers: true
     wait: true
   when:
     - tools_cluster.platform == "kubernetes"

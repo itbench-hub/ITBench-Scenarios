@@ -90,7 +90,7 @@ spec:
       interval: 1m
       rules:
         - alert: NoRequestsDetected
-          expr: sum by (service_name, namespace) (irate(traces_span_metrics_calls_total{service_name!~"flagd|load-generator", namespace="otel-demo",
+          expr: sum by (service_name, namespace) (increase(traces_span_metrics_calls_total{service_name!~"flagd|load-generator", namespace="otel-demo",
             status_code=~"STATUS_CODE_UNSET|STATUS_CODE_OK"}[5m])) == 0
           for: 6m
           labels:
