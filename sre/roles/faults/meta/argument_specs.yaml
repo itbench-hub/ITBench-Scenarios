@@ -49,7 +49,7 @@ argument_specs:
                   - misconfigured-persitent-volume-claim
                   - misconfigured-resource-quota
                   - misconfigured-service-port
-                  - tamper-environment-variables-port
+                  - modify-environment-variables-port
                   - unsupported-image
                 required: true
                 type: str
@@ -64,6 +64,7 @@ argument_specs:
                       kind:
                         choices:
                           - Deployment
+                          - ReplicaSet
                           - StatefulSet
                         required: true
                         type: str
@@ -210,7 +211,7 @@ argument_specs:
                       target_port:
                         required: true
                         type: int
-              tamper_environment_variables_port:
+              modify_environment_variables:
                 required: false
                 type: dict
                 options:
@@ -230,6 +231,17 @@ argument_specs:
                       namespace:
                         required: true
                         type: str
+                      env:
+                        elements: dict
+                        required: true
+                        type: list
+                        options:
+                          name:
+                            required: true
+                            type: str
+                          value:
+                            required: true
+                            type: str
               unsupported_image:
                 required: false
                 type: dict

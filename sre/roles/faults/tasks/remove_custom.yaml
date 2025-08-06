@@ -71,14 +71,14 @@
     - fault.custom.name == 'misconfigured-service-port'
     - fault.custom.misconfigured_service_port is defined
 
-- name: Import removed environment variables removal tasks
+- name: Import modify environment variables removal tasks
   ansible.builtin.import_tasks:
-    file: remove_custom_tamper_environment_variables_port.yaml
+    file: remove_custom_modify_environment_variables.yaml
   vars:
-    spec: "{{ fault.custom.tamper_environment_variables_port }}"
+    spec: "{{ fault.custom.modify_environment_variables }}"
   when:
-    - fault.custom.name == 'tamper-environment-variables-port'
-    - fault.custom.tamper_environment_variables_port is defined
+    - fault.custom.name == 'modify-environment-variables'
+    - fault.custom.modify_environment_variables is defined
 
 - name: Import unsupported image removal tasks
   ansible.builtin.import_tasks:
