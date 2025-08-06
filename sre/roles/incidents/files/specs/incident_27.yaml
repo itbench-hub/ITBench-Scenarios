@@ -9,15 +9,16 @@ metadata:
     - PHP
     - Rust
     - Tonic
-environment:
-  applications:
-    otel_demo:
-      enabled: true
-  tools:
-    category: sre
-    selected:
-      - chaos-mesh
-      - kubernetes-topology-monitor
+spec:
+  environment:
+    applications:
+      otel_demo:
+        enabled: true
+    tools:
+      category: sre
+      selected:
+        - chaos-mesh
+        - kubernetes-topology-monitor
   faults:
     - chaos_mesh:
         schedule:
