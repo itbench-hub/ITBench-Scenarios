@@ -6,7 +6,7 @@ fault:
       group_id: otel-demo-horizontal-pod-autoscalers
     condition: Misconfigured HPA
     category: Other
-    fault_mechanism: custom(other)
+    fault_mechanism: custom
 alerts:
   - id: high_cost_variation
     text: Cost has increased significantly despite having low utilization
