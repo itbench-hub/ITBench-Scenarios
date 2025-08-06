@@ -1,14 +1,19 @@
 ---
-- name: Scale down workload before fault injection
-  kubernetes.core.k8s_scale:
+- name: Get current replica count before scaling down
+  kubernetes.core.k8s_info:
     api_version: apps/v1
     kind: "{{ spec.workload.kind }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
     name: "{{ spec.workload.name }}"
     namespace: "{{ spec.workload.namespace }}"
-    replicas: 0
-    wait: true
+  register: workload_info
   when: spec.workload.kind in ['Deployment', 'ReplicaSet', 'StatefulSet']
+
+- name: Get original replica count
+  include_tasks: ../utils/get_replica_count.yaml
+
+- name: Scale down workload
+  include_tasks: ../utils/scale_down_workload.yaml
 
 - name: Inject fault (invalid command)
   kubernetes.core.k8s_json_patch:
@@ -22,13 +27,5 @@
         path: /spec/template/spec/containers/0/command
         value: ["invalid-command"]
 
-- name: Scale up workload after fault injection
-  kubernetes.core.k8s_scale:
-    api_version: apps/v1
-    kind: "{{ spec.workload.kind }}"
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ spec.workload.name }}"
-    namespace: "{{ spec.workload.namespace }}"
-    replicas: 1
-    wait: false
-  when: spec.workload.kind in ['Deployment', 'ReplicaSet', 'StatefulSet']
+- name: Scale up workload
+  include_tasks: ../utils/scale_up_workload.yaml

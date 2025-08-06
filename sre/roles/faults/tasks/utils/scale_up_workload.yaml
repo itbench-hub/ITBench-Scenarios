@@ -1,0 +1,10 @@
+- name: Scale up workload after fault injection
+  kubernetes.core.k8s_scale:
+    api_version: apps/v1
+    kind: "{{ spec.workload.kind }}"
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: "{{ spec.workload.name }}"
+    namespace: "{{ spec.workload.namespace }}"
+    replicas: "{{ original_replicas | int }}"
+    wait: false
+  when: spec.workload.kind in ['Deployment', 'ReplicaSet', 'StatefulSet']

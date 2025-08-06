@@ -1,4 +1,21 @@
 ---
+- name: Get original replica count
+  include_tasks: ../utils/get_replica_count.yaml
+
+- name: Scale down workload
+  include_tasks: ../utils/scale_down_workload.yaml
+
+- name: Scale down workload before fault injection
+  kubernetes.core.k8s_scale:
+    api_version: apps/v1
+    kind: "{{ spec.workload.kind }}"
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: "{{ spec.workload.name }}"
+    namespace: "{{ spec.workload.namespace }}"
+    replicas: 0
+    wait: true
+  when: spec.workload.kind in ['Deployment', 'ReplicaSet', 'StatefulSet']
+
 - name: Inject fault (invalid image)
   kubernetes.core.k8s_json_patch:
     api_version: apps/v1
@@ -10,3 +27,6 @@
       - op: replace
         path: /spec/template/spec/containers/0/image
         value: quay.io/it-bench/hello-bench-invalid:1.0.0
+
+- name: Scale up workload
+  include_tasks: ../utils/scale_up_workload.yaml
