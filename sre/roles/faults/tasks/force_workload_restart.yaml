@@ -4,7 +4,7 @@
     kind: "{{ faults_workload.kind }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
     name: "{{ faults_workload.name }}"
-    namespace: "{{ faults_workload.namespace.name }}"
+    namespace: "{{ faults_workload.namespace }}"
   register: faults_workload_info
 
 - name: Scale down workloads to 0 replicas
