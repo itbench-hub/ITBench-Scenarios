@@ -73,12 +73,12 @@
 
 - name: Import removed environment variables removal tasks
   ansible.builtin.import_tasks:
-    file: remove_custom_remove_environment_variables.yaml
+    file: remove_custom_tamper_environment_variables_port.yaml
   vars:
-    spec: "{{ fault.custom.remove_environment_variables }}"
+    spec: "{{ fault.custom.tamper_environment_variables_port }}"
   when:
-    - fault.custom.name == 'remove-environment-variables'
-    - fault.custom.remove_environment_variables is defined
+    - fault.custom.name == 'tamper-environment-variables-port'
+    - fault.custom.tamper_environment_variables_port is defined
 
 - name: Import unsupported image removal tasks
   ansible.builtin.import_tasks:

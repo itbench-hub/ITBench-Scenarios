@@ -6,16 +6,16 @@
     name: "{{ spec.workload.name }}"
     namespace: "{{ spec.workload.namespace }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-  register: current_deployment
+  register: faults_current_deployment
 
 - name: Update port of first _ADDR variable to 0000
-  set_fact:
-    updated_env_vars: "{{ (updated_env_vars | default([])) + [updated_var] }}"
-    addr_updated: "{{ (addr_updated | default(false)) or is_first_addr }}"
+  ansible.builtin.set_fact:
+    faults_updated_env_vars: "{{ (faults_updated_env_vars | default([])) + [updated_var] }}"
+    faults_addr_updated: "{{ (faults_addr_updated | default(false)) or is_first_addr }}"
   vars:
     is_first_addr: >-
       {{
-        not (addr_updated | default(false)) and
+        not (faults_addr_updated | default(false)) and
         item.name is defined and
         item.name.endswith('_ADDR') and
         item.value is defined and
@@ -33,7 +33,7 @@
         } if item.value is defined
         else item
       }}
-  loop: "{{ current_deployment.resources[0].spec.template.spec.containers[0].env }}"
+  loop: "{{ faults_current_deployment.resources[0].spec.template.spec.containers[0].env }}"
 
 - name: Apply fault injection (first _ADDR variable)
   kubernetes.core.k8s:
@@ -48,6 +48,6 @@
         template:
           spec:
             containers:
-              - name: "{{ current_deployment.resources[0].spec.template.spec.containers[0].name }}"
-                env: "{{ updated_env_vars }}"
+              - name: "{{ faults_current_deployment.resources[0].spec.template.spec.containers[0].name }}"
+                env: "{{ faults_updated_env_vars }}"
     merge_type: strategic-merge

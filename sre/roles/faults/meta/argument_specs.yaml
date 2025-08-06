@@ -49,7 +49,7 @@ argument_specs:
                   - misconfigured-persitent-volume-claim
                   - misconfigured-resource-quota
                   - misconfigured-service-port
-                  - remove-environment-variables
+                  - tamper-environment-variables-port
                   - unsupported-image
                 required: true
                 type: str
@@ -210,7 +210,7 @@ argument_specs:
                       target_port:
                         required: true
                         type: int
-              remove_environment_variables:
+              tamper_environment_variables_port:
                 required: false
                 type: dict
                 options:

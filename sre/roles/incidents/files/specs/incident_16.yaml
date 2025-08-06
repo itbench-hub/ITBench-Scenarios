@@ -17,8 +17,8 @@ spec:
         - kubernetes-topology-monitor
   faults:
     - custom:
-        name: remove-environment-variables
-        remove_environment_variables:
+        name: tamper-environment-variables-port
+        tamper_environment_variables_port:
           workload:
             kind: Deployment
             name: shipping
