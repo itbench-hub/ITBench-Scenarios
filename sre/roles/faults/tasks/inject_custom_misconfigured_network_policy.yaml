@@ -25,3 +25,5 @@
         ingress:
           - ports: []
     state: present
+  when:
+    - faults_workload_info.resources | length > 0

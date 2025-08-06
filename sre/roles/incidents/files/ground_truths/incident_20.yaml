@@ -92,5 +92,4 @@ recommended_actions:
   - solution:
       id: change_the_image_field_in_productcatalogueservice_deployment_pointing_to_the_correct_image
       actions:
-        - change the image field in productcatalogueservice deployment pointing to the
-          correct image
+        - change the image field in productcatalogueservice deployment pointing to the correct image

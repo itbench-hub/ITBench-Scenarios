@@ -61,6 +61,13 @@ argument_specs:
                     required: true
                     type: dict
                     options:
+                      container:
+                        required: true
+                        type: dict
+                        options:
+                          name:
+                            required: false
+                            type: str
                       kind:
                         choices:
                           - Deployment
@@ -89,6 +96,13 @@ argument_specs:
                     required: true
                     type: dict
                     options:
+                      container:
+                        required: true
+                        type: dict
+                        options:
+                          name:
+                            required: false
+                            type: str
                       kind:
                         choices:
                           - Deployment
@@ -171,6 +185,13 @@ argument_specs:
                     required: true
                     type: list
                     options:
+                      container:
+                        required: true
+                        type: dict
+                        options:
+                          name:
+                            required: false
+                            type: str
                       kind:
                         choices:
                           - Deployment
@@ -242,23 +263,27 @@ argument_specs:
                       name:
                         required: true
                         type: str
-                      container_name:
-                        required: false
-                        type: str
                       namespace:
                         required: true
                         type: str
-                      env:
-                        elements: dict
+                      container:
                         required: true
-                        type: list
+                        type: dict
                         options:
                           name:
-                            required: true
+                            required: false
                             type: str
-                          value:
+                          env:
+                            elements: dict
                             required: true
-                            type: str
+                            type: list
+                            options:
+                              name:
+                                required: true
+                                type: str
+                              value:
+                                required: true
+                                type: str
                   restart_policy:
                     choices:
                       - force
@@ -274,6 +299,13 @@ argument_specs:
                     required: true
                     type: dict
                     options:
+                      container:
+                        required: true
+                        type: dict
+                        options:
+                          name:
+                            required: false
+                            type: str
                       kind:
                         choices:
                           - Deployment

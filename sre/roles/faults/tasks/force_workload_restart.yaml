@@ -1,3 +1,4 @@
+---
 - name: Retrieve workload replica information
   kubernetes.core.k8s_info:
     api_version: apps/v1

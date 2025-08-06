@@ -28,7 +28,7 @@
     wait_condition:
       type: Paused
       status: "True"
-  register: paused_experiments_info
+  register: faults_paused_experiments_info
 
 - name: Delete resources allocated by schedule for Chaos Mesh experiment
   kubernetes.core.k8s:
@@ -42,7 +42,7 @@
         name: "{{ experiment.metadata.name }}"
         namespace: "{{ experiment.metadata.namespace }}"
     state: patched
-  loop: "{{ paused_experiments_info.resources }}"
+  loop: "{{ faults_paused_experiments_info.resources }}"
   loop_control:
     label: "{{ experiment.kind | lower }}/{{ experiment.metadata.name }}"
     loop_var: experiment

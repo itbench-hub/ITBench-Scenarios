@@ -23,3 +23,5 @@ spec:
             kind: Deployment
             name: checkout
             namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+            container:
+              name: checkout

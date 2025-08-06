@@ -8,38 +8,17 @@
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
   register: faults_workload_info
 
-- name: Environment variables to add or update
-  set_fact:
-    env_vars_to_update: "{{ spec.workload.env | default([]) }}"
+- name: Import variable setting tasks
+  ansible.builtin.import_tasks:
+    file: set_faults_workload_container_index.yaml
+  vars:
+    faults_workload: "{{ spec.workload }}"
 
-- name: Find target container index
-  set_fact:
-    target_container_index: >-
-      {{
-        (faults_workload_info.resources[0].spec.template.spec.containers |
-         map(attribute='name') | list).index(spec.workload.container_name)
-      }}
-  when: spec.workload.container_name is defined
-
-- name: Use first container if no container name specified
-  set_fact:
-    target_container_index: 0
-  when: spec.workload.container_name is not defined
-
-- name: Get current environment variables for target container
-  set_fact:
-    current_env: >-
-      {{
-        faults_workload_info.resources[0].spec.template.spec.containers[target_container_index | int].env | default([])
-      }}
-
-- name: Create final environment variables list
-  set_fact:
-    final_env: >-
-      {{
-        (current_env | rejectattr('name', 'in', env_vars_to_update | map(attribute='name') | list) | list) +
-        env_vars_to_update
-      }}
+- name: Retrieve container environment variables
+  ansible.builtin.set_fact:
+    faults_container_env: "{{ faults_workload_info.resources[0].spec.template.spec.containers[faults_workload_container_index].env }}"
+  when:
+    - faults_workload_info.resources | length > 0
 
 - name: Apply updated environment variables
   kubernetes.core.k8s_json_patch:
@@ -50,5 +29,16 @@
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
     patch:
       - op: replace
-        path: "/spec/template/spec/containers/{{ target_container_index }}/env"
-        value: "{{ final_env }}"
+        path: "/spec/template/spec/containers/{{ faults_workload_container_index }}/env"
+        value: |
+          {{
+            (
+              faults_container_env |
+              rejectattr(
+                'name',
+                'in',
+                (spec.workload.container.env | map(attribute='name'))
+              )
+            ) +
+            spec.workload.container.env
+          }}

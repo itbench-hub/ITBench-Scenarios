@@ -17,6 +17,12 @@
         storageClassName: invalid-class-name
     state: present
 
+- name: Import variable setting tasks
+  ansible.builtin.import_tasks:
+    file: set_faults_workload_container_index.yaml
+  vars:
+    faults_workload: "{{ spec.workload }}"
+
 - name: Inject fault (misconfigured persistent volume claim)
   kubernetes.core.k8s_json_patch:
     api_version: apps/v1
@@ -26,5 +32,5 @@
     namespace: "{{ spec.workload.namespace }}"
     patch:
       - op: add
-        path: /spec/containers/0/volumes
-        value: {"persistentVolumeClaim": {"claimName": "{{ spec.workload.name }}-invalid"}, "name": "invalid-volume"}
+        path: /spec/containers/{{ faults_workload_container_index }}/volumes
+        value: { "persistentVolumeClaim": { "claimName": "{{ spec.workload.name }}-invalid" }, "name": "invalid-volume" }
