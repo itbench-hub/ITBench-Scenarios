@@ -49,7 +49,7 @@ argument_specs:
                   - misconfigured-persitent-volume-claim
                   - misconfigured-resource-quota
                   - misconfigured-service-port
-                  - modify-environment-variables-port
+                  - modify-environment-variables
                   - unsupported-image
                 required: true
                 type: str

@@ -11,8 +11,8 @@
         path: /spec/template/spec/containers/0/command
         value: ["invalid-command"]
 
-- name: Import workload restart task
-  ansible.builtin.import_task:
+- name: Import workload restart tasks
+  ansible.builtin.import_tasks:
     file: force_workload_restart.yaml
   when:
     - (spec.workload.restart_policy | default('force')) == 'force'
