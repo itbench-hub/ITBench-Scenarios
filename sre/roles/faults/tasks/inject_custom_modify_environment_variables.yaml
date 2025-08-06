@@ -8,7 +8,7 @@
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
   register: faults_workload_info
 
-- name: Update port of first _ADDR variable to 0000
+- name: Update environment variable list
   ansible.builtin.set_fact:
     faults_updated_env_vars: |
       {{

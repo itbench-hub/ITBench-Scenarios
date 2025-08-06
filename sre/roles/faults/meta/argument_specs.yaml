@@ -74,6 +74,13 @@ argument_specs:
                       namespace:
                         required: true
                         type: str
+                  restart_policy:
+                    choices:
+                      - force
+                      - safe
+                    default: force
+                    required: false
+                    type: str
               invalid_image:
                 required: false
                 type: dict
@@ -94,6 +101,13 @@ argument_specs:
                       namespace:
                         required: true
                         type: str
+                  restart_policy:
+                    choices:
+                      - force
+                      - safe
+                    default: force
+                    required: false
+                    type: str
               invalid_node_selector:
                 required: false
                 type: dict
@@ -242,6 +256,13 @@ argument_specs:
                           value:
                             required: true
                             type: str
+                  restart_policy:
+                    choices:
+                      - force
+                      - safe
+                    default: force
+                    required: false
+                    type: str
               unsupported_image:
                 required: false
                 type: dict
@@ -262,6 +283,13 @@ argument_specs:
                       namespace:
                         required: true
                         type: str
+                  restart_policy:
+                    choices:
+                      - force
+                      - safe
+                    default: force
+                    required: false
+                    type: str
           otel_demo:
             required: false
             type: dict

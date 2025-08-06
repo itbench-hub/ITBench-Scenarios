@@ -1,20 +1,4 @@
 ---
-- name: Get current replica count before scaling down
-  kubernetes.core.k8s_info:
-    api_version: apps/v1
-    kind: "{{ spec.workload.kind }}"
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ spec.workload.name }}"
-    namespace: "{{ spec.workload.namespace }}"
-    replicas: 0
-    wait: true
-
-- name: Get original replica count
-  include_tasks: ../utils/get_replica_count.yaml
-
-- name: Scale down workload
-  include_tasks: ../utils/scale_down_workload.yaml
-
 - name: Inject fault (invalid command)
   kubernetes.core.k8s_json_patch:
     api_version: apps/v1
@@ -27,12 +11,10 @@
         path: /spec/template/spec/containers/0/command
         value: ["invalid-command"]
 
-- name: Scale up workload after fault injection
-  kubernetes.core.k8s_scale:
-    api_version: apps/v1
-    kind: "{{ spec.workload.kind }}"
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ spec.workload.name }}"
-    namespace: "{{ spec.workload.namespace }}"
-    replicas: 1
-    wait: false
+- name: Import workload restart task
+  ansible.builtin.import_task:
+    file: force_workload_restart.yaml
+  when:
+    - (spec.workload.restart_policy | default('force')) == 'force'
+  vars:
+    faults_workload: "{{ spec.workload }}"
