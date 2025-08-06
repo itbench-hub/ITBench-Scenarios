@@ -14,7 +14,7 @@
       {{
         lookup(
           'ansible.utils.index_of',
-          faults_workload_info.resources[0].spec.containers,
+          faults_workload_info.resources[0].spec.template.spec.containers,
           'eq',
           faults_workload.container.name,
           'name'
