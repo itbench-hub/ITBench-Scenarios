@@ -24,4 +24,4 @@ spec:
             name: "{{ applications_helm_releases.otel_demo.namespace }}"
           workloads:
             - kind: Deployment
-              name: product-catalog
+              name: ad

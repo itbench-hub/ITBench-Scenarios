@@ -2,7 +2,7 @@
 metadata:
   complexity: Medium
   id: 16
-  name: Checkout Service Environment Variables Removed
+  name: Misconfigured shipping service environment variable
   platform: kubernetes
   technologies:
     - Go
@@ -21,5 +21,5 @@ spec:
         remove_environment_variables:
           workload:
             kind: Deployment
-            name: checkout
+            name: shipping
             namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
