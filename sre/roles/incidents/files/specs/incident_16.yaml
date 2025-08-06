@@ -22,9 +22,9 @@ spec:
           workload:
             container:
               name: shipping
-            env:
-              - name: QUOTE_ADDR
-                value: "quote:0000"
+              env:
+                - name: QUOTE_ADDR
+                  value: "quote:0000"
             kind: Deployment
             name: shipping
             namespace: "{{ applications_helm_releases.otel_demo.namespace }}"

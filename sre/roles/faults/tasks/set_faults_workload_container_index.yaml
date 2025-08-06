@@ -14,11 +14,12 @@
       {{
         lookup(
           'ansible.utils.index_of',
-          faults_services_info.resources[0].spec.containers,
+          faults_workload_info.resources[0].spec.containers,
           'eq',
           faults_workload.container.name,
           'name'
         )
       }}
   when:
+    - faults_workload_info is defined
     - faults_workload_info.resources | length > 0

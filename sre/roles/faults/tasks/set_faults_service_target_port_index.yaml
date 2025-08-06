@@ -21,4 +21,5 @@
         )
       }}
   when:
+    - faults_services_info is defined
     - faults_services_info.resources | length > 0
