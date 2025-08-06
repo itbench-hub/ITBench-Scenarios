@@ -242,6 +242,9 @@ argument_specs:
                       name:
                         required: true
                         type: str
+                      container_name:
+                        required: false
+                        type: str
                       namespace:
                         required: true
                         type: str
