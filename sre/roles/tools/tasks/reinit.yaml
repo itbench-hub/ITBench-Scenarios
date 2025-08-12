@@ -65,8 +65,8 @@
     cmd: kubectl delete events --all-namespaces --all --ignore-not-found=true
   environment:
     KUBECONFIG: "{{ tools_cluster.kubeconfig }}"
-  register: delete_events_result
-  changed_when: delete_events_result.rc == 0
-  failed_when: delete_events_result.rc not in [0, 1]
+  register: tools_delete_events_result
+  changed_when: tools_delete_events_result.rc == 0
+  failed_when: tools_delete_events_result.rc not in [0, 1]
   when:
     - tools_cluster.platform == "kubernetes"
