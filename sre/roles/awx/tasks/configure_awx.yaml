@@ -105,23 +105,6 @@
   when:
     - awx_credentials.aws is defined
 
-# TODO: Remove this credential once the cronjobs are refactored
-
-- name: Add/Remove AWX credentials
-  awx.awx.credential:
-    # (Hack): As the value set using set_fact controller_host is not picked up
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    name: Credential-AWX
-    description: Credential-AWX
-    organization: IT-Bench
-    credential_type: Red Hat Ansible Automation Platform
-    inputs:
-      host: "{{ awx_controller_host }}"
-      username: admin
-      password: "{{ awx_controller_password }}" # pragma: allowlist secret
-
 - name: Create project for ITBench Repository
   awx.awx.project:
     controller_host: "{{ awx_controller_host }}"
