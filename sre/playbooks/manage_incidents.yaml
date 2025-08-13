@@ -50,13 +50,18 @@
               status: progressing
             leaderboard_storage: "{{ storage }}"
 
-        # - name: Pause for 600 seconds pre-fault removal for alert recording
-        #   ansible.builtin.pause:
-        #     seconds: 600
-        #   tags:
-        #     - pre_fault_removal
-        #   when:
-        #     - incident.runner != 'local'
+        - name: Import recorders role
+          ansible.builtin.import_role:
+            name: recorders
+          vars:
+            recorders_cluster:
+              kubeconfig: "{{ cluster.kubeconfig }}"
+              platform: "{{ cluster_platform }}"
+            recorders_enabled:
+              alerts:
+                prometheus: "{{ tools_enabled.prometheus }}"
+              topology:
+                kubernetes: "{{ tools_enabled.kubernetes_topology_monitor }}"
 
         # - name: Import e2e role
         #   ansible.builtin.import_role:
