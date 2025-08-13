@@ -1,0 +1,70 @@
+---
+- name: Retrieve the alert recorder pod name
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Pod
+    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+    namespace: "{{ recorders_namespace.name }}"
+    label_selectors:
+      - app.kubernetes.io/name = prometheus-alert-recorder
+      - app.kubernetes.io/part-of = it-bench
+  register: recorders_pods_info
+
+- name: Copy records directory from pod
+  kubernetes.core.k8s_cp:
+    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+    local_path: /tmp/alerts
+    namespace: "{{ recorders_pods_info.resources[0].metadata.namespace }}"
+    pod: "{{ recorders_pods_info.resources[0].metadata.name }}"
+    remote_path: /opt/app-root/src/records
+    state: from_pod
+  when:
+    - recorders_pods_info is defined
+    - recorders_pods_info.resources | length == 1
+
+- name: Uninstall Prometheus Alert Recorder
+  kubernetes.core.k8s:
+    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+    namespace: "{{ recorders_namespace.name }}"
+    src: files/kubernetes/alerts/prometheus.yaml
+    state: absent
+    wait: true
+
+- name: Delete ConfigMap with Python script
+  kubernetes.core.k8s:
+    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: alerts-recorder-prometheus-scripts
+        namespace: "{{ recorders_namespace.name }}"
+    state: absent
+    wait: true
+
+- name: Check for Secret with Prometheus bearer token
+  kubernetes.core.k8s_info:
+    api_version: route.openshift.io/v1
+    kind: Secret
+    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+    name: alerts-recorder-prometheus-token
+    namespace: "{{ recorders_namespace.name }}"
+  register: recorders_prometheus_secret_info
+  when:
+    - recorders_cluster.platform == "openshift"
+
+- name: Delete Secret with Prometheus bearer token
+  kubernetes.core.k8s:
+    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: v1
+      kind: Secret
+      metadata:
+        name: "{{ recorders_prometheus_secret_info.resources[0].metadata.name }}"
+        namespace: "{{ recorders_prometheus_secret_info.resources[0].metadata.namespace }}"
+    state: absent
+    wait: true
+  when:
+    - recorders_cluster.platform == "openshift"
+    - recorders_prometheus_secret_info is defined
+    - recorders_prometheus_secret_info.resources | length == 1
