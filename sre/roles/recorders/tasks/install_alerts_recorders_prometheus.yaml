@@ -60,7 +60,7 @@
           'name': PROMETHEUS_TOKEN,
           'valueFrom': {
             'secretKeyRef': {
-              'name': 'alerts-recorder-prometheus-token'
+              'name': 'alerts-recorder-prometheus-token',
               'key': 'token'
             }
           }

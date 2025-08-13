@@ -42,15 +42,6 @@
           type: job_template
         related:
           success_nodes:
-            - identifier: node-trace-gathering
-          failure_nodes:
-            - identifier: node-capture-failed-deployment
-      - identifier: node-trace-gathering
-        unified_job_template:
-          name: "Scenario-{{ incident }}--Trace-Gathering"
-          type: job_template
-        related:
-          success_nodes:
             - identifier: node-trigger-fault
           failure_nodes:
             - identifier: node-capture-failed-deployment
@@ -58,6 +49,16 @@
       - identifier: node-trigger-fault
         unified_job_template:
           name: "Incident {{ incident }}: Inject Faults"
+          type: job_template
+        related:
+          success_nodes:
+            - identifier: node-install-recorders
+          failure_nodes:
+            - identifier: node-capture-failed-deployment
+          always_nodes: []
+      - identifier: node-install-recorders
+        unified_job_template:
+          name: "Incident {{ incident }}: Install Data Recorders"
           type: job_template
         related:
           success_nodes:
@@ -92,6 +93,15 @@
     name: "Stop Incident {{ incident }}"
     state: present
     workflow_nodes:
+      - identifier: node-uninstall-recorders
+        unified_job_template:
+          name: "Incident {{ incident }}: Uninstall Data Recorders"
+          type: job_template
+        related:
+          success_nodes: []
+          failure_nodes: []
+          always_nodes:
+            - identifier: node-remove-fault
       - identifier: node-remove-fault
         unified_job_template:
           name: "Incident {{ incident }}: Remove Faults"

@@ -2,7 +2,7 @@
 - name: Import tools role for variable setting tasks
   ansible.builtin.import_role:
     name: tools
-    tasks_from: set_kubernetes_topology_monitor_endpoint
+    tasks_from: set_jaeger_endpoint
   vars:
     tools_cluster:
       kubeconfig: "{{ recorders_cluster.kubeconfig }}"
@@ -15,28 +15,28 @@
       apiVersion: v1
       kind: ConfigMap
       metadata:
-        name: topology-recorder-kubernetes-scripts
+        name: traces-recorder-jaeger-scripts
         namespace: "{{ recorders_namespace.name }}"
       data:
-        deps: "{{ lookup('ansible.builtin.file', 'files/scripts/topology/kubernetes/requirements.txt') }}"
-        script: "{{ lookup('ansible.builtin.file', 'files/scripts/topology/kubernetes/gather.py') }}"
+        deps: "{{ lookup('ansible.builtin.file', 'files/scripts/traces/jaeger/requirements.txt') }}"
+        script: "{{ lookup('ansible.builtin.file', 'files/scripts/traces/jaeger/gather.py') }}"
     state: present
 
-- name: Install Kubernetes Topology Recorder
+- name: Install Jaeger Traces Recorder
   kubernetes.core.k8s:
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
     namespace: "{{ recorders_namespace.name }}"
-    src: files/kubernetes/topology/kubernetes.yaml
+    src: files/kubernetes/traces/jaeger.yaml
     state: present
 
-- name: Update Kubernetes Topology Recorder environment variables
+- name: Update Jaeger Traces environment variables
   kubernetes.core.k8s:
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
     resource_definition:
       apiVersion: apps/v1
       kind: StatefulSet
       metadata:
-        name: kubernetes-topology-recorder
+        name: jaeger-traces-recorder
         namespace: "{{ recorders_namespace.name }}"
       spec:
         template:
@@ -44,6 +44,6 @@
             containers:
               - name: recorder
                 env:
-                  - name: KUBERNETES_TOPOLOGY_MONITOR_ENDPOINT
-                    value: "{{ tools_kubernetes_topology_mapper_endpoint }}"
+                  - name: JAEGER_ENDPOINT
+                    value: "{{ tools_jaeger_querier_endpoint }}"
     state: patched

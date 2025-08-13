@@ -3,20 +3,20 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   labels:
-    app.kubernetes.io/name: kubernetes-topology-recorder
+    app.kubernetes.io/name: jaeger-traces-recorder
     app.kubernetes.io/part-of: it-bench
-  name: kubernetes-topology-recorder
+  name: jaeger-traces-recorder
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: kubernetes-topology-recorder
+      app.kubernetes.io/name: jaeger-traces-recorder
       app.kubernetes.io/part-of: it-bench
   template:
     metadata:
       annotations:
         openshift.io/required-scc: restricted-v2
       labels:
-        app.kubernetes.io/name: kubernetes-topology-recorder
+        app.kubernetes.io/name: jaeger-traces-recorder
         app.kubernetes.io/part-of: it-bench
     spec:
       containers:
@@ -40,27 +40,27 @@ spec:
             - name: scripts
               mountPath: /opt/app-root/src/scripts
               readOnly: true
-            - name: kubernetes-topology-records
+            - name: jaeger-trace-records
               mountPath: /opt/app-root/src/records
       securityContext:
         fsGroup: 1001
       volumes:
         - name: scripts
           configMap:
-            name: topology-recorder-kubernetes-scripts
+            name: traces-recorder-jaeger-scripts
             items:
               - key: script
                 path: gather.py
         - name: dependencies
           configMap:
-            name: topology-recorder-kubernetes-scripts
+            name: traces-recorder-jaeger-scripts
             items:
               - key: deps
                 path: requirements.txt
   replicas: 1
   volumeClaimTemplates:
     - metadata:
-        name: kubernetes-topology-records
+        name: jaeger-trace-records
       spec:
         accessModes:
           - ReadWriteOnce
