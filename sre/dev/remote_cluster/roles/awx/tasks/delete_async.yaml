@@ -21,8 +21,8 @@
   loop: "{{ awx_async_delete_results.results }}"
   register: awx_async_delete_poll_results
   until: awx_async_delete_poll_results.finished
-  delay: 30
-  retries: 30
+  delay: 60
+  retries: 15
 
 - name: Clean up ansychronous operations
   ansible.builtin.async_status:
