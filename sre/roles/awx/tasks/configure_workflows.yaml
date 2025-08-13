@@ -71,26 +71,6 @@
           type: job_template
         related:
           success_nodes:
-            - identifier: node-check-for-alerts
-          failure_nodes:
-            - identifier: node-capture-failed-deployment
-          always_nodes: []
-      - identifier: node-check-for-alerts
-        unified_job_template:
-          name: "Scenario-{{ incident }}--Check-for-Alerts"
-          type: job_template
-        related:
-          success_nodes:
-            - identifier: node-alert-recorder-on
-          failure_nodes:
-            - identifier: node-capture-failed-deployment
-          always_nodes: []
-      - identifier: node-alert-recorder-on
-        unified_job_template:
-          name: "Scenario-{{ incident }}--Alert-Recorder-On"
-          type: job_template
-        related:
-          success_nodes:
             - identifier: node-handover-to-agent
           failure_nodes:
             - identifier: node-capture-failed-deployment
@@ -134,15 +114,6 @@
       - identifier: node-uninstalling-k8s-resources-default-namespace
         unified_job_template:
           name: "Scenario-{{ incident }}--Uninstalling-K8s-Resources-Default-Namespace"
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes:
-            - identifier: node-alert-recorder-off
-      - identifier: node-alert-recorder-off
-        unified_job_template:
-          name: "Scenario-{{ incident }}--Alert-Recorder-Off"
           type: job_template
         related:
           success_nodes: []

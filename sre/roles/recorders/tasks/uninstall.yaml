@@ -1,0 +1,17 @@
+---
+- name: Import alert recorder uninstallation tasks
+  ansible.builtin.import_tasks:
+    file: uninstall_alert_recorders.yaml
+  when:
+    - recorders_enabled.alerts is defined
+
+- name: Delete the namespace
+  kubernetes.core.k8s:
+    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ recorders_namespace.name }}"
+    state: absent
+    wait: true

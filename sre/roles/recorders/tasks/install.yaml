@@ -1,0 +1,16 @@
+---
+- name: Create the namespace
+  kubernetes.core.k8s:
+    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ recorders_namespace.name }}"
+    state: present
+
+- name: Import alert recorder installation tasks
+  ansible.builtin.import_tasks:
+    file: install_alert_recorders.yaml
+  when:
+    - recorders_enabled.alerts is defined
