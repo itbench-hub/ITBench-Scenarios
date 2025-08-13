@@ -61,16 +61,6 @@
           type: job_template
         related:
           success_nodes:
-            - identifier: node-post-fault-injection
-          failure_nodes:
-            - identifier: node-capture-failed-deployment
-          always_nodes: []
-      - identifier: node-post-fault-injection
-        unified_job_template:
-          name: "Scenario-{{ incident }}--Post-Fault-Injection"
-          type: job_template
-        related:
-          success_nodes:
             - identifier: node-handover-to-agent
           failure_nodes:
             - identifier: node-capture-failed-deployment
