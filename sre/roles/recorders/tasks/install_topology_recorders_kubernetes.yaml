@@ -1,0 +1,49 @@
+---
+- name: Import tools role for variable setting tasks
+  ansible.builtin.import_role:
+    name: tools
+    tasks_from: set_kubernetes_topology_monitor_endpoint
+  vars:
+    tools_cluster:
+      kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+      platform: "{{ recorders_cluster.platform }}"
+
+- name: Create ConfigMap with Python script
+  kubernetes.core.k8s:
+    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: v1
+      kind: ConfigMap
+      metadata:
+        name: topology-recorder-kubernetes-scripts
+        namespace: "{{ recorders_namespace.name }}"
+      data:
+        deps: "{{ lookup('ansible.builtin.file', 'files/scripts/alerts/prometheus/requirements.txt') }}"
+        script: "{{ lookup('ansible.builtin.file', 'files/scripts/alerts/prometheus/gather.py') }}"
+    state: present
+
+- name: Install Kubernetes Topology Recorder
+  kubernetes.core.k8s:
+    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+    namespace: "{{ recorders_namespace.name }}"
+    src: files/kubernetes/topology/kubernetes.yaml
+    state: present
+
+- name: Update Kubernetes Topology Recorder environment variables
+  kubernetes.core.k8s:
+    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: apps/v1
+      kind: StatefulSet
+      metadata:
+        name: kubernetes-topology-recorder
+        namespace: "{{ recorders_namespace.name }}"
+      spec:
+        template:
+          spec:
+            containers:
+              - name: recorder
+                env:
+                  - name: KUBERNETES_TOPOLOGY_MONITOR_ENDPOINT
+                    value: "{{ tools_kubernetes_topology_mapper_endpoint }}"
+    state: patched

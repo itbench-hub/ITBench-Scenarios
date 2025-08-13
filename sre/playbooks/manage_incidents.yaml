@@ -56,7 +56,10 @@
           kubeconfig: "{{ cluster.kubeconfig }}"
           platform: "{{ cluster_platform }}"
         recorders_enabled:
-          prometheus: "{{ tools_enabled.prometheus }}"
+          alerts:
+            prometheus: "{{ tools_enabled.prometheus }}"
+          topology:
+            kubernetes: "{{ tools_enabled.kubernetes_topology_monitor }}"
 
     # - name: Import faults role
     #   ansible.builtin.import_role:
