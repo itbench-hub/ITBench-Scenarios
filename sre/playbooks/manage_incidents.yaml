@@ -49,32 +49,24 @@
     #   when:
     #     - incident.runner != 'local'
 
-    # - name: Import e2e role
-    #   ansible.builtin.import_role:
-    #     name: e2e
-    #     tasks_from: record_topology_information
-    #   tags:
-    #     - pre_fault_removal
-    #   when:
-    #     - incident.runner != 'local'
-
-    - name: Import incidents role
+    - name: Import recorders role
       ansible.builtin.import_role:
-        name: incidents
+        name: recorders
       vars:
-        incidents_cluster:
+        recorders_cluster:
           kubeconfig: "{{ cluster.kubeconfig }}"
           platform: "{{ cluster_platform }}"
-        incidents_spec: "{{ incident_spec }}"
+        recorders_enabled:
+          prometheus: "{{ tools_enabled.prometheus }}"
 
-    # - name: Import e2e role
+    # - name: Import incidents role
     #   ansible.builtin.import_role:
-    #     name: e2e
-    #     tasks_from: record_topology_information
-    #   tags:
-    #     - post_fault_injection
-    #   when:
-    #     - incident.runner != 'local'
+    #     name: incidents
+    #   vars:
+    #     incidents_cluster:
+    #       kubeconfig: "{{ cluster.kubeconfig }}"
+    #       platform: "{{ cluster_platform }}"
+    #     incidents_spec: "{{ incident_spec }}"
 
     # - name: Import e2e role
     #   ansible.builtin.import_role:
