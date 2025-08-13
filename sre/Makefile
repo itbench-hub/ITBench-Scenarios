@@ -62,10 +62,28 @@ else
 	ansible-playbook -i inventory.yaml playbooks/manage_applications.yaml --tags "uninstall_applications"
 endif
 
+.PHONY: deploy_recorders
+deploy_recorders: ## Deploys the data recorders to cluster
+ifdef INCIDENT_NUMBER
+	ansible-playbook -i inventory.yaml playbooks/manage_recorders.yaml --tags "install_recorders" \
+		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
+else
+	ansible-playbook -i inventory.yaml playbooks/manage_recorders.yaml --tags "install_recorders"
+endif
+
+.PHONY: undeploy_recorders
+undeploy_recorders: ## Undeploys the data recorders to cluster
+ifdef INCIDENT_NUMBER
+	ansible-playbook -i inventory.yaml playbooks/manage_recorders.yaml --tags "uninstall_recorders" \
+		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
+else
+	ansible-playbook -i inventory.yaml playbooks/manage_recorders.yaml --tags "uninstall_recorders"
+endif
+
 .PHONY: inject_incident_fault
 inject_incident_fault: ## Injects the fault used in a specific incident
 ifdef INCIDENT_NUMBER
-	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "inject_faults,install_recorders" \
+	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "inject_faults" \
 		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
 else
 	@echo "Missing INCIDENT_NUMBER argument. Please run this command with this variable."
@@ -74,7 +92,7 @@ endif
 .PHONY: remove_incident_fault
 remove_incident_fault: ## Removes the fault used in a specific incident
 ifdef INCIDENT_NUMBER
-	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "remove_faults,uninstall_recorders" \
+	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "remove_faults" \
 		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
 else
 	@echo "Missing INCIDENT_NUMBER argument. Please run this command with this variable."
@@ -87,10 +105,10 @@ create_environment: deploy_tools deploy_applications ## Deploys tools and applic
 destroy_environment: undeploy_applications undeploy_tools ## Undeploys tools and applications to cluster
 
 .PHONY: start_incident
-start_incident: create_environment inject_incident_fault ## Starts an incident by deploying a stack, application, and fault for an incident
+start_incident: create_environment inject_incident_fault deploy_recorders ## Starts an incident by deploying a stack, application, and fault for an incident
 
 .PHONY: stop_incident
-stop_incident: remove_incident_fault destroy_environment ## Stops an incident by undeploying a stack, application, and fault for an incident
+stop_incident: undeploy_recorders remove_incident_fault destroy_environment ## Stops an incident by undeploying a stack, application, and fault for an incident
 
 .PHONY: deploy_awx_stack
 deploy_awx_stack: ## Deploys AWX to a cluster
