@@ -14,3 +14,9 @@
     file: install_alert_recorders.yaml
   when:
     - recorders_enabled.alerts is defined
+
+- name: Import topology recorder installation tasks
+  ansible.builtin.import_tasks:
+    file: install_topology_recorders.yaml
+  when:
+    - recorders_enabled.topology is defined
