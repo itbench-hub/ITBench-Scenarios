@@ -1,16 +1,8 @@
 ---
-- name: Manage SRE and FinOps Incident Environment Tool Stack
+- name: Manage SRE and FinOps Incident Data Recorder Stack
   hosts:
     - environment
   pre_tasks:
-    - name: Ensure incident file is defined
-      ansible.builtin.assert:
-        that: incident_id is defined
-        fail_msg: incident_id is not defined. Please run playbook with variable defined via CLI arguments.
-        success_msg: incident_id is defined.
-      tags:
-        - always
-
     - name: Import system role
       ansible.builtin.import_role:
         name: system
@@ -34,11 +26,32 @@
     - name: Import variables for incident
       ansible.builtin.import_role:
         name: incidents
+        tasks_from: load
       tags:
         - always
       vars:
         incidents_file:
           id: "{{ incident_id }}"
+      when:
+        - incident_id is defined
+
+    - name: Create tools_enabled dictionary
+      ansible.builtin.set_fact:
+        tools_enabled:
+          chaos_mesh: "{{ tools.chaos_mesh | default(false) }}"
+          clickhouse: "{{ tools.clickhouse | default(false) }}"
+          ingress: "{{ tools.ingress | default(false) }}"
+          jaeger: "{{ tools.jaeger | default(false) }}"
+          kubernetes_metrics_server: "{{ tools.kubernetes_metrics_server | default(false) }}"
+          kubernetes_topology_monitor: "{{ tools.kubernetes_topology_monitor | default(false) }}"
+          opencost: "{{ tools.opencost | default(false) }}"
+          opensearch: "{{ tools.opensearch | default(false) }}"
+          opentelemetry: "{{ tools.opentelemetry | default(false) }}"
+          prometheus: "{{ tools.prometheus | default(false) }}"
+      tags:
+        - always
+      when:
+        - incident_id is undefined
   tasks:
     - name: Import recorders role
       ansible.builtin.import_role:
@@ -52,20 +65,5 @@
             prometheus: "{{ tools_enabled.prometheus }}"
           topology:
             kubernetes: "{{ tools_enabled.kubernetes_topology_monitor }}"
-
-    # - name: Import faults role
-    #   ansible.builtin.import_role:
-    #     name: faults
-    #   vars:
-    #     faults_cluster:
-    #       kubeconfig: "{{ cluster.kubeconfig }}"
-    #     faults_specs: "{{ incidents_spec.spec.faults }}"
-
-    # - name: Import e2e role
-    #   ansible.builtin.import_role:
-    #     name: e2e
-    #     tasks_from: register_fault_injection_time
-    #   tags:
-    #     - inject_faults
-    #   when:
-    #     - incident.runner != 'local'
+          traces:
+            jaeger: "{{ tools_enabled.jaeger }}"

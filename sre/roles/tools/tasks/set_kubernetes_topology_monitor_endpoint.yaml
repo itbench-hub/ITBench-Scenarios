@@ -1,18 +1,17 @@
 ---
-- name: Retrieve Prometheus service info
+- name: Retrieve Kubernetes Topology Service service info
   kubernetes.core.k8s_info:
     api_version: v1
     kind: Service
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    name: topology-monitor
     namespace: "{{ tools_helm_releases.kubernetes_topology_monitor.namespace }}"
-    label_selectors:
-      - app = topology-monitor
   register: tools_topology_service_info
 
 - name: Extract Prometheus hostname
   ansible.builtin.set_fact:
     tools_kubernetes_topology_mapper_endpoint: http://{{ tools_topology_service_info.resources[0].metadata.name }}.{{
-      tools_topology_service_inforesources[0].metadata.namespace }}.svc.cluster.local:8080
+      tools_topology_service_info.resources[0].metadata.namespace }}.svc.cluster.local:8080
   when:
     - tools_cluster.platform == "kubernetes"
     - tools_topology_service_info is defined

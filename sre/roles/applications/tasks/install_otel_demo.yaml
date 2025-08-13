@@ -50,6 +50,14 @@
     tools_cluster:
       kubeconfig: "{{ applications_cluster.kubeconfig }}"
 
+- name: Import tools role for variable setting tasks
+  ansible.builtin.import_role:
+    name: tools
+    tasks_from: set_jaeger_endpoint
+  vars:
+    tools_cluster:
+      kubeconfig: "{{ applications_cluster.kubeconfig }}"
+
 - name: Install OpenTelemetry Demo (Astronomy Shop)
   kubernetes.core.helm:
     chart_ref: opentelemetry-demo
@@ -286,7 +294,7 @@
               http:
                 endpoint: http://{{ helm_releases.opensearch.name }}-master.{{ helm_releases.opensearch.namespace }}.svc.cluster.local:9200
             otlp:
-              endpoint: http://jaeger-collector.{{ helm_releases.collectors.namespace }}.svc.cluster.local:4317
+              endpoint: "{{ tools_jaeger_collector_otlp_endpoint }}"
             otlphttp/prometheus:
               endpoint: http://{{ helm_releases.prometheus.name }}-kube-prometheus-prometheus.{{ helm_releases.prometheus.namespace }}.svc.cluster.local:9090
             prometheus:
