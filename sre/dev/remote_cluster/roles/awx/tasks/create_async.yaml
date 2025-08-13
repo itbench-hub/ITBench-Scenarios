@@ -26,7 +26,7 @@
       Name: "{{ awx_stack.name_prefix }}-public-subnet-{{ item }}"
       Environment: k8s
       ManagedBy: ansible
-  loop: "{{ range(1, (awx_cluster_names | length) + 1) }}"
+  loop: "{{ range(1, (awx_cluster_names | length) + 1) | list }}"
   register: awx_public_subnets
 
 - name: Parse subnet ids
@@ -77,6 +77,10 @@
       - "{{ awx_cluster.networking.mode }}"
       - --state
       - "{{ awx_kops_state_store }}"
+      - --channel
+      - stable
+      - --kubernetes-version
+      - "{{ awx_cluster.kubernetes_version }}"
   async: 600
   loop: "{{ awx_cluster_names | zip(awx_subnet_ids) }}"
   poll: 0
@@ -88,8 +92,8 @@
   loop: "{{ awx_async_create_results.results }}"
   register: awx_async_create_poll_results
   until: awx_async_create_poll_results.finished
-  delay: 30
-  retries: 20
+  delay: 60
+  retries: 10
 
 - name: Clean up ansychronous operations
   ansible.builtin.async_status:
@@ -121,8 +125,8 @@
   loop: "{{ awx_async_update_results.results }}"
   register: awx_async_update_poll_results
   until: awx_async_update_poll_results.finished
-  delay: 30
-  retries: 20
+  delay: 60
+  retries: 10
 
 - name: Clean up ansychronous operations
   ansible.builtin.async_status:
@@ -156,10 +160,10 @@
       - --state
       - "{{ awx_kops_state_store }}"
       - --wait
-      - 10m
+      - 20m
   environment:
     KUBECONFIG: /tmp/{{ item }}.yaml
-  async: 600
+  async: 1800
   loop: "{{ awx_cluster_names }}"
   poll: 0
   register: awx_async_validate_results
@@ -171,7 +175,7 @@
   register: awx_async_validate_poll_results
   until: awx_async_validate_poll_results.finished
   delay: 60
-  retries: 10
+  retries: 30
 
 - name: Clean up ansychronous operations
   ansible.builtin.async_status:
