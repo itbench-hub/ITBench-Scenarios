@@ -36,9 +36,8 @@
     api_version: v1
     kind: Service
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    name: "{{ tools_helm_releases.prometheus.name }}-kube-prometheus-prometheus"
     namespace: "{{ tools_helm_releases.prometheus.namespace }}"
-    label_selectors:
-      - app = kube-prometheus-stack-prometheus
   register: tools_prometheus_service_info
   when:
     - tools_cluster.platform == "kubernetes"

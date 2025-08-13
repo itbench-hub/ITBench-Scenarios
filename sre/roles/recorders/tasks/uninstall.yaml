@@ -1,7 +1,7 @@
 ---
 - name: Import alert recorder uninstallation tasks
   ansible.builtin.import_tasks:
-    file: uninstall_alert_recorders.yaml
+    file: uninstall_alerts_recorders.yaml
   when:
     - recorders_enabled.alerts is defined
 
@@ -10,6 +10,12 @@
     file: uninstall_topology_recorders.yaml
   when:
     - recorders_enabled.topology is defined
+
+- name: Import traces recorder uninstallation tasks
+  ansible.builtin.import_tasks:
+    file: uninstall_traces_recorders.yaml
+  when:
+    - recorders_enabled.traces is defined
 
 - name: Delete the namespace
   kubernetes.core.k8s:

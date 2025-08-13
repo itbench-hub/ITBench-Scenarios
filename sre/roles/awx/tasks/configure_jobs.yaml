@@ -127,11 +127,49 @@
     project: GitHub-ITBench
     state: present
 
+- name: Add job template for installing data recorders
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credentials:
+      - Cluster-{{ incident_index + 1 }}-Kubeconfig
+      - AWS
+    execution_environment: AWX-EE-Custom
+    extra_vars:
+      incident_id: "{{ incident }}"
+    inventory: IT-Bench-SRE
+    job_tags: inject_faults
+    job_type: run
+    name: "Incident {{ incident }}: Install Data Recorders"
+    organization: ITBench-Scenarios
+    playbook: sre/playbooks/manage_recorders.yaml
+    project: GitHub-ITBench
+    state: present
+
+- name: Add job template for uninstalling data recorders
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credentials:
+      - Cluster-{{ incident_index + 1 }}-Kubeconfig
+      - AWS
+    execution_environment: AWX-EE-Custom
+    extra_vars:
+      incident_id: "{{ incident }}"
+    inventory: IT-Bench-SRE
+    job_tags: remove_faults
+    job_type: run
+    name: "Incident {{ incident }}: Uninstall Data Recorders"
+    organization: ITBench-Scenarios
+    playbook: sre/playbooks/manage_recorders.yaml
+    project: GitHub-ITBench
+    state: present
+
 # TODO: Complete the refactoring of the following code:
 #
 #       Telemetry Access code will be added directly to the Applications Role
-#       Recording code will be added directory to the Applications Role
-#       Post fault injection and pre fault removal will move to a Job
 
 - name: Creating/removing job template to setup for telemetry access
   awx.awx.job_template:
@@ -149,23 +187,6 @@
     name: "Scenario-{{ incident }}--Setup-For-Telemetry-Access"
     organization: ITBench-Scenarios
     playbook: sre/base.yaml
-    project: GitHub-ITBench
-    state: present
-
-- name: Creating/removing job template for trace gathering
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    credentials:
-      - Cluster-{{ incident_index + 1 }}-Kubeconfig
-      - AWS
-    execution_environment: AWX-EE-Custom
-    job_tags: telemetry_access
-    job_type: run
-    name: "Scenario-{{ incident }}--Trace-Gathering"
-    organization: ITBench-Scenarios
-    playbook: sre/cron_jobs/trace_recorder.yaml
     project: GitHub-ITBench
     state: present
 
