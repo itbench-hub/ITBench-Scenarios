@@ -294,7 +294,7 @@
               http:
                 endpoint: http://{{ helm_releases.opensearch.name }}-master.{{ helm_releases.opensearch.namespace }}.svc.cluster.local:9200
             otlp:
-              endpoint: "{{ tools_jaeger_collector_otlp_endpoint }}"
+              endpoint: "{{ tools_jaeger_collector_otlp_grpc_endpoint }}"
             otlphttp/prometheus:
               endpoint: http://{{ helm_releases.prometheus.name }}-kube-prometheus-prometheus.{{ helm_releases.prometheus.namespace }}.svc.cluster.local:9090
             prometheus:
