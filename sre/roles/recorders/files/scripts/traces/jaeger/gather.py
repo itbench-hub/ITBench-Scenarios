@@ -36,7 +36,7 @@ def get_operations(session, endpoint, headers, service):
         "{0}/api/operations".format(endpoint),
         headers=headers,
         params={
-            'service': service,
+            "service": service,
         },
         verify=True
     )
@@ -58,7 +58,7 @@ def get_traces(session, endpoint, headers, service, operation, time_window):
         "{0}/api/traces".format(endpoint),
         headers=headers,
         params={
-            'service': service,
+            "service": service,
             "operation": name,
             "start": time_window[0],
             "end": time_window[1],
@@ -81,12 +81,15 @@ def main():
 
     headers = { "Content-Type": "application/json" }
 
-    retries = Retry(total=3, backoff_factor=0.1)
+    retries = Retry(total=3, backoff_factor=0.3)
     adapter = HTTPAdapter(max_retries=retries)
 
     session = requests.Session()
     session.mount("http://", adapter)
     session.mount("https://", adapter)
+
+    logger.info("sleeping for 5 minutes to wait for Jaeger to receive data")
+    time.sleep(300)
 
     while True:
         next_datetime = datetime.now() + timedelta(seconds=300)
