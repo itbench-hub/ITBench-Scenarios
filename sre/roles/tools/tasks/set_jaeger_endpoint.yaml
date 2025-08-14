@@ -8,13 +8,12 @@
     namespace: "{{ tools_helm_releases.opentelemetry_collectors.namespace }}"
   register: tools_jaeger_service_info
 
-- name: Extract Prometheus hostname
+- name: Construct Jaeger in-cluster endpoints
   ansible.builtin.set_fact:
     tools_jaeger_collector_otlp_endpoint: http://{{ tools_jaeger_service_info.resources[0].metadata.name }}.{{
       tools_jaeger_service_info.resources[0].metadata.namespace }}.svc.cluster.local:4317
     tools_jaeger_querier_endpoint: http://{{ tools_jaeger_service_info.resources[0].metadata.name }}.{{
       tools_jaeger_service_info.resources[0].metadata.namespace }}.svc.cluster.local:16686
   when:
-    - tools_cluster.platform == "kubernetes"
     - tools_jaeger_service_info is defined
     - tools_jaeger_service_info.resources | length == 1
