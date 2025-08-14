@@ -558,12 +558,18 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-      - name: Test incident start
+      - name: Create environment
         run: |
-          INCIDENT_NUMBER=3 make -C sre start_incident
-      - name: Test incident stop
+          INCIDENT_NUMBER=3 make -C sre create_environment
+      - name: Test fault injection
         run: |
-          INCIDENT_NUMBER=3 make -C sre stop_incident
+          INCIDENT_NUMBER=3 make -C sre inject_incident_fault
+      - name: Test fault removal
+        run: |
+          INCIDENT_NUMBER=3 make -C sre remove_incident_fault
+      - name: Destroy environment
+        run: |
+          INCIDENT_NUMBER=3 make -C sre destroy_environment
   sre-incident-16:
     name: SRE Incident 16 Smoke Test
     needs:
@@ -593,12 +599,18 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-      - name: Test incident start
+      - name: Create environment
         run: |
-          INCIDENT_NUMBER=16 make -C sre start_incident
-      - name: Test incident stop
+          INCIDENT_NUMBER=16 make -C sre create_environment
+      - name: Test fault injection
         run: |
-          INCIDENT_NUMBER=16 make -C sre stop_incident
+          INCIDENT_NUMBER=16 make -C sre inject_incident_fault
+      - name: Test fault removal
+        run: |
+          INCIDENT_NUMBER=16 make -C sre remove_incident_fault
+      - name: Destroy environment
+        run: |
+          INCIDENT_NUMBER=16 make -C sre destroy_environment
   sre-incident-20:
     name: SRE Incident 20 Smoke Test
     needs:
@@ -628,12 +640,18 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-      - name: Test incident start
+      - name: Create environment
         run: |
-          INCIDENT_NUMBER=20 make -C sre start_incident
-      - name: Test incident stop
+          INCIDENT_NUMBER=20 make -C sre create_environment
+      - name: Test fault injection
         run: |
-          INCIDENT_NUMBER=20 make -C sre stop_incident
+          INCIDENT_NUMBER=20 make -C sre inject_incident_fault
+      - name: Test fault removal
+        run: |
+          INCIDENT_NUMBER=20 make -C sre remove_incident_fault
+      - name: Destroy environment
+        run: |
+          INCIDENT_NUMBER=20 make -C sre destroy_environment
   sre-incident-23:
     name: SRE Incident 23 Smoke Test
     needs:
@@ -663,12 +681,18 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-      - name: Test incident start
+      - name: Create environment
         run: |
-          INCIDENT_NUMBER=23 make -C sre start_incident
-      - name: Test incident stop
+          INCIDENT_NUMBER=23 make -C sre create_environment
+      - name: Test fault injection
         run: |
-          INCIDENT_NUMBER=23 make -C sre stop_incident
+          INCIDENT_NUMBER=23 make -C sre inject_incident_fault
+      - name: Test fault removal
+        run: |
+          INCIDENT_NUMBER=23 make -C sre remove_incident_fault
+      - name: Destroy environment
+        run: |
+          INCIDENT_NUMBER=23 make -C sre destroy_environment
   sre-incident-26:
     name: SRE Incident 26 Smoke Test
     needs:
@@ -699,12 +723,18 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-      - name: Test incident start
+      - name: Create environment
         run: |
-          INCIDENT_NUMBER=26 make -C sre start_incident
-      - name: Test incident stop
+          INCIDENT_NUMBER=26 make -C sre create_environment
+      - name: Test fault injection
         run: |
-          INCIDENT_NUMBER=26 make -C sre stop_incident
+          INCIDENT_NUMBER=26 make -C sre inject_incident_fault
+      - name: Test fault removal
+        run: |
+          INCIDENT_NUMBER=26 make -C sre remove_incident_fault
+      - name: Destroy environment
+        run: |
+          INCIDENT_NUMBER=26 make -C sre destroy_environment
   sre-incident-30:
     name: SRE Incident 30 Smoke Test
     needs:
@@ -734,12 +764,18 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-      - name: Test incident start
+      - name: Create environment
         run: |
-          INCIDENT_NUMBER=30 make -C sre start_incident
-      - name: Test incident stop
+          INCIDENT_NUMBER=30 make -C sre create_environment
+      - name: Test fault injection
         run: |
-          INCIDENT_NUMBER=30 make -C sre stop_incident
+          INCIDENT_NUMBER=30 make -C sre inject_incident_fault
+      - name: Test fault removal
+        run: |
+          INCIDENT_NUMBER=30 make -C sre remove_incident_fault
+      - name: Destroy environment
+        run: |
+          INCIDENT_NUMBER=30 make -C sre destroy_environment
   sre-incident-31:
     name: SRE Incident 31 Smoke Test
     needs:
@@ -769,12 +805,18 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-      - name: Test incident start
+      - name: Create environment
         run: |
-          INCIDENT_NUMBER=31 make -C sre start_incident
-      - name: Test incident stop
+          INCIDENT_NUMBER=31 make -C sre create_environment
+      - name: Test fault injection
         run: |
-          INCIDENT_NUMBER=31 make -C sre stop_incident
+          INCIDENT_NUMBER=31 make -C sre inject_incident_fault
+      - name: Test fault removal
+        run: |
+          INCIDENT_NUMBER=31 make -C sre remove_incident_fault
+      - name: Destroy environment
+        run: |
+          INCIDENT_NUMBER=31 make -C sre destroy_environment
   sre-incident-33:
     name: SRE Incident 33 Smoke Test
     needs:
@@ -804,12 +846,18 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-      - name: Test incident start
+      - name: Create environment
         run: |
-          INCIDENT_NUMBER=33 make -C sre start_incident
-      - name: Test incident stop
+          INCIDENT_NUMBER=33 make -C sre create_environment
+      - name: Test fault injection
         run: |
-          INCIDENT_NUMBER=33 make -C sre stop_incident
+          INCIDENT_NUMBER=33 make -C sre inject_incident_fault
+      - name: Test fault removal
+        run: |
+          INCIDENT_NUMBER=33 make -C sre remove_incident_fault
+      - name: Destroy environment
+        run: |
+          INCIDENT_NUMBER=33 make -C sre destroy_environment
   sre-incident-34:
     name: SRE Incident 34 Smoke Test
     needs:
@@ -839,12 +887,18 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-      - name: Test incident start
+      - name: Create environment
         run: |
-          INCIDENT_NUMBER=34 make -C sre start_incident
-      - name: Test incident stop
+          INCIDENT_NUMBER=34 make -C sre create_environment
+      - name: Test fault injection
         run: |
-          INCIDENT_NUMBER=34 make -C sre stop_incident
+          INCIDENT_NUMBER=34 make -C sre inject_incident_fault
+      - name: Test fault removal
+        run: |
+          INCIDENT_NUMBER=34 make -C sre remove_incident_fault
+      - name: Destroy environment
+        run: |
+          INCIDENT_NUMBER=34 make -C sre destroy_environment
   sre-incident-102:
     name: SRE Incident 102 Smoke Test
     needs:
@@ -874,12 +928,18 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-      - name: Test incident start
+      - name: Create environment
         run: |
-          INCIDENT_NUMBER=102 make -C sre start_incident
-      - name: Test incident stop
+          INCIDENT_NUMBER=102 make -C sre create_environment
+      - name: Test fault injection
         run: |
-          INCIDENT_NUMBER=102 make -C sre stop_incident
+          INCIDENT_NUMBER=102 make -C sre inject_incident_fault
+      - name: Test fault removal
+        run: |
+          INCIDENT_NUMBER=102 make -C sre remove_incident_fault
+      - name: Destroy environment
+        run: |
+          INCIDENT_NUMBER=102 make -C sre destroy_environment
   sre-incident-105:
     name: SRE Incident 105 Smoke Test
     needs:
@@ -909,12 +969,18 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-      - name: Test incident start
+      - name: Create environment
         run: |
-          INCIDENT_NUMBER=105 make -C sre start_incident
-      - name: Test incident stop
+          INCIDENT_NUMBER=105 make -C sre create_environment
+      - name: Test fault injection
         run: |
-          INCIDENT_NUMBER=105 make -C sre stop_incident
+          INCIDENT_NUMBER=105 make -C sre inject_incident_fault
+      - name: Test fault removal
+        run: |
+          INCIDENT_NUMBER=105 make -C sre remove_incident_fault
+      - name: Destroy environment
+        run: |
+          INCIDENT_NUMBER=105 make -C sre destroy_environment
   finops-incident-37:
     name: FinOps Incident 37 Smoke Test
     needs:
@@ -946,12 +1012,18 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-      - name: Test incident start
+      - name: Create environment
         run: |
-          INCIDENT_NUMBER=37 make -C sre start_incident
-      - name: Test incident stop
+          INCIDENT_NUMBER=37 make -C sre create_environment
+      - name: Test fault injection
         run: |
-          INCIDENT_NUMBER=37 make -C sre stop_incident
+          INCIDENT_NUMBER=37 make -C sre inject_incident_fault
+      - name: Test fault removal
+        run: |
+          INCIDENT_NUMBER=37 make -C sre remove_incident_fault
+      - name: Destroy environment
+        run: |
+          INCIDENT_NUMBER=37 make -C sre destroy_environment
   finops-incident-38:
     name: FinOps Incident 38 Smoke Test
     needs:
@@ -983,9 +1055,15 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-      - name: Test incident start
+      - name: Create environment
         run: |
-          INCIDENT_NUMBER=38 make -C sre start_incident
-      - name: Test incident stop
+          INCIDENT_NUMBER=38 make -C sre create_environment
+      - name: Test fault injection
         run: |
-          INCIDENT_NUMBER=38 make -C sre stop_incident
+          INCIDENT_NUMBER=38 make -C sre inject_incident_fault
+      - name: Test fault removal
+        run: |
+          INCIDENT_NUMBER=38 make -C sre remove_incident_fault
+      - name: Destroy environment
+        run: |
+          INCIDENT_NUMBER=38 make -C sre destroy_environment
