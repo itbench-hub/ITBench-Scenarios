@@ -25,7 +25,7 @@ def main():
 
     headers = { "Content-Type": "application/json" }
 
-    retries = Retry(total=3, backoff_factor=0.1)
+    retries = Retry(total=3, backoff_factor=0.5)
     adapter = HTTPAdapter(max_retries=retries)
 
     session = requests.Session()
