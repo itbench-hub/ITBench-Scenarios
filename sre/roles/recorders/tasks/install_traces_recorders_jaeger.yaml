@@ -47,3 +47,21 @@
                   - name: JAEGER_ENDPOINT
                     value: "{{ tools_jaeger_querier_endpoint }}"
     state: patched
+  when:
+    - tools_jaeger_querier_endpoint is defined
+
+- name: Wait for workload to update
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: StatefulSet
+    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+    name: jaeger-traces-recorder
+    namespace: "{{ recorders_namespace.name }}"
+  register: recorders_statefulset_info
+  until:
+    - recorders_statefulset_info.resources | length > 0
+    - recorders_statefulset_info.resources[0].status is defined
+    - recorders_statefulset_info.resources[0].status.readyReplicas is defined
+    - recorders_statefulset_info.resources[0].status.readyReplicas == 1
+  retries: 8
+  delay: 15

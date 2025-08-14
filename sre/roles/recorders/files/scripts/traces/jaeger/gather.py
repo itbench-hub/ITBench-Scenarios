@@ -89,12 +89,12 @@ def main():
     session.mount("https://", adapter)
 
     while True:
-        next_datetime = datetime.now() + timedelta(seconds=60)
+        next_datetime = datetime.now() + timedelta(seconds=300)
 
         traces = []
 
         end_time = int(time.time_ns() // 1000)
-        start_time = end_time - (60 * 1_000_000)
+        start_time = end_time - (300 * 1_000_000)
 
         services = get_services(session, endpoint, headers)
         logger.info("retrieved {0} services from jaeger".format(len(services)))
@@ -109,11 +109,12 @@ def main():
 
                 traces.extend(t)
 
-        utc_seconds = (datetime.now(timezone.utc) - datetime(1970, 1, 1, tzinfo=timezone.utc)).total_seconds()
-        file_path = os.path.join(os.path.expanduser("~"), "records", "{0}-traces.json".format(round(utc_seconds)))
+        if len(traces) > 0:
+            utc_seconds = (datetime.now(timezone.utc) - datetime(1970, 1, 1, tzinfo=timezone.utc)).total_seconds()
+            file_path = os.path.join(os.path.expanduser("~"), "records", "{0}-traces.json".format(round(utc_seconds)))
 
-        with open(file_path, "w") as f:
-            json.dump(traces, f, indent=4)
+            with open(file_path, "w") as f:
+                json.dump(traces, f, indent=4)
 
         sleep_interval = (next_datetime - datetime.now()).total_seconds()
         if sleep_interval > 0:

@@ -50,6 +50,8 @@
     recorders_prometheus_env_vars:
       - name: PROMETHEUS_ENDPOINT
         value: "{{ tools_prometheus_endpoint }}"
+  when:
+    - tools_prometheus_endpoint is defined
 
 - name: Add Secret to environment list
   ansible.builtin.set_fact:
@@ -69,6 +71,7 @@
   when:
     - recorders_cluster.platform == "openshift"
     - tools_prometheus_bearer_token is defined
+    - recorders_prometheus_env_vars is defined
 
 - name: Update Prometheus Alert Recorder environment variables
   kubernetes.core.k8s:
@@ -86,3 +89,21 @@
               - name: recorder
                 env: "{{ recorders_prometheus_env_vars }}"
     state: patched
+  when:
+    - recorders_prometheus_env_vars is defined
+
+- name: Wait for workload to update
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: StatefulSet
+    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+    name: prometheus-alert-recorder
+    namespace: "{{ recorders_namespace.name }}"
+  register: recorders_statefulset_info
+  until:
+    - recorders_statefulset_info.resources | length > 0
+    - recorders_statefulset_info.resources[0].status is defined
+    - recorders_statefulset_info.resources[0].status.readyReplicas is defined
+    - recorders_statefulset_info.resources[0].status.readyReplicas == 1
+  retries: 8
+  delay: 15

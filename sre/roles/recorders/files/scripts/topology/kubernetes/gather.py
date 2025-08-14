@@ -33,7 +33,7 @@ def main():
     session.mount("https://", adapter)
 
     while True:
-        next_datetime = datetime.now() + timedelta(seconds=60)
+        next_datetime = datetime.now() + timedelta(seconds=180)
 
         for item in ["nodes", "edges", "graph", "events"]:
             response = session.get("{0}/{1}".format(endpoint, item), headers=headers, verify=True)
