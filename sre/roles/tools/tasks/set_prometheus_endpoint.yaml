@@ -44,7 +44,7 @@
   when:
     - tools_cluster.platform == "kubernetes"
 
-- name: Extract Prometheus hostname
+- name: Construct Prometheus in-cluster endpoint
   ansible.builtin.set_fact:
     tools_prometheus_endpoint: http://{{ tools_prometheus_service_info.resources[0].metadata.name }}.{{
       tools_prometheus_service_info.resources[0].metadata.namespace }}.svc.cluster.local:9090

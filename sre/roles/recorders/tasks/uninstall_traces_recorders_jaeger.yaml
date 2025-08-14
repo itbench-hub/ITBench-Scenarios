@@ -10,17 +10,17 @@
       - app.kubernetes.io/part-of = it-bench
   register: recorders_pods_info
 
-- name: Copy records directory from pod
-  kubernetes.core.k8s_cp:
-    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
-    local_path: /tmp/traces
-    namespace: "{{ recorders_pods_info.resources[0].metadata.namespace }}"
-    pod: "{{ recorders_pods_info.resources[0].metadata.name }}"
-    remote_path: /opt/app-root/src/records
-    state: from_pod
-  when:
-    - recorders_pods_info is defined
-    - recorders_pods_info.resources | length == 1
+# - name: Copy records directory from pod
+#   kubernetes.core.k8s_cp:
+#     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+#     local_path: /tmp/traces
+#     namespace: "{{ recorders_pods_info.resources[0].metadata.namespace }}"
+#     pod: "{{ recorders_pods_info.resources[0].metadata.name }}"
+#     remote_path: /opt/app-root/src/records
+#     state: from_pod
+#   when:
+#     - recorders_pods_info is defined
+#     - recorders_pods_info.resources | length == 1
 
 - name: Uninstall Jaeger Traces Recorder
   kubernetes.core.k8s:
