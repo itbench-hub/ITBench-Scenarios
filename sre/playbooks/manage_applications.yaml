@@ -44,29 +44,41 @@
       when:
         - incident_id is undefined
   tasks:
-    - name: Import applications role
-      ansible.builtin.import_role:
-        name: applications
-      vars:
-        applications_cluster:
-          cloud_provider: "{{ cluster_provider }}"
-          kubeconfig: "{{ cluster.kubeconfig }}"
-          platform: "{{ cluster_platform }}"
+    - name: Import required roles
+      block:
+        - name: Import leaderboard role
+          ansible.builtin.import_role:
+            name: leaderboard
+          vars:
+            leaderboard_status:
+              status: progressing
 
-    # - name: Import e2e role
-    #   ansible.builtin.import_role:
-    #     name: e2e
-    #     tasks_from: register_deployment_time
-    #   tags:
-    #     - install_applications
-    #   when:
-    #     - incident.runner != 'local'
+        - name: Import applications role
+          ansible.builtin.import_role:
+            name: applications
+          vars:
+            applications_cluster:
+              cloud_provider: "{{ cluster_provider }}"
+              kubeconfig: "{{ cluster.kubeconfig }}"
+              platform: "{{ cluster_platform }}"
 
-    # - name: Import e2e role
-    #   ansible.builtin.import_role:
-    #     name: e2e
-    #     tasks_from: register_deployment_failure
-    #   tags:
-    #     - capture_failed_deployment_state
-    #   when:
-    #     - incident.runner != 'local'
+        - name: Import leaderboard role
+          ansible.builtin.import_role:
+            name: leaderboard
+          vars:
+            leaderboard_status:
+              status: succeeded
+      rescue:
+        - name: Import leaderboard role
+          ansible.builtin.import_role:
+            name: leaderboard
+          vars:
+            leaderboard_status:
+              failed_task:
+                name: "{{ ansible_failed_task.name }}"
+                result: "{{ ansible_failed_result }}"
+              status: failed
+
+        - name: Fail playbook
+          ansible.builtin.fail:
+            msg: Failing playbook

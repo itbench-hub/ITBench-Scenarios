@@ -1,0 +1,38 @@
+---
+- name: Load status file(s)
+  ansible.builtin.set_fact:
+    leaderboard_current_status: "{{ lookup('ansible.builtin.file', '/tmp/status.json') | from_json }}"
+    leaderboard_legacy_status: "{{ lookup('ansible.builtin.file', '/tmp/status_legacy.json') | from_json }}"
+
+- name: Update status
+  ansible.builtin.set_fact:
+    leaderboard_status_conditions: "{{ leaderboard_legacy_status.status.conditions + [status_condition] }}"
+    leaderboard_status_events: "{{ leaderboard_current_status.events + [status_event] }}"
+  vars:
+    status_condition:
+      type: Deployed
+      status: "{{ leaderboard_status.status == 'succeeded' }}"
+      lastTransitionTime: "{{ now(utc=True, fmt='%Y-%m-%dT%H:%M:%SZ') }}"
+    status_event:
+      phase: tool-uninstallation
+      status: "{{ leaderboard_status.status }}"
+      task: "{{ leaderboard_status.failed_task | default(omit) }}"
+
+- name: Update status file in legacy format
+  ansible.builtin.copy:
+    content: |
+      {{
+        leaderboard_legacy_status |
+        combine({'status': {'conditions': leaderboard_status_conditions}}) |
+        to_nice_json(indent=2)
+      }}
+    dest: "/tmp/status.json"
+    mode: "0644"
+  when:
+    - leaderboard_status.status != 'progressing'
+
+- name: Update status file in v1 format
+  ansible.builtin.copy:
+    content: "{{ leaderboard_current_status | combine({'events': leaderboard_status_events}) | to_nice_json }}"
+    dest: "/tmp/status.json"
+    mode: "0644"

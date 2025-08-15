@@ -1,0 +1,19 @@
+---
+- name: Load status file(s)
+  ansible.builtin.set_fact:
+    leaderboard_current_status: "{{ lookup('ansible.builtin.file', '/tmp/status.json') | from_json }}"
+
+- name: Update status
+  ansible.builtin.set_fact:
+    leaderboard_status_events: "{{ leaderboard_current_status.events + [status_event] }}"
+  vars:
+    status_event:
+      phase: recorder-uninstallation
+      status: "{{ leaderboard_status.status }}"
+      task: "{{ leaderboard_status.failed_task | default(omit) }}"
+
+- name: Update status file in v1 format
+  ansible.builtin.copy:
+    content: "{{ leaderboard_current_status | combine({'events': leaderboard_status_events}) | to_nice_json }}"
+    dest: "/tmp/status.json"
+    mode: "0644"
