@@ -1,16 +1,8 @@
 ---
-- name: Manage SRE and FinOps Incident Environment Tool Stack
+- name: Manage SRE and FinOps Incident Data Recorder Stack
   hosts:
     - environment
   pre_tasks:
-    - name: Ensure incident file is defined
-      ansible.builtin.assert:
-        that: incident_id is defined
-        fail_msg: incident_id is not defined. Please run playbook with variable defined via CLI arguments.
-        success_msg: incident_id is defined.
-      tags:
-        - always
-
     - name: Import system role
       ansible.builtin.import_role:
         name: system
@@ -40,21 +32,20 @@
       vars:
         incidents_file:
           id: "{{ incident_id }}"
+      when:
+        - incident_id is defined
   tasks:
-    - name: Import incidents role
+    - name: Import recorders role
       ansible.builtin.import_role:
-        name: incidents
+        name: recorders
       vars:
-        incidents_cluster:
+        recorders_cluster:
           kubeconfig: "{{ cluster.kubeconfig }}"
           platform: "{{ cluster_platform }}"
-        incidents_spec: "{{ incident_spec }}"
-
-    # - name: Import e2e role
-    #   ansible.builtin.import_role:
-    #     name: e2e
-    #     tasks_from: register_fault_injection_time
-    #   tags:
-    #     - inject_faults
-    #   when:
-    #     - incident.runner != 'local'
+        recorders_enabled:
+          alerts:
+            prometheus: "{{ tools_enabled.prometheus | default(tools.prometheus) }}"
+          topology:
+            kubernetes: "{{ tools_enabled.kubernetes_topology_monitor | default(tools.kubernetes_topology_monitor) }}"
+          traces:
+            jaeger: "{{ tools_enabled.jaeger | default(tools.jaeger) }}"
