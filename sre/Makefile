@@ -105,10 +105,10 @@ create_environment: deploy_tools deploy_applications ## Deploys tools and applic
 destroy_environment: undeploy_applications undeploy_tools ## Undeploys tools and applications to cluster
 
 .PHONY: start_incident
-start_incident: create_environment inject_incident_fault deploy_recorders ## Starts an incident by deploying a stack, application, and fault for an incident
+start_incident: create_environment inject_incident_fault deploy_recorders ## Starts an incident by deploying a stack, applications, faults, and recorders for an incident
 
 .PHONY: stop_incident
-stop_incident: undeploy_recorders remove_incident_fault destroy_environment ## Stops an incident by undeploying a stack, application, and fault for an incident
+stop_incident: undeploy_recorders remove_incident_fault destroy_environment ## Stops an incident by undeploying a stack, applications, faults, and recorders for an incident
 
 .PHONY: deploy_awx_stack
 deploy_awx_stack: ## Deploys AWX to a cluster
