@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 def get_services(session, endpoint, headers):
     response = session.get(
-        "{0}/api/services".format(endpoint),
+        "{0}/api/v3/services".format(endpoint),
         headers=headers,
         verify=True
     )
@@ -29,11 +29,11 @@ def get_services(session, endpoint, headers):
         return []
 
     content = response.json()
-    return content.get("data", [])
+    return content.get("services", [])
 
 def get_operations(session, endpoint, headers, service):
     response = session.get(
-        "{0}/api/operations".format(endpoint),
+        "{0}/api/v3/operations".format(endpoint),
         headers=headers,
         params={
             "service": service,
@@ -46,7 +46,7 @@ def get_operations(session, endpoint, headers, service):
         return []
 
     content = response.json()
-    return content.get("data", [])
+    return content.get("operations", [])
 
 def get_traces(session, endpoint, headers, service, operation, time_window):
     name = operation.get("name")
@@ -55,14 +55,14 @@ def get_traces(session, endpoint, headers, service, operation, time_window):
         return []
 
     response = session.get(
-        "{0}/api/traces".format(endpoint),
+        "{0}/api/v3/traces".format(endpoint),
         headers=headers,
         params={
-            "service": service,
-            "operation": name,
-            "start": time_window[0],
-            "end": time_window[1],
-            "limit": 1
+            "query.service_name": service,
+            "query.operation_name": name,
+            "query.start_time_min": time_window[0],
+            "query.start_time_max": time_window[1],
+            "query.num_traces": "1"
         },
         verify=True
     )
@@ -72,7 +72,7 @@ def get_traces(session, endpoint, headers, service, operation, time_window):
         return []
 
     content = response.json()
-    return content.get("data", [])
+    return content.get("result", {}).get("resourceSpans", [])
 
 def main():
     endpoint = os.environ.get("JAEGER_ENDPOINT")
@@ -88,16 +88,17 @@ def main():
     session.mount("http://", adapter)
     session.mount("https://", adapter)
 
-    logger.info("sleeping for 5 minutes to wait for Jaeger to receive data")
-    time.sleep(300)
-
     while True:
-        next_datetime = datetime.now() + timedelta(seconds=300)
+        current_datetime = datetime.now()
+        last_datetime = current_datetime - timedelta(seconds=300)
+        next_datetime = current_datetime + timedelta(seconds=300)
 
         traces = []
 
-        end_time = int(time.time_ns() // 1000)
-        start_time = end_time - (300 * 1_000_000)
+        time_window = (
+            "{0}000Z".format(last_datetime.isoformat(timespec='microseconds')),
+            "{0}000Z".format(current_datetime.isoformat(timespec='microseconds'))
+        )
 
         services = get_services(session, endpoint, headers)
         logger.info("retrieved {0} services from jaeger".format(len(services)))
@@ -107,8 +108,8 @@ def main():
             logger.info("retrieved {0} operations from jaeger".format(len(operations)))
 
             for operation in operations:
-                t = get_traces(session, endpoint, headers, service, operation, (start_time, end_time))
-                logger.info("retrieved {0} traces from jaeger".format(len(ts)))
+                t = get_traces(session, endpoint, headers, service, operation, time_window)
+                logger.info("retrieved {0} traces from jaeger".format(len(t)))
 
                 traces.extend(t)
 
