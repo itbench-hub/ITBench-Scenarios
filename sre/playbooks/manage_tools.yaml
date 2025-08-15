@@ -35,6 +35,13 @@
       when:
         - incident_id is defined
 
+    - name: Create leaderboard_incident dictionary
+      ansible.builtin.set_fact:
+        leaderboard_incident:
+          id: "{{ incident_id }}"
+      when:
+        - incident_id is defined
+
     - name: Create tools_enabled dictionary
       ansible.builtin.set_fact:
         tools_enabled:
@@ -53,29 +60,41 @@
       when:
         - incident_id is undefined
   tasks:
-    # - name: Import e2e role
-    #   ansible.builtin.import_role:
-    #     name: e2e
-    #     tasks_from: initialize_assertion_json
-    #   tags:
-    #     - install_tools
-    #   when:
-    #     - incident.runner != 'local'
+    - name: Import required roles
+      block:
+        - name: Import leaderboard role
+          ansible.builtin.import_role:
+            name: leaderboard
+          vars:
+            leaderboard_status:
+              status: progressing
 
-    - name: Import tools role
-      ansible.builtin.import_role:
-        name: tools
-      vars:
-        tools_cluster:
-          provider: "{{ cluster_provider }}"
-          kubeconfig: "{{ cluster.kubeconfig }}"
-          platform: "{{ cluster_platform }}"
+        - name: Import tools role
+          ansible.builtin.import_role:
+            name: tools
+          vars:
+            tools_cluster:
+              provider: "{{ cluster_provider }}"
+              kubeconfig: "{{ cluster.kubeconfig }}"
+              platform: "{{ cluster_platform }}"
 
-    # - name: Import e2e role
-    #   ansible.builtin.import_role:
-    #     name: e2e
-    #     tasks_from: finalize_assertion_json
-    #   tags:
-    #     - uninstall_tools
-    #   when:
-    #     - incident.runner != 'local'
+        - name: Import leaderboard role
+          ansible.builtin.import_role:
+            name: leaderboard
+          vars:
+            leaderboard_status:
+              status: succeeded
+      rescue:
+        - name: Import leaderboard role
+          ansible.builtin.import_role:
+            name: leaderboard
+          vars:
+            leaderboard_status:
+              failed_task:
+                name: "{{ ansible_failed_task.name }}"
+                result: "{{ ansible_failed_result }}"
+              status: failed
+
+        - name: Fail playbook
+          ansible.builtin.fail:
+            msg: Failing playbook

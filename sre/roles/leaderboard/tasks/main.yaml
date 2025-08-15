@@ -1,0 +1,64 @@
+---
+- name: Import status file creation tasks
+  ansible.builtin.import_tasks:
+    file: create_status.yaml
+  tags:
+    - install_tools
+
+- name: Verify that the status file exists
+  ansible.builtin.set_fact:
+    leaderboard_status_exists: "{{ '/tmp/status.json' is exists }}"
+  tags:
+    - always
+
+- name: Perform update tasks
+  when:
+    - leaderboard_status_exists
+  block:
+    - name: Import status file update tasks
+      ansible.builtin.import_tasks:
+        file: update_status_install_tools.yaml
+      tags:
+        - install_tools
+
+    - name: Import status file update tasks
+      ansible.builtin.import_tasks:
+        file: update_status_install_applications.yaml
+      tags:
+        - install_applications
+
+    - name: Import status file update tasks
+      ansible.builtin.import_tasks:
+        file: update_status_inject_faults.yaml
+      tags:
+        - inject_faults
+
+    - name: Import status file update tasks
+      ansible.builtin.import_tasks:
+        file: update_status_remove_faults.yaml
+      tags:
+        - remove_faults
+
+    - name: Import status file update tasks
+      ansible.builtin.import_tasks:
+        file: update_status_install_recorders.yaml
+      tags:
+        - install_recorders
+
+    - name: Import status file update tasks
+      ansible.builtin.import_tasks:
+        file: update_status_uninstall_recorders.yaml
+      tags:
+        - uninstall_recorders
+
+    - name: Import status file update tasks
+      ansible.builtin.import_tasks:
+        file: update_status_uninstall_applications.yaml
+      tags:
+        - uninstall_applications
+
+    - name: Import status file update tasks
+      ansible.builtin.import_tasks:
+        file: update_status_uninstall_tools.yaml
+      tags:
+        - uninstall_tools
