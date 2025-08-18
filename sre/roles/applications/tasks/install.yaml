@@ -10,7 +10,7 @@
     configuration: |
       {{
         applications_configurations.otel_demo |
-        combine((applications_enabled.otel_demo.configuration | default({})), recursive=true)
+        combine((applications_required.otel_demo.configuration | default({})), recursive=true)
       }}
     helm_releases:
       collectors: "{{ tools_helm_releases.opentelemetry_collectors }}"
@@ -18,8 +18,8 @@
       otel_demo: "{{ applications_helm_releases.otel_demo }}"
       prometheus: "{{ tools_helm_releases.prometheus }}"
   when:
-    - applications_enabled.otel_demo is defined
-    - applications_enabled.otel_demo.enabled
+    - applications_required.otel_demo is defined
+    - applications_required.otel_demo.enabled
 
 # TODO: Enable these tasks during the refactor of the e2e
 
