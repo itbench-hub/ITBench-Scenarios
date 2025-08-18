@@ -29,12 +29,12 @@ argument_specs:
         type: dict
         options:
           otel_demo:
-            required: false
+            required: true
             type: dict
             options:
               configuration:
-                required: false
-                type: str
+                required: true
+                type: dict
               enabled:
                 required: true
                 type: bool
