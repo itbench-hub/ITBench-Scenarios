@@ -61,7 +61,7 @@
           opencost: "{{ incidents_tools.opencost | default(tools.opencost) }}"
           opensearch: "{{ incidents_tools.opensearch | default(tools.opensearch) }}"
           opentelemetry: "{{ incidents_tools.opentelemetry | default(tools.opentelemetry) }}"
-          prometheus: "{{ incidents_tools.prometheus | default(tools.prometheus }}"
+          prometheus: "{{ incidents_tools.prometheus | default(tools.prometheus) }}"
 
     # - name: Import e2e role
     #   ansible.builtin.import_role:
