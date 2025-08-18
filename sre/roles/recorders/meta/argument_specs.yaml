@@ -23,7 +23,7 @@ argument_specs:
             default: kubernetes
             required: false
             type: str
-      recorders_enabled:
+      recorders_required:
         required: false
         type: dict
         options:
