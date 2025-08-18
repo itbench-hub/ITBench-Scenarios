@@ -19,7 +19,7 @@
   ansible.builtin.set_fact:
     incidents_applications:
       otel_demo:
-        configuration: "{{ incidents_spec.spec.environment.applications.otel_demo.configuration }}"
+        configuration: "{{ incidents_spec.spec.environment.applications.otel_demo.configuration | default(omit) }}"
         enabled: "{{ incidents_spec.spec.environment.applications.otel_demo.enabled }}"
     incidents_tools:
       chaos_mesh: "{{ 'chaos-mesh' in incidents_spec.spec.environment.tools.selected }}"
