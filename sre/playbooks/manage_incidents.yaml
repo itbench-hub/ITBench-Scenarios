@@ -40,26 +40,13 @@
         incidents_file:
           id: "{{ incident_id }}"
   tasks:
-    - name: Import recorders role
+    - name: Import faults role
       ansible.builtin.import_role:
-        name: recorders
+        name: faults
       vars:
-        recorders_cluster:
+        faults_cluster:
           kubeconfig: "{{ cluster.kubeconfig }}"
-          platform: "{{ cluster_platform }}"
-        recorders_enabled:
-          alerts:
-            prometheus: "{{ tools_enabled.prometheus }}"
-          topology:
-            kubernetes: "{{ tools_enabled.kubernetes_topology_monitor }}"
-
-    # - name: Import faults role
-    #   ansible.builtin.import_role:
-    #     name: faults
-    #   vars:
-    #     faults_cluster:
-    #       kubeconfig: "{{ cluster.kubeconfig }}"
-    #     faults_specs: "{{ incidents_spec.spec.faults }}"
+        faults_specs: "{{ incidents_spec.spec.faults }}"
 
     # - name: Import e2e role
     #   ansible.builtin.import_role:
