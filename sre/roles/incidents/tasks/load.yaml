@@ -29,24 +29,9 @@
       opentelemetry: "{{ 'opentelemetry' in env_configuration.tools.selected or env_configuration.tools.category != '' }}"
       prometheus: "{{ 'prometheus' in env_configuration.tools.selected or env_configuration.tools.category != '' }}"
 
-- name: Create applications_enabled dictionary for applications role
+- name: Create variables for Ansible role usage
   ansible.builtin.set_fact:
-    applications_enabled:
-      otel_demo: "{{ env_configuration.applications.otel_demo.enabled }}"
-
-- name: Load otel_demo configuration from applications role
-  ansible.builtin.include_vars:
-    file: ../applications/defaults/main/otel_demo_configuration.yaml
-  when:
-    - applications_enabled.otel_demo
-
-- name: Combine defaults with configuration from incident spec
-  ansible.builtin.set_fact:
-    applications_otel_demo_configuration: |
-      {{
-        applications_otel_demo_configuration |
-        combine(env_configuration.applications.otel_demo.configuration, recursive=true)
-      }}
-  when:
-    - applications_enabled.otel_demo
-    - env_configuration.applications.otel_demo.configuration is defined
+    incidents_applications:
+      otel_demo:
+        configuration: "{{ incident_spec.spec.environment.applications.otel_demo.configuration }}"
+        enabled: "{{ incident_spec.spec.environment.applications.otel_demo.enabled }}"
