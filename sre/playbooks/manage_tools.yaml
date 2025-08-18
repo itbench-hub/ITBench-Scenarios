@@ -26,7 +26,6 @@
     - name: Import variables for incident
       ansible.builtin.import_role:
         name: incidents
-        tasks_from: load
       tags:
         - always
       vars:
