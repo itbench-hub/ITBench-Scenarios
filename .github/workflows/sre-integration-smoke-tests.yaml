@@ -117,7 +117,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          echo "tools: { jaeger: true, kubernetes_topology_monitor: false, prometheus: false }" > sre/group_vars/environment/tools.yaml
+          mv sre/tests/files/jaeger.yaml sre/group_vars/environment/tools.yaml
       - name: Install tools
         run: |
           make -C sre deploy_tools
@@ -154,7 +154,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          echo "tools: { jaeger: false, kubernetes_topology_monitor: true, prometheus: false }" > sre/group_vars/environment/tools.yaml
+          mv sre/tests/files/kubernetes-topology-monitor.yaml sre/group_vars/environment/tools.yaml
       - name: Install tools
         run: |
           make -C sre deploy_tools
@@ -191,7 +191,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          echo "tools: { jaeger: false, kubernetes_topology_monitor: false, prometheus: true }" > sre/group_vars/environment/tools.yaml
+          mv sre/tests/files/prometheus.yaml sre/group_vars/environment/tools.yaml
       - name: Install tools
         run: |
           make -C sre deploy_tools
