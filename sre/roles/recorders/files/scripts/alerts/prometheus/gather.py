@@ -45,15 +45,18 @@ def main():
             logger.warning("unable to query prometheus server")
         else:
             content = response.json()
+
             alerts = content.get("data", {}).get("alerts", [])
+            firing_alerts = list(filter(lambda a: a.get("state", "") == "firing"))
 
             logger.info("retrieved {0} alerts from prometheus server".format(len(alerts)))
+            logger.info("retrieved {0} alerts are in firing state".format(len(firing_alerts)))
 
             utc_seconds = (datetime.now(timezone.utc) - datetime(1970, 1, 1, tzinfo=timezone.utc)).total_seconds()
             file_path = os.path.join(os.path.expanduser("~"), "records", "{0}-alerts.json".format(round(utc_seconds)))
 
             with open(file_path, "w") as f:
-                json.dump(alerts, f, indent=4)
+                json.dump(firing_alerts, f, indent=4)
 
         sleep_interval = (next_datetime - datetime.now()).total_seconds()
         if sleep_interval > 0:
