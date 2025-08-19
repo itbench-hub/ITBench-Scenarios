@@ -51,3 +51,14 @@ argument_specs:
                 default: true
                 required: false
                 type: bool
+      recorders_storage:
+        required: true
+        type: dict
+        options:
+          local:
+            required: false
+            type: dict
+            options:
+              directory:
+                required: true
+                type: str
