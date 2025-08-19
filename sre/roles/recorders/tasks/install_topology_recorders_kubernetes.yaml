@@ -18,15 +18,15 @@
         name: topology-recorder-kubernetes-scripts
         namespace: "{{ recorders_namespace.name }}"
       data:
-        deps: "{{ lookup('ansible.builtin.file', 'files/scripts/topology/kubernetes/requirements.txt') }}"
-        script: "{{ lookup('ansible.builtin.file', 'files/scripts/topology/kubernetes/gather.py') }}"
+        deps: "{{ lookup('ansible.builtin.file', 'files/topology/kubernetes/scripts/requirements.txt') }}"
+        script: "{{ lookup('ansible.builtin.file', 'files/topology/kubernetes/scripts/gather.py') }}"
     state: present
 
 - name: Install Kubernetes Topology Recorder
   kubernetes.core.k8s:
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
     namespace: "{{ recorders_namespace.name }}"
-    src: files/kubernetes/topology/kubernetes.yaml
+    src: files/topology/kubernetes/statefulset.yaml
     state: present
 
 - name: Update Kubernetes Topology Recorder environment variables

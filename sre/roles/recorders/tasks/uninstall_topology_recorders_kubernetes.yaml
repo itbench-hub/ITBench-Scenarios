@@ -26,7 +26,7 @@
   kubernetes.core.k8s:
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
     namespace: "{{ recorders_namespace.name }}"
-    src: files/kubernetes/topology/kubernetes.yaml
+    src: files/alerts/prometheus/statefulset.yaml
     state: absent
     wait: true
 
@@ -41,3 +41,22 @@
         namespace: "{{ recorders_namespace.name }}"
     state: absent
     wait: true
+
+- name: Find all exported JSON files
+  ansible.builtin.find:
+    path: /tmp/topology
+    patterns:
+      - "*.json"
+  register: recorders_files
+
+- name: Copy exported data into local directory
+  ansible.builtin.copy:
+    dest: "{{ recorders_storage.local.directory }}/{{ file.path | basename }}"
+    mode: "0644"
+    src: "{{ file.path }}"
+  loop: "{{ recorders_files.files }}"
+  loop_control:
+    label: file/{{ file.path | basename }}
+    loop_var: file
+  when:
+    - recorders_storage.local is defined
