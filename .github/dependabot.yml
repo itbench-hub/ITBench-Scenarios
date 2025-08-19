@@ -20,7 +20,7 @@ updates:
 
   - package-ecosystem: "docker"
     directories:
-      - "sre/roles/recorders/files/kubernetes/"
+      - "sre/roles/recorders/files/**/**/"
       - "sre/roles/tools/files/kubernetes/"
       - "sre/tools/kubernetes-topology-monitor/"
       - "sre/tools/kubernetes-topology-monitor/charts/kubernetes-topology-monitor/templates/"
@@ -45,7 +45,7 @@ updates:
       - "/"
       - "sre/"
       - "sre/dev/remote_cluster/"
-      - "sre/roles/recorders/files/scripts/**/"
+      - "sre/roles/recorders/files/**/**/scripts/"
       - "sre/tools/kubernetes-topology-monitor/"
     groups:
       pip-production-dependencies:

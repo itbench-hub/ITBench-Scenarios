@@ -34,15 +34,15 @@
         name: alerts-recorder-prometheus-scripts
         namespace: "{{ recorders_namespace.name }}"
       data:
-        deps: "{{ lookup('ansible.builtin.file', 'files/scripts/alerts/prometheus/requirements.txt') }}"
-        script: "{{ lookup('ansible.builtin.file', 'files/scripts/alerts/prometheus/gather.py') }}"
+        deps: "{{ lookup('ansible.builtin.file', 'files/alerts/prometheus/scripts/requirements.txt') }}"
+        script: "{{ lookup('ansible.builtin.file', 'files/alerts/prometheus/scripts/gather.py') }}"
     state: present
 
 - name: Install Prometheus Alert Recorder
   kubernetes.core.k8s:
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
     namespace: "{{ recorders_namespace.name }}"
-    src: files/kubernetes/alerts/prometheus.yaml
+    src: files/alerts/prometheus/statefulset.yaml
     state: present
 
 - name: Create Prometheus Alert Recorder environment list
