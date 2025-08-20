@@ -8,6 +8,10 @@
       kubeconfig: "{{ recorders_cluster.kubeconfig }}"
       platform: "{{ recorders_cluster.platform }}"
 
+- name: Load statefulset information
+  ansible.builtin.set_fact:
+    recorders_statefulset: "{{ lookup('ansible.builtin.file', 'files/topology/kubernetes/statefulset.yaml') | from_yaml }}"
+
 - name: Create ConfigMap with Python script
   kubernetes.core.k8s:
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
@@ -22,29 +26,13 @@
   kubernetes.core.k8s:
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
     namespace: "{{ recorders_namespace.name }}"
-    src: files/topology/kubernetes/statefulset.yaml
+    template: templates/topology/kubernetes/statefulset.j2
     state: present
-
-- name: Update Kubernetes Topology Recorder environment variables
-  kubernetes.core.k8s:
-    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: apps/v1
-      kind: StatefulSet
-      metadata:
-        name: kubernetes-topology-recorder
-        namespace: "{{ recorders_namespace.name }}"
-      spec:
-        template:
-          spec:
-            containers:
-              - name: recorder
-                env:
-                  - name: KUBERNETES_TOPOLOGY_MONITOR_ENDPOINT
-                    value: "{{ tools_kubernetes_topology_mapper_endpoint }}"
-    state: patched
-  when:
-    - tools_kubernetes_topology_mapper_endpoint is defined
+  vars:
+    container_image: "{{ recorders_statefulset.spec.template.spec.containers[0].image }}"
+    container_environment_variables:
+      - name: KUBERNETES_TOPOLOGY_MONITOR_ENDPOINT
+        value: "{{ tools_kubernetes_topology_mapper_endpoint }}"
 
 - name: Wait for workload to update
   kubernetes.core.k8s_info:
