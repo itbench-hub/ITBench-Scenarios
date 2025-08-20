@@ -75,7 +75,7 @@
 
 - name: Wait for workload to update
   kubernetes.core.k8s_info:
-    api_version: "{{ recorders_workload.result.api_version }}"
+    api_version: "{{ recorders_workload.result.apiVersion }}"
     kind: "{{ recorders_workload.result.kind }}"
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
     name: "{{ recorders_workload.result.metadata.name }}"
