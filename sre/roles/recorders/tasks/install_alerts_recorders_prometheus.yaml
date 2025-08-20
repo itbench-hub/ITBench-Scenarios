@@ -26,7 +26,7 @@
       {{
         recorders_prometheus_env_vars +
         [{
-          'name': PROMETHEUS_TOKEN,
+          'name': 'PROMETHEUS_TOKEN',
           'valueFrom': {
             'secretKeyRef': {
               'name': 'alerts-recorder-prometheus-token',
