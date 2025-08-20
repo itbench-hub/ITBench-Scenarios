@@ -37,8 +37,8 @@
       scenario_number: "{{ item[0] }}"
       run_number: "{{ item[1] }}"
       sre_agent_name__version_number: "{{ awx_agent.version }}"
-      s3_bucket_name_for_results: "{{ awx_experiments.storage.s3.bucket_name | default('') }}"
-      s3_endpoint_url: "{{ awx_experiments.storage.s3.endpoint_url | default('') }}"
+      s3_bucket_name_for_results: "{{ awx_experiments.storage.s3.bucket | default('') }}"
+      s3_endpoint_url: "{{ awx_experiments.storage.s3.endpoint | default('') }}"
       sre_bench_runner: "{{ sre_bench_runner | default(true) }}"
     wait: false
   loop: "{{ awx_experiment_workflows }}"
@@ -56,8 +56,8 @@
       scenario_number: "{{ item[0] }}"
       run_number: "{{ item[1] }}"
       sre_agent_name__version_number: "{{ awx_agent.version }}"
-      s3_bucket_name_for_results: "{{ awx_experiments.storage.s3.bucket_name | default('') }}"
-      s3_endpoint_url: "{{ awx_experiments.storage.s3.endpoint_url | default('') }}"
+      s3_bucket_name_for_results: "{{ awx_experiments.storage.s3.bucket | default('') }}"
+      s3_endpoint_url: "{{ awx_experiments.storage.s3.endpoint | default('') }}"
       sre_bench_runner: "{{ sre_bench_runner | default(true) }}"
     wait: false
   loop: "{{ awx_experiment_workflows }}"

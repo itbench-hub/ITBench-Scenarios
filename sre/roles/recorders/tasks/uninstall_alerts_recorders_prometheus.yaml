@@ -76,3 +76,17 @@
     loop_var: file
   when:
     - recorders_storage.local is defined
+
+- name: Upload exported data to S3 bucket
+  amazon.aws.s3_object:
+    endpoint_url: "{{ recorders_storage.s3.endpoint }}"
+    bucket: "{{ recorders_storage.s3.bucket }}"
+    object: "/{{ recorders_storage.s3.directory }}/{{ file.path | basename }}"
+    src: "{{ file.path }}"
+    mode: put
+  loop: "{{ recorders_files.files }}"
+  loop_control:
+    label: file/{{ file.path | basename }}
+    loop_var: file
+  when:
+    - recorders_storage.s3 is defined
