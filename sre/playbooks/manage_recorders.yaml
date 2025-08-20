@@ -50,3 +50,4 @@
             jaeger: "{{ incidents_tools.jaeger | default(tools.jaeger) }}"
         recorders_storage:
           local: "{{ storage.local | default(omit) }}"
+          s3: "{{ storage.s3 | default(omit) }}"
