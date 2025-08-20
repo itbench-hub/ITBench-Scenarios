@@ -11,16 +11,12 @@
 - name: Create ConfigMap with Python script
   kubernetes.core.k8s:
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: traces-recorder-jaeger-scripts
-        namespace: "{{ recorders_namespace.name }}"
-      data:
-        deps: "{{ lookup('ansible.builtin.file', 'files/traces/jaeger/scripts/requirements.txt') }}"
-        script: "{{ lookup('ansible.builtin.file', 'files/traces/jaeger/scripts/gather.py') }}"
+    namespace: "{{ recorders_namespace.name }}"
+    template: templates/traces/jaeger/configmap.j2
     state: present
+  vars:
+    python_script_file_contents: "{{ lookup('ansible.builtin.file', 'files/traces/jaeger/scripts/gather.py') }}"
+    requirements_file_contents: "{{ lookup('ansible.builtin.file', 'files/traces/jaeger/scripts/requirements.txt') }}"
 
 - name: Install Jaeger Traces Recorder
   kubernetes.core.k8s:
