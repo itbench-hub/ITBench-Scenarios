@@ -21,7 +21,7 @@ spec:
     spec:
       containers:
         - name: recorder
-          image: "{{ container_image }}"
+          image: {{ container_image }}
           command:
             - /bin/sh
           args:
