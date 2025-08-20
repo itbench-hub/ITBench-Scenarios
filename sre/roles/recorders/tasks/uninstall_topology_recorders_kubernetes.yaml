@@ -32,13 +32,14 @@
 
 - name: Delete ConfigMap with Python script
   kubernetes.core.k8s:
+    api_version: v1
+    delete_all: true
+    kind: ConfigMap
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: topology-recorder-kubernetes-scripts
-        namespace: "{{ recorders_namespace.name }}"
+    namespace: "{{ recorders_namespace.name }}"
+    label_selectors:
+      - app.kubernetes.io/name = kubernetes-topology-recorder
+      - app.kubernetes.io/part-of = it-bench
     state: absent
     wait: true
 
