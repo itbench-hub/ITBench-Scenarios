@@ -28,6 +28,7 @@
     namespace: "{{ recorders_namespace.name }}"
     template: templates/traces/jaeger/statefulset.j2
     state: present
+  register: recorders_workload
   vars:
     container_image: "{{ recorders_statefulset.spec.template.spec.containers[0].image }}"
     container_environment_variables:
@@ -36,11 +37,11 @@
 
 - name: Wait for workload to update
   kubernetes.core.k8s_info:
-    api_version: apps/v1
-    kind: StatefulSet
+    api_version: "{{ recorders_workload.result.api_version }}"
+    kind: "{{ recorders_workload.result.kind }}"
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
-    name: jaeger-traces-recorder
-    namespace: "{{ recorders_namespace.name }}"
+    name: "{{ recorders_workload.result.metadata.name }}"
+    namespace: "{{ recorders_workload.result.metadata.namespace }}"
   register: recorders_statefulset_info
   until:
     - recorders_statefulset_info.resources | length > 0
@@ -49,3 +50,5 @@
     - recorders_statefulset_info.resources[0].status.readyReplicas == 1
   retries: 8
   delay: 15
+  when:
+    - recorders_workload is defined
