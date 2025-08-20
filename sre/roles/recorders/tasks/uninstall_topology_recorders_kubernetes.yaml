@@ -61,6 +61,7 @@
     loop_var: file
   when:
     - recorders_storage.local is defined
+    - recorders_files is defined
 
 - name: Upload exported data to S3 bucket
   amazon.aws.s3_object:
@@ -75,3 +76,4 @@
     loop_var: file
   when:
     - recorders_storage.s3 is defined
+    - recorders_files is defined
