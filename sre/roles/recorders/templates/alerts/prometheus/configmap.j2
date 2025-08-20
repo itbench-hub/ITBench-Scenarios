@@ -1,0 +1,8 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: alerts-recorder-prometheus-scripts
+data:
+  deps: "{{ requirements_file_contents }}"
+  script: "{{ python_script_file_contents }}"
