@@ -1,7 +1,5 @@
 # Makefile to run Ansible playbooks
 
-EXECUTE_CHECKS_IN_BACKGROUND ?= false
-
 NUMBER_OF_RUNS = 1
 
 
@@ -143,20 +141,6 @@ injection_docs: ## Generates documentation for all fault injection
 	export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES; \
 	ansible-playbook base.yaml --tags "injection_docs"
 
-.PHONY: check_alerts
-check_alerts:
-ifeq ($(EXECUTE_CHECKS_IN_BACKGROUND),false)
-	ansible-playbook -v base.yaml --tags "book_keeping" \
-		--extra-vars "is_book_keeping=true" \
-		--extra-vars "sample_application=$(SAMPLE_APPLICATION)" \
-		$(BOOK_KEEPING_EXTRA_VARS)
-else
-	nohup ansible-playbook -v base.yaml --tags "book_keeping" \
-		--extra-vars "is_book_keeping=true" \
-		--extra-vars "sample_application=$(SAMPLE_APPLICATION)" \
-		$(BOOK_KEEPING_EXTRA_VARS) &
-endif
-
 .SILENT: fetch_alerts
 fetch_alerts:
 	ansible-playbook -v base.yaml --tags "fetch_alerts" \
@@ -291,3 +275,8 @@ e2e_awx_stage_three: ## DEPRECATED: Given an incident number, run_uuid end the s
 	@echo "Executing 'make launch_stop_workflow'..."
 	@echo ""
 	$(MAKE) launch_stop_workflow
+
+.PHONY: check_alerts
+check_alerts:
+	@echo "WARNING: 'make check_alerts' is deprecated. Please use 'make deploy_recorders' instead."
+	@echo "This command will be removed in a future version."
