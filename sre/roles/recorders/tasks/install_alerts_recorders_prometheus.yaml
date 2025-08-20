@@ -8,18 +8,14 @@
       kubeconfig: "{{ recorders_cluster.kubeconfig }}"
       platform: "{{ recorders_cluster.platform }}"
 
-- name: Create Secret with Prometheus bearer token
+- name: Create ConfigMap with Python script
   kubernetes.core.k8s:
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: v1
-      kind: Secret
-      metadata:
-        name: alerts-recorder-prometheus-token
-        namespace: "{{ recorders_namespace.name }}"
-      data:
-        token: "{{ tools_prometheus_bearer_token }}"
+    namespace: "{{ recorders_namespace.name }}"
+    template: templates/alerts/prometheus/secret.j2
     state: present
+  vars:
+    prometheus_bearer_token: "{{ tools_prometheus_bearer_token }}"
   when:
     - recorders_cluster.platform == "openshift"
     - tools_prometheus_bearer_token is defined
@@ -27,16 +23,12 @@
 - name: Create ConfigMap with Python script
   kubernetes.core.k8s:
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: alerts-recorder-prometheus-scripts
-        namespace: "{{ recorders_namespace.name }}"
-      data:
-        deps: "{{ lookup('ansible.builtin.file', 'files/alerts/prometheus/scripts/requirements.txt') }}"
-        script: "{{ lookup('ansible.builtin.file', 'files/alerts/prometheus/scripts/gather.py') }}"
+    namespace: "{{ recorders_namespace.name }}"
+    template: templates/alerts/prometheus/configmap.j2
     state: present
+  vars:
+    python_script_file_contents: "{{ lookup('ansible.builtin.file', 'files/alerts/prometheus/scripts/gather.py') }}"
+    requirements_file_contents: "{{ lookup('ansible.builtin.file', 'files/alerts/prometheus/scripts/requirements.txt') }}"
 
 - name: Install Prometheus Alert Recorder
   kubernetes.core.k8s:
