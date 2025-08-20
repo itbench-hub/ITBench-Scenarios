@@ -8,6 +8,6 @@ metadata:
   name: topology-recorder-kubernetes-scripts
 data:
   deps: |
-    {{ requirements_file_contents }}
+    {{ requirements_file_contents | indent(width=4) }}
   script: |
-    {{ python_script_file_contents }}
+    {{ python_script_file_contents | indent(width=4) }}
