@@ -60,10 +60,13 @@ argument_specs:
                 required: false
                 type: dict
                 options:
-                  bucket_name:
+                  bucket:
                     required: true
                     type: str
-                  endpoint_url:
+                  directory:
+                    required: true
+                    type: str
+                  endpoint:
                     required: true
                     type: str
           trials:

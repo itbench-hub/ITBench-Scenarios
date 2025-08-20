@@ -62,3 +62,16 @@ argument_specs:
               directory:
                 required: true
                 type: str
+          s3:
+            required: false
+            type: dict
+            options:
+              bucket:
+                required: true
+                type: str
+              directory:
+                required: true
+                type: str
+              endpoint:
+                required: true
+                type: str
