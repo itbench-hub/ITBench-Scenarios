@@ -170,6 +170,7 @@
 # TODO: Complete the refactoring of the following code:
 #
 #       Telemetry Access code will be added directly to the Applications Role
+#       A 10 minute pause will also be needed
 
 - name: Creating/removing job template to setup for telemetry access
   awx.awx.job_template:
