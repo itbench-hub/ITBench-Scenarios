@@ -64,7 +64,7 @@
 
     - name: Import tools role
       ansible.builtin.import_role:
-        name: tools
+        name: ../roles/tools
       vars:
         tools_cluster:
           provider: "{{ cluster_provider }}"
