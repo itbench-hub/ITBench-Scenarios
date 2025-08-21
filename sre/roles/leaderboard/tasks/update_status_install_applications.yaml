@@ -2,7 +2,7 @@
 - name: Load status file(s)
   ansible.builtin.set_fact:
     leaderboard_current_status: "{{ lookup('ansible.builtin.file', '/tmp/status.json') | from_json }}"
-    leaderboard_legacy_status: "{{ lookup('ansible.builtin.file', '/tmp/status_legacy.json') | from_json }}"
+    leaderboard_legacy_status: "{{ lookup('ansible.builtin.file', '/tmp/assertion.json') | from_json }}"
 
 - name: Update status
   ansible.builtin.set_fact:
