@@ -65,6 +65,12 @@
       tags:
         - uninstall_tools
   always:
+    - name: Copy legacy status into local directory
+      ansible.builtin.copy:
+        dest: "{{ recorders_storage.local.directory }}/assertion.json"
+        mode: "0644"
+        src: /tmp/assertion.json
+
     - name: Upload legacy status to S3 bucket
       amazon.aws.s3_object:
         endpoint_url: "{{ leaderboard_storage.s3.endpoint }}"
@@ -74,6 +80,12 @@
         mode: put
       when:
         - leaderboard_storage.s3 is defined
+
+    - name: Copy status into local directory
+      ansible.builtin.copy:
+        dest: "{{ recorders_storage.local.directory }}/status.json"
+        mode: "0644"
+        src: /tmp/status.json
 
     - name: Upload v1 status to S3 bucket
       amazon.aws.s3_object:
