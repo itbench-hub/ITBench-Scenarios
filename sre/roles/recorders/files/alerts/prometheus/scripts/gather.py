@@ -47,7 +47,7 @@ def main():
             content = response.json()
 
             alerts = content.get("data", {}).get("alerts", [])
-            firing_alerts = list(filter(lambda a: a.get("state", "") == "firing"))
+            firing_alerts = list(filter(lambda a: a.get("state", "") == "firing", alerts))
 
             logger.info("retrieved {0} alerts from prometheus server".format(len(alerts)))
             logger.info("retrieved {0} alerts are in firing state".format(len(firing_alerts)))
