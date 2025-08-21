@@ -33,13 +33,6 @@
           id: "{{ incident_id }}"
       when:
         - incident_id is defined
-
-    - name: Create leaderboard_incident dictionary
-      ansible.builtin.set_fact:
-        leaderboard_incident:
-          id: "{{ incident_id }}"
-      when:
-        - incident_id is defined
   tasks:
     - name: Import required roles
       block:

@@ -2,7 +2,6 @@
 - name: Create leaderboard status content
   ansible.builtin.set_fact:
     leaderboard_current_status:
-      incident: "{{ leaderboard_incident.id | default(omit) }}"
       events: []
     leaderboard_legacy_status:
       status:
