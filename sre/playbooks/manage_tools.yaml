@@ -5,7 +5,7 @@
   pre_tasks:
     - name: Import system role
       ansible.builtin.import_role:
-        name: system
+        name: ../roles/system
       tags:
         - always
       vars:
@@ -14,7 +14,7 @@
 
     - name: Import cluster role
       ansible.builtin.import_role:
-        name: cluster
+        name: ../roles/cluster
       tags:
         - always
       vars:
