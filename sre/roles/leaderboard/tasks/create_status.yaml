@@ -11,7 +11,7 @@
 - name: Create status file in legacy format
   ansible.builtin.copy:
     content: "{{ leaderboard_legacy_status | to_nice_json(indent=2) }}"
-    dest: "/tmp/status_legacy.json"
+    dest: "/tmp/assertion.json"
     mode: "0644"
 
 - name: Create status file in v1 format
