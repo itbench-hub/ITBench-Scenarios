@@ -36,7 +36,6 @@
   when:
     - recorders_cluster.platform == "openshift"
     - tools_prometheus_bearer_token is defined
-    - recorders_prometheus_env_vars is defined
 
 - name: Create Secret with bearer token
   kubernetes.core.k8s:
