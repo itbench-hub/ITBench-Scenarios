@@ -107,6 +107,10 @@ launch_start_workflow: ## Launches the AWX workflow's equivalent of make start_i
 launch_stop_workflow: ## Launches the AWX workflow's equivalent of make stop_incident
 	ansible-playbook -i inventory.yaml playbooks/manage_awx.yaml --tags "launch_stop_workflow"
 
+.PHONY: generate_leaderboard_bundle
+generate_leaderboard_bundle: ## Generates a bundle for Leaderboard to interface with
+	ansible-playbook -i inventory.yaml playbooks/generate_leaderboard_bundle.yaml
+
 # TODO: See why the OBJC_DISABLE_INITIALIZE_FORK_SAFETY is needed
 
 .PHONY: incident documentation
@@ -163,12 +167,6 @@ evaluation:
 																	domain=sre s3_endpoint_url='https://s3.us-east-2.amazonaws.com'" > /tmp/eval.out ; \
 	cat evaluation/e2e_new/incident_reports/$(INCIDENT_NUMBER).json
 	rm evaluation/e2e_new/incident_reports/$(INCIDENT_NUMBER).json
-
-.SILENT: bundle_status
-bundle_status:
-	ansible-playbook base.yaml --tags "bundle_status" --extra-vars "run_uuid=${RUN_UUID} sre_agent_name__version_number=${PARTICIPANT_AGENT_UUID} scenario_number=${INCIDENT_NUMBER} run_number=1 bundle_status_file=roles/bundle_status/status-$$INCIDENT_NUMBER.json s3_bucket_name_for_results='sre-runner-with-awx' sre_bench_runner=true domain=sre s3_endpoint_url='https://s3.us-east-2.amazonaws.com'" > /tmp/status.out; \
-	cat roles/bundle_status/status-${INCIDENT_NUMBER}.json
-	rm roles/bundle_status/status-${INCIDENT_NUMBER}.json
 
 .SILENT: bundle_info
 bundle_info:
@@ -273,3 +271,11 @@ e2e_awx_stage_three: ## DEPRECATED: Given an incident number, run_uuid end the s
 	@echo "Executing 'make launch_stop_workflow'..."
 	@echo ""
 	$(MAKE) launch_stop_workflow
+
+.SILENT: bundle_status
+bundle_status:
+	@echo "WARNING: 'make bundle_status is deprecated. Please use 'make generate_leaderboard_bundle' instead."
+	@echo "This command will be removed in a future version."
+	@echo "Executing 'make generate_leaderboard_bundle'..."
+	@echo ""
+	$(MAKE) generate_leaderboard_bundle
