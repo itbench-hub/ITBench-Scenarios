@@ -8,19 +8,18 @@
     label_selectors:
       - app.kubernetes.io/name = prometheus-alert-recorder
       - app.kubernetes.io/part-of = it-bench
-  register: recorders_pods_info
+  register: recorders_prometheus_pods_info
 
 - name: Copy records directory from pod
   kubernetes.core.k8s_cp:
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
     local_path: /tmp/alerts
-    namespace: "{{ recorders_pods_info.resources[0].metadata.namespace }}"
-    pod: "{{ recorders_pods_info.resources[0].metadata.name }}"
+    namespace: "{{ recorders_prometheus_pods_info.resources[0].metadata.namespace }}"
+    pod: "{{ recorders_prometheus_pods_info.resources[0].metadata.name }}"
     remote_path: /opt/app-root/src/records
     state: from_pod
   when:
-    - recorders_pods_info is defined
-    - recorders_pods_info.resources | length == 1
+    - recorders_prometheus_pods_info.resources | length == 1
 
 - name: Uninstall Prometheus Alert Recorder
   kubernetes.core.k8s:
@@ -63,20 +62,19 @@
     path: /tmp/alerts
     patterns:
       - "*.json"
-  register: recorders_files
+  register: recorders_prometheus_files
 
 - name: Copy exported data into local directory
   ansible.builtin.copy:
     dest: "{{ recorders_storage.local.directory }}/{{ file.path | basename }}"
     mode: "0644"
     src: "{{ file.path }}"
-  loop: "{{ recorders_files.files }}"
+  loop: "{{ recorders_prometheus_files.files }}"
   loop_control:
     label: file/{{ file.path | basename }}
     loop_var: file
   when:
     - recorders_storage.local is defined
-    - recorders_files is defined
 
 - name: Upload exported data to S3 bucket
   amazon.aws.s3_object:
@@ -85,10 +83,9 @@
     object: "/{{ recorders_storage.s3.directory }}/{{ file.path | basename }}"
     src: "{{ file.path }}"
     mode: put
-  loop: "{{ recorders_files.files }}"
+  loop: "{{ recorders_prometheus_files.files }}"
   loop_control:
     label: file/{{ file.path | basename }}
     loop_var: file
   when:
     - recorders_storage.s3 is defined
-    - recorders_files is defined
