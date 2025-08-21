@@ -8,13 +8,6 @@ argument_specs:
     author:
       - Gerard Vanloo
     options:
-      leaderboard_incident:
-        required: false
-        type: dict
-        options:
-          id:
-            required: true
-            type: int
       leaderboard_status:
         required: true
         type: dict
