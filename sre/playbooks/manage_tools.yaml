@@ -42,6 +42,7 @@
           vars:
             leaderboard_status:
               status: progressing
+            leaderboard_storage: "{{ storage }}"
 
         - name: Import tools role
           ansible.builtin.import_role:
@@ -69,6 +70,7 @@
           vars:
             leaderboard_status:
               status: succeeded
+            leaderboard_storage: "{{ storage }}"
       rescue:
         - name: Import leaderboard role
           ansible.builtin.import_role:
@@ -79,6 +81,7 @@
                 name: "{{ ansible_failed_task.name }}"
                 result: "{{ ansible_failed_result }}"
               status: failed
+            leaderboard_storage: "{{ storage }}"
 
         - name: Fail playbook
           ansible.builtin.fail:

@@ -30,9 +30,16 @@ argument_specs:
             required: true
             type: str
       leaderboard_storage:
-        required: true
+        required: false
         type: dict
         options:
+          local:
+            required: false
+            type: dict
+            options:
+              directory:
+                required: true
+                type: str
           s3:
             required: false
             type: dict
