@@ -15,5 +15,5 @@
 - name: Update status file in v1 format
   ansible.builtin.copy:
     content: "{{ leaderboard_current_status | combine({'events': leaderboard_status_events}) | to_nice_json }}"
-    dest: "/tmp/status.json"
+    dest: "/tmp/assertion.json"
     mode: "0644"

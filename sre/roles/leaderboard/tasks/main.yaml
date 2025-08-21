@@ -7,13 +7,15 @@
 
 - name: Verify that the status file exists
   ansible.builtin.set_fact:
-    leaderboard_status_exists: "{{ '/tmp/status.json' is exists }}"
+    leaderboard_current_status_exists: "{{ '/tmp/status.json' is exists }}"
+    leaderboard_legacy_status_exists: "{{ '/tmp/assertion.json' is exists }}"
   tags:
     - always
 
 - name: Perform update tasks
   when:
-    - leaderboard_status_exists
+    - leaderboard_current_status_exists
+    - leaderboard_legacy_status_exists
   block:
     - name: Import status file update tasks
       ansible.builtin.import_tasks:
@@ -62,3 +64,23 @@
         file: update_status_uninstall_tools.yaml
       tags:
         - uninstall_tools
+  always:
+    - name: Upload legacy status to S3 bucket
+      amazon.aws.s3_object:
+        endpoint_url: "{{ leaderboard_storage.s3.endpoint }}"
+        bucket: "{{ leaderboard_storage.s3.bucket }}"
+        object: "/{{ leaderboard_storage.s3.directory }}/assertion.json"
+        src: /tmp/assertion.json
+        mode: put
+      when:
+        - leaderboard_storage.s3 is defined
+
+    - name: Upload v1 status to S3 bucket
+      amazon.aws.s3_object:
+        endpoint_url: "{{ leaderboard_storage.s3.endpoint }}"
+        bucket: "{{ leaderboard_storage.s3.bucket }}"
+        object: "/{{ leaderboard_storage.s3.directory }}/status.json"
+        src: /tmp/status.json
+        mode: put
+      when:
+        - leaderboard_storage.s3 is defined

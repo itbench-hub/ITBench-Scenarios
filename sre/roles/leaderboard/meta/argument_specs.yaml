@@ -36,3 +36,20 @@ argument_specs:
               - succeeded
             required: true
             type: str
+      leaderboard_storage:
+        required: true
+        type: dict
+        options:
+          s3:
+            required: false
+            type: dict
+            options:
+              bucket:
+                required: true
+                type: str
+              directory:
+                required: true
+                type: str
+              endpoint:
+                required: true
+                type: str
