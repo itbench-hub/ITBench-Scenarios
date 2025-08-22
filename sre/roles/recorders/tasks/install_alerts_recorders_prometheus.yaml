@@ -10,7 +10,7 @@
 
 - name: Load statefulset information
   ansible.builtin.set_fact:
-    recorders_prometheus_statefulset: "{{ lookup('ansible.builtin.file', 'files/topology/kubernetes/statefulset.yaml') | from_yaml }}"
+    recorders_prometheus_statefulset: "{{ lookup('ansible.builtin.file', 'files/alerts/prometheus/statefulset.yaml') | from_yaml }}"
 
 - name: Create Prometheus Alert Recorder environment list
   ansible.builtin.set_fact:
