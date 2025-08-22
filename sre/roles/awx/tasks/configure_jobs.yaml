@@ -127,11 +127,50 @@
     project: GitHub-ITBench
     state: present
 
+- name: Add job template for installing data recorders
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credentials:
+      - Cluster-{{ incident_index + 1 }}-Kubeconfig
+      - AWS
+    execution_environment: AWX-EE-Custom
+    extra_vars:
+      incident_id: "{{ incident }}"
+    inventory: IT-Bench-SRE
+    job_tags: inject_faults
+    job_type: run
+    name: "Incident {{ incident }}: Install Data Recorders"
+    organization: ITBench-Scenarios
+    playbook: sre/playbooks/manage_recorders.yaml
+    project: GitHub-ITBench
+    state: present
+
+- name: Add job template for uninstalling data recorders
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credentials:
+      - Cluster-{{ incident_index + 1 }}-Kubeconfig
+      - AWS
+    execution_environment: AWX-EE-Custom
+    extra_vars:
+      incident_id: "{{ incident }}"
+    inventory: IT-Bench-SRE
+    job_tags: remove_faults
+    job_type: run
+    name: "Incident {{ incident }}: Uninstall Data Recorders"
+    organization: ITBench-Scenarios
+    playbook: sre/playbooks/manage_recorders.yaml
+    project: GitHub-ITBench
+    state: present
+
 # TODO: Complete the refactoring of the following code:
 #
 #       Telemetry Access code will be added directly to the Applications Role
-#       Recording code will be added directory to the Applications Role
-#       Post fault injection and pre fault removal will move to a Job
+#       A 10 minute pause will also be needed
 
 - name: Creating/removing job template to setup for telemetry access
   awx.awx.job_template:
@@ -147,57 +186,6 @@
     job_tags: telemetry_access
     job_type: run
     name: "Scenario-{{ incident }}--Setup-For-Telemetry-Access"
-    organization: ITBench-Scenarios
-    playbook: sre/base.yaml
-    project: GitHub-ITBench
-    state: present
-
-- name: Creating/removing job template for trace gathering
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    credentials:
-      - Cluster-{{ incident_index + 1 }}-Kubeconfig
-      - AWS
-    execution_environment: AWX-EE-Custom
-    job_tags: telemetry_access
-    job_type: run
-    name: "Scenario-{{ incident }}--Trace-Gathering"
-    organization: ITBench-Scenarios
-    playbook: sre/cron_jobs/trace_recorder.yaml
-    project: GitHub-ITBench
-    state: present
-
-- name: Creating/removing job template for post fault injection task(s)
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    credentials:
-      - Cluster-{{ incident_index + 1 }}-Kubeconfig
-      - AWS
-    execution_environment: AWX-EE-Custom
-    job_tags: post_fault_injection
-    job_type: run
-    name: "Scenario-{{ incident }}--Post-Fault-Injection"
-    organization: ITBench-Scenarios
-    playbook: sre/base.yaml
-    project: GitHub-ITBench
-    state: present
-
-- name: Creating/removing job template for pre fault removal task(s)
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    credentials:
-      - Cluster-{{ incident_index + 1 }}-Kubeconfig
-      - AWS
-    execution_environment: AWX-EE-Custom
-    job_tags: pre_fault_removal
-    job_type: run
-    name: "Scenario-{{ incident }}--Post-Fault-Injection"
     organization: ITBench-Scenarios
     playbook: sre/base.yaml
     project: GitHub-ITBench
@@ -264,60 +252,6 @@
     name: "Scenario-{{ incident }}--Uninstalling-K8s-Resources-Default-Namespace"
     organization: ITBench-Scenarios
     playbook: sre/base.yaml
-    project: GitHub-ITBench
-    state: present
-
-- name: Creating/removing job template to check for alerts
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    credentials:
-      - Cluster-{{ incident_index + 1 }}-Kubeconfig
-      - AWS
-    execution_environment: AWX-EE-Custom
-    job_type: run
-    name: "Scenario-{{ incident }}--Check-for-Alerts"
-    organization: ITBench-Scenarios
-    playbook: sre/cron_jobs/alert_recorder.yaml
-    project: GitHub-ITBench
-    state: present
-
-- name: Creating/removing job template to turn alert recorder on
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    credentials:
-      - Cluster-{{ incident_index + 1 }}-Kubeconfig
-      - Credential-AWX
-    execution_environment: AWX-EE-Custom
-    extra_vars:
-      controller_host: "{{ awx_controller_host }}"
-      scenario_number: "{{ incident }}"
-    job_type: run
-    name: "Scenario-{{ incident }}--Alert-Recorder-On"
-    organization: ITBench-Scenarios
-    playbook: sre/cron_jobs/alert_recorder_init.yaml
-    project: GitHub-ITBench
-    state: present
-
-- name: Creating/removing job template to turn alert recorder off
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    credentials:
-      - Cluster-{{ incident_index + 1 }}-Kubeconfig
-      - Credential-AWX
-    execution_environment: AWX-EE-Custom
-    extra_vars:
-      controller_host: "{{ awx_controller_host }}"
-      scenario_number: "{{ incident }}"
-    job_type: run
-    name: "Scenario-{{ incident }}--Alert-Recorder-Off"
-    organization: ITBench-Scenarios
-    playbook: sre/cron_jobs/alert_recorder_deinit.yaml
     project: GitHub-ITBench
     state: present
 
