@@ -1,4 +1,14 @@
 ---
+- name: Import agents role to remove agent RBAC
+  ansible.builtin.import_role:
+    name: agent
+    tasks_from: remove_telemetry_access.yaml
+  vars:
+    agent_application:
+      namespace: "{{ helm_release.namespace }}"
+    agent_cluster:
+      kubeconfig: "{{ cluster.kubeconfig }}"
+
 - name: Remove Horizontal Pod Autoscalers
   kubernetes.core.k8s:
     api_version: autoscaling/v2
