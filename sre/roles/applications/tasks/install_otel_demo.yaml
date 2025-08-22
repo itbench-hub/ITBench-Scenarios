@@ -399,3 +399,7 @@
       namespace: "{{ helm_release.namespace }}"
     agent_cluster:
       kubeconfig: "{{ cluster.kubeconfig }}"
+
+- name: Set token variable for telemetry access
+  ansible.builtin.set_fact:
+    applications_otel_demo_token: "{{ agent_token_request.result.status.token }}"
