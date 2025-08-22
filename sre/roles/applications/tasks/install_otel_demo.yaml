@@ -44,7 +44,7 @@
 
 - name: Import tools role for variable setting tasks
   ansible.builtin.import_role:
-    name: ../../../tools
+    name: ../../tools
     tasks_from: set_clickhouse_endpoint
   vars:
     tools_cluster:
