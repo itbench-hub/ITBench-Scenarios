@@ -3,8 +3,8 @@
 # Dependabot to track the image. The full definition is provided in the
 # template version of this object.
 
-apiVersion: apps/v1
-kind: StatefulSet
+apiVersion: batch/v1
+kind: Job
 metadata:
   name: kubernetes-topology-recorder
 spec:
