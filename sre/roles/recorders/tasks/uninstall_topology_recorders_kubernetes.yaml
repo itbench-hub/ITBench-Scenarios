@@ -1,12 +1,35 @@
 ---
-- name: Retrieve the topology recorder pod name
+- name: Wait for any ongoing jobs to be removed
+  kubernetes.core.k8s_info:
+    api_version: batch/v1
+    kind: Job
+    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+    label_selectors:
+      - app.kubernetes.io/name = kubernetes-topology-recorder
+      - app.kubernetes.io/part-of = it-bench
+    namespace: "{{ recorders_namespace.name }}"
+  register: recorders_kubernetes_job_info
+  until:
+    - recorders_kubernetes_job_info.resources | length == 0
+  retries: 8
+  delay: 15
+
+- name: Create Deployment to retrieve records
+  kubernetes.core.k8s:
+    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+    namespace: "{{ recorders_namespace.name }}"
+    src: files/topology/kubernetes/deployment.yaml
+    state: present
+    wait: true
+
+- name: Retrieve the retriever pod name
   kubernetes.core.k8s_info:
     api_version: v1
     kind: Pod
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
     namespace: "{{ recorders_namespace.name }}"
     label_selectors:
-      - app.kubernetes.io/name = kubernetes-topology-recorder
+      - app.kubernetes.io/name = kubernetes-topology-record-retriever
       - app.kubernetes.io/part-of = it-bench
   register: recorders_kubernetes_pods_info
 
@@ -22,11 +45,11 @@
     - recorders_kubernetes_pods_info is defined
     - recorders_kubernetes_pods_info.resources | length == 1
 
-- name: Uninstall Kubernetes Topology Monitor Recorder
+- name: Uninstall the Deployment
   kubernetes.core.k8s:
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
     namespace: "{{ recorders_namespace.name }}"
-    src: files/alerts/prometheus/statefulset.yaml
+    src: files/topology/kubernetes/deployment.yaml
     state: absent
     wait: true
 
@@ -40,6 +63,14 @@
     label_selectors:
       - app.kubernetes.io/name = kubernetes-topology-recorder
       - app.kubernetes.io/part-of = it-bench
+    state: absent
+    wait: true
+
+- name: Delete PersistentVolumeClaim
+  kubernetes.core.k8s:
+    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+    namespace: "{{ recorders_namespace.name }}"
+    src: files/topology/kubernetes/persistentvolumeclaim.yaml
     state: absent
     wait: true
 
