@@ -48,8 +48,5 @@ def main():
             with open(file_path, "w") as f:
                 json.dump(content, f, indent=4)
 
-    logger.debug("download complete. begin sleeping.")
-    time.sleep(1800)
-
 if __name__ == "__main__":
     main()

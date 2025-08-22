@@ -8,9 +8,16 @@
       kubeconfig: "{{ recorders_cluster.kubeconfig }}"
       platform: "{{ recorders_cluster.platform }}"
 
-- name: Load statefulset information
+- name: Load job information
   ansible.builtin.set_fact:
-    recorders_kubernetes_statefulset: "{{ lookup('ansible.builtin.file', 'files/topology/kubernetes/statefulset.yaml') | from_yaml }}"
+    recorders_kubernetes_job: "{{ lookup('ansible.builtin.file', 'files/topology/kubernetes/job.yaml') | from_yaml }}"
+
+- name: Create PersistentVolumeClaim to retain records
+  kubernetes.core.k8s:
+    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+    namespace: "{{ recorders_namespace.name }}"
+    src: files/topology/kubernetes/persistentvolumeclaim.yaml
+    state: present
 
 - name: Create ConfigMap with Python script
   kubernetes.core.k8s:
@@ -22,31 +29,27 @@
     python_script_file_contents: "{{ lookup('ansible.builtin.file', 'files/topology/kubernetes/scripts/gather.py') }}"
     requirements_file_contents: "{{ lookup('ansible.builtin.file', 'files/topology/kubernetes/scripts/requirements.txt') }}"
 
+- name: Wait for any ongoing jobs to be removed
+  kubernetes.core.k8s_info:
+    api_version: "{{ recorders_kubernetes_job.apiVersion }}"
+    kind: "{{ recorders_kubernetes_job.kind }}"
+    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
+    name: "{{ recorders_kubernetes_job.metadata.name }}"
+    namespace: "{{ recorders_namespace.name }}"
+  register: recorders_kubernetes_job_info
+  until:
+    - recorders_kubernetes_job_info.resources | length == 0
+  retries: 8
+  delay: 15
+
 - name: Install Kubernetes Topology Recorder
   kubernetes.core.k8s:
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
     namespace: "{{ recorders_namespace.name }}"
-    template: templates/topology/kubernetes/statefulset.j2
+    template: templates/topology/kubernetes/job.j2
     state: present
-  register: recorders_kubernetes_workload
   vars:
-    container_image: "{{ recorders_kubernetes_statefulset.spec.template.spec.containers[0].image }}"
+    container_image: "{{ recorders_kubernetes_job.spec.template.spec.containers[0].image }}"
     container_environment_variables:
       - name: KUBERNETES_TOPOLOGY_MONITOR_ENDPOINT
         value: "{{ tools_kubernetes_topology_mapper_endpoint }}"
-
-- name: Wait for workload to update
-  kubernetes.core.k8s_info:
-    api_version: "{{ recorders_kubernetes_workload.result.apiVersion }}"
-    kind: "{{ recorders_kubernetes_workload.result.kind }}"
-    kubeconfig: "{{ recorders_cluster.kubeconfig }}"
-    name: "{{ recorders_kubernetes_workload.result.metadata.name }}"
-    namespace: "{{ recorders_kubernetes_workload.result.metadata.namespace }}"
-  register: recorders_kubernetes_statefulset_info
-  until:
-    - recorders_kubernetes_statefulset_info.resources | length > 0
-    - recorders_kubernetes_statefulset_info.resources[0].status is defined
-    - recorders_kubernetes_statefulset_info.resources[0].status.readyReplicas is defined
-    - recorders_kubernetes_statefulset_info.resources[0].status.readyReplicas == 1
-  retries: 8
-  delay: 15
