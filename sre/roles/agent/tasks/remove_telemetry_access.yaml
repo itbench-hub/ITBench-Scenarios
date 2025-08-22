@@ -1,0 +1,26 @@
+---
+- name: Delete RoleBinding
+  kubernetes.core.k8s:
+    kubeconfig: "{{ agent_cluster.kubeconfig }}"
+    namespace: "{{ agent_application.namesapce }}"
+    template: templates/rolebinding.j2
+    state: absent
+    wait: true
+  vars:
+    service_account_namespace: "{{ agent_application.namesapce }}"
+
+- name: Delete Role
+  kubernetes.core.k8s:
+    kubeconfig: "{{ agent_cluster.kubeconfig }}"
+    namespace: "{{ agent_application.namesapce }}"
+    src: files/role.yaml
+    state: absent
+    wait: true
+
+- name: Delete Service Account
+  kubernetes.core.k8s:
+    kubeconfig: "{{ agent_cluster.kubeconfig }}"
+    namespace: "{{ agent_application.namesapce }}"
+    src: files/serviceaccount.yaml
+    state: absent
+    wait: true
