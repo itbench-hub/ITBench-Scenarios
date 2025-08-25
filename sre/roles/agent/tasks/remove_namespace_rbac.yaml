@@ -7,6 +7,7 @@
     kubeconfig: "{{ agent_cluster.kubeconfig }}"
     namespace: "{{ namespace.name }}"
     label_selectors:
+      - app.kubernetes.io/component = access-provider
       - app.kubernetes.io/part-of = it-bench
     state: absent
     wait: true
@@ -19,6 +20,7 @@
     kubeconfig: "{{ agent_cluster.kubeconfig }}"
     namespace: "{{ namespace.name }}"
     label_selectors:
+      - app.kubernetes.io/component = access-provider
       - app.kubernetes.io/part-of = it-bench
     state: absent
     wait: true
@@ -31,6 +33,7 @@
     kubeconfig: "{{ agent_cluster.kubeconfig }}"
     namespace: "{{ namespace.name }}"
     label_selectors:
+      - app.kubernetes.io/component = access-provider
       - app.kubernetes.io/part-of = it-bench
     state: absent
     wait: true

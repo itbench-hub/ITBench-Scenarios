@@ -7,6 +7,7 @@
       kind: ServiceAccount
       metadata:
         labels:
+          app.kubernetes.io/component: access-provider
           app.kubernetes.io/part-of: it-bench
         name: agent
         namespace: "{{ namespace.name }}"
@@ -19,10 +20,22 @@
     namespace: "{{ namespace.name }}"
     template: templates/role.j2
     state: present
-  register: agent_role
+  register: agent_rw_role
   vars:
     verbs:
       - "*"
+  when:
+    - namespace.access == 'read-write'
+
+- name: Create RoleBinding
+  kubernetes.core.k8s:
+    kubeconfig: "{{ agent_cluster.kubeconfig }}"
+    namespace: "{{ namespace.name }}"
+    template: templates/rolebinding.j2
+    state: present
+  vars:
+    role: "{{ agent_rw_role.result }}"
+    service_account: "{{ agent_service_account.result }}"
   when:
     - namespace.access == 'read-write'
 
@@ -32,7 +45,7 @@
     namespace: "{{ namespace.name }}"
     template: templates/role.j2
     state: present
-  register: agent_role
+  register: agent_ro_role
   vars:
     verbs:
       - "get"
@@ -47,5 +60,7 @@
     template: templates/rolebinding.j2
     state: present
   vars:
-    role: "{{ agent_role.result }}"
+    role: "{{ agent_ro_role.result }}"
     service_account: "{{ agent_service_account.result }}"
+  when:
+    - namespace.access == 'read-only'
