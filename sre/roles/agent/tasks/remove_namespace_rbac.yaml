@@ -5,7 +5,6 @@
     delete_all: true
     kind: RoleBinding
     kubeconfig: "{{ agent_cluster.kubeconfig }}"
-    namespace: "{{ namespace.name }}"
     label_selectors:
       - app.kubernetes.io/component = access-provider
       - app.kubernetes.io/part-of = it-bench
@@ -18,7 +17,6 @@
     delete_all: true
     kind: Role
     kubeconfig: "{{ agent_cluster.kubeconfig }}"
-    namespace: "{{ namespace.name }}"
     label_selectors:
       - app.kubernetes.io/component = access-provider
       - app.kubernetes.io/part-of = it-bench
@@ -31,7 +29,6 @@
     delete_all: true
     kind: ServiceAccount
     kubeconfig: "{{ agent_cluster.kubeconfig }}"
-    namespace: "{{ namespace.name }}"
     label_selectors:
       - app.kubernetes.io/component = access-provider
       - app.kubernetes.io/part-of = it-bench

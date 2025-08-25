@@ -1,66 +1,57 @@
 ---
-- name: Create Service Account
-  kubernetes.core.k8s:
+- name: Create verbs dictionary
+  ansible.builtin.set_fact:
+    agent_access_verbs:
+      read-only:
+        - "get"
+        - "list"
+      read-write:
+        - "*"
+
+- name: Retrieve information about namespace
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Namespace
     kubeconfig: "{{ agent_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: v1
-      kind: ServiceAccount
-      metadata:
-        labels:
-          app.kubernetes.io/component: access-provider
-          app.kubernetes.io/part-of: it-bench
-        name: agent
+    name: "{{ namespace.name }}"
+  register: agent_namespace_info
+
+- name: Create RBAC objects
+  when:
+    - agent_namespace_info.resources | length == 1
+  block:
+    - name: Create Service Account
+      kubernetes.core.k8s:
+        kubeconfig: "{{ agent_cluster.kubeconfig }}"
+        resource_definition:
+          apiVersion: v1
+          kind: ServiceAccount
+          metadata:
+            labels:
+              app.kubernetes.io/component: access-provider
+              app.kubernetes.io/name: agent
+              app.kubernetes.io/part-of: it-bench
+            name: agent
+            namespace: "{{ namespace.name }}"
+        state: present
+      register: agent_service_account
+
+    - name: Create Role
+      kubernetes.core.k8s:
+        kubeconfig: "{{ agent_cluster.kubeconfig }}"
         namespace: "{{ namespace.name }}"
-    state: present
-  register: agent_service_account
+        template: templates/role.j2
+        state: present
+      register: agent_role
+      vars:
+        verbs: "{{ agent_access_verbs[namespace.access] }}"
 
-- name: Create Role with read-write access
-  kubernetes.core.k8s:
-    kubeconfig: "{{ agent_cluster.kubeconfig }}"
-    namespace: "{{ namespace.name }}"
-    template: templates/role.j2
-    state: present
-  register: agent_rw_role
-  vars:
-    verbs:
-      - "*"
-  when:
-    - namespace.access == 'read-write'
-
-- name: Create RoleBinding
-  kubernetes.core.k8s:
-    kubeconfig: "{{ agent_cluster.kubeconfig }}"
-    namespace: "{{ namespace.name }}"
-    template: templates/rolebinding.j2
-    state: present
-  vars:
-    role: "{{ agent_rw_role.result }}"
-    service_account: "{{ agent_service_account.result }}"
-  when:
-    - namespace.access == 'read-write'
-
-- name: Create Role with read-only access
-  kubernetes.core.k8s:
-    kubeconfig: "{{ agent_cluster.kubeconfig }}"
-    namespace: "{{ namespace.name }}"
-    template: templates/role.j2
-    state: present
-  register: agent_ro_role
-  vars:
-    verbs:
-      - "get"
-      - "list"
-  when:
-    - namespace.access == 'read-only'
-
-- name: Create RoleBinding
-  kubernetes.core.k8s:
-    kubeconfig: "{{ agent_cluster.kubeconfig }}"
-    namespace: "{{ namespace.name }}"
-    template: templates/rolebinding.j2
-    state: present
-  vars:
-    role: "{{ agent_ro_role.result }}"
-    service_account: "{{ agent_service_account.result }}"
-  when:
-    - namespace.access == 'read-only'
+    - name: Create RoleBinding
+      kubernetes.core.k8s:
+        kubeconfig: "{{ agent_cluster.kubeconfig }}"
+        namespace: "{{ namespace.name }}"
+        template: templates/rolebinding.j2
+        state: present
+      vars:
+        role: "{{ agent_role.result }}"
+        service_account: "{{ agent_service_account.result }}"
