@@ -1,0 +1,35 @@
+---
+- name: Include tasks for granting agent access to namespaces
+  ansible.builtin.include_tasks:
+    file: add_namespace_rbac.yaml
+    apply:
+      tags:
+        - grant_access
+  loop: "{{ agent_namespaces }}"
+  loop_control:
+    label: namespace/{{ namespace.name }}
+    loop_var: namespace
+  tasks:
+    - grant_access
+
+- name: Include tasks for restricted kubeconfig generation
+  ansible.builtin.include_tasks:
+    file: generate_restricted_kubeconfig.yaml
+    apply:
+      tags:
+        - grant_access
+  tasks:
+    - grant_access
+
+- name: Include tasks for revoking agent access to namespaces
+  ansible.builtin.include_tasks:
+    file: remove_namespace_rbac.yaml
+    apply:
+      tags:
+        - revoke_access
+  loop: "{{ agent_namespaces }}"
+  loop_control:
+    label: namespace/{{ namespace.name }}
+    loop_var: namespace
+  tasks:
+    - revoke_access

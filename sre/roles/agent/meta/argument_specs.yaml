@@ -1,6 +1,6 @@
 ---
 argument_specs:
-  add_telemetry_access:
+  main:
     short_description: Main entry point for applications role
     description:
       - This role is responsible for installing and uninstalling the applications that
@@ -8,13 +8,6 @@ argument_specs:
     author:
       - Gerard Vanloo
     options:
-      agent_application:
-        required: true
-        type: dict
-        options:
-          namespace:
-            required: true
-            type: str
       agent_cluster:
         description:
           - The Kubernetes or OpenShift cluster that the application(s) will be installed to
@@ -29,57 +22,17 @@ argument_specs:
                 the absolute path.
             required: true
             type: str
-  generate_restricted_kubeconfig:
-    short_description: Main entry point for applications role
-    description:
-      - This role is responsible for installing and uninstalling the applications that
-        faults will be injected to for benchmarking.
-    author:
-      - Gerard Vanloo
-    options:
-      agent_application_tokens:
+      agent_namespaces:
+        elements: dict
         required: true
-        type: dict
-      agent_cluster:
-        description:
-          - The Kubernetes or OpenShift cluster that the application(s) will be installed to
-            or uninstalled from.
-        required: true
-        type: dict
+        type: list
         options:
-          kubeconfig:
-            description:
-              - The file path of the Kubernetes configuration file.
-              - Use '~' over '$HOME' to substitute for the root directory or provide
-                the absolute path.
+          access:
+            choices:
+              - read-only
+              - read-write
             required: true
             type: str
-  remove_telemetry_access:
-    short_description: Main entry point for applications role
-    description:
-      - This role is responsible for installing and uninstalling the applications that
-        faults will be injected to for benchmarking.
-    author:
-      - Gerard Vanloo
-    options:
-      agent_application:
-        required: true
-        type: dict
-        options:
-          namespace:
-            required: true
-            type: str
-      agent_cluster:
-        description:
-          - The Kubernetes or OpenShift cluster that the application(s) will be installed to
-            or uninstalled from.
-        required: true
-        type: dict
-        options:
-          kubeconfig:
-            description:
-              - The file path of the Kubernetes configuration file.
-              - Use '~' over '$HOME' to substitute for the root directory or provide
-                the absolute path.
+          name:
             required: true
             type: str

@@ -2,12 +2,14 @@
 kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
+  labels:
+    app.kubernetes.io/part-of: it-bench
   name: agent-access
 subjects:
   - kind: ServiceAccount
-    name: agent
-    namespace: "{{ service_account_namespace }}"
+    name: {{ service_account.metadata.name }}
+    namespace: {{ service_account.metadata.namespace }}
 roleRef:
   kind: Role
-  name: agent-access
+  name: {{ role.metadata.name }}
   apiGroup: rbac.authorization.k8s.io
