@@ -16,7 +16,7 @@
 - name: Create Role with read-write access
   kubernetes.core.k8s:
     kubeconfig: "{{ agent_cluster.kubeconfig }}"
-    namespace: "{{ namespace }}"
+    namespace: "{{ namespace.name }}"
     template: templates/role.j2
     state: present
   register: agent_role
@@ -29,7 +29,7 @@
 - name: Create Role with read-only access
   kubernetes.core.k8s:
     kubeconfig: "{{ agent_cluster.kubeconfig }}"
-    namespace: "{{ namespace }}"
+    namespace: "{{ namespace.name }}"
     template: templates/role.j2
     state: present
   register: agent_role
@@ -43,7 +43,7 @@
 - name: Create RoleBinding
   kubernetes.core.k8s:
     kubeconfig: "{{ agent_cluster.kubeconfig }}"
-    namespace: "{{ namespace }}"
+    namespace: "{{ namespace.name }}"
     template: templates/rolebinding.j2
     state: present
   vars:

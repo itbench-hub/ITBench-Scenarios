@@ -9,7 +9,7 @@
   loop_control:
     label: namespace/{{ namespace.name }}
     loop_var: namespace
-  tasks:
+  tags:
     - grant_access
 
 - name: Include tasks for restricted kubeconfig generation
@@ -18,7 +18,7 @@
     apply:
       tags:
         - grant_access
-  tasks:
+  tags:
     - grant_access
 
 - name: Include tasks for revoking agent access to namespaces
@@ -31,5 +31,5 @@
   loop_control:
     label: namespace/{{ namespace.name }}
     loop_var: namespace
-  tasks:
+  tags:
     - revoke_access
