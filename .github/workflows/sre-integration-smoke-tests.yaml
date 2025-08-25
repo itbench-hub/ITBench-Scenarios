@@ -49,13 +49,13 @@ jobs:
           make -C sre group_vars
       - name: Create environment
         run: |
-          INCIDENT_NUMBER=1 make create_environment
+          INCIDENT_NUMBER=1 make -C sre create_environment
       - name: Test access granting
         run: |
-          make enable_agent_access
+          make -C sre enable_agent_access
       - name: Test access revoking
         run: |
-          make disable_agent_access
+          make -C sre disable_agent_access
   chaos-mesh:
     name: Chaos Mesh Smoke Tests
     runs-on: ubuntu-24.04
