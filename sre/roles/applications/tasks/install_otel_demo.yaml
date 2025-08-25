@@ -50,6 +50,13 @@
   ansible.builtin.debug:
     msg: "Role path: {{ role_path }}"
 
+- name: Debug before importing tools role
+  ansible.builtin.debug:
+    msg:
+      - "About to import tools role for clickhouse credentials"
+      - "tools_cluster.kubeconfig: {{ tools_cluster.kubeconfig | default('UNDEFINED') }}"
+      - "tools_instances: {{ tools_instances | default('UNDEFINED') }}"
+
 - name: Import tools role for variable setting tasks
   ansible.builtin.import_role:
     name: ../tools
@@ -65,6 +72,13 @@
   vars:
     tools_cluster:
       kubeconfig: "{{ applications_cluster.kubeconfig }}"
+
+- name: Debug after importing credentials
+  ansible.builtin.debug:
+    msg:
+      - "tools_clickhouse_username: {{ tools_clickhouse_username | default('UNDEFINED') }}"
+      - "tools_clickhouse_password: {{ tools_clickhouse_password | default('UNDEFINED') }}"
+      - "tools_clickhouse_user_secret_info: {{ tools_clickhouse_user_secret_info | default('UNDEFINED') }}"
 
 - name: Install OpenTelemetry Demo (Astronomy Shop)
   kubernetes.core.helm:
