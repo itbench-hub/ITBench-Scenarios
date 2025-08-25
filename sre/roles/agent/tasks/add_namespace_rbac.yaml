@@ -1,0 +1,51 @@
+---
+- name: Create Service Account
+  kubernetes.core.k8s:
+    kubeconfig: "{{ agent_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        labels:
+          app.kubernetes.io/part-of: it-bench
+        name: agent
+        namespace: "{{ namespace.name }}"
+    state: present
+  register: agent_service_account
+
+- name: Create Role with read-write access
+  kubernetes.core.k8s:
+    kubeconfig: "{{ agent_cluster.kubeconfig }}"
+    namespace: "{{ namespace }}"
+    template: templates/role.j2
+    state: present
+  register: agent_role
+  vars:
+    verbs:
+      - "*"
+  when:
+    - namespace.access == 'read-write'
+
+- name: Create Role with read-only access
+  kubernetes.core.k8s:
+    kubeconfig: "{{ agent_cluster.kubeconfig }}"
+    namespace: "{{ namespace }}"
+    template: templates/role.j2
+    state: present
+  register: agent_role
+  vars:
+    verbs:
+      - "get"
+      - "list"
+  when:
+    - namespace.access == 'read-only'
+
+- name: Create RoleBinding
+  kubernetes.core.k8s:
+    kubeconfig: "{{ agent_cluster.kubeconfig }}"
+    namespace: "{{ namespace }}"
+    template: templates/rolebinding.j2
+    state: present
+  vars:
+    role: "{{ agent_role.result }}"
+    service_account: "{{ agent_service_account.result }}"

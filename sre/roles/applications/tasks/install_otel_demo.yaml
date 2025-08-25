@@ -389,17 +389,3 @@
     label: horizontalpodautoscaler/{{ item | regex_replace('_', '-') }}
   when:
     - configuration[item].autoscaling | default(false)
-
-- name: Import agents role to add agent RBAC
-  ansible.builtin.import_role:
-    name: agent
-    tasks_from: add_telemetry_access.yaml
-  vars:
-    agent_application:
-      namespace: "{{ helm_release.namespace }}"
-    agent_cluster:
-      kubeconfig: "{{ cluster.kubeconfig }}"
-
-- name: Set token variable for telemetry access
-  ansible.builtin.set_fact:
-    applications_otel_demo_token: "{{ agent_token_request.result.status.token }}"

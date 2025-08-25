@@ -20,13 +20,3 @@
   when:
     - applications_required.otel_demo is defined
     - applications_required.otel_demo.enabled
-
-- name: Import agents role for restricted kubeconfig generation
-  ansible.builtin.import_role:
-    name: agent
-    tasks_from: generate_restricted_kubeconfig
-  vars:
-    agent_application_tokens:
-      "{{ applications_helm_releases.otel_demo.namespace }}": "{{ applications_otel_demo_token | default('') }}"
-    agent_cluster:
-      kubeconfig: "{{ cluster.kubeconfig }}"
