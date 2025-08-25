@@ -27,9 +27,5 @@
     apply:
       tags:
         - revoke_access
-  loop: "{{ agent_namespaces }}"
-  loop_control:
-    label: namespace/{{ namespace.name }}
-    loop_var: namespace
   tags:
     - revoke_access
