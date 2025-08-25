@@ -2,30 +2,30 @@
 - name: Create Service Account
   kubernetes.core.k8s:
     kubeconfig: "{{ agent_cluster.kubeconfig }}"
-    namespace: "{{ agent_application.namesapce }}"
+    namespace: "{{ agent_application.namespace }}"
     src: files/serviceaccount.yaml
     state: present
 
 - name: Create Role
   kubernetes.core.k8s:
     kubeconfig: "{{ agent_cluster.kubeconfig }}"
-    namespace: "{{ agent_application.namesapce }}"
+    namespace: "{{ agent_application.namespace }}"
     src: files/role.yaml
     state: present
 
 - name: Create RoleBinding
   kubernetes.core.k8s:
     kubeconfig: "{{ agent_cluster.kubeconfig }}"
-    namespace: "{{ agent_application.namesapce }}"
+    namespace: "{{ agent_application.namespace }}"
     template: templates/rolebinding.j2
     state: present
   vars:
-    service_account_namespace: "{{ agent_application.namesapce }}"
+    service_account_namespace: "{{ agent_application.namespace }}"
 
 - name: Create TokenRequest
   kubernetes.core.k8s:
     kubeconfig: "{{ agent_cluster.kubeconfig }}"
-    namespace: "{{ agent_application.namesapce }}"
+    namespace: "{{ agent_application.namespace }}"
     src: files/tokenrequest.yaml
     state: present
   register: agent_token_request
