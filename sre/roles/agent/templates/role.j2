@@ -2,7 +2,9 @@
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: agent-access
+  labels:
+    app.kubernetes.io/part-of: it-bench
+  name: agent-read-write-access
 rules:
   - apiGroups:
       - ""
@@ -22,8 +24,7 @@ rules:
       - pods/portforward
       - pods/log
       - resourcequotas
-    verbs:
-      - "*"
+    verbs: {{ verbs }}
   - apiGroups:
       - apps
     resources:
@@ -31,15 +32,13 @@ rules:
       - replicasets
       - daemonsets
       - statefulsets
-    verbs:
-      - "*"
+    verbs: {{ verbs }}
   - apiGroups:
       - batch
     resources:
       - jobs
       - cronjobs
-    verbs:
-      - "*"
+    verbs: {{ verbs }}
   - apiGroups:
       - autoscaling
     resources:
@@ -51,18 +50,15 @@ rules:
     resources:
       - roles
       - rolebindings
-    verbs:
-      - "*"
+    verbs: {{ verbs }}
   - apiGroups:
       - policy
     resources:
       - poddisruptionbudgets
-    verbs:
-      - "*"
+    verbs: {{ verbs }}
   - apiGroups:
       - networking.k8s.io
     resources:
       - networkpolicies
       - ingresses
-    verbs:
-      - "*"
+    verbs: {{ verbs }}
