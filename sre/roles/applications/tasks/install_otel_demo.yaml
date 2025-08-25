@@ -50,6 +50,13 @@
   ansible.builtin.debug:
     msg: "Role path: {{ role_path }}"
 
+- name: Debug before importing tools role
+  ansible.builtin.debug:
+    msg:
+      - "About to import tools role for clickhouse credentials"
+      - "tools_cluster.kubeconfig: {{ tools_cluster.kubeconfig | default('UNDEFINED') }}"
+      - "tools_instances: {{ tools_instances | default('UNDEFINED') }}"
+
 - name: Import tools role for variable setting tasks
   ansible.builtin.import_role:
     name: ../tools
