@@ -29,7 +29,6 @@
           metadata:
             labels:
               app.kubernetes.io/component: access-provider
-              app.kubernetes.io/name: agent
               app.kubernetes.io/part-of: it-bench
             name: agent
             namespace: "{{ ns.name }}"
