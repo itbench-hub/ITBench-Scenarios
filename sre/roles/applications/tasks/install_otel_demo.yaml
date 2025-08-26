@@ -59,7 +59,7 @@
 
 - name: Import tools role for variable setting tasks
   ansible.builtin.include_role:
-    name: ../tools
+    name: ../roles/tools
     tasks_from: set_clickhouse_credentials
     apply:
       tags:
@@ -70,7 +70,7 @@
 
 - name: Import tools role for variable setting tasks
   ansible.builtin.include_role:
-    name: ../tools
+    name: ../roles/tools
     tasks_from: set_clickhouse_endpoint
     apply:
       tags:
