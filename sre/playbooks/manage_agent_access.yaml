@@ -35,3 +35,4 @@
             access: read-write
           - name: "{{ tools_helm_releases.chaos_mesh.namespace }}"
             access: read-write
+        agent_storage: "{{ storage }}"
