@@ -21,9 +21,8 @@ jobs:
   agent-access:
     name: Agent Access Smoke Tests
     needs:
-      - opentelemetry
+      - chaos-mesh
       - otel-demo
-      - prometheus
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5.0.0

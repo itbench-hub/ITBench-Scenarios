@@ -35,7 +35,3 @@
             access: read-write
           - name: "{{ tools_helm_releases.chaos_mesh.namespace }}"
             access: read-write
-          - name: "{{ tools_helm_releases.opentelemetry_collectors.namespace }}"
-            access: read-only
-          - name: "{{ tools_helm_releases.prometheus.namespace }}"
-            access: read-only
