@@ -58,23 +58,17 @@
       - "tools_instances: {{ tools_instances | default('UNDEFINED') }}"
 
 - name: Import tools role for variable setting tasks
-  ansible.builtin.include_role:
+  ansible.builtin.import_role:
     name: ../roles/tools
     tasks_from: set_clickhouse_credentials
-    apply:
-      tags:
-        - install_applications
   vars:
     tools_cluster:
       kubeconfig: "{{ applications_cluster.kubeconfig }}"
 
 - name: Import tools role for variable setting tasks
-  ansible.builtin.include_role:
+  ansible.builtin.import_role:
     name: ../roles/tools
     tasks_from: set_clickhouse_endpoint
-    apply:
-      tags:
-        - install_applications
   vars:
     tools_cluster:
       kubeconfig: "{{ applications_cluster.kubeconfig }}"
