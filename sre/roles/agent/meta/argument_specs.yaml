@@ -33,3 +33,27 @@ argument_specs:
           name:
             required: true
             type: str
+      agent_storage:
+        required: true
+        type: dict
+        options:
+          local:
+            required: false
+            type: dict
+            options:
+              directory:
+                required: true
+                type: str
+          s3:
+            required: false
+            type: dict
+            options:
+              bucket:
+                required: true
+                type: str
+              directory:
+                required: true
+                type: str
+              endpoint:
+                required: true
+                type: str
