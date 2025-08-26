@@ -155,3 +155,16 @@ _Note_: For a full list of `make` commands, run the following command:
 ```bash
 make help
 ```
+
+## Frequently Asked Questions (FAQ)
+
+### Images are not downloading from DockerHub
+
+A few of the tools and applications used by the various software in ITBench requires downloading images from DockerHub. However, DockerHub has [rate limits](https://docs.docker.com/docker-hub/usage/) which will prevent an user from pulling from it after the limit has been exhuasted for that IP address until it resets.
+
+There are two recommended approaches for manuevering around this limit:
+
+1. [Create a Docker account](https://www.docker.com/get-started/)
+2. Download and store the image files on the local machine
+
+In order to do (2), one must already be able to pull the images from DockerHub. A script has been provided which uses Podman to pull down these images and store them as a tar file on the local machine. This set up can allow a user to use the images needed even in an offline fashion.
