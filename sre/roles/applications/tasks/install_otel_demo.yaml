@@ -61,6 +61,9 @@
   ansible.builtin.include_role:
     name: ../tools
     tasks_from: set_clickhouse_credentials
+    apply:
+      tags:
+        - install_applications
   vars:
     tools_cluster:
       kubeconfig: "{{ applications_cluster.kubeconfig }}"
@@ -69,6 +72,9 @@
   ansible.builtin.include_role:
     name: ../tools
     tasks_from: set_clickhouse_endpoint
+    apply:
+      tags:
+        - install_applications
   vars:
     tools_cluster:
       kubeconfig: "{{ applications_cluster.kubeconfig }}"
