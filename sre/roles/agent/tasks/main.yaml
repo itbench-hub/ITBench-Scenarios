@@ -7,8 +7,8 @@
         - grant_access
   loop: "{{ agent_namespaces }}"
   loop_control:
-    label: namespace/{{ namespace.name }}
-    loop_var: namespace
+    label: namespace/{{ ns.name }}
+    loop_var: ns
   tags:
     - grant_access
 

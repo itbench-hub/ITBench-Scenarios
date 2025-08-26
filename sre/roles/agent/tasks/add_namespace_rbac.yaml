@@ -13,7 +13,7 @@
     api_version: v1
     kind: Namespace
     kubeconfig: "{{ agent_cluster.kubeconfig }}"
-    name: "{{ namespace.name }}"
+    name: "{{ ns.name }}"
   register: agent_namespace_info
 
 - name: Create RBAC objects
@@ -32,24 +32,24 @@
               app.kubernetes.io/name: agent
               app.kubernetes.io/part-of: it-bench
             name: agent
-            namespace: "{{ namespace.name }}"
+            namespace: "{{ ns.name }}"
         state: present
       register: agent_service_account
 
     - name: Create Role
       kubernetes.core.k8s:
         kubeconfig: "{{ agent_cluster.kubeconfig }}"
-        namespace: "{{ namespace.name }}"
+        namespace: "{{ ns.name }}"
         template: templates/role.j2
         state: present
       register: agent_role
       vars:
-        verbs: "{{ agent_access_verbs[namespace.access] }}"
+        verbs: "{{ agent_access_verbs[ns.access] }}"
 
     - name: Create RoleBinding
       kubernetes.core.k8s:
         kubeconfig: "{{ agent_cluster.kubeconfig }}"
-        namespace: "{{ namespace.name }}"
+        namespace: "{{ ns.name }}"
         template: templates/rolebinding.j2
         state: present
       vars:
