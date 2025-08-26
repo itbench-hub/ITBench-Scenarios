@@ -1,0 +1,43 @@
+---
+- name: Export the kubeconfig
+  ansible.builtin.command:
+    argv:
+      - kops
+      - export
+      - --name
+      - "{{ item }}"
+      - kubecfg
+      - --admin
+      - --state
+      - "{{ awx_kops_state_store }}"
+      - --kubeconfig
+      - /tmp/{{ item }}.yaml
+  register: awx_export_output
+  changed_when: awx_export_output.rc == 0
+  loop: "{{ awx_runner_cluster_names + [awx_head_cluster_name] }}"
+
+- name: Update stack group variables file
+  ansible.builtin.copy:
+    content: "{{ stack_definition | to_nice_yaml(indent=2) }}"
+    dest: "../../../group_vars/runner/stack.yaml"
+    mode: "0644"
+  vars:
+    stack_definition:
+      stack:
+        awx:
+          kubeconfig: /tmp/{{ awx_head_cluster_name }}.yaml
+        runners:
+          kubeconfigs: |
+            {{
+              [] |
+              zip_longest(awx_runner_cluster_names, fillvalue="/tmp") |
+              map('join', '/') |
+              zip_longest([], fillvalue="yaml") |
+              map('join', '.')
+            }}
+
+- name: Display the export environment variable command for the head cluster
+  ansible.builtin.debug:
+    msg:
+      - "Run the following command to execute kubectl commands:"
+      - export KUBECONFIG=/tmp/{{ awx_head_cluster_name }}.yaml
