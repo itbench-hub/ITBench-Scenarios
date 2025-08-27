@@ -30,7 +30,7 @@
           type: job_template
         related:
           success_nodes:
-            - identifier: node-inject-fault
+            - identifier: node-install-recorders
           always_nodes: []
       # ToDo: Replace with *NEW* implementation
       # - identifier: node-telemetry-access
@@ -48,9 +48,8 @@
           type: job_template
         related:
           success_nodes:
-            - identifier: node-handover-to-agent
-          failure_nodes:
             - identifier: node-inject-fault
+          failure_nodes: []
           always_nodes: []
       - identifier: node-inject-fault
         unified_job_template:
