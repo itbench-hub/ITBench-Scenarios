@@ -162,9 +162,26 @@ make help
 
 A few of the tools and applications used by the various software in ITBench requires downloading images from DockerHub. However, DockerHub has [rate limits](https://docs.docker.com/docker-hub/usage/) which will prevent an user from pulling from it after the limit has been exhuasted for that IP address until it resets.
 
-There are two recommended approaches for manuevering around this limit:
-
-1. [Create a Docker account](https://www.docker.com/get-started/)
-2. Download and store the image files on the local machine
-
-In order to do (2), one must already be able to pull the images from DockerHub. A script has been provided which uses Podman to pull down these images and store them as a tar file on the local machine. This set up can allow a user to use the images needed even in an offline fashion.
+One recommended approach for manuevering around this limit is to creating a Personal Access Token (PAT) and then using it as a secret in Kubernetes.
+Steps are as follows:
+1. **Login/Create a Docker Hub account** at https://www.docker.com/get-started/
+2. **Generate a Personal Access Token (PAT)**:
+   - Log into Docker Hub
+   - Go to Account Settings → Security
+   - Click "New Access Token"
+   - Give it a descriptive name
+   - Select appropriate permissions ("Public Repo Read" as we are pulling public images)
+   - Copy the generated token
+3. **Create a Docker Registry Secret in Kubernetes**
+    ```bash
+    kubectl create secret docker-registry dockerhub-secret \
+      --docker-server=https://index.docker.io/v1/ \
+      --docker-username=your-dockerhub-username \
+      --docker-password=your-access-token \
+      --docker-email=your-email@example.com \
+      --namespace=your-namespace
+    ```
+    You will need to repeat the above for the following namespaces:
+   1. prometheus
+   2. opensearch
+   3. jaeger
