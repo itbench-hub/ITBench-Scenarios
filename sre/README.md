@@ -182,6 +182,8 @@ Steps are as follows:
       --namespace=your-namespace
     ```
     You will need to repeat the above for the following namespaces:
-   1. prometheus
-   2. opensearch
-   3. jaeger
+    - clickhouse
+    - clickhouse-operator
+    - opensearch
+    - opensearch-collectors
+    - prometheus
