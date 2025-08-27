@@ -62,7 +62,7 @@
   kubernetes.core.helm:
     chart_ref: opentelemetry-demo
     chart_repo_url: https://open-telemetry.github.io/opentelemetry-helm-charts
-    chart_version: 0.37.2
+    chart_version: 0.37.6
     kubeconfig: "{{ applications_cluster.kubeconfig }}"
     release_name: "{{ helm_releases.otel_demo.name }}"
     release_namespace: "{{ helm_releases.otel_demo.namespace }}"
@@ -82,28 +82,33 @@
           replicas: "{{ configuration.accounting.replicas }}"
           resources:
             requests:
-              cpu: 200m
-              memory: 256Mi
+              cpu: 3m
+              memory: 50Mi
             limits:
-              memory: 512Mi
+              cpu: 10m
+              memory: 100Mi
         ad:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
           replicas: "{{ configuration.ad.replicas }}"
           resources:
             requests:
-              cpu: 25m
-              memory: 300Mi
+              cpu: 15m
+              memory: 125Mi
             limits:
-              memory: 640Mi
+              cpu: 30m
+              memory: 250Mi
         cart:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
           replicas: "{{ configuration.cart.replicas }}"
           resources:
             requests:
-              cpu: 35m
-              memory: 100Mi
+              cpu: 7m
+              memory: 30Mi
+            limits:
+              cpu: 15m
+              memory: 60Mi
         checkout:
           envOverrides:
             - name: SHIPPING_ADDR
@@ -113,47 +118,54 @@
           replicas: "{{ configuration.checkout.replicas }}"
           resources:
             requests:
-              cpu: 10m
-              memory: 20Mi
+              cpu: 3m
+              memory: 15Mi
             limits:
-              memory: 64Mi
+              cpu: 10m
+              memory: 30Mi
         currency:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
           replicas: "{{ configuration.currency.replicas }}"
           resources:
             requests:
-              cpu: 25m
-              memory: 15Mi
+              cpu: 1m
+              memory: 3Mi
             limits:
-              memory: 32Mi
+              cpu: 5m
+              memory: 6Mi
         email:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
           replicas: "{{ configuration.email.replicas }}"
           resources:
             requests:
+              cpu: 5m
+              memory: 30Mi
+            limits:
               cpu: 10m
-              memory: 75Mi
+              memory: 60Mi
         flagd:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
           resources:
             requests:
-              cpu: 15m
-              memory: 75Mi
+              cpu: 2m
+              memory: 25Mi
             limits:
-              memory: 512Mi
+              cpu: 10m
+              memory: 50Mi
         fraud-detection:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
           replicas: "{{ configuration.fraud_detection.replicas }}"
           resources:
             requests:
-              cpu: 35m
-              memory: 400Mi
+              cpu: 50m
+              memory: 80Mi
             limits:
-              memory: 1Gi
+              cpu: 100m
+              memory: 160Mi
         frontend:
           envOverrides:
             - name: SHIPPING_ADDR
@@ -163,20 +175,22 @@
           replicas: "{{ configuration.frontend.replicas }}"
           resources:
             requests:
-              cpu: 300m
-              memory: 150Mi
+              cpu: 25m
+              memory: 75Mi
             limits:
-              memory: 256Mi
+              cpu: 50m
+              memory: 150Mi
         frontend-proxy:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
           replicas: "{{ configuration.frontend_proxy.replicas }}"
           resources:
             requests:
-              cpu: 75m
-              memory: 40Mi
+              cpu: 10m
+              memory: 15Mi
             limits:
-              memory: 128Mi
+              cpu: 20m
+              memory: 30Mi
         image-provider:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
@@ -186,8 +200,11 @@
             runAsUser: 101
           resources:
             requests:
-              cpu: 10m
-              memory: 25Mi
+              cpu: 1m
+              memory: 4Mi
+            limits:
+              cpu: 5m
+              memory: 10Mi
         kafka:
           imageOverride:
             tag: 2.0.2-kafka
@@ -196,10 +213,11 @@
           replicas: "{{ configuration.kafka.replicas }}"
           resources:
             requests:
-              cpu: 50m
-              memory: 700Mi
+              cpu: 250m
+              memory: 300Mi
             limits:
-              memory: 1.5Gi
+              cpu: 400m
+              memory: 600Mi
         load-generator:
           envOverrides:
             - name: LOCUST_BROWSER_TRAFFIC_ENABLED
@@ -214,60 +232,73 @@
             requests:
               cpu: 100m
               memory: 100Mi
+            limits:
+              cpu: 500m
+              memory: 750Mi
         payment:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
           replicas: "{{ configuration.payment.replicas }}"
           resources:
             requests:
-              cpu: 50m
-              memory: 150Mi
+              cpu: 5m
+              memory: 60Mi
             limits:
-              memory: 256Mi
+              cpu: 10m
+              memory: 120Mi
         product-catalog:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
           replicas: "{{ configuration.product_catalog.replicas }}"
           resources:
             requests:
-              cpu: 50m
-              memory: 15Mi
+              cpu: 5m
+              memory: 8Mi
             limits:
-              memory: 64Mi
+              cpu: 10m
+              memory: 16Mi
         quote:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
           replicas: "{{ configuration.quote.replicas }}"
           resources:
             requests:
-              cpu: 10m
-              memory: 40Mi
+              cpu: 1m
+              memory: 10Mi
             limits:
-              memory: 128Mi
+              cpu: 5m
+              memory: 20Mi
         recommendation:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
           replicas: "{{ configuration.recommendation.replicas }}"
           resources:
             requests:
-              cpu: 50m
-              memory: 100Mi
+              cpu: 10m
+              memory: 25Mi
+            limits:
+              cpu: 20m
+              memory: 75Mi
         shipping:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
           replicas: "{{ configuration.shipping.replicas }}"
           resources:
             requests:
-              cpu: 10m
-              memory: 15Mi
+              cpu: 1m
+              memory: 3Mi
             limits:
-              memory: 64Mi
+              cpu: 5m
+              memory: 10Mi
         valkey-cart:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
           replicas: "{{ configuration.valkey_cart.replicas }}"
           resources:
             requests:
+              cpu: 3m
+              memory: 3Mi
+            limits:
               cpu: 10m
               memory: 10Mi
       grafana:
@@ -330,10 +361,11 @@
             protocol: TCP
         resources:
           requests:
-            cpu: 75m
-            memory: 200Mi
+            cpu: 50m
+            memory: 150Mi
           limits:
-            memory: 768Mi
+            cpu: 100m
+            memory: 300Mi
       prometheus:
         enabled: false
     wait: true

@@ -50,12 +50,12 @@ spec:
       rules:
         - alert: CPUEfficiency
           expr: avg by (container, namespace) (container_namespace:container_cpu_usage_seconds_per_requests:ratio_irate5m{container!="load-generator",
-            namespace="otel-demo"}) * 100 < 85
+            namespace="otel-demo"}) * 100 < 80
           for: 1m
           labels:
             severity: info
           annotations:
-            description: "{{ $labels.container }} in {{ $labels.namespace }} has a cpu efficiency below 85% for 5m (current: {{ $value }}%)"
+            description: "{{ $labels.container }} in {{ $labels.namespace }} has a cpu efficiency below 80% for 5m (current: {{ $value }}%)"
         - alert: MemoryEfficiency
           expr: avg by (container, namespace)
             (container_namespace:container_memory_working_set_bytes_per_requests_bytes:ratio_avg5m{container!="load-generator", namespace="otel-demo"}) * 100 <
