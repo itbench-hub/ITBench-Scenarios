@@ -22,12 +22,7 @@
           multiline: true
       required:
         - kubeconfig
-    injectors:
-      file:
-        template.kubeconfig: "{{ kubeconfig }}"
-      extra_vars:
-        cluster:
-          kubeconfig: "{{ tower.filename.kubeconfig }}"
+    injectors: "{{ lookup('file', 'files/credential_type_kubeconfig_injectors.json') }}"
     kind: cloud
     name: Kubeconfig
     state: present
