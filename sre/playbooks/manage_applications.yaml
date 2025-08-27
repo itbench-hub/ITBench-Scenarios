@@ -12,17 +12,6 @@
         system_cluster:
           kubeconfig: "{{ cluster.kubeconfig }}"
 
-    - name: Import cluster role
-      ansible.builtin.import_role:
-        name: ../roles/cluster
-      tags:
-        - always
-      vars:
-        cluster_files:
-          kubeconfig: "{{ cluster.kubeconfig }}"
-        cluster_tools_enabled:
-          oc: "{{ system_oc_exists }}"
-
     - name: Import variables for incident
       ansible.builtin.import_role:
         name: ../roles/incidents

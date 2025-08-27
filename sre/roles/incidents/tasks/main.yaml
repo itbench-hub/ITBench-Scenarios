@@ -1,5 +1,4 @@
 ---
-<<<<<<< HEAD
 - name: Include Helm Release variables from applications role
   ansible.builtin.include_vars:
     file: ../applications/defaults/main/helm_releases.yaml
@@ -33,12 +32,3 @@
       opensearch: "{{ 'opensearch' in incidents_spec.spec.environment.tools.selected }}"
       opentelemetry: "{{ 'opentelemetry' in incidents_spec.spec.environment.tools.selected or true }}"
       prometheus: "{{ 'prometheus' in incidents_spec.spec.environment.tools.selected or true }}"
-=======
-- name: Import faults role
-  ansible.builtin.import_role:
-    name: ../roles/faults
-  vars:
-    faults_cluster:
-      kubeconfig: "{{ incidents_cluster.kubeconfig }}"
-    faults_specs: "{{ incidents_spec.spec.faults }}"
->>>>>>> 0fc7ba6 (fix: relative role path)

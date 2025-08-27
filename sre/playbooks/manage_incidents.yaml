@@ -42,7 +42,7 @@
   tasks:
     - name: Import faults role
       ansible.builtin.import_role:
-        name: ../roles/incidents
+        name: ../roles/faults
       vars:
         faults_cluster:
           kubeconfig: "{{ cluster.kubeconfig }}"

@@ -12,17 +12,6 @@
     fail_msg: "Unable to find kubectl. Please install kubectl by following README.md instructions"
     success_msg: "kubectl is installed."
 
-- name: Debug kubeconfig path
-  ansible.builtin.debug:
-    msg:
-      - "system_cluster.kubeconfig: {{ system_cluster.kubeconfig }}"
-      - "Expanded path: {{ system_cluster.kubeconfig | ansible.builtin.expanduser }}"
-
-- name: Check if kubeconfig file exists
-  ansible.builtin.stat:
-    path: "{{ system_cluster.kubeconfig | ansible.builtin.expanduser }}"
-  register: kubeconfig_stat
-
 - name: Get kubectl client version
   ansible.builtin.command:
     cmd: "{{ system_kubectl_path.stdout }} version -o json"
