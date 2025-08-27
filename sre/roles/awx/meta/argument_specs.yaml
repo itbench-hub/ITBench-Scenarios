@@ -48,7 +48,7 @@ argument_specs:
         required: true
         type: dict
         options:
-          incidents:
+          scenarios:
             elements: int
             required: true
             type: list
@@ -93,6 +93,9 @@ argument_specs:
               url:
                 required: true
                 type: str
+              branch:
+                required: true
+                type: str
           llm_agent:
             required: true
             type: dict
@@ -108,6 +111,9 @@ argument_specs:
                     required: true
                     type: str
               url:
+                required: true
+                type: str
+              branch:
                 required: true
                 type: str
       awx_runners:
