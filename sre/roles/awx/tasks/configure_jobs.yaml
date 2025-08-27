@@ -18,11 +18,11 @@
     execution_environment: AWX-EE-Custom
     extra_vars:
       incident_id: "{{ incident }}"
-    inventory: IT-Bench-SRE
+    inventory: ITBench
     job_tags: install_tools
     job_type: run
-    name: "Incident {{ incident }}: Deploy Tools"
-    organization: ITBench-Scenarios
+    name: "Scenario-{{ incident }}--Deploy-Tools"
+    organization: ITBench
     playbook: sre/playbooks/manage_tools.yaml
     project: GitHub-ITBench
     state: present
@@ -38,11 +38,11 @@
     execution_environment: AWX-EE-Custom
     extra_vars:
       incident_id: "{{ incident }}"
-    inventory: IT-Bench-SRE
+    inventory: ITBench
     job_tags: uninstall_tools
     job_type: run
-    name: "Incident {{ incident }}: Undeploy Tools"
-    organization: ITBench-Scenarios
+    name: "Scenario-{{ incident }}--Undeploy-Tools"
+    organization: ITBench
     playbook: sre/playbooks/manage_tools.yaml
     project: GitHub-ITBench
     state: present
@@ -58,11 +58,11 @@
     execution_environment: AWX-EE-Custom
     extra_vars:
       incident_id: "{{ incident }}"
-    inventory: IT-Bench-SRE
+    inventory: ITBench
     job_tags: install_applications
     job_type: run
-    name: "Incident {{ incident }}: Deploy Applications"
-    organization: ITBench-Scenarios
+    name: "Scenario-{{ incident }}--Deploy-Applications"
+    organization: ITBench
     playbook: sre/playbooks/manage_applications.yaml
     project: GitHub-ITBench
     state: present
@@ -78,11 +78,11 @@
     execution_environment: AWX-EE-Custom
     extra_vars:
       incident_id: "{{ incident }}"
-    inventory: IT-Bench-SRE
+    inventory: ITBench
     job_tags: uninstall_applications
     job_type: run
-    name: "Incident {{ incident }}: Undeploy Applications"
-    organization: ITBench-Scenarios
+    name: "Scenario-{{ incident }}--Undeploy-Applications"
+    organization: ITBench
     playbook: sre/playbooks/manage_applications.yaml
     project: GitHub-ITBench
     state: present
@@ -98,11 +98,11 @@
     execution_environment: AWX-EE-Custom
     extra_vars:
       incident_id: "{{ incident }}"
-    inventory: IT-Bench-SRE
+    inventory: ITBench
     job_tags: inject_faults
     job_type: run
-    name: "Incident {{ incident }}: Inject Faults"
-    organization: ITBench-Scenarios
+    name: "Scenario-{{ incident }}--Inject-Faults"
+    organization: ITBench
     playbook: sre/playbooks/manage_incidents.yaml
     project: GitHub-ITBench
     state: present
@@ -118,11 +118,11 @@
     execution_environment: AWX-EE-Custom
     extra_vars:
       incident_id: "{{ incident }}"
-    inventory: IT-Bench-SRE
+    inventory: ITBench
     job_tags: remove_faults
     job_type: run
-    name: "Incident {{ incident }}: Remove Faults"
-    organization: ITBench-Scenarios
+    name: "Scenario-{{ incident }}--Remove-Faults"
+    organization: ITBench
     playbook: sre/playbooks/manage_incidents.yaml
     project: GitHub-ITBench
     state: present
@@ -170,60 +170,27 @@
 # TODO: Complete the refactoring of the following code:
 #
 #       Telemetry Access code will be added directly to the Applications Role
-#       A 10 minute pause will also be needed
-
-- name: Creating/removing job template to setup for telemetry access
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    credentials:
-      - Cluster-{{ incident_index + 1 }}-Kubeconfig
-      - AWS
-    execution_environment: AWX-EE-Custom
-    extra_vars:
-      sample_application: otel_astronomy_shop
-    job_tags: telemetry_access
-    job_type: run
-    name: "Scenario-{{ incident }}--Setup-For-Telemetry-Access"
-    organization: ITBench-Scenarios
-    playbook: sre/base.yaml
-    project: GitHub-ITBench
-    state: present
-
-- name: Capture failed deployment state
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    credentials:
-      - Cluster-{{ incident_index + 1 }}-Kubeconfig
-      - AWS
-    execution_environment: AWX-EE-Custom
-    job_tags: capture_failed_deployment_state
-    job_type: run
-    name: "Scenario-{{ incident }}--Capture-Failed-Deployment"
-    organization: ITBench-Scenarios
-    playbook: sre/base.yaml
-    project: GitHub-ITBench
-    state: present
-
-- name: Capture failed fault injection state
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    credentials:
-      - Cluster-{{ incident_index + 1 }}-Kubeconfig
-      - AWS
-    execution_environment: AWX-EE-Custom
-    job_tags: capture_failed_fault_injection_state
-    job_type: run
-    name: "Scenario-{{ incident }}--Capture-Failed-Fault-Injection"
-    organization: ITBench-Scenarios
-    playbook: sre/base.yaml
-    project: GitHub-ITBench
-    state: present
+#       Recording code will be added directory to the Applications Role
+#       Post fault injection and pre fault removal will move to a Job
+#       - A 10 minute pause will also be needed
+# - name: Creating/removing job template to setup for telemetry access
+#   awx.awx.job_template:
+#     controller_host: "{{ awx_controller_host }}"
+#     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+#     controller_username: admin
+#     credentials:
+#       - Cluster-{{ incident_index + 1 }}-Kubeconfig
+#       - AWS
+#     execution_environment: AWX-EE-Custom
+#     extra_vars:
+#       sample_application: otel_astronomy_shop
+#     job_tags: telemetry_access
+#     job_type: run
+#     name: "Scenario-{{ incident }}--Setup-For-Telemetry-Access"
+#     organization: ITBench
+#     playbook: sre/base.yaml
+#     project: GitHub-ITBench
+#     state: present
 
 - name: Node pause in lieu of SRE Agent
   awx.awx.job_template:
@@ -234,26 +201,44 @@
     job_tags: sre_agent
     job_type: run
     name: "Scenario-{{ incident }}--Node-Pause"
-    organization: ITBench-Scenarios
+    organization: ITBench
     playbook: sre/base.yaml
     project: GitHub-ITBench
     state: present
 
-- name: Uninstalling K8s resources in default namespace
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    credentials:
-      - Cluster-{{ incident_index + 1 }}-Kubeconfig
-    execution_environment: AWX-EE-Custom
-    job_tags: uninstall_sre_agent
-    job_type: run
-    name: "Scenario-{{ incident }}--Uninstalling-K8s-Resources-Default-Namespace"
-    organization: ITBench-Scenarios
-    playbook: sre/base.yaml
-    project: GitHub-ITBench
-    state: present
+# TODO: To be removed with restricted Kubeconfig becoming the default
+# - name: Uninstalling K8s resources in default namespace
+#   awx.awx.job_template:
+#     controller_host: "{{ awx_controller_host }}"
+#     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+#     controller_username: admin
+#     credentials:
+#       - Cluster-{{ incident_index + 1 }}-Kubeconfig
+#     execution_environment: AWX-EE-Custom
+#     job_tags: uninstall_sre_agent
+#     job_type: run
+#     name: "Scenario-{{ incident }}--Uninstalling-K8s-Resources-Default-Namespace"
+#     organization: ITBench
+#     playbook: sre/base.yaml
+#     project: GitHub-ITBench
+#     state: present
+
+# TODO: Need equivalent of this
+# - name: Creating/removing job template to check for alerts
+#   awx.awx.job_template:
+#     controller_host: "{{ awx_controller_host }}"
+#     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+#     controller_username: admin
+#     credentials:
+#       - Cluster-{{ incident_index + 1 }}-Kubeconfig
+#       - AWS
+#     execution_environment: AWX-EE-Custom
+#     job_type: run
+#     name: "Scenario-{{ incident }}--Check-for-Alerts"
+#     organization: ITBench
+#     playbook: sre/cron_jobs/alert_recorder.yaml
+#     project: GitHub-ITBench
+#     state: present
 
 - name: Handover to Agent
   awx.awx.job_template:
@@ -264,11 +249,11 @@
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
     execution_environment: AWX-EE-Custom
-    inventory: Demo Inventory
+    inventory: ITBench
     job_tags: handover_to_agent
     job_type: run
     name: "Scenario-{{ incident }}--Handover-To-Agent"
-    organization: ITBench-Scenarios
+    organization: ITBench
     playbook: sre/base.yaml
     project: GitHub-ITBench
     state: present
@@ -282,11 +267,11 @@
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
     execution_environment: AWX-EE-Custom
-    inventory: Demo Inventory
+    inventory: ITBench
     job_tags: handover_from_agent
     job_type: run
     name: "Scenario-{{ incident }}--Handover-From-Agent"
-    organization: ITBench-Scenarios
+    organization: ITBench
     playbook: sre/base.yaml
     project: GitHub-ITBench
     state: present
@@ -303,7 +288,7 @@
     job_tags: sre_agent
     job_type: run
     name: "Scenario-{{ incident }}--Run-SRE-Agent"
-    organization: ITBench-Scenarios
+    organization: ITBench
     playbook: deployments/ansible/base.yaml
     project: GitHub-LLM-Agent
     state: present
