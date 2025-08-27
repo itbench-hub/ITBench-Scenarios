@@ -138,11 +138,11 @@
     execution_environment: AWX-EE-Custom
     extra_vars:
       incident_id: "{{ incident }}"
-    inventory: IT-Bench-SRE
-    job_tags: inject_faults
+    inventory: ITBench
+    job_tags: install_recorders
     job_type: run
-    name: "Incident {{ incident }}: Install Data Recorders"
-    organization: ITBench-Scenarios
+    name: "Scenario-{{ incident }}--Install-Data-Recorders"
+    organization: ITBench
     playbook: sre/playbooks/manage_recorders.yaml
     project: GitHub-ITBench
     state: present
@@ -158,11 +158,11 @@
     execution_environment: AWX-EE-Custom
     extra_vars:
       incident_id: "{{ incident }}"
-    inventory: IT-Bench-SRE
-    job_tags: remove_faults
+    inventory: ITBench
+    job_tags: uninstall_recorders
     job_type: run
-    name: "Incident {{ incident }}: Uninstall Data Recorders"
-    organization: ITBench-Scenarios
+    name: "Scenario-{{ incident }}--Uninstall-Data-Recorders"
+    organization: ITBench
     playbook: sre/playbooks/manage_recorders.yaml
     project: GitHub-ITBench
     state: present

@@ -52,7 +52,7 @@
 
 - name: Import tools role for variable setting tasks
   ansible.builtin.import_role:
-    name: tools
+    name: ../roles/tools
     tasks_from: set_jaeger_endpoint
   vars:
     tools_cluster:

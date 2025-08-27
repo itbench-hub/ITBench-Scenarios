@@ -50,7 +50,7 @@
           success_nodes:
             - identifier: node-handover-to-agent
           failure_nodes:
-            - identifier: node-capture-failed-deployment
+            - identifier: node-inject-fault
           always_nodes: []
       - identifier: node-inject-fault
         unified_job_template:
@@ -98,7 +98,7 @@
     workflow_nodes:
       - identifier: node-uninstall-recorders
         unified_job_template:
-          name: "Incident {{ incident }}: Uninstall Data Recorders"
+          name: "Scenario-{{ incident }}--Uninstall-Data-Recorders"
           type: job_template
         related:
           success_nodes: []
