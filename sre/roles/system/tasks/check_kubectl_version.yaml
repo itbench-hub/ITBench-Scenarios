@@ -23,20 +23,6 @@
     path: "{{ system_cluster.kubeconfig | ansible.builtin.expanduser }}"
   register: kubeconfig_stat
 
-- name: Debug kubeconfig file status
-  ansible.builtin.debug:
-    var: kubeconfig_stat
-
-- name: Display kubeconfig content (be careful with sensitive data)
-  ansible.builtin.command:
-    cmd: "cat {{ system_cluster.kubeconfig | ansible.builtin.expanduser }}"
-  register: kubeconfig_content
-  no_log: false  # Set to true in production to avoid logging sensitive data
-
-- name: Show kubeconfig content
-  ansible.builtin.debug:
-    var: kubeconfig_content.stdout
-
 - name: Get kubectl client version
   ansible.builtin.command:
     cmd: "{{ system_kubectl_path.stdout }} version -o json"

@@ -34,29 +34,6 @@
           it-bench/monitoring: "true"
     state: present
 
-- name: Print current working directory
-  ansible.builtin.shell: pwd
-  register: current_dir
-
-- name: Display current directory
-  ansible.builtin.debug:
-    msg: "Current directory: {{ current_dir.stdout }}"
-
-- name: Print playbook directory
-  ansible.builtin.debug:
-    msg: "Playbook directory: {{ playbook_dir }}"
-
-- name: Print role path
-  ansible.builtin.debug:
-    msg: "Role path: {{ role_path }}"
-
-- name: Debug before importing tools role
-  ansible.builtin.debug:
-    msg:
-      - "About to import tools role for clickhouse credentials"
-      - "tools_cluster.kubeconfig: {{ tools_cluster.kubeconfig | default('UNDEFINED') }}"
-      - "tools_instances: {{ tools_instances | default('UNDEFINED') }}"
-
 - name: Import tools role for variable setting tasks
   ansible.builtin.import_role:
     name: ../roles/tools
