@@ -5,7 +5,7 @@
   pre_tasks:
     - name: Import system role
       ansible.builtin.import_role:
-        name: system
+        name: ../roles/system
       tags:
         - always
       vars:
@@ -14,7 +14,7 @@
 
     - name: Import variables for incident
       ansible.builtin.import_role:
-        name: incidents
+        name: ../roles/incidents
       tags:
         - always
       vars:
@@ -25,7 +25,7 @@
   tasks:
     - name: Import applications role
       ansible.builtin.import_role:
-        name: applications
+        name: ../roles/applications
       vars:
         applications_cluster:
           kubeconfig: "{{ cluster.kubeconfig }}"
