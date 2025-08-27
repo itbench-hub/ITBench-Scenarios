@@ -22,7 +22,7 @@
           multiline: true
       required:
         - kubeconfig
-    injectors: "{{ lookup('file', 'files/credential_type_kubeconfig_injectors.json') }}"
+    injectors: "{{ lookup('ansible.builtin.file', 'files/credential_type_kubeconfig_injectors.json') }}"
     kind: cloud
     name: Kubeconfig
     state: present
