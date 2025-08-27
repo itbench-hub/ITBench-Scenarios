@@ -3,7 +3,7 @@
   ansible.builtin.set_fact:
     awx_experiment_workflows: |
       {{
-        awx_experiments.incidents |
+        awx_experiments.scenarios |
         product(range(1, ((awx_experiments.trials | int) + 1)))
       }}
   tags:
@@ -26,12 +26,12 @@
 
 # TODO: Replace the fake UUID with a real generated one
 
-- name: Launch the workflow for `Start Incident`
+- name: Launch the workflow for `Start Scenario`
   awx.awx.workflow_launch:
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    workflow_template: "Start Incident {{ item[0] }}"
+    workflow_template: "Start-Scenario-{{ item[0] }}"
     extra_vars:
       run_uuid: this-is-a-fake-id
       scenario_number: "{{ item[0] }}"
@@ -45,12 +45,12 @@
   tags:
     - launch_start_workflow
 
-- name: Launch the workflow for `Stop Incident`
+- name: Launch the workflow for `Stop Scenario`
   awx.awx.workflow_launch:
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    workflow_template: "Stop Incident {{ item[0] }}"
+    workflow_template: "Stop-Scenario-{{ item[0] }}"
     extra_vars:
       run_uuid: this-is-a-fake-id
       scenario_number: "{{ item[0] }}"

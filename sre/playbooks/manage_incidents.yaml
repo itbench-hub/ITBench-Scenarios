@@ -13,7 +13,7 @@
 
     - name: Import system role
       ansible.builtin.import_role:
-        name: system
+        name: ../roles/system
       tags:
         - always
       vars:
@@ -22,7 +22,7 @@
 
     - name: Import cluster role
       ansible.builtin.import_role:
-        name: cluster
+        name: ../roles/cluster
       tags:
         - always
       vars:
@@ -33,7 +33,7 @@
 
     - name: Import variables for incident
       ansible.builtin.import_role:
-        name: incidents
+        name: ../roles/incidents
       tags:
         - always
       vars:
@@ -49,6 +49,14 @@
             leaderboard_status:
               status: progressing
             leaderboard_storage: "{{ storage }}"
+
+        - name: Import faults role
+          ansible.builtin.import_role:
+            name: ../roles/faults
+          vars:
+            faults_cluster:
+              kubeconfig: "{{ cluster.kubeconfig }}"
+            faults_specs: "{{ incidents_spec.spec.faults }}"
 
         - name: Import recorders role
           ansible.builtin.import_role:
