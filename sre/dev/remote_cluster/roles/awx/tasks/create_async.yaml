@@ -23,7 +23,7 @@
     map_public: true
     state: present
     tags:
-      Name: "{{ awx_stack.name_prefix }}-public-subnet-{{ item }}"
+      Name: "{{ awx_stack.name_prefix }}-public-subnet-{{ item | string }}"
       Environment: k8s
       ManagedBy: ansible
   loop: "{{ range(1, (awx_cluster_names | length) + 1) | list }}"

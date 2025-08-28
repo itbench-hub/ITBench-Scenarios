@@ -55,6 +55,12 @@
   tags:
     - create
 
+- name: Import export tasks
+  ansible.builtin.import_tasks:
+    file: export.yaml
+  tags:
+    - export
+
 - name: Import asynchronous AWX stack deletion tasks
   ansible.builtin.import_tasks:
     file: delete_async.yaml
