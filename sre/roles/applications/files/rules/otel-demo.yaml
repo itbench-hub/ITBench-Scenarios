@@ -49,22 +49,22 @@ spec:
       interval: 1m
       rules:
         - alert: CPUEfficiency
-          expr: avg by (container, namespace) (container_namespace:container_cpu_usage_seconds_per_requests:ratio_irate5m{container!="load-generator",
-            namespace="otel-demo"}) * 100 < 80
-          for: 1m
+          expr: round(avg by (container, namespace) (container_namespace:container_cpu_usage_seconds_per_requests:ratio_irate1m{container!="load-generator",
+            namespace="otel-demo"}) * 100) < 65
+          for: 2m
           labels:
             severity: info
           annotations:
-            description: "{{ $labels.container }} in {{ $labels.namespace }} has a cpu efficiency below 80% for 5m (current: {{ $value }}%)"
+            description: "{{ $labels.container }} in {{ $labels.namespace }} has a cpu efficiency below 65% for 5m (current: {{ $value }}%)"
         - alert: MemoryEfficiency
-          expr: avg by (container, namespace)
-            (container_namespace:container_memory_working_set_bytes_per_requests_bytes:ratio_avg5m{container!="load-generator", namespace="otel-demo"}) * 100 <
-            70
-          for: 1m
+          expr: round(avg by (container, namespace)
+            (container_namespace:container_memory_working_set_bytes_per_requests_bytes:ratio_avg1m{container!~"load-generator|flagd-ui", namespace="otel-demo"})
+            * 100) < 75
+          for: 2m
           labels:
             severity: info
           annotations:
-            description: "{{ $labels.container }} in {{ $labels.namespace }} has a memory efficiency below 70% for 5m (current: {{ $value }}%)"
+            description: "{{ $labels.container }} in {{ $labels.namespace }} has a memory efficiency below 75% for 5m (current: {{ $value }}%)"
     - name: GoldenSignalAlerts
       interval: 1m
       rules:
