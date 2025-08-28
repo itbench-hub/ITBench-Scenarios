@@ -41,6 +41,10 @@ endif
 create_awx_stack: ## Creates an AWX stack created by kops
 	ansible-playbook -i inventory.yaml playbooks/manage_awx_stack.yaml --tags "create"
 
+.PHONY: export_awx_kubeconfigs
+export_awx_kubeconfigs: ## Exports the kubeconfigs of all clusters used in an AWX stack
+	ansible-playbook -i inventory.yaml playbooks/manage_awx_stack.yaml --tags "export"
+
 .PHONY: destroy_awx_stack
 destroy_awx_stack: ## Destroy an AWX stack created by kops
 	ansible-playbook -i inventory.yaml playbooks/manage_awx_stack.yaml --tags "delete"
