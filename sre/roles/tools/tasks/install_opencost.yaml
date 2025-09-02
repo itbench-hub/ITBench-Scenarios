@@ -21,7 +21,7 @@
       - oc
       - whoami
       - -t
-      - --kubeconfig='{{ tools_cluster.kubeconfig | ansible.builtin.expanduser }}'
+      - --kubeconfig={{ tools_cluster.kubeconfig | ansible.builtin.expanduser }}
   register: tools_prometheus_token
   changed_when: false
   when:

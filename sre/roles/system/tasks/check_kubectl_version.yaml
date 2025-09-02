@@ -19,7 +19,7 @@
       - version
       - -o
       - json
-      - --kubeconfig='{{ system_cluster.kubeconfig | ansible.builtin.expanduser }}'
+      - --kubeconfig={{ system_cluster.kubeconfig | ansible.builtin.expanduser }}
   register: system_raw_kubectl_version
   changed_when: false
 

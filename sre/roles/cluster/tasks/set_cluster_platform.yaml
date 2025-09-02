@@ -20,7 +20,7 @@
       - version
       - -o
       - json
-      - --kubeconfig='{{ cluster_files.kubeconfig | ansible.builtin.expanduser }}'
+      - --kubeconfig={{ cluster_files.kubeconfig | ansible.builtin.expanduser }}
   register: cluster_raw_oc_version
   changed_when: false
   when:

@@ -69,7 +69,7 @@
       - --all-namespaces
       - --all
       - --ignore-not-found=true
-      - --kubeconfig='{{ tools_cluster.kubeconfig | ansible.builtin.expanduser }}'
+      - --kubeconfig={{ tools_cluster.kubeconfig | ansible.builtin.expanduser }}
   register: delete_events_result
   changed_when: delete_events_result.rc == 0
   failed_when: delete_events_result.rc not in [0, 1]
