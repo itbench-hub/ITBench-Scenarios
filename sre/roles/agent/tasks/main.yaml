@@ -20,6 +20,8 @@
         - grant_access
   tags:
     - grant_access
+  when:
+    - agent_namespaces | length > 0
 
 - name: Include tasks for revoking agent access to namespaces
   ansible.builtin.include_tasks:
