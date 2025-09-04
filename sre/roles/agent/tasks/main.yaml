@@ -1,4 +1,20 @@
 ---
+- name: Create Service Account
+  kubernetes.core.k8s:
+    kubeconfig: "{{ agent_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: v1
+      kind: ServiceAccount
+      metadata:
+        labels:
+          app.kubernetes.io/component: access-provider
+          app.kubernetes.io/part-of: it-bench
+        name: agent
+        namespace: "{{ (agent_namespaces | first).name }}"
+    state: present
+  tags:
+    - grant_access
+
 - name: Include tasks for granting agent access to namespaces
   ansible.builtin.include_tasks:
     file: add_namespace_rbac.yaml

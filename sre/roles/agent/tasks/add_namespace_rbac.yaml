@@ -7,7 +7,6 @@
         - "list"
       read-write:
         - "*"
-
 - name: Retrieve information about namespace
   kubernetes.core.k8s_info:
     api_version: v1
@@ -16,25 +15,20 @@
     name: "{{ ns.name }}"
   register: agent_namespace_info
 
+- name: Retrieve Service Accounts for namespaces
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: ServiceAccount
+    kubeconfig: "{{ agent_cluster.kubeconfig }}"
+    label_selectors:
+      - app.kubernetes.io/component = access-provider
+      - app.kubernetes.io/part-of = it-bench
+  register: agent_service_account_info
+
 - name: Create RBAC objects
   when:
     - agent_namespace_info.resources | length == 1
   block:
-    - name: Create Service Account
-      kubernetes.core.k8s:
-        kubeconfig: "{{ agent_cluster.kubeconfig }}"
-        resource_definition:
-          apiVersion: v1
-          kind: ServiceAccount
-          metadata:
-            labels:
-              app.kubernetes.io/component: access-provider
-              app.kubernetes.io/part-of: it-bench
-            name: agent
-            namespace: "{{ ns.name }}"
-        state: present
-      register: agent_service_account
-
     - name: Create Role
       kubernetes.core.k8s:
         kubeconfig: "{{ agent_cluster.kubeconfig }}"
@@ -53,4 +47,4 @@
         state: present
       vars:
         role: "{{ agent_role.result }}"
-        service_account: "{{ agent_service_account.result }}"
+        service_account: "{{ agent_service_account_info.resources | first }}"
