@@ -109,7 +109,7 @@ launch_stop_workflow: ## Launches the AWX workflow's equivalent of make stop_inc
 
 .PHONY: generate_agent_bundle
 generate_agent_bundle: ## Generates a bundle for an LLM Agent to interface with
-	ansible-playbook -i inventory.yaml playbooks/generate_agent_bundle.yaml
+	ANSIBLE_STDOUT_CALLBACK=ansible.posix.json ansible-playbook -i inventory.yaml playbooks/generate_agent_bundle.yaml | jq -r '.plays[].tasks[] | select(.task.name == "Print agent bundle") | .hosts.localhost.msg'
 
 # TODO: See why the OBJC_DISABLE_INITIALIZE_FORK_SAFETY is needed
 
