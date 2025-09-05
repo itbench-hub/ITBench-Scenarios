@@ -9,9 +9,9 @@ metadata:
   name: agent-access
 subjects:
   - kind: ServiceAccount
-    name: {{ service_account.metadata.name }}
-    namespace: {{ service_account.metadata.namespace }}
+    name: agent
+    namespace: agent
 roleRef:
   kind: Role
-  name: {{ role.metadata.name }}
+  name: agent-access
   apiGroup: rbac.authorization.k8s.io

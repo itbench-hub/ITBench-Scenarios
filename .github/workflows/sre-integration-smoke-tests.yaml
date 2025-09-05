@@ -48,7 +48,7 @@ jobs:
           make -C sre group_vars
       - name: Create environment
         run: |
-          INCIDENT_NUMBER=1 make -C sre create_environment
+          INCIDENT_NUMBER=26 make -C sre create_environment
       - name: Test access granting
         run: |
           make -C sre enable_agent_access

@@ -7,44 +7,39 @@
         - "list"
       read-write:
         - "*"
-- name: Retrieve information about namespace
-  kubernetes.core.k8s_info:
-    api_version: v1
-    kind: Namespace
+
+- name: Create namespace
+  kubernetes.core.k8s:
     kubeconfig: "{{ agent_cluster.kubeconfig }}"
-    name: "{{ ns.name }}"
-  register: agent_namespace_info
+    src: files/namespace.yaml
+    state: present
 
-- name: Retrieve Service Accounts for namespaces
-  kubernetes.core.k8s_info:
-    api_version: v1
-    kind: ServiceAccount
+- name: Create service account
+  kubernetes.core.k8s:
     kubeconfig: "{{ agent_cluster.kubeconfig }}"
-    label_selectors:
-      - app.kubernetes.io/component = access-provider
-      - app.kubernetes.io/part-of = it-bench
-  register: agent_service_account_info
+    src: files/serviceaccount.yaml
+    state: present
 
-- name: Create RBAC objects
-  when:
-    - agent_namespace_info.resources | length == 1
-  block:
-    - name: Create Role
-      kubernetes.core.k8s:
-        kubeconfig: "{{ agent_cluster.kubeconfig }}"
-        namespace: "{{ ns.name }}"
-        template: templates/role.j2
-        state: present
-      register: agent_role
-      vars:
-        verbs: "{{ agent_access_verbs[ns.access] }}"
+- name: Create role in selected namespaces
+  kubernetes.core.k8s:
+    kubeconfig: "{{ agent_cluster.kubeconfig }}"
+    namespace: "{{ ns.name }}"
+    template: templates/role.j2
+    state: present
+  loop: "{{ agent_namespaces }}"
+  loop_control:
+    label: namespace/{{ ns.name }}
+    loop_var: ns
+  vars:
+    verbs: "{{ agent_access_verbs[ns.access] }}"
 
-    - name: Create RoleBinding
-      kubernetes.core.k8s:
-        kubeconfig: "{{ agent_cluster.kubeconfig }}"
-        namespace: "{{ ns.name }}"
-        template: templates/rolebinding.j2
-        state: present
-      vars:
-        role: "{{ agent_role.result }}"
-        service_account: "{{ agent_service_account_info.resources | first }}"
+- name: Create role binding in selected namespaces
+  kubernetes.core.k8s:
+    kubeconfig: "{{ agent_cluster.kubeconfig }}"
+    namespace: "{{ ns.name }}"
+    src: files/rolebinding.yaml
+    state: present
+  loop: "{{ agent_namespaces }}"
+  loop_control:
+    label: namespace/{{ ns.name }}
+    loop_var: ns
