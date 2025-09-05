@@ -81,14 +81,14 @@
     - name: Create bundle file
       ansible.builtin.copy:
         content: "{{ leaderboard_bundle.status | to_nice_json(indent=2) }}"
-        dest: "/tmp/bundle_status.json"
+        dest: /tmp/bundle_status.json
         mode: "0644"
 
     - name: Copy bundle file into local directory
       ansible.builtin.copy:
         dest: "{{ storage.local.directory }}/bundle_status.json"
         mode: "0644"
-        src: /tmp/status.json
+        src: /tmp/bundle_status.json
       when:
         - storage.local is defined
 
@@ -97,7 +97,7 @@
         endpoint_url: "{{ storage.s3.endpoint }}"
         bucket: "{{ storage.s3.bucket }}"
         object: "/{{ storage.s3.directory }}/bundle_status.json"
-        src: /tmp/status.json
+        src: /tmp/bundle_status.json
         mode: put
       when:
         - storage.s3 is defined
