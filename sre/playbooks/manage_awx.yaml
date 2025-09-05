@@ -1,3 +1,4 @@
+---
 - name: Manage SRE and FinOps AWX Stack
   hosts:
     - runner
