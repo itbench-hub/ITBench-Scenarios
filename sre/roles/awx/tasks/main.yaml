@@ -9,7 +9,7 @@
   ansible.builtin.import_tasks:
     file: configure_awx.yaml
   tags:
-    - install_tools
+    - configure_pipeline
 
 - name: Import AWX workflow launch tasks
   ansible.builtin.import_tasks:
