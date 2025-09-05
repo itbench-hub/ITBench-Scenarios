@@ -1,7 +1,5 @@
 # Makefile to run Ansible playbooks
 
-EXECUTE_CHECKS_IN_BACKGROUND ?= false
-
 NUMBER_OF_RUNS = 1
 
 
@@ -62,6 +60,24 @@ else
 	ansible-playbook -i inventory.yaml playbooks/manage_applications.yaml --tags "uninstall_applications"
 endif
 
+.PHONY: deploy_recorders
+deploy_recorders: ## Deploys the data recorders to cluster
+ifdef INCIDENT_NUMBER
+	ansible-playbook -i inventory.yaml playbooks/manage_recorders.yaml --tags "install_recorders" \
+		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
+else
+	ansible-playbook -i inventory.yaml playbooks/manage_recorders.yaml --tags "install_recorders"
+endif
+
+.PHONY: undeploy_recorders
+undeploy_recorders: ## Undeploys the data recorders to cluster
+ifdef INCIDENT_NUMBER
+	ansible-playbook -i inventory.yaml playbooks/manage_recorders.yaml --tags "uninstall_recorders" \
+		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
+else
+	ansible-playbook -i inventory.yaml playbooks/manage_recorders.yaml --tags "uninstall_recorders"
+endif
+
 .PHONY: inject_incident_fault
 inject_incident_fault: ## Injects the fault used in a specific incident
 ifdef INCIDENT_NUMBER
@@ -87,10 +103,10 @@ create_environment: deploy_tools deploy_applications ## Deploys tools and applic
 destroy_environment: undeploy_applications undeploy_tools ## Undeploys tools and applications to cluster
 
 .PHONY: start_incident
-start_incident: create_environment inject_incident_fault ## Starts an incident by deploying a stack, application, and fault for an incident
+start_incident: create_environment deploy_recorders inject_incident_fault ## Starts an incident by deploying a stack, applications, faults, and recorders for an incident
 
 .PHONY: stop_incident
-stop_incident: remove_incident_fault destroy_environment ## Stops an incident by undeploying a stack, application, and fault for an incident
+stop_incident: undeploy_recorders remove_incident_fault destroy_environment ## Stops an incident by undeploying a stack, applications, faults, and recorders for an incident
 
 .PHONY: enable_agent_access
 enable_agent_access: ## Adds access controls for llm agent
@@ -136,20 +152,6 @@ validate_docs: ## Validates documention for an incident
 injection_docs: ## Generates documentation for all fault injection
 	export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES; \
 	ansible-playbook base.yaml --tags "injection_docs"
-
-.PHONY: check_alerts
-check_alerts:
-ifeq ($(EXECUTE_CHECKS_IN_BACKGROUND),false)
-	ansible-playbook -v base.yaml --tags "book_keeping" \
-		--extra-vars "is_book_keeping=true" \
-		--extra-vars "sample_application=$(SAMPLE_APPLICATION)" \
-		$(BOOK_KEEPING_EXTRA_VARS)
-else
-	nohup ansible-playbook -v base.yaml --tags "book_keeping" \
-		--extra-vars "is_book_keeping=true" \
-		--extra-vars "sample_application=$(SAMPLE_APPLICATION)" \
-		$(BOOK_KEEPING_EXTRA_VARS) &
-endif
 
 .SILENT: fetch_alerts
 fetch_alerts:
@@ -289,3 +291,8 @@ bundle_info:
 	@echo "Executing 'make generate_agent_bundle'..."
 	@echo ""
 	$(MAKE) generate_agent_bundle
+
+.PHONY: check_alerts
+check_alerts:
+	@echo "WARNING: 'make check_alerts' is deprecated. Please use 'make deploy_recorders' instead."
+	@echo "This command will be removed in a future version."
