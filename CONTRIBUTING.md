@@ -46,9 +46,9 @@ In order to sign and commit code using commitizen, please run the following comm
 cz commit -- --signoff
 ```
 
-### Committing to SRE Scenarios
+## Committing to SRE Scenarios
 
-#### Add a new tool
+### Add a new tool
 
 **Note:** It is recommended that a tool installed to a Kubernetes cluster use Helm as the deployment mechanism. This helps to simplify the deployment process and keeps the general uniformity of ITBench's deployment.
 
@@ -58,7 +58,7 @@ cz commit -- --signoff
 3. Expand the [tools argument spec](./sre/roles/tools/meta/argument_specs.yaml) and add the tool to the [tools group variables](./sre/group_vars/environment/tools.yaml.example). Also, update the [incident load task](./sre/roles/incidents/tasks/load.yaml).
 4. Create a PR titled: `feat: new tool [<tool name>]`
 
-#### Add a new application
+### Add a new application
 
 **Note:** It is recommended that an application installed to a Kubernetes cluster use Helm as the deployment mechanism. This helps to simplify the deployment process and keeps the general uniformity of ITBench's deployment.
 
@@ -70,7 +70,7 @@ cz commit -- --signoff
 3. Expand the [applications argument spec](./sre/roles/applications/meta/argument_specs.yaml) and add the tool to the [applications group variables](./sre/group_vars/environment/applications.yaml.example). Also, update the [incident load task](./sre/roles/incidents/tasks/main.yaml).
 4. Create a PR titled: `feat: new application [<application name>]`
 
-#### Add a new fault injection (and removal)
+### Add a new fault injection (and removal)
 
 **Note:** When creating tasks, please use the given Ansible modules whenever possible. This reduces the overhead in reviewing the fault and keeps the uniformity of the ITBench codebase. For example, when making a task that creates a Kubernetes object, use the `kubernetes.core.k8s` collection instead of using `ansible.builtin.command` and invoking the kubectl CLI. The collections used in this project can be found [here](./sre/requirements.yaml) and documentation for them can be found [here](https://docs.ansible.com/ansible/latest/collections/index.html).
 
@@ -83,7 +83,7 @@ cz commit -- --signoff
   - This file is titled `incident_<unique int id>`
 5. Create a PR titled: `feat: new fault [<fault name>]`
 
-#### Add a new incident
+### Add a new incident
 
 **Note:** The structure of the incident spec file is defined [here](./sre/roles/incidents/meta/argument_specs.yaml) and the structure of the fault spec is defined [here](./sre/roles/faults/meta/argument_specs.yaml).
 
