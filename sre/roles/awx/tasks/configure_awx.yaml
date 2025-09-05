@@ -186,7 +186,7 @@
     file: configure_jobs.yaml
     apply:
       tags:
-        - install_tools
+        - configure_pipeline
   loop: "{{ awx_experiments.scenarios }}"
   loop_control:
     loop_var: incident
@@ -197,7 +197,7 @@
     file: configure_workflows.yaml
     apply:
       tags:
-        - install_tools
+        - configure_pipeline
   loop: "{{ awx_experiments.scenarios }}"
   loop_control:
     loop_var: incident

@@ -18,14 +18,19 @@ group_vars: ## Generates the group variables
 deploy_awx_stack: ## Deploys AWX to a cluster
 	ansible-playbook -i inventory.yaml playbooks/manage_awx.yaml --tags "install_tools"
 
+.PHONY: configure_awx_pipeline
+configure_awx_pipeline: ## Add job and workflow templates to AWX pipeline
+	ansible-playbook -i inventory.yaml playbooks/manage_awx.yaml --tags "configure_pipeline"
+
 .PHONY: undeploy_awx_stack
 undeploy_awx_stack: ## Undeploys AWX to a cluster
 	ansible-playbook -i inventory.yaml playbooks/manage_awx.yaml --tags "uninstall_tools"
 
-.PHONY: launch_start_incident_workflow
+.PHONY: launch_start_workflow
 launch_start_workflow: ## Launches the AWX workflow's equivalent of make start_incident
 	ansible-playbook -i inventory.yaml playbooks/manage_awx.yaml --tags "launch_start_workflow"
 
+.PHONY: launch_stop_workflow
 launch_stop_workflow: ## Launches the AWX workflow's equivalent of make stop_incident
 	ansible-playbook -i inventory.yaml playbooks/manage_awx.yaml --tags "launch_stop_workflow"
 

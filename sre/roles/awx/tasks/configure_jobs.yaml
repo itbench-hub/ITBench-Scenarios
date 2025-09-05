@@ -167,30 +167,45 @@
     project: GitHub-ITBench
     state: present
 
-# TODO: Complete the refactoring of the following code:
-#
-#       Telemetry Access code will be added directly to the Applications Role
-#       Recording code will be added directory to the Applications Role
-#       Post fault injection and pre fault removal will move to a Job
-#       - A 10 minute pause will also be needed
-# - name: Creating/removing job template to setup for telemetry access
-#   awx.awx.job_template:
-#     controller_host: "{{ awx_controller_host }}"
-#     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-#     controller_username: admin
-#     credentials:
-#       - Cluster-{{ incident_index + 1 }}-Kubeconfig
-#       - AWS
-#     execution_environment: AWX-EE-Custom
-#     extra_vars:
-#       sample_application: otel_astronomy_shop
-#     job_tags: telemetry_access
-#     job_type: run
-#     name: "Scenario-{{ incident }}--Setup-For-Telemetry-Access"
-#     organization: ITBench
-#     playbook: sre/base.yaml
-#     project: GitHub-ITBench
-#     state: present
+- name: Add job template for enabling agent access
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credentials:
+      - Cluster-{{ incident_index + 1 }}-Kubeconfig
+      - AWS
+    execution_environment: AWX-EE-Custom
+    extra_vars:
+      incident_id: "{{ incident }}"
+    inventory: ITBench
+    job_tags: grant_access
+    job_type: run
+    name: "Scenario-{{ incident }}--Enable-Agent-Access"
+    organization: ITBench
+    playbook: sre/playbooks/manage_agent_access.yaml
+    project: GitHub-ITBench
+    state: present
+
+- name: Add job template for disabling agent access
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credentials:
+      - Cluster-{{ incident_index + 1 }}-Kubeconfig
+      - AWS
+    execution_environment: AWX-EE-Custom
+    extra_vars:
+      incident_id: "{{ incident }}"
+    inventory: ITBench
+    job_tags: revoke_access
+    job_type: run
+    name: "Scenario-{{ incident }}--Enable-Agent-Access"
+    organization: ITBench
+    playbook: sre/playbooks/manage_agent_access.yaml
+    project: GitHub-ITBench
+    state: present
 
 - name: Node pause in lieu of SRE Agent
   awx.awx.job_template:
@@ -205,40 +220,6 @@
     playbook: sre/base.yaml
     project: GitHub-ITBench
     state: present
-
-# TODO: To be removed with restricted Kubeconfig becoming the default
-# - name: Uninstalling K8s resources in default namespace
-#   awx.awx.job_template:
-#     controller_host: "{{ awx_controller_host }}"
-#     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-#     controller_username: admin
-#     credentials:
-#       - Cluster-{{ incident_index + 1 }}-Kubeconfig
-#     execution_environment: AWX-EE-Custom
-#     job_tags: uninstall_sre_agent
-#     job_type: run
-#     name: "Scenario-{{ incident }}--Uninstalling-K8s-Resources-Default-Namespace"
-#     organization: ITBench
-#     playbook: sre/base.yaml
-#     project: GitHub-ITBench
-#     state: present
-
-# TODO: Need equivalent of this
-# - name: Creating/removing job template to check for alerts
-#   awx.awx.job_template:
-#     controller_host: "{{ awx_controller_host }}"
-#     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-#     controller_username: admin
-#     credentials:
-#       - Cluster-{{ incident_index + 1 }}-Kubeconfig
-#       - AWS
-#     execution_environment: AWX-EE-Custom
-#     job_type: run
-#     name: "Scenario-{{ incident }}--Check-for-Alerts"
-#     organization: ITBench
-#     playbook: sre/cron_jobs/alert_recorder.yaml
-#     project: GitHub-ITBench
-#     state: present
 
 - name: Handover to Agent
   awx.awx.job_template:
