@@ -26,7 +26,7 @@ jobs:
       - name: Run ansible-lint
         uses: ansible/ansible-lint@v25.8.2
         with:
-          args: playbooks/manage_applications.yaml playbooks/manage_tools.yaml playbooks/manage_incidents.yaml playbooks/manage_recorders.yaml
+          args: playbooks
           setup_python: "false"
           working_directory: sre
           requirements_file: requirements.yaml
