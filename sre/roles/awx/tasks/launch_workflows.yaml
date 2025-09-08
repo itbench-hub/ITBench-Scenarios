@@ -40,16 +40,11 @@
     controller_username: admin
     workflow_template: "Start-Scenario-{{ item[0] }}"
     extra_vars:
-      run_uuid: "{{ awx_generated_uuid.stdout }}"
-      scenario_number: "{{ item[0] }}"
-      run_number: "{{ item[1] }}"
-      sre_agent_name__version_number: "{{ awx_agent.version }}"
       storage:
         s3:
           bucket: "{{ storage.s3.bucket | default('') }}"
           endpoint: "{{ storage.s3.endpoint | default('') }}"
-          directory: "{{ awx_agent.version }}/{{ awx_generated_uuid.stdout }}/{{ item[0] }}"
-      sre_bench_runner: "{{ sre_bench_runner | default(true) }}"
+          directory: "{{ awx_agent.version }}/{{ awx_generated_uuid.stdout }}/{{ item[0] | string }}/{{ item[1] | string }}"
     wait: false
   loop: "{{ awx_experiment_workflows }}"
   tags:
@@ -62,13 +57,11 @@
     controller_username: admin
     workflow_template: "Stop-Scenario-{{ item[0] }}"
     extra_vars:
-      run_uuid: this-is-a-fake-id
-      scenario_number: "{{ item[0] }}"
-      run_number: "{{ item[1] }}"
-      sre_agent_name__version_number: "{{ awx_agent.version }}"
-      s3_bucket_name_for_results: "{{ awx_experiments.storage.s3.bucket | default('') }}"
-      s3_endpoint_url: "{{ awx_experiments.storage.s3.endpoint | default('') }}"
-      sre_bench_runner: "{{ sre_bench_runner | default(true) }}"
+      storage:
+        s3:
+          bucket: "{{ storage.s3.bucket | default('') }}"
+          endpoint: "{{ storage.s3.endpoint | default('') }}"
+          directory: "{{ awx_agent.version }}/{{ awx_generated_uuid.stdout }}/{{ item[0] | string }}/{{ item[1] | string }}"
     wait: false
   loop: "{{ awx_experiment_workflows }}"
   tags:
