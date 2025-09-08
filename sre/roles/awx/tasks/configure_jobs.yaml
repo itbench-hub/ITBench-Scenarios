@@ -114,7 +114,7 @@
       - AWS
     execution_environment: AWX-EE-Custom
     inventory: ITBench
-    job_tags: remove_access
+    job_tags: revoke_access
     job_type: run
     name: "Scenario-{{ incident }}--Remove-Access-From-Agent"
     organization: ITBench
