@@ -23,16 +23,16 @@
       when:
         - incident_id is defined
   tasks:
-    - name: Import required roles
+    - name: Import leaderboard role
+      ansible.builtin.import_role:
+        name: leaderboard
+      vars:
+        leaderboard_status:
+          status: progressing
+        leaderboard_storage: "{{ storage }}"
+
+    - name: Attempt to perform tasks in application role
       block:
-        - name: Import leaderboard role
-          ansible.builtin.import_role:
-            name: leaderboard
-          vars:
-            leaderboard_status:
-              status: progressing
-            leaderboard_storage: "{{ storage }}"
-        
         - name: Import applications role
           ansible.builtin.import_role:
             name: applications
@@ -43,7 +43,7 @@
               otel_demo:
                 configuration: "{{ incidents_applications.otel_demo.configuration | default({}) }}"
                 enabled: "{{ incidents_applications.otel_demo.enabled | default(applications.otel_demo) }}"
-                
+
         - name: Import leaderboard role
           ansible.builtin.import_role:
             name: leaderboard
