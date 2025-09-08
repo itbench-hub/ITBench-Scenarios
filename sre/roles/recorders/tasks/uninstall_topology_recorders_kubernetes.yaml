@@ -81,9 +81,17 @@
       - "*.json"
   register: recorders_kubernetes_files
 
+- name: Ensure topology_information directory exists on local
+  ansible.builtin.file:
+    path: "{{ recorders_storage.local.directory }}/topology_information"
+    state: directory
+    mode: "0755"
+  when:
+    - recorders_storage.local is defined
+
 - name: Copy exported data into local directory
   ansible.builtin.copy:
-    dest: "{{ recorders_storage.local.directory }}/{{ file.path | basename }}"
+    dest: "{{ recorders_storage.local.directory }}/topology_information/{{ file.path | basename }}"
     mode: "0644"
     src: "{{ file.path }}"
   loop: "{{ recorders_kubernetes_files.files }}"
@@ -92,6 +100,7 @@
     loop_var: file
   when:
     - recorders_storage.local is defined
+    - recorders_kubernetes_files is defined
 
 - name: Upload exported data to S3 bucket
   amazon.aws.s3_object:
@@ -106,3 +115,5 @@
     loop_var: file
   when:
     - recorders_storage.s3 is defined
+    - recorders_kubernetes_files is defined
+

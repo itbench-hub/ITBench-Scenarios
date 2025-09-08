@@ -49,9 +49,17 @@
       - "*.json"
   register: recorders_jaeger_files
 
+- name: Ensure trace_information directory exists on local
+  ansible.builtin.file:
+    path: "{{ recorders_storage.local.directory }}/trace_information"
+    state: directory
+    mode: "0755"
+  when:
+    - recorders_storage.local is defined
+
 - name: Copy exported data into local directory
   ansible.builtin.copy:
-    dest: "{{ recorders_storage.local.directory }}/{{ file.path | basename }}"
+    dest: "{{ recorders_storage.local.directory }}/trace_information/{{ file.path | basename }}"
     mode: "0644"
     src: "{{ file.path }}"
   loop: "{{ recorders_jaeger_files.files }}"
@@ -66,7 +74,7 @@
   amazon.aws.s3_object:
     endpoint_url: "{{ recorders_storage.s3.endpoint }}"
     bucket: "{{ recorders_storage.s3.bucket }}"
-    object: "/{{ recorders_storage.s3.directory }}/{{ file.path | basename }}"
+    object: "/{{ recorders_storage.s3.directory }}/trace_information/{{ file.path | basename }}"
     src: "{{ file.path }}"
     mode: put
   loop: "{{ recorders_jaeger_files.files }}"

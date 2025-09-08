@@ -64,9 +64,17 @@
       - "*.json"
   register: recorders_prometheus_files
 
+- name: Ensure alerts directory exists on local
+  ansible.builtin.file:
+    path: "{{ recorders_storage.local.directory }}/alerts"
+    state: directory
+    mode: "0755"
+  when:
+    - recorders_storage.local is defined
+
 - name: Copy exported data into local directory
   ansible.builtin.copy:
-    dest: "{{ recorders_storage.local.directory }}/{{ file.path | basename }}"
+    dest: "{{ recorders_storage.local.directory }}/alerts/{{ file.path | basename }}"
     mode: "0644"
     src: "{{ file.path }}"
   loop: "{{ recorders_prometheus_files.files }}"
@@ -75,6 +83,7 @@
     loop_var: file
   when:
     - recorders_storage.local is defined
+    - recorders_prometheus_files is defined
 
 - name: Upload exported data to S3 bucket
   amazon.aws.s3_object:
@@ -89,3 +98,4 @@
     loop_var: file
   when:
     - recorders_storage.s3 is defined
+    - recorders_prometheus_files is defined
