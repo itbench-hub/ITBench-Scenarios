@@ -13,38 +13,40 @@
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
+    inventory: ITBench
     name: "Start-Scenario-{{ incident }}"
     state: present
     workflow_nodes:
-      - identifier: node-install-observability-stack
+      - identifier: node-deploy-tools
         unified_job_template:
           name: "Scenario-{{ incident }}--Deploy-Tools"
           type: job_template
         related:
           success_nodes:
-            - identifier: node-install-sample-application
+            - identifier: node-install-applications
+          failure_nodes: []
           always_nodes: []
-      - identifier: node-install-sample-application
+      - identifier: node-install-applications
         unified_job_template:
           name: "Scenario-{{ incident }}--Deploy-Applications"
           type: job_template
         related:
           success_nodes:
             - identifier: node-install-recorders
+          failure_nodes: []
           always_nodes: []
-      # ToDo: Replace with *NEW* implementation
-      # - identifier: node-telemetry-access
-      #   unified_job_template:
-      #     name: "Scenario-{{ incident }}--Setup-For-Telemetry-Access"
-      #     type: job_template
-      #   related:
-      #     success_nodes:
-      #       - identifier: node-trace-gathering
-      #     failure_nodes:
-      #       - identifier: node-capture-failed-deployment
       - identifier: node-install-recorders
         unified_job_template:
           name: "Scenario-{{ incident }}--Install-Data-Recorders"
+          type: job_template
+        related:
+          success_nodes:
+            - identifier: node-grant-access-to-agent
+          failure_nodes: []
+          always_nodes: []
+      - identifier: node-grant-access-to-agent
+        unified_job_template:
+          name: "Scenario-{{ incident }}--Grant-Access-To-Agent"
           type: job_template
         related:
           success_nodes:
@@ -57,7 +59,8 @@
           type: job_template
         related:
           success_nodes:
-            - identifier: node-check-for-alerts
+            - identifier: node-handover-to-agent
+          failure_nodes: []
           always_nodes: []
       # # TODO: Replace with a topology recorder run
       # - identifier: node-post-fault-injection
@@ -70,21 +73,22 @@
       #     failure_nodes:
       #       - identifier: node-capture-failed-deployment
       #     always_nodes: []
-      - identifier: node-check-for-alerts
-        unified_job_template:
-          name: "Scenario-{{ incident }}--Check-for-Alerts"
-          type: job_template
-        related:
-          success_nodes: [] # - identifier: node-handover-to-agent
-          always_nodes: []
-      # # TODO: Need equivalent of handover-to-agent-record
-      # - identifier: node-handover-to-agent
+      # - identifier: node-check-for-alerts
       #   unified_job_template:
-      #     name: "Scenario-{{ incident }}--Handover-To-Agent"
+      #     name: "Scenario-{{ incident }}--Check-for-Alerts"
       #     type: job_template
       #   related:
-      #     success_nodes: []
+      #     success_nodes: [] # - identifier: node-handover-to-agent
+      #     failure_nodes: []
       #     always_nodes: []
+      - identifier: node-handover-to-agent
+        unified_job_template:
+          name: "Scenario-{{ incident }}--Handover-To-Agent"
+          type: job_template
+        related:
+          success_nodes: []
+          failure_nodes: []
+          always_nodes: []
 
 - name: Create workflow for stopping incidents
   awx.awx.workflow_job_template:
@@ -93,8 +97,27 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     name: "Stop-Scenario-{{ incident }}"
+    inventory: ITBench
     state: present
     workflow_nodes:
+      - identifier: node-handback-from-agent
+        unified_job_template:
+          name: "Scenario-{{ incident }}--Handback-From-Agent"
+          type: job_template
+        related:
+          success_nodes: []
+          failure_nodes: []
+          always_nodes:
+            - identifier: node-remove-access-from-agent
+      - identifier: node-remove-access-from-agent
+        unified_job_template:
+          name: "Scenario-{{ incident }}--Remove-Access-From-Agent"
+          type: job_template
+        related:
+          success_nodes: []
+          failure_nodes: []
+          always_nodes:
+            - identifier: node-uninstall-recorders
       - identifier: node-uninstall-recorders
         unified_job_template:
           name: "Scenario-{{ incident }}--Uninstall-Data-Recorders"
@@ -113,25 +136,6 @@
           failure_nodes: []
           always_nodes:
             - identifier: node-undeploy-applications
-      # ToDo: To be removed in lieu on new implementation with stringent Kubeconfig
-      # - identifier: node-uninstalling-k8s-resources-default-namespace
-      #   unified_job_template:
-      #     name: "Scenario-{{ incident }}--Uninstalling-K8s-Resources-Default-Namespace"
-      #     type: job_template
-      #   related:
-      #     success_nodes: []
-      #     failure_nodes: []
-      #     always_nodes:
-      #       - identifier: node-alert-recorder-off
-      # - identifier: node-alert-recorder-off
-      #   unified_job_template:
-      #     name: "Scenario-{{ incident }}--Alert-Recorder-Off"
-      #     type: job_template
-      #   related:
-      #     success_nodes: []
-      #     failure_nodes: []
-      #     always_nodes:
-      #       - identifier: node-uninstall-sample-application-end
       - identifier: node-undeploy-applications
         unified_job_template:
           name: "Scenario-{{ incident }}--Undeploy-Applications"

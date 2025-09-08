@@ -87,6 +87,40 @@
     project: GitHub-ITBench
     state: present
 
+- name: Add job template to grant access to agent
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credentials:
+      - Cluster-{{ incident_index + 1 }}-Kubeconfig
+      - AWS
+    execution_environment: AWX-EE-Custom
+    inventory: ITBench
+    job_tags: grant_access
+    job_type: run
+    name: "Scenario-{{ incident }}--Grant-Access-To-Agent"
+    organization: ITBench
+    playbook: sre/playbooks/manage_agent_access.yaml
+    project: GitHub-ITBench
+
+- name: Add job template to remove access from agent
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credentials:
+      - Cluster-{{ incident_index + 1 }}-Kubeconfig
+      - AWS
+    execution_environment: AWX-EE-Custom
+    inventory: ITBench
+    job_tags: remove_access
+    job_type: run
+    name: "Scenario-{{ incident }}--Remove-Access-From-Agent"
+    organization: ITBench
+    playbook: sre/playbooks/manage_agent_access.yaml
+    project: GitHub-ITBench
+
 - name: Add job template for injecting faults
   awx.awx.job_template:
     controller_host: "{{ awx_controller_host }}"
@@ -181,7 +215,7 @@
     inventory: ITBench
     job_tags: grant_access
     job_type: run
-    name: "Scenario-{{ incident }}--Enable-Agent-Access"
+    name: "Scenario-{{ incident }}--Grant-Access-To-Agent"
     organization: ITBench
     playbook: sre/playbooks/manage_agent_access.yaml
     project: GitHub-ITBench
@@ -201,23 +235,9 @@
     inventory: ITBench
     job_tags: revoke_access
     job_type: run
-    name: "Scenario-{{ incident }}--Enable-Agent-Access"
+    name: "Scenario-{{ incident }}--Remove-Access-From-Agent"
     organization: ITBench
     playbook: sre/playbooks/manage_agent_access.yaml
-    project: GitHub-ITBench
-    state: present
-
-- name: Node pause in lieu of SRE Agent
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    execution_environment: AWX-EE-Custom
-    job_tags: sre_agent
-    job_type: run
-    name: "Scenario-{{ incident }}--Node-Pause"
-    organization: ITBench
-    playbook: sre/base.yaml
     project: GitHub-ITBench
     state: present
 
@@ -231,15 +251,15 @@
       - AWS
     execution_environment: AWX-EE-Custom
     inventory: ITBench
-    job_tags: handover_to_agent
+    job_tags: agent_handover
     job_type: run
     name: "Scenario-{{ incident }}--Handover-To-Agent"
     organization: ITBench
-    playbook: sre/base.yaml
+    playbook: sre/manage_agent_transition.yaml
     project: GitHub-ITBench
     state: present
 
-- name: Handover from Agent
+- name: Handback from Agent
   awx.awx.job_template:
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
@@ -249,11 +269,11 @@
       - AWS
     execution_environment: AWX-EE-Custom
     inventory: ITBench
-    job_tags: handover_from_agent
+    job_tags: agent_handback
     job_type: run
-    name: "Scenario-{{ incident }}--Handover-From-Agent"
+    name: "Scenario-{{ incident }}--Handback-From-Agent"
     organization: ITBench
-    playbook: sre/base.yaml
+    playbook: sre/manage_agent_transition.yaml
     project: GitHub-ITBench
     state: present
 
@@ -266,6 +286,7 @@
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
     execution_environment: AWX-EE-Custom
+    inventory: ITBench
     job_tags: sre_agent
     job_type: run
     name: "Scenario-{{ incident }}--Run-SRE-Agent"

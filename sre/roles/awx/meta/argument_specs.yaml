@@ -56,14 +56,18 @@ argument_specs:
             required: false
             type: dict
             options:
+              local:
+                required: false
+                type: dict
+                options:
+                  directory:
+                    required: true
+                    type: str
               s3:
                 required: false
                 type: dict
                 options:
                   bucket:
-                    required: true
-                    type: str
-                  directory:
                     required: true
                     type: str
                   endpoint:

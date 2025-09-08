@@ -24,7 +24,12 @@
     - launch_start_workflow
     - launch_stop_workflow
 
-# TODO: Replace the fake UUID with a real generated one
+- name: Generate UUID4 for run_uuid
+  command: uuidgen -r
+  register: generated_uuid
+  tags:
+    - launch_start_workflow
+    - launch_stop_workflow
 
 - name: Launch the workflow for `Start Scenario`
   awx.awx.workflow_launch:
@@ -33,12 +38,15 @@
     controller_username: admin
     workflow_template: "Start-Scenario-{{ item[0] }}"
     extra_vars:
-      run_uuid: this-is-a-fake-id
+      run_uuid: "{{ generated_uuid.stdout }}"
       scenario_number: "{{ item[0] }}"
       run_number: "{{ item[1] }}"
       sre_agent_name__version_number: "{{ awx_agent.version }}"
-      s3_bucket_name_for_results: "{{ awx_experiments.storage.s3.bucket | default('') }}"
-      s3_endpoint_url: "{{ awx_experiments.storage.s3.endpoint | default('') }}"
+      storage:
+        s3:
+          bucket: "{{ storage.s3.bucket | default('') }}"
+          endpoint: "{{ storage.s3.endpoint | default('') }}"
+          directory: "{{ awx_agent.version }}/{{ generated_uuid.stdout }}/{{ item[0] }}"
       sre_bench_runner: "{{ sre_bench_runner | default(true) }}"
     wait: false
   loop: "{{ awx_experiment_workflows }}"
