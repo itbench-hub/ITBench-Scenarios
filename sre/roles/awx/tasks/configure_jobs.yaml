@@ -255,7 +255,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Handover-To-Agent"
     organization: ITBench
-    playbook: sre/manage_agent_transition.yaml
+    playbook: sre/playbooks/manage_agent_transition.yaml
     project: GitHub-ITBench
     state: present
 
@@ -273,7 +273,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Handback-From-Agent"
     organization: ITBench
-    playbook: sre/manage_agent_transition.yaml
+    playbook: sre/playbooks/manage_agent_transition.yaml
     project: GitHub-ITBench
     state: present
 
