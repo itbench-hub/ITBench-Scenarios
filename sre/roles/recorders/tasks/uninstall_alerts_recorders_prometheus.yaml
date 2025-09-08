@@ -98,4 +98,4 @@
     loop_var: file
   when:
     - recorders_storage.s3 is defined
-    - recorders_prometheus_files is defined
+    - recorders_prometheus_files is define

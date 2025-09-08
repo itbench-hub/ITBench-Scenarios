@@ -116,4 +116,3 @@
   when:
     - recorders_storage.s3 is defined
     - recorders_kubernetes_files is defined
-
