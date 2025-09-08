@@ -109,6 +109,8 @@
         dest: "{{ leaderboard_storage.local.directory }}/assertion.json"
         mode: "0644"
         src: /tmp/assertion.json
+      tags:
+        - always
       when:
         - leaderboard_storage.local is defined
         - leaderboard_status_conditions is defined
@@ -120,6 +122,8 @@
         object: "/{{ leaderboard_storage.s3.directory }}/assertion.json"
         src: /tmp/assertion.json
         mode: put
+      tags:
+        - always
       when:
         - leaderboard_storage.s3 is defined
         - leaderboard_status_conditions is defined
@@ -129,6 +133,8 @@
         dest: "{{ leaderboard_storage.local.directory }}/status.json"
         mode: "0644"
         src: /tmp/status.json
+      tags:
+        - always
       when:
         - leaderboard_storage.local is defined
         - leaderboard_status_events is defined
@@ -140,6 +146,8 @@
         object: "/{{ leaderboard_storage.s3.directory }}/status.json"
         src: /tmp/status.json
         mode: put
+      tags:
+        - always
       when:
         - leaderboard_storage.s3 is defined
         - leaderboard_status_events is defined
