@@ -41,38 +41,38 @@
     extra_vars:
       storage:
         s3:
-          bucket: ""
-          endpoint: ""
-          directory: ""
+          bucket: "{{ storage.s3.bucket | default('') }}"
+          endpoint: "{{ storage.s3.endpoint | default('') }}"
+          directory: "{{ awx_agent.version }}/{{ awx_generated_uuid.stdout }}/{{ item[0] | string }}/{{ item[1] | string }}"
     wait: false
   loop: "{{ awx_experiment_workflows }}"
-  register: launched_init_workflows
+  register: awx_launched_init_workflows
   tags:
     - launch_experiment_workflow
 
 - name: Wait for all launched init workflows to complete
-  uri:
+  ansible.builtin.uri:
     url: "{{ awx_controller_host }}/api/v2/workflow_jobs/{{ item.id }}/"
     method: GET
     user: admin
     password: "{{ awx_controller_password }}"
-    force_basic_auth: yes
-    return_content: yes
-    validate_certs: no
+    force_basic_auth: true
+    return_content: true
+    validate_certs: false
     timeout: 30
-  loop: "{{ launched_init_workflows.results }}"
+  loop: "{{ awx_launched_init_workflows.results }}"
   when: item.id is defined
-  register: status_init_workflows
-  until: status_init_workflows.json.status in ['successful', 'failed', 'error', 'canceled']
+  register: awx_status_init_workflows
+  until: awx_status_init_workflows.json.status in ['successful', 'failed', 'error', 'canceled']
   retries: 20
   delay: 30
   tags:
     - launch_experiment_workflow
 
 - name: Check that all init workflows are succesful
-  fail:
+  ansible.builtin.fail:
     msg: "Init workflow {{ item.json.name }} (ID: {{ item.json.id }}) failed with status: {{ item.json.status }}"
-  loop: "{{ status_init_workflows.results }}"
+  loop: "{{ awx_status_init_workflows.results }}"
   when:
     - item.json.status is defined
     - item.json.status != 'successful'
@@ -110,33 +110,33 @@
           directory: ""
     wait: false
   loop: "{{ awx_experiment_workflows }}"
-  register: launched_deinit_workflows
+  register: awx_launched_deinit_workflows
   tags:
     - deinit_experiment_workflow
 
 - name: Wait for all launched deinit workflows to complete
-  uri:
+  ansible.builtin.uri:
     url: "{{ awx_controller_host }}/api/v2/workflow_jobs/{{ item.id }}/"
     method: GET
     user: admin
     password: "{{ awx_controller_password }}"
-    force_basic_auth: yes
-    return_content: yes
-    validate_certs: no
+    force_basic_auth: true
+    return_content: true
+    validate_certs: false
     timeout: 30
-  loop: "{{ launched_deinit_workflows.results }}"
+  loop: "{{ awx_launched_deinit_workflows.results }}"
   when: item.id is defined
-  register: status_deinit_workflows
-  until: status_deinit_workflows.json.status in ['successful', 'failed', 'error', 'canceled']
+  register: awx_status_deinit_workflows
+  until: awx_status_deinit_workflows.json.status in ['successful', 'failed', 'error', 'canceled']
   retries: 20
   delay: 30
   tags:
     - deinit_experiment_workflow
 
 - name: Check that all deinit workflows are successful
-  fail:
+  ansible.builtin.fail:
     msg: "Deinit workflow {{ item.json.name }} (ID: {{ item.json.id }}) failed with status: {{ item.json.status }}"
-  loop: "{{ status_deinit_workflows.results }}"
+  loop: "{{ awx_status_deinit_workflows.results }}"
   when:
     - item.json.status is defined
     - item.json.status != 'successful'
