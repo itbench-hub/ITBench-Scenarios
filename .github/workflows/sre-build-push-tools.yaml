@@ -39,33 +39,39 @@ jobs:
             quay.io/it-bench/topology-monitor:latest
   awx-ee:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        architecture:
-          - amd64
-          - arm64
     steps:
-      - uses: actions/checkout@v5.0.0
-      - name: Login to Quay.io
-        uses: docker/login-action@v3.5.0
-        with:
-          registry: quay.io
-          username: ${{ secrets.QUAY_USERNAME }}
-          password: ${{ secrets.QUAY_ROBOT_TOKEN }}
-      - uses: actions/setup-python@v5.6.0
+      - name: Checkout codebase
+        uses: actions/checkout@v5.0.0
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3.6.0
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.11.1
+      - name: Set up Python
+        uses: actions/setup-python@v5.6.0
         with:
           python-version: '3.12'
-      - name: Install Python and Ansible dependencies
+      - name: Install Python dependencies
         run: |
-          pip install -r sre/requirements.txt
-          pip install -r sre/requirements-dev.txt
-      - name: Build AWX Execution Environment image
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+        working-directory: sre
+      - name: Create AWX Execution Environment image context
         run: |
-          ansible-builder build -v3 -t quay.io/it-bench/awx-ee:latest --container-runtime=docker
+          ansible-builder create --output-filename Dockerfile
         working-directory: sre/tools/awx-ee
-      - name: Push image
-        run: |
-          docker push quay.io/it-bench/awx-ee:latest
+      - name: Build AWX Execution Environment image
+        uses: docker/build-push-action@v6.18.0
+        env:
+          DOCKER_BUILD_RECORD_UPLOAD: false
+        with:
+          context: sre/tools/awx-ee/context
+          platforms: |
+            linux/amd64
+            linux/arm64
+          push: true
+          tags: |
+            quay.io/it-bench/awx-ee:1.0.0
+            quay.io/it-bench/awx-ee:latest
   hello-bench:
     runs-on: ubuntu-latest
     strategy:

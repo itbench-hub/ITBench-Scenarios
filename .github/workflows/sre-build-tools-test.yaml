@@ -33,28 +33,26 @@ jobs:
             quay.io/it-bench/topology-monitor:latest
   awx-ee:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        architecture:
-          - amd64
-          - arm64
     steps:
-      - uses: actions/checkout@v5.0.0
-      - uses: actions/setup-python@v5.6.0
-        with:
-          python-version: '3.12'
-      - name: Install Python and Ansible dependencies
-        run: |
-          pip install -r sre/requirements.txt
-          pip install -r sre/requirements-dev.txt
-      - name: Create AWX Execution Environment image context
-        run: |
-          ansible-builder create --output-filename Dockerfile
-        working-directory: sre/tools/awx-ee
+      - name: Checkout codebase
+        uses: actions/checkout@v5.0.0
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3.6.0
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3.11.1
+      - name: Set up Python
+        uses: actions/setup-python@v5.6.0
+        with:
+          python-version: '3.12'
+      - name: Install Python dependencies
+        run: |
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
+        working-directory: sre
+      - name: Create AWX Execution Environment image context
+        run: |
+          ansible-builder create --output-filename Dockerfile
+        working-directory: sre/tools/awx-ee
       - name: Build AWX Execution Environment image
         uses: docker/build-push-action@v6.18.0
         env:
@@ -62,7 +60,8 @@ jobs:
         with:
           context: sre/tools/awx-ee/context
           platforms: |
-            linux/${{ matrix.architecture }}
+            linux/amd64
+            linux/arm64
           push: false
           tags: |
             quay.io/it-bench/awx-ee:1.0.0
