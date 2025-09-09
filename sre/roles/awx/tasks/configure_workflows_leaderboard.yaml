@@ -7,14 +7,14 @@
   ansible.builtin.import_tasks:
     file: set_awx_controller_password.yaml
 
-- name: Create workflow for running scenarios end to end
+- name: Create leaderboard workflow for starting incidents - Stage One
   awx.awx.workflow_job_template:
     ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     inventory: ITBench
-    name: "Scenario-{{ incident }}"
+    name: "Start-Scenario-{{ incident }}"
     state: present
     workflow_nodes:
       - identifier: node-deploy-tools
@@ -62,6 +62,17 @@
             - identifier: node-handover-to-agent
           failure_nodes: []
           always_nodes: []
+      # # TODO: Replace with a topology recorder run
+      # - identifier: node-post-fault-injection
+      #   unified_job_template:
+      #     name: "Scenario-{{ incident }}--Post-Fault-Injection"
+      #     type: job_template
+      #   related:
+      #     success_nodes:
+      #       - identifier: node-check-for-alerts
+      #     failure_nodes:
+      #       - identifier: node-capture-failed-deployment
+      #     always_nodes: []
       # - identifier: node-check-for-alerts
       #   unified_job_template:
       #     name: "Scenario-{{ incident }}--Check-for-Alerts"
@@ -75,28 +86,32 @@
           name: "Scenario-{{ incident }}--Handover-To-Agent"
           type: job_template
         related:
-          success_nodes:
-            - identifier: node-run-agent
+          success_nodes: []
           failure_nodes: []
           always_nodes: []
-      - identifier: node-run-agent
-        unified_job_template:
-          name: "Scenario-{{ incident }}--Run-Agent"
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes:
-            - identifier: node-handback-from-agent
-      - identifier: node-handback-from-agent
-        unified_job_template:
-          name: "Scenario-{{ incident }}--Handback-From-Agent"
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes:
-            - identifier: node-remove-access-from-agent
+
+# Evaluation - Stage Two
+
+- name: Create workflow for stopping incidents - Stage Three
+  awx.awx.workflow_job_template:
+    ask_variables_on_launch: true
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    name: "Stop-Scenario-{{ incident }}"
+    inventory: ITBench
+    state: present
+    workflow_nodes:
+      # # Currently handled at Stage 2 -- Evaluation
+      # - identifier: node-handback-from-agent
+      #   unified_job_template:
+      #     name: "Scenario-{{ incident }}--Handback-From-Agent"
+      #     type: job_template
+      #   related:
+      #     success_nodes: []
+      #     failure_nodes: []
+      #     always_nodes:
+      #       - identifier: node-remove-access-from-agent
       - identifier: node-remove-access-from-agent
         unified_job_template:
           name: "Scenario-{{ incident }}--Remove-Access-From-Agent"

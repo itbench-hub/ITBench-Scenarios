@@ -7,22 +7,19 @@
         product(range(1, ((awx_experiments.trials | int) + 1)))
       }}
   tags:
-    - launch_start_workflow
-    - launch_stop_workflow
+    - launch_experiment_workflow
 
 - name: Import variable setting tasks
   ansible.builtin.import_tasks:
     file: set_awx_controller_host.yaml
   tags:
-    - launch_start_workflow
-    - launch_stop_workflow
+    - launch_experiment_workflow
 
 - name: Import variable setting tasks
   ansible.builtin.import_tasks:
     file: set_awx_controller_password.yaml
   tags:
-    - launch_start_workflow
-    - launch_stop_workflow
+    - launch_experiment_workflow
 
 - name: Generate UUID4 for run_uuid
   ansible.builtin.command:
@@ -30,15 +27,14 @@
   changed_when: false
   register: awx_generated_uuid
   tags:
-    - launch_start_workflow
-    - launch_stop_workflow
+    - launch_experiment_workflow
 
-- name: Launch the workflow for `Start Scenario`
+- name: Launch the workflow for running select or all scenarios end-to-end
   awx.awx.workflow_launch:
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    workflow_template: "Start-Scenario-{{ item[0] }}"
+    workflow_template: "Scenario-{{ item[0] }}"
     extra_vars:
       storage:
         s3:
@@ -48,21 +44,4 @@
     wait: false
   loop: "{{ awx_experiment_workflows }}"
   tags:
-    - launch_start_workflow
-
-- name: Launch the workflow for `Stop Scenario`
-  awx.awx.workflow_launch:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    workflow_template: "Stop-Scenario-{{ item[0] }}"
-    extra_vars:
-      storage:
-        s3:
-          bucket: "{{ storage.s3.bucket | default('') }}"
-          endpoint: "{{ storage.s3.endpoint | default('') }}"
-          directory: "{{ awx_agent.version }}/{{ awx_generated_uuid.stdout }}/{{ item[0] | string }}/{{ item[1] | string }}"
-    wait: false
-  loop: "{{ awx_experiment_workflows }}"
-  tags:
-    - launch_stop_workflow
+    - launch_experiment_workflow

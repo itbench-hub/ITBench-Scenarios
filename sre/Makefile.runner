@@ -34,6 +34,10 @@ launch_start_workflow: ## Launches the AWX workflow's equivalent of make start_i
 launch_stop_workflow: ## Launches the AWX workflow's equivalent of make stop_incident
 	ansible-playbook -i inventory.yaml playbooks/manage_awx.yaml --tags "launch_stop_workflow"
 
+.PHONY: launch_experiment_workflow
+launch_experiment_workflow: ## Launches the AWX workflow's for running select or all scenarios end to end on AWX with an agent
+	ansible-playbook -i inventory.yaml playbooks/manage_awx.yaml --tags "launch_experiment_workflow"
+
 .PHONY: awx_configure_init
 awx_configure_init:
 	@echo "WARNING: 'make awx_configure_init' is deprecated. Please use 'make deploy_awx_stack' instead."

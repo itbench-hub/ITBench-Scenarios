@@ -192,9 +192,19 @@
     loop_var: incident
     index_var: incident_index
 
-- name: Import AWX workflow configuration tasks
+- name: Import AWX workflow configuration tasks to run select or all experiments
   ansible.builtin.include_tasks:
     file: configure_workflows.yaml
+    apply:
+      tags:
+        - configure_pipeline
+  loop: "{{ awx_experiments.scenarios }}"
+  loop_control:
+    loop_var: incident
+
+- name: Import AWX workflow configuration tasks for the leaderboard
+  ansible.builtin.include_tasks:
+    file: configure_workflows_leaderboard.yaml
     apply:
       tags:
         - configure_pipeline

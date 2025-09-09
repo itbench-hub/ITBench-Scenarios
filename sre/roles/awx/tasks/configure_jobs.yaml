@@ -289,7 +289,7 @@
     inventory: ITBench
     job_tags: sre_agent
     job_type: run
-    name: "Scenario-{{ incident }}--Run-SRE-Agent"
+    name: "Scenario-{{ incident }}--Run-Agent"
     organization: ITBench
     playbook: deployments/ansible/base.yaml
     project: GitHub-LLM-Agent
@@ -297,8 +297,7 @@
     extra_vars:
       prometheus_namespace_project_name: prometheus
       sre_agent_directory: /runner/project
-      conda_sh_directory: /opt/conda/etc/profile.d/conda.sh
-      conda_env_directory: /runner/project/lumyn_env
+      venv_directory: /runner/venv
       provider_agents: "{{ awx_agent.configuration['agents_config']['provider'] }}"
       model_agents: "{{ awx_agent.configuration['agents_config']['model'] }}"
       url_agents: "{{ awx_agent.configuration['agents_config']['url'] }}"
