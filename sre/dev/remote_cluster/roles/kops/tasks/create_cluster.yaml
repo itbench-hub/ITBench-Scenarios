@@ -6,6 +6,8 @@
       - create
       - cluster
       - "{{ cluster_name }}"
+      - --cloud
+      - aws
       - --zones
       - "{{ kops_cluster.aws.zones | join(',') }}"
       - --ssh-public-key
