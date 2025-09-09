@@ -78,7 +78,7 @@
           type: job_template
         related:
           success_nodes:
-            - identifier: node-handover-to-agent
+            - identifier: node-check-for-alerts
           failure_nodes: []
           always_nodes: []
       - identifier: node-check-for-alerts
