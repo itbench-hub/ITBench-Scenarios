@@ -22,64 +22,38 @@
           kubeconfig: "{{ cluster.kubeconfig }}"
         cluster_tools_enabled:
           oc: "{{ system_oc_exists }}"
+  tasks:
+    - name: Import tools role for variable setting tasks
+      ansible.builtin.import_role:
+        name: tools
+        tasks_from: set_ingress_hostname
+      vars:
+        tools_cluster:
+          kubeconfig: "{{ cluster.kubeconfig }}"
 
-tasks:
-  - name: Get the Ingress URL
-    ansible.builtin.shell: "KUBECONFIG={{ cluster.kubeconfig }} kubectl get ingress prometheus -n prometheus -o json"
-    register: prometheus_ingress
-    retries: 5
-    delay: 60
-    until: (prometheus_ingress.stdout | length) > 0
-    ignore_errors: yes
-  
-  - name: Extract the Ingress hostname information
-    set_fact:
-      ingress_hostname: "{{ prometheus_ingress.stdout | from_json | json_query('status.loadBalancer.ingress[0].hostname') }}"
-    when: prometheus_ingress.stdout | trim != ''
-  
-  - name: Set the Prometheus URL
-    set_fact:
-      prometheus_url: "http://{{ ingress_hostname }}"
-    when: ingress_hostname is defined and ingress_hostname | trim != ''
+    - name: Call the Prometheus Alerts API until alerts in firing state are detected
+      ansible.builtin.uri:
+        url: http://{{ ingress_hostname }}/prometheus/api/v1/alerts
+        method: GET
+        return_content: true
+        body_format: json
+        headers:
+          Content-Type: "application/json"
+      register: alerts_api_result
+      retries: 30
+      delay: 15
+      until:
+        - alerts_api_result.status == 200
+        - alerts_api_result.json is defined
+        - alerts_api_result.json.data is defined
+        - alerts_api_result.json.data.alerts is defined
+        - alerts_api_result.json.data.alerts | selectattr('state', '==', 'firing') | list | length > 0
+      when:
+        - ingress_hostname is defined
 
-  - name: Attempt to check for firing alerts
-    block:
-      - name: Call the Prometheus Alerts API until alerts in firing state are detected
-        ansible.builtin.uri:
-          url: "{{ prometheus_url }}/api/v1/alerts"
-          method: GET
-          return_content: true
-          body_format: json
-          headers:
-            Content-Type: "application/json"
-        register: alerts_api_result
-        retries: 30
-        delay: 15
-        until: >
-          alerts_api_result.status == 200 and
-          alerts_api_result.json is defined and
-          alerts_api_result.json.data is defined and
-          alerts_api_result.json.data.alerts is defined and
-          (alerts_api_result.json.data.alerts | selectattr('state', '==', 'firing') | list | length > 0)
-        when: prometheus_url is defined
-
-      - name: Display firing alerts found
-        ansible.builtin.debug:
-          msg: "Found {{ alerts_api_result.json.data.alerts | selectattr('state', '==', 'firing') | list | length }} firing alerts"
-        when: alerts_api_result is defined and alerts_api_result.json is defined
-
-    rescue:
-      - name: Import leaderboard role
-        ansible.builtin.import_role:
-          name: leaderboard
-        vars:
-          leaderboard_status:
-            failed_task:
-              name: "{{ ansible_failed_task.name }}"
-              result: "{{ ansible_failed_result }}"
-            status: failed
-          leaderboard_storage: "{{ storage }}"
-
-      - name: Fail playbook
-        ansible.builtin.fail:
-          msg: "Task ({{ ansible_failed_task.name }}) has failed: {{ ansible_failed_result }}"
+    - name: Display firing alerts found
+      ansible.builtin.debug:
+        msg: Found {{ alerts_api_result.json.data.alerts | selectattr('state', '==', 'firing') | list | length }} firing alerts
+      when:
+        - alerts_api_result is defined
+        - alerts_api_result.json is defined
