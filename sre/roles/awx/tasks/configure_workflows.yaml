@@ -7,6 +7,25 @@
   ansible.builtin.import_tasks:
     file: set_awx_controller_password.yaml
 
+- name: Create workflow for initializing select or all scenarios end to end
+  awx.awx.workflow_job_template:
+    ask_variables_on_launch: true
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    inventory: ITBench
+    name: "Scenario-{{ incident }}-Init"
+    state: present
+    workflow_nodes:
+      - identifier: node-deploy-tools
+        unified_job_template:
+          name: "Scenario-{{ incident }}--Deploy-Tools"
+          type: job_template
+        related:
+          success_nodes: []
+          failure_nodes: []
+          always_nodes: []
+
 - name: Create workflow for running scenarios end to end
   awx.awx.workflow_job_template:
     ask_variables_on_launch: true
@@ -17,9 +36,9 @@
     name: "Scenario-{{ incident }}"
     state: present
     workflow_nodes:
-      - identifier: node-deploy-tools
+      - identifier: node-reinit-tools
         unified_job_template:
-          name: "Scenario-{{ incident }}--Deploy-Tools"
+          name: "Scenario-{{ incident }}--Reinit-Tools"
           type: job_template
         related:
           success_nodes:
@@ -131,8 +150,18 @@
         related:
           success_nodes: []
           failure_nodes: []
-          always_nodes:
-            - identifier: node-undeploy-tools
+          always_nodes: []
+
+- name: Create workflow for de-initializing select or all scenarios end to end
+  awx.awx.workflow_job_template:
+    ask_variables_on_launch: true
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    inventory: ITBench
+    name: "Scenario-{{ incident }}-Deinit"
+    state: present
+    workflow_nodes:
       - identifier: node-undeploy-tools
         unified_job_template:
           name: "Scenario-{{ incident }}--Undeploy-Tools"

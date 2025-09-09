@@ -8,18 +8,21 @@
       }}
   tags:
     - launch_experiment_workflow
+    - deinit_experiment_workflow
 
 - name: Import variable setting tasks
   ansible.builtin.import_tasks:
     file: set_awx_controller_host.yaml
   tags:
     - launch_experiment_workflow
+    - deinit_experiment_workflow
 
 - name: Import variable setting tasks
   ansible.builtin.import_tasks:
     file: set_awx_controller_password.yaml
   tags:
     - launch_experiment_workflow
+    - deinit_experiment_workflow
 
 - name: Generate UUID4 for run_uuid
   ansible.builtin.command:
@@ -29,7 +32,54 @@
   tags:
     - launch_experiment_workflow
 
-- name: Launch the workflow for running select or all scenarios end-to-end
+- name: Launch the workflow for initializing the run of select or all scenarios end-to-end
+  awx.awx.workflow_launch:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    workflow_template: "Scenario-{{ item[0] }}-Init"
+    extra_vars:
+      storage:
+        s3:
+          bucket: ""
+          endpoint: ""
+          directory: ""
+    wait: false
+  loop: "{{ awx_experiment_workflows }}"
+  register: launched_init_workflows
+  tags:
+    - launch_experiment_workflow
+
+- name: Wait for all launched init workflows to complete
+  uri:
+    url: "{{ awx_controller_host }}/api/v2/workflow_jobs/{{ item.id }}/"
+    method: GET
+    user: admin
+    password: "{{ awx_controller_password }}"
+    force_basic_auth: yes
+    return_content: yes
+    validate_certs: no
+    timeout: 30
+  loop: "{{ launched_init_workflows.results }}"
+  when: item.id is defined
+  register: status_init_workflows
+  until: status_init_workflows.json.status in ['successful', 'failed', 'error', 'canceled']
+  retries: 20
+  delay: 30
+  tags:
+    - launch_experiment_workflow
+
+- name: Check that all init workflows are succesful
+  fail:
+    msg: "Init workflow {{ item.json.name }} (ID: {{ item.json.id }}) failed with status: {{ item.json.status }}"
+  loop: "{{ status_init_workflows.results }}"
+  when:
+    - item.json.status is defined
+    - item.json.status != 'successful'
+  tags:
+    - launch_experiment_workflow
+
+- name: Launch the workflow for running select or all scenarios - the end-to-end experiment
   awx.awx.workflow_launch:
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
@@ -45,3 +95,50 @@
   loop: "{{ awx_experiment_workflows }}"
   tags:
     - launch_experiment_workflow
+
+- name: Launch the workflow for de-initializing the run of select or all scenarios end-to-end
+  awx.awx.workflow_launch:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    workflow_template: "Scenario-{{ item[0] }}-Deinit"
+    extra_vars:
+      storage:
+        s3:
+          bucket: ""
+          endpoint: ""
+          directory: ""
+    wait: false
+  loop: "{{ awx_experiment_workflows }}"
+  register: launched_deinit_workflows
+  tags:
+    - deinit_experiment_workflow
+
+- name: Wait for all launched deinit workflows to complete
+  uri:
+    url: "{{ awx_controller_host }}/api/v2/workflow_jobs/{{ item.id }}/"
+    method: GET
+    user: admin
+    password: "{{ awx_controller_password }}"
+    force_basic_auth: yes
+    return_content: yes
+    validate_certs: no
+    timeout: 30
+  loop: "{{ launched_deinit_workflows.results }}"
+  when: item.id is defined
+  register: status_deinit_workflows
+  until: status_deinit_workflows.json.status in ['successful', 'failed', 'error', 'canceled']
+  retries: 20
+  delay: 30
+  tags:
+    - deinit_experiment_workflow
+
+- name: Check that all deinit workflows are successful
+  fail:
+    msg: "Deinit workflow {{ item.json.name }} (ID: {{ item.json.id }}) failed with status: {{ item.json.status }}"
+  loop: "{{ status_deinit_workflows.results }}"
+  when:
+    - item.json.status is defined
+    - item.json.status != 'successful'
+  tags:
+    - deinit_experiment_workflow

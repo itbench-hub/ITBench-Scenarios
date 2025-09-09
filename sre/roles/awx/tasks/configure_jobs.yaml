@@ -27,6 +27,26 @@
     project: GitHub-ITBench
     state: present
 
+- name: Add job template for re-initilaizing tools
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credentials:
+      - Cluster-{{ incident_index + 1 }}-Kubeconfig
+      - AWS
+    execution_environment: AWX-EE-Custom
+    extra_vars:
+      incident_id: "{{ incident }}"
+    inventory: ITBench
+    job_tags: reinit_tools
+    job_type: run
+    name: "Scenario-{{ incident }}--Reinit-Tools"
+    organization: ITBench
+    playbook: sre/playbooks/manage_tools.yaml
+    project: GitHub-ITBench
+    state: present
+
 - name: Add job template for uninstalling tools
   awx.awx.job_template:
     controller_host: "{{ awx_controller_host }}"
