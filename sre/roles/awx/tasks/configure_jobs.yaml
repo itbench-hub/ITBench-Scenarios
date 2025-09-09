@@ -87,40 +87,6 @@
     project: GitHub-ITBench
     state: present
 
-- name: Add job template to grant access to agent
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    credentials:
-      - Cluster-{{ incident_index + 1 }}-Kubeconfig
-      - AWS
-    execution_environment: AWX-EE-Custom
-    inventory: ITBench
-    job_tags: grant_access
-    job_type: run
-    name: "Scenario-{{ incident }}--Grant-Access-To-Agent"
-    organization: ITBench
-    playbook: sre/playbooks/manage_agent_access.yaml
-    project: GitHub-ITBench
-
-- name: Add job template to remove access from agent
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    credentials:
-      - Cluster-{{ incident_index + 1 }}-Kubeconfig
-      - AWS
-    execution_environment: AWX-EE-Custom
-    inventory: ITBench
-    job_tags: revoke_access
-    job_type: run
-    name: "Scenario-{{ incident }}--Remove-Access-From-Agent"
-    organization: ITBench
-    playbook: sre/playbooks/manage_agent_access.yaml
-    project: GitHub-ITBench
-
 - name: Add job template for injecting faults
   awx.awx.job_template:
     controller_host: "{{ awx_controller_host }}"
