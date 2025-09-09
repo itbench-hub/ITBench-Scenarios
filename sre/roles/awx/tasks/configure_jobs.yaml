@@ -67,6 +67,23 @@
     project: GitHub-ITBench
     state: present
 
+- name: Add job template for checking alerts in firing state
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credentials:
+      - Cluster-{{ incident_index + 1 }}-Kubeconfig
+      - AWS
+    execution_environment: AWX-EE-Custom
+    inventory: ITBench
+    job_type: run
+    name: "Scenario-{{ incident }}--Check-for-Alerts"
+    organization: ITBench
+    playbook: sre/playbooks/check_for_alerts_in_firing_state.yaml
+    project: GitHub-ITBench
+    state: present
+
 - name: Add job template for installing applicaions
   awx.awx.job_template:
     controller_host: "{{ awx_controller_host }}"

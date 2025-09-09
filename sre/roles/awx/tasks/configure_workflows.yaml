@@ -81,14 +81,16 @@
             - identifier: node-handover-to-agent
           failure_nodes: []
           always_nodes: []
-      # - identifier: node-check-for-alerts
-      #   unified_job_template:
-      #     name: "Scenario-{{ incident }}--Check-for-Alerts"
-      #     type: job_template
-      #   related:
-      #     success_nodes: [] # - identifier: node-handover-to-agent
-      #     failure_nodes: []
-      #     always_nodes: []
+      - identifier: node-check-for-alerts
+        unified_job_template:
+          name: "Scenario-{{ incident }}--Check-for-Alerts"
+          type: job_template
+        related:
+          success_nodes:
+            - identifier: node-handover-to-agent
+          failure_nodes:
+            - identifier: node-uninstall-recorders
+          always_nodes: []
       - identifier: node-handover-to-agent
         unified_job_template:
           name: "Scenario-{{ incident }}--Handover-To-Agent"
