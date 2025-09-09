@@ -45,7 +45,6 @@ updates:
     directories:
       - "/"
       - "sre/"
-      - "sre/dev/remote_cluster/"
       - "sre/roles/recorders/files/**/**/scripts/"
       - "sre/tools/kubernetes-topology-monitor/"
     groups:
