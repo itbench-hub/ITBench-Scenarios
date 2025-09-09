@@ -47,10 +47,26 @@ jobs:
         run: |
           pip install -r sre/requirements.txt
           pip install -r sre/requirements-dev.txt
-      - name: Build AWX Execution Environment image
+      - name: Create AWX Execution Environment image context
         run: |
-          ansible-builder build -v3 -t quay.io/it-bench/awx-ee:latest --container-runtime=docker
+          ansible-builder create --output-filename Dockerfile
         working-directory: sre/tools/awx-ee
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3.6.0
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3.11.1
+      - name: Build AWX Execution Environment image
+        uses: docker/build-push-action@v6.18.0
+        env:
+          DOCKER_BUILD_RECORD_UPLOAD: false
+        with:
+          context: sre/tools/awx-ee/context
+          platforms: |
+            linux/${{ matrix.architecture }}
+          push: false
+          tags: |
+            quay.io/it-bench/awx-ee:1.0.0
+            quay.io/it-bench/awx-ee:latest
   hello-bench:
     runs-on: ubuntu-latest
     strategy:
