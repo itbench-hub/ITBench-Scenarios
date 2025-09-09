@@ -50,7 +50,6 @@
             alerts_api_result.json.data is defined and
             alerts_api_result.json.data.alerts is defined and
             (alerts_api_result.json.data.alerts | selectattr('state', '==', 'firing') | list | length > 0)
-          when: prometheus_url is defined
   
         - name: Display firing alerts found
           ansible.builtin.debug:
