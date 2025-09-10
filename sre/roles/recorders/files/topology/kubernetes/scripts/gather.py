@@ -22,6 +22,7 @@ def main():
     endpoint = os.environ.get("KUBERNETES_TOPOLOGY_MONITOR_ENDPOINT")
     if endpoint is None:
         sys.exit("error: KUBERNETES_TOPOLOGY_MONITOR_ENDPOINT environment variable is not set")
+    filename_annotations = os.environment.get("FILENAME_ANNOTATIONS", "tbd")
 
     headers = { "Content-Type": "application/json" }
 
@@ -43,7 +44,7 @@ def main():
             logger.info("retrieved {0} data".format(item))
 
             utc_seconds = (datetime.now(timezone.utc) - datetime(1970, 1, 1, tzinfo=timezone.utc)).total_seconds()
-            file_path = os.path.join(os.path.expanduser("~"), "records", "{0}-{1}.json".format(round(utc_seconds), item))
+            file_path = os.path.join(os.path.expanduser("~"), "records", "{0}_{1}_{2}.json".format(filename_annotations, item, round(utc_seconds))
 
             with open(file_path, "w") as f:
                 json.dump(content, f, indent=4)
