@@ -22,7 +22,7 @@ def main():
     endpoint = os.environ.get("KUBERNETES_TOPOLOGY_MONITOR_ENDPOINT")
     if endpoint is None:
         sys.exit("error: KUBERNETES_TOPOLOGY_MONITOR_ENDPOINT environment variable is not set")
-    filename_annotation = os.environment.get("FILENAME_ANNOTATION", "TBD")
+    filename_annotation = os.environ.get("FILENAME_ANNOTATION", "TBD")
 
     headers = { "Content-Type": "application/json" }
 
