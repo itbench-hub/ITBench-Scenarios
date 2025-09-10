@@ -25,7 +25,7 @@ def main():
 
     filename_prefix = os.environ.get("FILENAME_PREFIX", "")
     if len(filename_prefix) > 0:
-        filename_prefix = "{0}_".format(filename_prefix)
+        filename_prefix = "{0}__".format(filename_prefix)
 
     headers = { "Content-Type": "application/json" }
 
@@ -47,7 +47,7 @@ def main():
             logger.info("retrieved {0} data".format(item))
 
             utc_seconds = (datetime.now(timezone.utc) - datetime(1970, 1, 1, tzinfo=timezone.utc)).total_seconds()
-            file_path = os.path.join(os.path.expanduser("~"), "records", "{0}_{1}_{2}.json".format(filename_prefix, item, round(utc_seconds)))
+            file_path = os.path.join(os.path.expanduser("~"), "records", "{0}{1}__{2}.json".format(filename_prefix, item, round(utc_seconds)))
 
             with open(file_path, "w") as f:
                 json.dump(content, f, indent=4)
