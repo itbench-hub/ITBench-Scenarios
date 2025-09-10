@@ -206,6 +206,7 @@
 
 - name: Add job template for installing data recorders
   awx.awx.job_template:
+    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
@@ -226,6 +227,7 @@
 
 - name: Add job template for installing topology data recorder
   awx.awx.job_template:
+    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin

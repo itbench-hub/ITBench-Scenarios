@@ -53,5 +53,5 @@
     container_environment_variables:
       - name: KUBERNETES_TOPOLOGY_MONITOR_ENDPOINT
         value: "{{ tools_kubernetes_topology_mapper_endpoint }}"
-      - name: FILENAME_ANNOTATIONS
-        value: "{{  }}"
+      - name: FILENAME_ANNOTATION
+        value: "{{ filename_annotation }}"

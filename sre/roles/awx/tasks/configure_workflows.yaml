@@ -58,6 +58,8 @@
         unified_job_template:
           name: "Scenario-{{ incident }}--Install-Data-Recorders"
           type: job_template
+        extra_data:
+          filename_annotation: "init"
         related:
           success_nodes:
             - identifier: node-pause-at-start
@@ -103,6 +105,8 @@
         unified_job_template:
           name: "Scenario-{{ incident }}--Install-Topology-Data-Recorder"
           type: job_template
+        extra_data:
+          filename_annotation: "post_fault_injection"
         related:
           success_nodes:
             - identifier: node-pause-post-fault-injection
@@ -176,6 +180,8 @@
         unified_job_template:
           name: "Scenario-{{ incident }}--Install-Topology-Data-Recorder"
           type: job_template
+        extra_data:
+          filename_annotation: "end"
         related:
           success_nodes: []
           failure_nodes: []
