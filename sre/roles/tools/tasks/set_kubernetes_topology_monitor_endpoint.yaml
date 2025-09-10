@@ -10,7 +10,7 @@
 
 - name: Construct Kubernetes Topology in-cluster endpoint
   ansible.builtin.set_fact:
-    tools_kubernetes_topology_mapper_endpoint: http://{{ tools_topology_service_info.resources[0].metadata.name }}.{{
+    tools_kubernetes_topology_monitor_endpoint: http://{{ tools_topology_service_info.resources[0].metadata.name }}.{{
       tools_topology_service_info.resources[0].metadata.namespace }}.svc.cluster.local:8080
   when:
     - tools_topology_service_info is defined

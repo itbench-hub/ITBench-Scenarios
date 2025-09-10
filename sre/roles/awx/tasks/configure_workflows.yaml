@@ -59,7 +59,7 @@
           name: "Scenario-{{ incident }}--Install-Data-Recorders"
           type: job_template
         extra_data:
-          filename_annotation: "init"
+          recorders_awx_topology_filename_prefix: "init"
         related:
           success_nodes:
             - identifier: node-pause-at-start
@@ -106,7 +106,7 @@
           name: "Scenario-{{ incident }}--Install-Topology-Data-Recorder"
           type: job_template
         extra_data:
-          filename_annotation: "post_fault_injection"
+          recorders_awx_topology_filename_prefix: "post_fault_injection"
         related:
           success_nodes:
             - identifier: node-pause-post-fault-injection
@@ -181,7 +181,7 @@
           name: "Scenario-{{ incident }}--Install-Topology-Data-Recorder"
           type: job_template
         extra_data:
-          filename_annotation: "end"
+          recorders_awx_topology_filename_prefix: "end"
         related:
           success_nodes: []
           failure_nodes: []
