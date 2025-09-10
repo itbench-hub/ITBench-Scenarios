@@ -80,7 +80,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Check-for-Alerts"
     organization: ITBench
-    playbook: sre/playbooks/check_for_alerts_in_firing_state.yaml
+    playbook: sre/playbooks/check_for_specific_alerts_in_firing_state.yaml
     project: GitHub-ITBench
     state: present
 
