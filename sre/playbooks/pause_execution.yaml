@@ -6,3 +6,5 @@
     - name: Pausing for 120 seconds
       ansible.builtin.pause:
         seconds: 120
+      tags:
+        - pause
