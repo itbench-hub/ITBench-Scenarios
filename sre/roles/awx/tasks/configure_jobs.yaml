@@ -204,6 +204,89 @@
     project: GitHub-ITBench
     state: present
 
+- name: Add job template for installing data recorders
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credentials:
+      - Cluster-{{ incident_index + 1 }}-Kubeconfig
+      - AWS
+    execution_environment: AWX-EE-Custom
+    extra_vars:
+      incident_id: "{{ incident }}"
+    inventory: ITBench
+    job_tags: install_recorders
+    job_type: run
+    name: "Scenario-{{ incident }}--Install-Data-Recorders"
+    organization: ITBench
+    playbook: sre/playbooks/manage_recorders.yaml
+    project: GitHub-ITBench
+    state: present
+
+- name: Add job template for installing topology data recorder
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credentials:
+      - Cluster-{{ incident_index + 1 }}-Kubeconfig
+      - AWS
+    execution_environment: AWX-EE-Custom
+    extra_vars:
+      incident_id: "{{ incident }}"
+      tools:
+        prometheus: false
+        jaeger: false
+        kubernetes_topology_monitor: true
+    inventory: ITBench
+    job_tags: install_recorders
+    job_type: run
+    name: "Scenario-{{ incident }}--Install-Topology-Data-Recorder"
+    organization: ITBench
+    playbook: sre/playbooks/manage_recorders.yaml
+    project: GitHub-ITBench
+    state: present
+
+- name: Add job template for uninstalling topology data recorder
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credentials:
+      - Cluster-{{ incident_index + 1 }}-Kubeconfig
+      - AWS
+    execution_environment: AWX-EE-Custom
+    extra_vars:
+      incident_id: "{{ incident }}"
+      tools:
+        prometheus: false
+        jaeger: false
+        kubernetes_topology_monitor: true
+    inventory: ITBench
+    job_tags: uninstall_recorders
+    job_type: run
+    name: "Scenario-{{ incident }}--Uninstall-Topology-Data-Recorder"
+    organization: ITBench
+    playbook: sre/playbooks/manage_recorders.yaml
+    project: GitHub-ITBench
+    state: present
+
+- name: Add job template for pause
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    execution_environment: AWX-EE-Custom
+    inventory: ITBench
+    job_tags: pause
+    job_type: run
+    name: "Scenario-{{ incident }}--Pause"
+    organization: ITBench
+    playbook: sre/playbooks/pause_execution.yaml
+    project: GitHub-ITBench
+    state: present
+
 - name: Add job template for enabling agent access
   awx.awx.job_template:
     controller_host: "{{ awx_controller_host }}"
