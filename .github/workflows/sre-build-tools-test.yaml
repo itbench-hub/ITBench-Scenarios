@@ -8,6 +8,10 @@ on:
       - sre/tools/**
       - '!sre/tools/kubernetes-topology-monitor/charts/kubernetes-topology-monitor/**'
 
+concurrency:
+  group: ci-build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   topology-monitor:
     strategy:
