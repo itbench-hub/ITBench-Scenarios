@@ -13,7 +13,7 @@
 
 - name: Import validation tasks
   ansible.builtin.import_tasks:
-    file: verify.yaml
+    file: verify_spec.yaml
 
 - name: Create variables for Ansible role usage
   ansible.builtin.set_fact:
