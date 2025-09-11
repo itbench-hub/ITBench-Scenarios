@@ -28,6 +28,25 @@ argument_specs:
           metadata:
             required: true
             type: dict
+            options:
+              complexity:
+                choices:
+                  - Low
+                  - Medium
+                  - High
+                required: true
+                type: str
+              id:
+                required: true
+                type: int
+              name:
+                required: true
+                type: str
+              platform:
+                choices:
+                  - kubernetes
+                required: true
+                type: str
           spec:
             required: true
             type: dict
