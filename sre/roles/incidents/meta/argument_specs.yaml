@@ -14,8 +14,8 @@ argument_specs:
           id:
             required: true
             type: int
-  verify_ground_truth:
-    short_description: Main entry point for spec verification.
+  validate_ground_truth:
+    short_description: Entry point for ground truth validation
     description:
       - Theses tasks verify the spec of a incident.
     author:
@@ -131,8 +131,8 @@ argument_specs:
                   id:
                     required: true
                     type: str
-  verify_spec:
-    short_description: Main entry point for spec verification.
+  validate_spec:
+    short_description: Main entry point for spec validation
     description:
       - Theses tasks verify the spec of a incident.
     author:
