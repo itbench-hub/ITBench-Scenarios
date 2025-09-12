@@ -10,16 +10,25 @@
 
 - name: Load incident spec from file
   ansible.builtin.set_fact:
-    incidents_ground_truth: "{{ lookup('ansible.builtin.file', incidents_truth_file_path) | from_yaml}}"
     incidents_spec: "{{ lookup('ansible.builtin.template', incidents_spec_file_path) | from_yaml }}"
 
 - name: Import validation tasks
   ansible.builtin.import_tasks:
     file: verify_spec.yaml
 
+- name: Load ground truth from file
+  ansible.builtin.set_fact:
+    incidents_ground_truth: "{{ lookup('ansible.builtin.file', incidents_truth_file_path) | from_yaml}}"
+  vars:
+    incidents_ground_truth_exists: "{{ incidents_truth_file_path is exists }}"
+  when:
+    - incidents_ground_truth_exists
+
 - name: Import validation tasks
   ansible.builtin.import_tasks:
     file: verify_ground_truth.yaml
+  when:
+    - incidents_ground_truth is defined
 
 - name: Create variables for Ansible role usage
   ansible.builtin.set_fact:
