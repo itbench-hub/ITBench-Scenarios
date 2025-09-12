@@ -1,4 +1,20 @@
 ---
-- name: Print validation successful task
+- name: Validate truth content
+  ansible.utils.validate:
+    data: "{{ incidents_ground_truth }}"
+    criteria: "{{ lookup('ansible.builtin.file', 'files/schemas/ground_truth.json') | from_json }}"
+    engine: ansible.utils.jsonschema
+  failed_when: false
+  register: incidents_truth_validation_result
+
+- name: Display validation errors
   ansible.builtin.debug:
-    msg: Completed ground truth validation.
+    var: incidents_truth_validation_result
+  when:
+    - incidents_truth_validation_result.errors is defined
+
+- name: Fail validation due to errors
+  ansible.builtin.fail:
+    msg: Failed to validate the ground truth file. Please consult the above log to resolve error(s).
+  when:
+    - incidents_truth_validation_result.errors is defined
