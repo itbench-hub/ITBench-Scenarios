@@ -8,7 +8,8 @@ on:
       - sre/tools/**
       - '!sre/tools/kubernetes-topology-monitor/charts/kubernetes-topology-monitor/**'
   pull_request:
-    branches: - main
+    branches:
+      - main
     paths:
       - sre/tools/** - '!sre/tools/kubernetes-topology-monitor/charts/kubernetes-topology-monitor/**'
 
