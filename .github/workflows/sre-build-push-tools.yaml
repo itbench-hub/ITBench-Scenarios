@@ -1,4 +1,4 @@
-name: Build and push SRE tool images
+name: Build and push if applicable SRE tool images
 
 on:
   push:
@@ -7,6 +7,14 @@ on:
     paths:
       - sre/tools/**
       - '!sre/tools/kubernetes-topology-monitor/charts/kubernetes-topology-monitor/**'
+  pull_request:
+    branches: - main
+    paths:
+      - sre/tools/** - '!sre/tools/kubernetes-topology-monitor/charts/kubernetes-topology-monitor/**'
+
+concurrency:
+  group: ci-build-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   topology-monitor:
@@ -44,11 +52,13 @@ jobs:
           platforms: ${{ matrix.platform }}
           outputs: type=image,name=quay.io/it-bench/topology-monitor,push-by-digest=true,push=true
       - name: Export digest
+        if: github.ref == 'refs/heads/main'
         run: |
           mkdir -p ${{ runner.temp }}/digests
           digest="${{ steps.build.outputs.digest }}"
           touch "${{ runner.temp }}/digests/${digest#sha256:}"
       - name: Upload digest
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: topology-monitor-digests-${{ env.PLATFORM_PAIR }}
@@ -58,6 +68,7 @@ jobs:
 
   topology-monitor-merge:
     runs-on: ubuntu-24.04
+    if: github.ref == 'refs/heads/main'
     needs:
       - topology-monitor
     steps:
@@ -117,8 +128,8 @@ jobs:
           python-version: '3.13'
       - name: Install Python dependencies
         run: |
-          pip install -r sre/requirements.txt
-          pip install -r sre/requirements-dev.txt
+          pip install -r requirements.txt
+          pip install -r requirements-dev.txt
         working-directory: sre
       - name: Create AWX Execution Environment image context
         run: |
@@ -139,11 +150,13 @@ jobs:
           platforms: ${{ matrix.platform }}
           outputs: type=image,name=quay.io/it-bench/awx-ee,push-by-digest=true,push=true
       - name: Export digest
+        if: github.ref == 'refs/heads/main'
         run: |
           mkdir -p ${{ runner.temp }}/digests
           digest="${{ steps.build.outputs.digest }}"
           touch "${{ runner.temp }}/digests/${digest#sha256:}"
       - name: Upload digest
+        if: github.ref == 'refs/heads/main'
         uses: actions/upload-artifact@v4
         with:
           name: awx-ee-digests-${{ env.PLATFORM_PAIR }}
@@ -153,6 +166,7 @@ jobs:
 
   awx-ee-merge:
     runs-on: ubuntu-24.04
+    if: github.ref == 'refs/heads/main'
     needs:
       - awx-ee
     steps:
@@ -209,7 +223,7 @@ jobs:
           context: sre/tools/hello-bench
           platforms: |
             linux/${{ matrix.architecture }}
-          push: true
+          push: ${{ github.ref == 'refs/heads/main' }}
           tags: |
             quay.io/it-bench/hello-bench-${{ matrix.architecture }}:1.0.0
             quay.io/it-bench/hello-bench-${{ matrix.architecture }}:latest
