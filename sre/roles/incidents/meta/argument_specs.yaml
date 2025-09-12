@@ -14,7 +14,124 @@ argument_specs:
           id:
             required: true
             type: int
-  verify:
+  verify_ground_truth:
+    short_description: Main entry point for spec verification.
+    description:
+      - Theses tasks verify the spec of a incident.
+    author:
+      - Gerard Vanloo
+    options:
+      incidents_ground_truth:
+        required: true
+        type: dict
+        options:
+          alerts:
+            elements: dict
+            required: true
+            type: list
+            options:
+              id:
+                choices:
+                  - RequestErrorRate
+                  - RequestLatency
+                required: true
+                type: str
+              group_id:
+                required: true
+                type: str
+              metadata:
+                required: true
+                type: dict
+                options:
+                  description:
+                    required: true
+                    type: str
+          aliases:
+            elements: list
+            required: false
+            type: list
+          fault:
+            elements: dict
+            required: true
+            type: list
+            options:
+              category:
+                required: true
+                type: str
+              condition:
+                required: true
+                type: str
+              entity:
+                required: true
+                type: dict
+                options:
+                  kind:
+                    required: true
+                    type: str
+                  group_id:
+                    required: true
+                    type: str
+                  name:
+                    required: true
+                    type: str
+              fault_mechanism:
+                required: true
+                type: str
+          groups:
+            elements: dict
+            required: true
+            type: list
+            options:
+              kind:
+                required: true
+                type: str
+              filter:
+                elements: str
+                required: true
+                type: list
+              id:
+                required: true
+                type: str
+              namespace:
+                required: true
+                type: str
+              root_cause:
+                required: true
+                type: bool
+          propagations:
+            elements: dict
+            required: false
+            type: list
+            options:
+              condition:
+                required: true
+                type: str
+              effect:
+                required: true
+                type: str
+              source:
+                required: true
+                type: str
+              target:
+                required: true
+                type: str
+          recommended_actions:
+            elements: dict
+            required: true
+            type: list
+            options:
+              solution:
+                required: true
+                type: dict
+                options:
+                  actions:
+                    elements: str
+                    required: true
+                    type: list
+                  id:
+                    required: true
+                    type: str
+  verify_spec:
     short_description: Main entry point for spec verification.
     description:
       - Theses tasks verify the spec of a incident.

@@ -1,0 +1,4 @@
+---
+- name: Print validation successful task
+  ansible.builtin.debug:
+    msg: Completed ground truth validation.
