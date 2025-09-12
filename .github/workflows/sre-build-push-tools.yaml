@@ -117,13 +117,18 @@ jobs:
           python-version: '3.13'
       - name: Install Python dependencies
         run: |
-          pip install -r requirements.txt
-          pip install -r requirements-dev.txt
+          pip install -r sre/requirements.txt
+          pip install -r sre/requirements-dev.txt
         working-directory: sre
       - name: Create AWX Execution Environment image context
         run: |
           ansible-builder create --output-filename Dockerfile
         working-directory: sre/tools/awx-ee
+      - name: Copy requirements to expected location
+        run: |
+          cp _build/requirements.yml requirements.yml
+          cp _build/requirements.txt requirements.txt
+        working-directory: sre/tools/awx-ee/context
       - name: Build AWX Execution Environment image
         id: build
         uses: docker/build-push-action@v6.18.0
