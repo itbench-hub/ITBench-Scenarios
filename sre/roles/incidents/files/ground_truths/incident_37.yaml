@@ -13,8 +13,10 @@ groups:
   - id: otel-demo-namespace-1
     kind: Namespace
     name: otel-demo
-    namespace: ""
+    namespace: otel-demo
     root_cause: true
+aliases:
+  - - otel-demo-namespace-1
 recommended_actions:
   - solution:
       id: "no_action"
