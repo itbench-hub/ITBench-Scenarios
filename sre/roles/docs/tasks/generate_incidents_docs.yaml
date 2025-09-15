@@ -1,0 +1,42 @@
+---
+- name: Find all incident specs
+  ansible.builtin.find:
+    paths: "{{ playbook_dir }}/../roles/incidents/files/specs"
+    pattern: "incident_*.yaml"
+  register: docs_incident_spec_files
+
+- name: Parse identifiers from spec files
+  ansible.builtin.set_fact:
+    docs_incidents_ids: "{{ (docs_incidents_ids | default([])) + [spec.metadata.id] }}"
+  loop: "{{ docs_incident_spec_files.files }}"
+  loop_control:
+    label: "{{ item.path }}"
+  vars:
+    spec: "{{ lookup('ansible.builtin.file', item.path) | from_yaml }}"
+
+- name: Load spec and truth file
+  ansible.builtin.set_fact:
+    docs_contents: |
+      {{
+        (
+          docs_contents | default([])
+        ) +
+        [
+          {
+            "spec": (lookup('ansible.builtin.file', spec_path) | from_yaml),
+            "truth": (lookup('ansible.builtin.file', truth_path) | from_yaml)
+          }
+        ]
+      }}
+  loop: "{{ docs_incidents_ids | sort }}"
+  loop_control:
+    label: "incident-{{ item }}"
+  vars:
+    spec_path: "{{ playbook_dir }}/../roles/incidents/files/specs/incident_{{ item }}.yaml"
+    truth_path: "{{ playbook_dir }}/../roles/incidents/files/ground_truths/incident_{{ item }}.yaml"
+
+- name: Generate Incidents README file
+  ansible.builtin.copy:
+    content: "{{ lookup('ansible.builtin.template', 'templates/incidents-readme.j2') }}"
+    dest: "{{ playbook_dir }}/../docs/incidents.md"
+    mode: "0644"

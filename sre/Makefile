@@ -15,6 +15,14 @@ group_vars: ## Generates the group variables
 	cp group_vars/environment/cluster.yaml.example group_vars/environment/cluster.yaml
 	cp group_vars/environment/tools.yaml.example group_vars/environment/tools.yaml
 
+.PHONY: docs
+docs: ## Generates the documentation for the incidents
+	ansible-playbook -i inventory.yaml playbooks/manage_documentation.yaml --tags "generate_docs"
+
+.PHONY: validate_docs
+validate_docs: ## Validates the documents (ie: specs) used to run an incident
+	ansible-playbook -i inventory.yaml playbooks/manage_documentation.yaml --tags "validate_docs"
+
 .PHONY: deploy_tools
 deploy_tools: ## Deploys the observability and fault tools to cluster
 ifdef INCIDENT_NUMBER
@@ -120,11 +128,6 @@ generate_leaderboard_bundle: ## Generates a bundle for Leaderboard to interface 
 	ansible-playbook -i inventory.yaml playbooks/generate_leaderboard_bundle.yaml
 
 # TODO: See why the OBJC_DISABLE_INITIALIZE_FORK_SAFETY is needed
-
-.PHONY: incident documentation
-documentation: ## Generates documentation for all incidents
-	export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES; \
-	ansible-playbook base.yaml --tags "documentation"
 
 .PHONY: validate_docs
 validate_docs: ## Validates documention for an incident
@@ -250,3 +253,11 @@ bundle_status:
 check_alerts:
 	@echo "WARNING: 'make check_alerts' is deprecated. Please use 'make deploy_recorders' instead."
 	@echo "This command will be removed in a future version."
+
+.PHONY: documentation
+documentation: ## DEPRECATED: Generates documentation for all incidents
+	@echo "WARNING: 'make documentation is deprecated. Please use 'make docs' instead."
+	@echo "This command will be removed in a future version."
+	@echo "Executing 'make docs'..."
+	@echo ""
+	$(MAKE) docs
