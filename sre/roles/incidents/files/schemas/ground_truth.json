@@ -73,7 +73,7 @@
             "type": "array",
             "items": {
                 "type": "object",
-                "required": ["kind", "filter", "id", "namespace", "root_cause"],
+                "required": ["kind", "filter", "id", "namespace"],
                 "properties": {
                     "filter": {
                         "type": "array",
