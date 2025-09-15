@@ -75,7 +75,7 @@ jobs:
       - topology-monitor
     steps:
       - name: Download digests
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: ${{ runner.temp }}/digests
           pattern: topology-monitor-digests-*
@@ -173,7 +173,7 @@ jobs:
       - awx-ee
     steps:
       - name: Download digests
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: ${{ runner.temp }}/digests
           pattern: awx-ee-digests-*
