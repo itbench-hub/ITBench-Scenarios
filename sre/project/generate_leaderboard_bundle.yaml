@@ -40,7 +40,9 @@
       ansible.builtin.set_fact:
         bundle_contents: |
           {{
-            bundle_contents +
+            (
+              bundle_contents | default([])
+            ) +
             [{
               "bundle": {
                 "name": item.spec.metadata.name,

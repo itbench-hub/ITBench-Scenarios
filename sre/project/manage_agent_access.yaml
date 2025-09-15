@@ -14,13 +14,13 @@
   tasks:
     - name: Include Helm Release variables from tools role
       ansible.builtin.include_vars:
-        file: ../roles/tools/defaults/main/helm_releases.yaml
+        file: roles/tools/defaults/main/helm_releases.yaml
       tags:
         - always
 
     - name: Include Helm Release variables from applications role
       ansible.builtin.include_vars:
-        file: ../roles/applications/defaults/main/helm_releases.yaml
+        file: roles/applications/defaults/main/helm_releases.yaml
       tags:
         - always
 
