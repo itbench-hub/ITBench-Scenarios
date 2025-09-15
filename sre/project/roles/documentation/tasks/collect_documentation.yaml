@@ -1,7 +1,7 @@
 ---
 - name: Find all/select incident roles
   find:
-    paths: "roles" 
+    paths: "roles"
     patterns: "{{ selected_incidents | map('regex_replace', '^', 'incident_') | list | default('incident_*') }}"
     file_type: "directory"
     recurse: False

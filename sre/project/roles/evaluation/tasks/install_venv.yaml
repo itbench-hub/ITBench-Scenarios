@@ -1,4 +1,4 @@
---- 
+---
 - name: Ensure virtual environment exists
   ansible.builtin.stat:
     path: "{{ venv_dir }}/bin/activate"
