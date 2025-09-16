@@ -127,19 +127,6 @@ generate_agent_bundle: ## Generates a bundle for an LLM Agent to interface with
 generate_leaderboard_bundle: ## Generates a bundle for Leaderboard to interface with
 	ansible-playbook -i inventory.yaml playbooks/generate_leaderboard_bundle.yaml
 
-# TODO: See why the OBJC_DISABLE_INITIALIZE_FORK_SAFETY is needed
-
-.PHONY: validate_docs
-validate_docs: ## Validates documention for an incident
-	export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES; \
-	ansible-playbook base.yaml --tags "single_doc_validate,incident_$(INCIDENT_NUMBER)" \
-		--extra-vars "doc_incident_number=$(INCIDENT_NUMBER)"
-
-.PHONY: Fault injection documentation
-injection_docs: ## Generates documentation for all fault injection
-	export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES; \
-	ansible-playbook base.yaml --tags "injection_docs"
-
 .SILENT: fetch_alerts
 fetch_alerts:
 	ansible-playbook -v base.yaml --tags "fetch_alerts" \
@@ -261,3 +248,8 @@ documentation: ## DEPRECATED: Generates documentation for all incidents
 	@echo "Executing 'make docs'..."
 	@echo ""
 	$(MAKE) docs
+
+.PHONY: injection_docs
+injection_docs: ## DEPRECATED: Generates documentation for all fault injection
+	@echo "WARNING: 'make injection_docs' is deprecated."
+	@echo "This command will be removed in a future version."
