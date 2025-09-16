@@ -17,7 +17,7 @@ alerts:
     metadata:
       description: Frontend service experiencing connection failures to ad service
   - id: RequestErrorRate
-    group_id: frontend-proxy-1
+    group_id: frontend-service-proxy-1
     metadata:
       description: Frontend proxy experiencing errors when serving pages that require ads functionality
 groups:
