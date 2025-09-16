@@ -11,7 +11,6 @@ A fault is a solvable issue injected into an environment to create an incident.
 | [Custom - Invalid Node Selector](#custom---invalid-node-selector) | No | No |
 | [Custom - Misconfigured Horizontal Pod Autoscaler](#custom---misconfigured-horizontal-pod-autoscaler) | No | No |
 | [Custom - Misconfigured Network Policy](#custom---misconfigured-network-policy) | No | No |
-
 | [Custom - Misconfigured Resource Quota](#custom---misconfigured-resource-quota) | No | No |
 | [Custom - Misconfigured Service Port](#custom---misconfigured-service-port) | No | No |
 | [Custom - Modify Environment Variables](#custom---modify-environment-variables) | No | No |
@@ -28,9 +27,7 @@ Astronomy Shop contains faults which are triggered through feature flag usage. T
 
 Injection tasks are described [here](../roles/faults/tasks/inject_otel_demo_flagd.yaml) and removal tasks are described [here](../roles/faults/tasks/remove_otel_demo_flagd.yaml).
 
-Example(s):
-
-- [Incident 3](../roles/incidents/files/specs/incident_3.yaml)
+**Example:** [Incident 3](../roles/incidents/files/specs/incident_3.yaml)
 
 ## Chaos Mesh Experiments
 
@@ -38,10 +35,7 @@ Chaos Mesh has many faults which can be configured to target many workloads. In 
 
 Injection tasks are described [here](../roles/faults/tasks/inject_chaos_mesh.yaml) and removal tasks are described [here](../roles/faults/tasks/remove_chaos_mesh.yaml).
 
-Example(s):
-
-- [Incident 26](../roles/incidents/files/specs/incident_26.yaml)
-- [Incident 27](../roles/incidents/files/specs/incident_27.yaml)
+**Examples:** [Incident 26](../roles/incidents/files/specs/incident_26.yaml), [Incident 27](../roles/incidents/files/specs/incident_27.yaml)
 
 ## Custom - Invalid Node Selector
 
@@ -49,9 +43,7 @@ This fault changes the node selector of a given workload. This node does not exi
 
 Injection tasks are described [here](../roles/faults/tasks/inject_custom_invalid_node_selector.yaml).
 
-Example(s):
-
-- [Incident 33](../roles/incidents/files/specs/incident_33.yaml)
+**Example:** [Incident 33](../roles/incidents/files/specs/incident_33.yaml)
 
 ## Custom - Invalid Workload Command
 
@@ -59,9 +51,7 @@ This fault changes the command of a given workload's container. This command is 
 
 Injection tasks are described [here](../roles/faults/tasks/inject_custom_invalid_command.yaml).
 
-Example(s):
-
-- [Incident 105](../roles/incidents/files/specs/incident_105.yaml)
+**Example:** [Incident 105](../roles/incidents/files/specs/incident_105.yaml)
 
 ## Custom - Invalid Workload Image
 
@@ -69,9 +59,7 @@ This fault changes the image of a given workload's container. This image does no
 
 Injection tasks are described [here](../roles/faults/tasks/inject_custom_invalid_image.yaml).
 
-Example(s):
-
-- [Incident 20](../roles/incidents/files/specs/incident_20.yaml)
+**Example:** [Incident 20](../roles/incidents/files/specs/incident_20.yaml)
 
 ## Custom - Misconfigured Horizontal Pod Autoscaler
 
@@ -79,9 +67,7 @@ This fault changes the `metrics` parameters of a given HPA uses in order to [sca
 
 Injection tasks are described [here](../roles/faults/tasks/inject_custom_misconfigured_horizontal_pod_autoscaler.yaml).
 
-Example(s):
-
-- [Incident 38](../roles/incidents/files/specs/incident_38.yaml)
+**Example:** [Incident 38](../roles/incidents/files/specs/incident_38.yaml)
 
 ## Custom - Misconfigured Network Policy
 
@@ -89,9 +75,7 @@ This fault adds a network policy to the application's namespace. This policy is 
 
 Injection tasks are described [here](../roles/faults/tasks/inject_custom_misconfigured_network_policy.yaml).
 
-Example(s):
-
-- [Incident 31](../roles/incidents/files/specs/incident_31.yaml)
+**Example:** [Incident 31](../roles/incidents/files/specs/incident_31.yaml)
 
 ## Custom - Misconfigured Persistent Volume Claim
 
@@ -105,9 +89,7 @@ This fault adds a resource quota to the application's namesapce. This [quota](ht
 
 Injection tasks are described [here](../roles/faults/tasks/inject_custom_misconfigured_resource_quota.yaml).
 
-Example(s):
-
-- [Incident 102](../roles/incidents/files/specs/incident_102.yaml)
+**Example:** [Incident 102](../roles/incidents/files/specs/incident_102.yaml)
 
 ## Custom - Misconfigured Service Port
 
@@ -115,9 +97,7 @@ This fault changes the `targetPort` of a given service. This should result in co
 
 Injection tasks are described [here](../roles/faults/tasks/inject_custom_misconfigured_service_port.yaml).
 
-Example(s):
-
-- [Incident 30](../roles/incidents/files/specs/incident_30.yaml)
+**Example:** [Incident 30](../roles/incidents/files/specs/incident_30.yaml)
 
 ## Custom - Modify Environment Variables
 
@@ -125,9 +105,7 @@ This fault changes the matching environment variable(s) of a given workload's co
 
 Injection tasks are described [here](../roles/faults/tasks/inject_custom_modify_environment_variables.yaml).
 
-Example(s):
-
-- [Incident 16](../roles/incidents/files/specs/incident_16.yaml)
+**Example:** [Incident 16](../roles/incidents/files/specs/incident_16.yaml)
 
 ## Custom - Unsupported Image
 
@@ -135,9 +113,7 @@ This fault changes the image of a given workload's container. This image is in a
 
 Injection tasks are described [here](../roles/faults/tasks/inject_custom_unsupported_image.yaml).
 
-Example(s):
-
-- [Incident 23](../roles/incidents/files/specs/incident_23.yaml)
+**Example:** [Incident 23](../roles/incidents/files/specs/incident_23.yaml)
 
 ## Valkey - Invalid Password
 
@@ -145,6 +121,4 @@ This fault changes the password of a given Valkey workload to cause unauthorized
 
 Injection tasks are described [here](../roles/faults/tasks/inject_valkey_invalid_password.yaml).
 
-Example(s):
-
-- [Incident 34](../roles/incidents/files/specs/incident_34.yaml)
+**Example:** [Incident 34](../roles/incidents/files/specs/incident_34.yaml)
