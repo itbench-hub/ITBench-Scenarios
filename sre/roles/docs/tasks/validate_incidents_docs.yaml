@@ -20,8 +20,8 @@
     apply:
       tags:
         - validate_docs
+      vars:
+        incident_id: "{{ item }}"
   loop: "{{ docs_incidents_ids }}"
   loop_control:
     label: "incident-{{ item }}"
-  vars:
-    incident_id: "{{ item }}"
