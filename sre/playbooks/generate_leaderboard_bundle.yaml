@@ -21,7 +21,7 @@
               }
             ]
           }}
-      loop: "{{ documents_incidents_ids | sort }}"
+      loop: "{{ documentation_incidents_ids | sort }}"
       loop_control:
         label: "incident-{{ item }}"
       tags:

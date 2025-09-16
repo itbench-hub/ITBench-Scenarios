@@ -5,10 +5,10 @@
 
 - name: Load spec and truth files
   ansible.builtin.set_fact:
-    documents_contents: |
+    documentation_contents: |
       {{
         (
-          documents_contents | default([])
+          documentation_contents | default([])
         ) +
         [
           {
@@ -17,7 +17,7 @@
           }
         ]
       }}
-  loop: "{{ documents_incidents_ids | sort }}"
+  loop: "{{ documentation_incidents_ids | sort }}"
   loop_control:
     label: "incident-{{ item }}"
   vars:

@@ -11,6 +11,6 @@
         - validate_docs
       vars:
         incident_id: "{{ item }}"
-  loop: "{{ documents_incidents_ids }}"
+  loop: "{{ documentation_incidents_ids }}"
   loop_control:
     label: "incident-{{ item }}"

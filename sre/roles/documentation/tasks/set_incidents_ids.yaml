@@ -3,12 +3,12 @@
   ansible.builtin.find:
     paths: "{{ playbook_dir }}/../roles/incidents/files/specs"
     pattern: "incident_*.yaml"
-  register: documents_incident_spec_files
+  register: documentation_incident_spec_files
 
 - name: Parse identifiers from spec files
   ansible.builtin.set_fact:
-    documents_incidents_ids: "{{ (documents_incidents_ids | default([])) + [spec.metadata.id] }}"
-  loop: "{{ documents_incident_spec_files.files }}"
+    documentation_incidents_ids: "{{ (documentation_incidents_ids | default([])) + [spec.metadata.id] }}"
+  loop: "{{ documentation_incident_spec_files.files }}"
   loop_control:
     label: "{{ item.path }}"
   vars:

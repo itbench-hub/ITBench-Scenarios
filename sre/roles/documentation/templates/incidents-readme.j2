@@ -6,13 +6,13 @@ Currently, ITBench comprises of an initial set of 42 SRE scenarios and 2 FinOps 
 
 | ID | Name | Complexity | Platform |
 | --- | --- | --- | --- |
-{% for content in documents_contents %}
+{% for content in documentation_contents %}
 | [Incident {{ content.spec.metadata.id }}](#incident-{{ content.spec.metadata.id }}) | {{ content.spec.metadata.name }} | {{ content.spec.metadata.complexity }} | {{ content.spec.metadata.platform }} |
 {% endfor %}
 
 ## Detailed Summary of Incidents
 
-{% for content in documents_contents %}
+{% for content in documentation_contents %}
 ### [Incident {{ content.spec.metadata.id }}](../roles/incidents/files/specs/incident_{{ content.spec.metadata.id }}.yaml)
 
 **Tools**
