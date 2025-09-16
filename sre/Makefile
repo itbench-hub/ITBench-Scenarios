@@ -127,30 +127,9 @@ generate_agent_bundle: ## Generates a bundle for an LLM Agent to interface with
 generate_leaderboard_bundle_status: ## Generates a bundle status for Leaderboard to interface with
 	ansible-playbook -i inventory.yaml playbooks/generate_leaderboard_bundle_status.yaml
 
-.SILENT: fetch_alerts
-fetch_alerts:
-	ansible-playbook -v base.yaml --tags "fetch_alerts" \
-		--extra-vars "incident_number=$(INCIDENT_NUMBER)" \
-		--extra-vars "sample_application=$(SAMPLE_APPLICATION)" \
-		> /tmp/fetch.out 2>&1 &
-
-.PHONY: evaluation
-.SILENT: evaluation
-evaluation:
-	KOPS_STATE_STORE=s3://${S3_BUCKET_NAME} kops export kubecfg ${CLUSTER_ASSIGNED_NAME} --admin --kubeconfig /tmp/${CLUSTER_ASSIGNED_NAME}.yaml > /tmp/eval.out; \
-	ansible-playbook -v base.yaml --tags "evaluation" --extra-vars "incident_number=$(INCIDENT_NUMBER) \
-	                                                                shared_workspace=\"$(SHARED_WORKSPACE)\" \
-																	s3_bucket_name_for_results='sre-runner-with-awx' \
-																	sre_agent_name__version_number=${PARTICIPANT_AGENT_UUID} \
-																	run_uuid=${RUN_UUID} \
-																	scenario_number=$(INCIDENT_NUMBER) \
-																	run_number=1  \
-																	location=${location} \
-																	sre_bench_runner=true \
-																	kubeconfig=/tmp/${CLUSTER_ASSIGNED_NAME}.yaml \
-																	domain=sre s3_endpoint_url='https://s3.us-east-2.amazonaws.com'" > /tmp/eval.out ; \
-	cat evaluation/e2e_new/incident_reports/$(INCIDENT_NUMBER).json
-	rm evaluation/e2e_new/incident_reports/$(INCIDENT_NUMBER).json
+PHONY: fetch_alerts
+fetch_alerts: ## Checks the Prometheus for firing alerts
+	ansible-runner run ./ -p check_for_specific_alerts_in_firing_state.yaml
 
 .PHONY: deploy_observability_stack
 deploy_observability_stack: ## DEPRECATED: Deploys the observability tools to cluster

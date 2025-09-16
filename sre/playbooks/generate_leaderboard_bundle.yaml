@@ -48,9 +48,6 @@
                 target: launch_start_workflow
               inject_fault:
                 unused: "{{ item.spec.faults | length == 0 }}"
-              evaluate:
-                file: Makefile
-                target: "evaluation"
               delete:
                 file: Makefile.runner
                 target: launch_stop_workflow
