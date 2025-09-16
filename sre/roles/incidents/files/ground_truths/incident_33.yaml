@@ -63,6 +63,7 @@ propagations:
   - source: frontend-service-1
     target: frontend-proxy-1
     condition: Frontend service returns degraded responses with missing ads errors
+    effect: Frontend service has slower and incorrect responses
 recommended_actions:
   - solution:
       id: fix_node_selectors

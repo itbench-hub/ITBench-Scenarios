@@ -24,6 +24,10 @@ groups:
     filter:
       - frontend\b
     namespace: otel-demo
+  - id: frontend-proxy-pod-1
+    kind: Pod
+    filter:
+      - frontend-proxy-.*
   - id: frontend-proxy-service-1
     kind: Service
     filter:

@@ -33,6 +33,11 @@ groups:
     filter:
       - frontend\b
     namespace: otel-demo
+  - id: frontend-pod-1
+    kind: Pod
+    filter:
+      - frontend-.*
+    namespace: otel-demo
   - id: frontend-proxy-service-1
     kind: Service
     filter:
