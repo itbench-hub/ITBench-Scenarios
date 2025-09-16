@@ -123,9 +123,9 @@ disable_agent_access: ## Removes access controls for llm agent
 generate_agent_bundle: ## Generates a bundle for an LLM Agent to interface with
 	ANSIBLE_STDOUT_CALLBACK=ansible.posix.json ansible-playbook -i inventory.yaml playbooks/generate_agent_bundle.yaml | jq -r '.plays[].tasks[] | select(.task.name == "Print agent bundle") | .hosts.localhost.msg'
 
-.PHONY: generate_leaderboard_bundle
-generate_leaderboard_bundle: ## Generates a bundle for Leaderboard to interface with
-	ansible-playbook -i inventory.yaml playbooks/generate_leaderboard_bundle.yaml
+.PHONY: generate_leaderboard_bundle_status
+generate_leaderboard_bundle_status: ## Generates a bundle status for Leaderboard to interface with
+	ansible-playbook -i inventory.yaml playbooks/generate_leaderboard_bundle_status.yaml
 
 .SILENT: fetch_alerts
 fetch_alerts:
@@ -230,11 +230,11 @@ bundle_info:
 
 .SILENT: bundle_status
 bundle_status:
-	@echo "WARNING: 'make bundle_status is deprecated. Please use 'make generate_leaderboard_bundle' instead."
+	@echo "WARNING: 'make bundle_status is deprecated. Please use 'make generate_leaderboard_bundle_status' instead."
 	@echo "This command will be removed in a future version."
-	@echo "Executing 'make generate_leaderboard_bundle'..."
+	@echo "Executing 'make generate_leaderboard_bundle_status'..."
 	@echo ""
-	$(MAKE) generate_leaderboard_bundle
+	$(MAKE) generate_leaderboard_bundle_status
 
 .PHONY: check_alerts
 check_alerts:

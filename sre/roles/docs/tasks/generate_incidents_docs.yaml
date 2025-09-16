@@ -1,20 +1,9 @@
 ---
-- name: Find all incident specs
-  ansible.builtin.find:
-    paths: "{{ playbook_dir }}/../roles/incidents/files/specs"
-    pattern: "incident_*.yaml"
-  register: docs_incident_spec_files
+- name: Import variable setting tasks
+  ansible.builtin.import_tasks:
+    file: set_incidents_ids.yaml
 
-- name: Parse identifiers from spec files
-  ansible.builtin.set_fact:
-    docs_incidents_ids: "{{ (docs_incidents_ids | default([])) + [spec.metadata.id] }}"
-  loop: "{{ docs_incident_spec_files.files }}"
-  loop_control:
-    label: "{{ item.path }}"
-  vars:
-    spec: "{{ lookup('ansible.builtin.file', item.path) | from_yaml }}"
-
-- name: Load spec and truth file
+- name: Load spec and truth files
   ansible.builtin.set_fact:
     docs_contents: |
       {{

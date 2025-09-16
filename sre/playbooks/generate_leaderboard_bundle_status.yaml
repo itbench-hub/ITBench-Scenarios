@@ -1,5 +1,5 @@
 ---
-- name: Manage SRE and FinOps Leaderboard Bundle
+- name: Manage SRE and FinOps Leaderboard Bundle Status
   hosts:
     - environment
   pre_tasks:
