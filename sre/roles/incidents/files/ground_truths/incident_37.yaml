@@ -17,7 +17,7 @@ groups:
     root_cause: true
 aliases:
   - - otel-demo-namespace-1
-propigations: []
+propagations: []
 recommended_actions:
   - solution:
       id: "no_action"

@@ -54,7 +54,7 @@ aliases:
   - - frontend-horizontal-pod-autoscalers-1
   - - image-provider-horizontal-pod-autoscalers-1
   - - otel-demo-namespace-1
-propigations: []
+propagations: []
 recommended_actions:
   - solution:
       id: investigate_detect_misconfigured_autoscaler
