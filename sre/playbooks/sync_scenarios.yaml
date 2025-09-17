@@ -1,0 +1,49 @@
+---
+- name: Sync scenarios across repositories
+  hosts:
+    - environment
+  pre_tasks:
+    - name: Import system role
+      ansible.builtin.import_role:
+        name: system
+      tags:
+        - always
+      vars:
+        system_cluster:
+          kubeconfig: "{{ cluster.kubeconfig }}"
+
+    - name: Import cluster role
+      ansible.builtin.import_role:
+        name: cluster
+      tags:
+        - always
+      vars:
+        cluster_files:
+          kubeconfig: "{{ cluster.kubeconfig }}"
+        cluster_tools_enabled:
+          oc: "{{ system_oc_exists }}"
+
+    - name: Import variables for incident
+      ansible.builtin.import_role:
+        name: incidents
+      tags:
+        - always
+      vars:
+        incidents_file:
+          id: "{{ incident_id }}"
+  tasks:
+    - name: Setup repository with submodules and content
+      ansible.builtin.shell: |
+        cd {{ playbook_dir }}
+        echo {{ playbook_dir }}
+        git submodule update --init --recursive
+        
+        if [ -f "scripts/copy-scenarios-to-submodule.sh" ]; then
+            chmod +x scripts/copy-scenarios-to-submodule.sh
+            ./scripts/copy-scenarios-to-submodule.sh
+            echo "Scenarios synced"
+        else
+            echo "Copy script not found, skipping content copy"
+        fi
+      tags:
+        - sync_scenarios

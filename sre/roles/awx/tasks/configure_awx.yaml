@@ -114,7 +114,7 @@
     scm_branch: "{{ awx_github.it_bench.branch | default('main') }}"
     scm_clean: true
     scm_delete_on_update: true
-    scm_track_submodules: false
+    scm_track_submodules: true
     scm_type: git
     scm_url: "{{ awx_github.it_bench.url }}"
     state: present

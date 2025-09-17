@@ -21,6 +21,16 @@
   tags:
     - launch_experiment_workflow
 
+- name: Launch the workflow for syncing scenario repositories
+  awx.awx.workflow_launch:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    workflow_template: "Sync-Scenarios-Workflow"
+  register: awx_launched_init_workflows
+  tags:
+    - sync_scenarios
+
 - name: Create workflow launch list for initialization
   ansible.builtin.set_fact:
     awx_experiment_workflows: "{{ awx_experiments.scenarios }}"

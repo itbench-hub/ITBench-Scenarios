@@ -17,6 +17,21 @@
     awx_job_credentials: "{{ awx_job_credentials + ['AWS'] }}"
   when:
     - awx_credentials.aws is defined
+    
+- name: Add job template to sync scenarios
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    execution_environment: AWX-EE-Custom
+    inventory: ITBench
+    job_tags: sync_scenarios
+    job_type: run
+    name: "Sync-Scenarios"
+    organization: ITBench
+    playbook: sre/playbooks/sync_scenarios.yaml
+    project: GitHub-ITBench
+    state: present
 
 - name: Add job template for installing tools
   awx.awx.job_template:
