@@ -17,7 +17,7 @@ alerts:
     metadata:
       description: Frontend service experiencing connection failures to ad service
   - id: RequestErrorRate
-    group_id: frontend-service-proxy-1
+    group_id: frontend-proxy-service-1
     metadata:
       description: Frontend proxy experiencing errors when serving pages that require ads functionality
 groups:
@@ -32,12 +32,22 @@ groups:
     filter:
       - ad\b
     namespace: otel-demo
+  - id: frontend-pod-1
+    kind: Pod
+    filter:
+      - frontend-.*
+    namespace: otel-demo
   - id: frontend-service-1
     kind: Service
     filter:
       - frontend\b
     namespace: otel-demo
-  - id: frontend-service-proxy-1
+  - id: frontend-proxy-pod-1
+    kind: Pod
+    filter:
+      - frontend-proxy-.*
+    namespace: otel-demo
+  - id: frontend-proxy-service-1
     kind: Service
     filter:
       - frontend-proxy\b
