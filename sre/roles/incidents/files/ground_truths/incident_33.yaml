@@ -45,8 +45,6 @@ groups:
 aliases:
   - - ad-service-1
     - ad-pod-1
-  - - cart-service-1
-    - cart-pod-1
   - - frontend-service-1
     - frontend-pod-1
   - - frontend-proxy-service-1
