@@ -35,6 +35,9 @@ sre/Incident_Data.html
 sre/evaluation/
 sre/ground_truths.json
 
+# Ansible-Runner files
+sre/artifacts
+
 # Source: python .gitignore
 
 # Byte-compiled / optimized / DLL files
