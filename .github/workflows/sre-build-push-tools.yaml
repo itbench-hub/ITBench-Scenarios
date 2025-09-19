@@ -37,6 +37,7 @@ jobs:
       - name: Checkout codebase
         uses: actions/checkout@v5.0.0
       - name: Login to Quay.io
+        if: github.ref == 'refs/heads/main'
         uses: docker/login-action@v3.5.0
         with:
           registry: quay.io
@@ -52,6 +53,7 @@ jobs:
         with:
           context: sre/tools/kubernetes-topology-monitor
           platforms: ${{ matrix.platform }}
+          push: ${{ github.ref == 'refs/heads/main' }}
           outputs: type=image,name=quay.io/it-bench/topology-monitor,push-by-digest=true,push=true
       - name: Export digest
         if: github.ref == 'refs/heads/main'
@@ -150,6 +152,7 @@ jobs:
         with:
           context: sre/tools/awx-ee/context
           platforms: ${{ matrix.platform }}
+          push: ${{ github.ref == 'refs/heads/main' }}
           outputs: type=image,name=quay.io/it-bench/awx-ee,push-by-digest=true,push=true
       - name: Export digest
         if: github.ref == 'refs/heads/main'
