@@ -7,6 +7,7 @@
         product(range(1, ((awx_experiments.trials | int) + 1)))
       }}
   tags:
+    - sync_scenarios
     - launch_experiment_workflow
     - deinit_experiment_workflow
 
@@ -14,6 +15,7 @@
   ansible.builtin.import_tasks:
     file: set_awx_controller_host.yaml
   tags:
+    - sync_scenarios
     - launch_experiment_workflow
     - deinit_experiment_workflow
 
@@ -21,6 +23,7 @@
   ansible.builtin.import_tasks:
     file: set_awx_controller_password.yaml
   tags:
+    - sync_scenarios
     - launch_experiment_workflow
     - deinit_experiment_workflow
 
