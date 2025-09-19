@@ -88,8 +88,10 @@ endif
 .PHONY: inject_incident_fault
 inject_incident_fault: ## Injects the fault used in a specific incident
 ifdef INCIDENT_NUMBER
-	ansible-playbook -i inventory project/manage_incidents.yaml --tags "inject_faults" \
-		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
+	python scripts/manage_incidents.py \
+		--private_project_directory $(shell pwd) \
+		--incident_spec_file $(shell pwd)/project/roles/incidents/files/specs/incident_$(INCIDENT_NUMBER).yaml \
+		--run_tags inject_faults
 else
 	@echo "Missing INCIDENT_NUMBER argument. Please run this command with this variable."
 endif
@@ -97,8 +99,10 @@ endif
 .PHONY: remove_incident_fault
 remove_incident_fault: ## Removes the fault used in a specific incident
 ifdef INCIDENT_NUMBER
-	ansible-playbook -i inventory project/manage_incidents.yaml --tags "remove_faults" \
-		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
+	python scripts/manage_incidents.py \
+		--private_project_directory $(shell pwd) \
+		--incident_spec_file $(shell pwd)/project/roles/incidents/files/specs/incident_$(INCIDENT_NUMBER).yaml \
+		--run_tags remove_faults
 else
 	@echo "Missing INCIDENT_NUMBER argument. Please run this command with this variable."
 endif
