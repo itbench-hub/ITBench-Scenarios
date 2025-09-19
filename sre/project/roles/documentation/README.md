@@ -42,7 +42,7 @@ These tables map the fields to their reasons.
             "name": "otel-demo-checkoutservice"
             "kind": "Deployment"
           "condition": "cache utilization high"
-      "manual_actions": 
+      "manual_actions":
         - "increase memory"
         - "kill leaking process"
       "automations":
