@@ -26,6 +26,10 @@ configure_awx_pipeline: ## Add job and workflow templates to AWX pipeline
 undeploy_awx_stack: ## Undeploys AWX to a cluster
 	ansible-playbook -i inventory.yaml playbooks/manage_awx.yaml --tags "uninstall_tools"
 
+.PHONY: launch_experiment_workflow
+launch_sync_scenarios_workflow: ## Launches the AWX workflow's for syncing scenarios across repositories
+	ansible-playbook -i inventory.yaml playbooks/manage_awx.yaml --tags "sync_scenarios"
+
 .PHONY: launch_start_workflow
 launch_start_workflow: ## Launches the AWX workflow's equivalent of make start_incident
 	ansible-playbook -i inventory.yaml playbooks/manage_awx.yaml --tags "launch_start_workflow"

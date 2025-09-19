@@ -23,14 +23,6 @@
         cluster_tools_enabled:
           oc: "{{ system_oc_exists }}"
 
-    - name: Import variables for incident
-      ansible.builtin.import_role:
-        name: incidents
-      tags:
-        - always
-      vars:
-        incidents_file:
-          id: "{{ incident_id }}"
   tasks:
     - name: Setup repository with submodules and content
       ansible.builtin.shell: |
