@@ -53,20 +53,20 @@
     aliases: "{{ incidents_ground_truth.aliases | flatten | unique }}"
     group_ids: "{{ incidents_ground_truth.groups | community.general.json_query('[*].id') }}"
 
-- name: Validate propigation sources
+- name: Validate propagation sources
   ansible.builtin.assert:
     that: sources is subset(group_ids)
     fail_msg: "Unknown sources found: {{ sources | difference(group_ids) }}"
-    success_msg: All propigation sources are valid.
+    success_msg: All propagation sources are valid.
   vars:
     group_ids: "{{ incidents_ground_truth.groups | community.general.json_query('[*].id') }}"
     sources: "{{ incidents_ground_truth.propagations | community.general.json_query('[*].sources') }}"
 
-- name: Validate propigation targets
+- name: Validate proprogation targets
   ansible.builtin.assert:
     that: targets is subset(group_ids)
     fail_msg: "Unknown targets found: {{ targets | difference(group_ids) }}"
-    success_msg: All propigation targets are valid.
+    success_msg: All propagation targets are valid.
   vars:
     group_ids: "{{ incidents_ground_truth.groups | community.general.json_query('[*].id') }}"
     targets: "{{ incidents_ground_truth.propagations | community.general.json_query('[*].targets') }}"
