@@ -10,7 +10,8 @@
       tags:
         - validate_docs
       vars:
-        incident_id: "{{ item }}"
+        incidents_file:
+          id: "{{ item }}"
   loop: "{{ documentation_incidents_ids }}"
   loop_control:
     label: "incident-{{ item }}"
