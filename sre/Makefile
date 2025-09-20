@@ -127,6 +127,10 @@ generate_agent_bundle: ## Generates a bundle for an LLM Agent to interface with
 generate_leaderboard_bundle_status: ## Generates a bundle status for Leaderboard to interface with
 	ansible-playbook -i inventory.yaml playbooks/generate_leaderboard_bundle_status.yaml
 
+.PHONY: generate_leaderboard_bundle
+generate_leaderboard_bundle: ## Generates a bundle of scenarios for the Leaderboard to interface
+	ansible-playbook -i inventory.yaml playbooks/generate_leaderboard_bundle.yaml
+
 PHONY: fetch_alerts
 fetch_alerts: ## Checks the Prometheus for firing alerts
 	ansible-runner run ./ -p check_for_specific_alerts_in_firing_state.yaml

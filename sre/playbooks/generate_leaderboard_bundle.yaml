@@ -98,7 +98,7 @@
     - name: Create bundle file
       ansible.builtin.copy:
         content: "{{ bundle_contents | to_nice_json }}"
-        dest: "{{ playbook_dir }}/../docs/scenarios.json"
+        dest: "{{ playbook_dir }}/../docs/scenario_bundle.json"
         mode: "0644"
       tags:
         - always
