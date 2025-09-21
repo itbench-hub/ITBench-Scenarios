@@ -1,7 +1,7 @@
-playbooks/generate_leaderboard_bundle_status.yaml yaml[line-length]
-roles/applications/files/rules/otel-demo.yaml yaml[line-length]
+project/generate_leaderboard_bundle_status.yaml yaml[line-length]
+project/roles/applications/files/rules/otel-demo.yaml yaml[line-length]
 
 # Temporary
-roles/leaderboard/tasks/main.yaml ignore-errors
-roles/faults/tasks/inject_otel_demo_flagd.yaml var-naming[no-role-prefix]
-roles/incidents/tasks/main.yaml yaml[line-length]
+project/roles/leaderboard/tasks/main.yaml ignore-errors
+project/roles/faults/tasks/inject_otel_demo_flagd.yaml var-naming[no-role-prefix]
+project/roles/incidents/tasks/main.yaml yaml[line-length]
