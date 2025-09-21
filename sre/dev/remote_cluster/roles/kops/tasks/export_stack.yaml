@@ -19,7 +19,7 @@
 - name: Update stack group variables file
   ansible.builtin.copy:
     content: "{{ stack_definition | to_nice_yaml(indent=2) }}"
-    dest: "../../../group_vars/runner/stack.yaml"
+    dest: "../../../inventory/group_vars/runner/stack.yaml"
     mode: "0644"
   vars:
     stack_definition:
