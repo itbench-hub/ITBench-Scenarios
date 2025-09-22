@@ -14,8 +14,8 @@ spec:
       selected:
         - kubernetes-topology-monitor
   faults:
-    - otel_demo:
-        flagd:
-          flags:
-            - name: adHighCpu
-              state: "on"
+    - - otel_demo:
+          flagd:
+            flags:
+              - name: adHighCpu
+                state: "on"

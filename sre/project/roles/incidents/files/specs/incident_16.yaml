@@ -14,15 +14,15 @@ spec:
       selected:
         - kubernetes-topology-monitor
   faults:
-    - custom:
-        name: modify-environment-variables
-        modify_environment_variables:
-          workload:
-            container:
+    - - custom:
+          name: modify-environment-variables
+          modify_environment_variables:
+            workload:
+              container:
+                name: shipping
+                env:
+                  - name: QUOTE_ADDR
+                    value: "quote:0000"
+              kind: Deployment
               name: shipping
-              env:
-                - name: QUOTE_ADDR
-                  value: "quote:0000"
-            kind: Deployment
-            name: shipping
-            namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
