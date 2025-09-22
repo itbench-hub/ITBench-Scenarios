@@ -67,7 +67,10 @@
                 "faults": {
                     "type": "array",
                     "items": {
-                        "type": "object"
+                        "type": "array",
+                        "items": {
+                            "type": "object"
+                        }
                     }
                 }
             }
