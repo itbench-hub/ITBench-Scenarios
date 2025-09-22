@@ -1,92 +1,83 @@
 {
     "type": "object",
-    "required": ["metadata", "scenario"],
+    "required": ["metadata", "spec", "version"],
     "properties": {
         "metadata": {
             "type": "object",
-            "required": ["version"],
+            "required": ["complexity", "id", "name", "platform"],
             "properties": {
-                "version": {
+                "complexity": {
                     "type": "string",
-                    "enum": ["v1"]
+                    "enum": ["Low", "Medium", "High"]
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "platform": {
+                    "type": "string",
+                    "enum": ["kubernetes"]
                 }
             }
         },
-        "scenario": {
+        "spec": {
             "type": "object",
-            "required": ["metadata", "spec"],
+            "required": ["environment", "faults"],
             "properties": {
-                "metadata": {
+                "environment": {
                     "type": "object",
-                    "required": ["complexity", "id", "name", "platform"],
+                    "required": ["applications", "tools"],
                     "properties": {
-                        "complexity": {
-                            "type": "string",
-                            "enum": ["Low", "Medium", "High"]
-                        },
-                        "id": {
-                            "type": "integer"
-                        },
-                        "name": {
-                            "type": "string"
-                        },
-                        "platform": {
-                            "type": "string",
-                            "enum": ["kubernetes"]
-                        }
-                    }
-                },
-                "spec": {
-                    "type": "object",
-                    "required": ["environment", "faults"],
-                    "properties": {
-                        "environment": {
+                        "applications": {
                             "type": "object",
-                            "required": ["applications", "tools"],
                             "properties": {
-                                "applications": {
+                                "otel_demo": {
                                     "type": "object",
+                                    "required": ["enabled"],
                                     "properties": {
-                                        "otel_demo": {
-                                            "type": "object",
-                                            "required": ["enabled"],
-                                            "properties": {
-                                                "configuration": {
-                                                    "type": "object"
-                                                },
-                                                "enabled": {
-                                                    "type": "boolean"
-                                                }
-                                            }
-                                        }
-                                    }
-                                },
-                                "tools": {
-                                    "type": "object",
-                                    "properties": {
-                                        "category": {
-                                            "type": "string",
-                                            "enum": ["finops", "sre"]
+                                        "configuration": {
+                                            "type": "object"
                                         },
-                                        "selected": {
-                                            "type": "array",
-                                            "items": {
-                                                "type": "string"
-                                            }
+                                        "enabled": {
+                                            "type": "boolean"
                                         }
                                     }
                                 }
                             }
                         },
-                        "faults": {
-                            "type": "array",
-                            "items": {
-                                "type": "object"
+                        "tools": {
+                            "type": "object",
+                            "properties": {
+                                "category": {
+                                    "type": "string",
+                                    "enum": ["finops", "sre"]
+                                },
+                                "selected": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "string"
+                                    }
+                                }
                             }
+                        }
+                    }
+                },
+                "faults": {
+                    "type": "array",
+                    "items": {
+                        "type": "array",
+                        "items": {
+                            "type": "object"
                         }
                     }
                 }
             }
+        },
+        "version": {
+            "type": "string",
+            "enum": ["v1"]
         }
     }
 }
