@@ -164,15 +164,9 @@ experiments:
 ```
 
 **Configuration tips:**
-<<<<<<< HEAD
 - The local Kind cluster setup supports one scenario at at time. There is a plan to extend this to allow for scenario runs one after the other.
 - Increase `trials` for statistical significance
 - Available scenarios and their respective scenario IDs in open source are documented [here](https://github.com/itbench-hub/ITBench-Scenarios/blob/main/sre/docs/incidents.md).
-=======
-- Start with a single scenario for initial testing. The local Kind cluster setup supports one scenario at at time
-- Increase `trials` for statistical significance
-- Available scenarios and their respective scenario IDs in open source: 1, 3, 16, 20, 23, 26, 27, 30, 31, 33, 34, 37, 38, 102, 105
->>>>>>> d31491c (bump: adding relevant bits for AWX)
 
 ### GitHub Configuration (github.yaml)
 
@@ -206,7 +200,6 @@ Kubernetes cluster configuration:
 ```yaml
 stack:
   awx:
-<<<<<<< HEAD
     kubeconfig: ~/.kube/config       # Path to your local Kind clusters kubeconfig
   runners:
     kubeconfigs:
@@ -215,14 +208,3 @@ stack:
 
 ## For AWS based runs
 Allows for multiple scenarios to run in across different available clusters. At this time we assume that each scenario has access to its own cluster.
-=======
-    use_nodeport: true               # Enable NodePort for local access
-    kubeconfig: ~/.kube/config       # Path to your local Kind clusters kubeconfig
-  runners:
-    kubeconfigs:
-      - ~/.kube/config               # Path to your local Kind cluster kubeconfig
-```
-
-## For AWS based runs
-Allows for multiple scenarios to run in across different available clusters. At this time we assume that each scenario has access to its own cluster. 
->>>>>>> d31491c (bump: adding relevant bits for AWX)
