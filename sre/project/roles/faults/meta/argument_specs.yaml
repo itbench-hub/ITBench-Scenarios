@@ -385,3 +385,19 @@ argument_specs:
                       namespace:
                         required: true
                         type: str
+          wait:
+            required: false
+            type: dict
+            options:
+              name:
+                choices:
+                  - pause
+                required: true
+                type: str
+              pause:
+                required: false
+                type: dict
+                options:
+                  seconds:
+                    required: true
+                    type: int

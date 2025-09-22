@@ -1,4 +1,18 @@
 ---
+- name: Include wait tasks
+  ansible.builtin.include_tasks:
+    file: wait.yaml
+    apply:
+      tags:
+        - inject_faults
+      vars:
+        fault: "{{ fault_spec }}"
+  loop: "{{ faults_specs }}"
+  loop_control:
+    loop_var: fault_spec
+  tags:
+    - inject_faults
+
 - name: Include injection tasks
   ansible.builtin.include_tasks:
     file: inject.yaml
