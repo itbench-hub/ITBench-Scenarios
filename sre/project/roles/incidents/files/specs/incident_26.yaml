@@ -1,24 +1,22 @@
 ---
+version: v1
 metadata:
-  version: "v1"
-scenario:
-  metadata:
-    complexity: Medium
-    id: 26
-    name: HTTP request tamper fault
-    platform: kubernetes
-  spec:
-    environment:
-      applications:
-        otel_demo:
-          enabled: true
-      tools:
-        category: sre
-        selected:
-          - chaos-mesh
-          - kubernetes-topology-monitor
-    faults:
-      - chaos_mesh:
+  complexity: Medium
+  id: 26
+  name: HTTP request tamper fault
+  platform: kubernetes
+spec:
+  environment:
+    applications:
+      otel_demo:
+        enabled: true
+    tools:
+      category: sre
+      selected:
+        - chaos-mesh
+        - kubernetes-topology-monitor
+  faults:
+    - - chaos_mesh:
           schedule:
             name: otel-demo-email-http-chaos-post-body-tamper
             spec:

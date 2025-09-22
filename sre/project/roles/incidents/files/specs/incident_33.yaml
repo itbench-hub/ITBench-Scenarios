@@ -1,23 +1,21 @@
 ---
+version: v1
 metadata:
-  version: "v1"
-scenario:
-  metadata:
-    complexity: Low
-    id: 33
-    name: Invalid node selector on pod
-    platform: kubernetes
-  spec:
-    environment:
-      applications:
-        otel_demo:
-          enabled: true
-      tools:
-        category: sre
-        selected:
-          - kubernetes-topology-monitor
-    faults:
-      - custom:
+  complexity: Low
+  id: 33
+  name: Invalid node selector on pod
+  platform: kubernetes
+spec:
+  environment:
+    applications:
+      otel_demo:
+        enabled: true
+    tools:
+      category: sre
+      selected:
+        - kubernetes-topology-monitor
+  faults:
+    - - custom:
           name: invalid-node-selector
           invalid_node_selector:
             workload:

@@ -1,23 +1,21 @@
 ---
+version: v1
 metadata:
-  version: "v1"
-scenario:
-  metadata:
-    complexity: Medium
-    id: 16
-    name: Misconfigured shipping service environment variable
-    platform: kubernetes
-  spec:
-    environment:
-      applications:
-        otel_demo:
-          enabled: true
-      tools:
-        category: sre
-        selected:
-          - kubernetes-topology-monitor
-    faults:
-      - custom:
+  complexity: Medium
+  id: 16
+  name: Misconfigured shipping service environment variable
+  platform: kubernetes
+spec:
+  environment:
+    applications:
+      otel_demo:
+        enabled: true
+    tools:
+      category: sre
+      selected:
+        - kubernetes-topology-monitor
+  faults:
+    - - custom:
           name: modify-environment-variables
           modify_environment_variables:
             workload:
