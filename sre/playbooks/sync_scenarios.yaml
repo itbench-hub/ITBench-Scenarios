@@ -3,6 +3,10 @@
   hosts:
     - environment
   pre_tasks:
+    - name: Pause
+      ansible.builtin.pause:
+        seconds: 600
+
     - name: Import system role
       ansible.builtin.import_role:
         name: system
