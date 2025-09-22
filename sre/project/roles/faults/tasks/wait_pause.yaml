@@ -1,0 +1,4 @@
+---
+- name: Pause for {{ spec.seconds }}s
+  ansible.builtin.pause:
+    seconds: "{{ spec.seconds }}"
