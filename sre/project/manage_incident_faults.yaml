@@ -74,7 +74,7 @@
           vars:
             faults_cluster:
               kubeconfig: "{{ cluster.kubeconfig }}"
-            faults_specs: "{{ [incidents_spec.scenario.spec.faults[fault_group | int]] }}"
+            faults_specs: "{{ [incidents_spec.spec.faults[fault_group | int]] }}"
 
         - name: Import leaderboard role
           ansible.builtin.import_role:
