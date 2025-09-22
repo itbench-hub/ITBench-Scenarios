@@ -29,7 +29,7 @@
     job_type: run
     name: "Sync-Scenarios"
     organization: ITBench
-    playbook: sre/playbooks/sync_scenarios.yaml
+    playbook: ITBench-Scenarios/sre/playbooks/sync_scenarios.yaml
     project: GitHub-ITBench
     state: present
 
