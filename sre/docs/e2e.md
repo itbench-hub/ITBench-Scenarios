@@ -62,7 +62,11 @@ Open your browser and navigate to: [http://127.0.0.1:30950/ui_next/overview](htt
 - Password: Retrieve using the command below:
 
 ```bash
+<<<<<<< HEAD
 KUBECONFIG=<path_to_kubeconfig> kubectl get secret awx-deployment-admin-password -n awx --template={{.data.password}} | base64 -d
+=======
+KUBECONFIG=/path_to_kubeconfig kubectl get secret awx-deployment-admin-password -n awx --template={{.data.password}} | base64 -d
+>>>>>>> d31491c (bump: adding relevant bits for AWX)
 ```
 
 ### Step 5: Configure AWX Pipeline
@@ -109,7 +113,11 @@ agent_configuration:
       provider: "openai"              # LLM provider (openai, watsonx, etc.)
       model: "gpt-4o"                 # Model to use
       url: "https://api.openai.com/v1" # API endpoint
+<<<<<<< HEAD
       api_key: "your-api-key-here"    # Your API key # pragma: allowlist secret
+=======
+      api_key: "your-api-key-here"    # Your API key
+>>>>>>> d31491c (bump: adding relevant bits for AWX)
       seed: "42"                      # For reproducible results
       top_p: "0.1"                    # Sampling parameter
       temperature: "0.000001"         # Response randomness (lower = more deterministic)
@@ -156,9 +164,15 @@ experiments:
 ```
 
 **Configuration tips:**
+<<<<<<< HEAD
 - The local Kind cluster setup supports one scenario at at time. There is a plan to extend this to allow for scenario runs one after the other.
 - Increase `trials` for statistical significance
 - Available scenarios and their respective scenario IDs in open source are documented [here](https://github.com/itbench-hub/ITBench-Scenarios/blob/main/sre/docs/incidents.md).
+=======
+- Start with a single scenario for initial testing. The local Kind cluster setup supports one scenario at at time
+- Increase `trials` for statistical significance
+- Available scenarios and their respective scenario IDs in open source: 1, 3, 16, 20, 23, 26, 27, 30, 31, 33, 34, 37, 38, 102, 105
+>>>>>>> d31491c (bump: adding relevant bits for AWX)
 
 ### GitHub Configuration (github.yaml)
 
@@ -192,6 +206,7 @@ Kubernetes cluster configuration:
 ```yaml
 stack:
   awx:
+<<<<<<< HEAD
     kubeconfig: ~/.kube/config       # Path to your local Kind clusters kubeconfig
   runners:
     kubeconfigs:
@@ -200,3 +215,14 @@ stack:
 
 ## For AWS based runs
 Allows for multiple scenarios to run in across different available clusters. At this time we assume that each scenario has access to its own cluster.
+=======
+    use_nodeport: true               # Enable NodePort for local access
+    kubeconfig: ~/.kube/config       # Path to your local Kind clusters kubeconfig
+  runners:
+    kubeconfigs:
+      - ~/.kube/config               # Path to your local Kind cluster kubeconfig
+```
+
+## For AWS based runs
+Allows for multiple scenarios to run in across different available clusters. At this time we assume that each scenario has access to its own cluster. 
+>>>>>>> d31491c (bump: adding relevant bits for AWX)
