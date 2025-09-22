@@ -2,37 +2,10 @@
 - name: Sync scenarios across repositories
   hosts:
     - environment
-  pre_tasks:
-    - name: Pause
-      ansible.builtin.pause:
-        seconds: 600
-
-    - name: Import system role
-      ansible.builtin.import_role:
-        name: system
-      tags:
-        - always
-      vars:
-        system_cluster:
-          kubeconfig: "{{ cluster.kubeconfig }}"
-
-    - name: Import cluster role
-      ansible.builtin.import_role:
-        name: cluster
-      tags:
-        - always
-      vars:
-        cluster_files:
-          kubeconfig: "{{ cluster.kubeconfig }}"
-        cluster_tools_enabled:
-          oc: "{{ system_oc_exists }}"
-
   tasks:
     - name: Setup repository with submodules and content
       ansible.builtin.shell: |
-        cd {{ playbook_dir }}
-        echo {{ playbook_dir }}
-        git submodule update --init --recursive
+        cd {{ playbook_dir }}/../../../
         
         if [ -f "scripts/copy-scenarios-to-submodule.sh" ]; then
             chmod +x scripts/copy-scenarios-to-submodule.sh
