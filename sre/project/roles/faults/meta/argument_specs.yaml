@@ -410,3 +410,19 @@ argument_specs:
                     required: false
                     type: int
                     default: 500
+          wait:
+            required: false
+            type: dict
+            options:
+              name:
+                choices:
+                  - pause
+                required: true
+                type: str
+              pause:
+                required: false
+                type: dict
+                options:
+                  seconds:
+                    required: true
+                    type: int
