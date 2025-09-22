@@ -103,6 +103,19 @@
       when:
         - leaderboard_status_events is defined
   always:
+    - name: Ensure local directory exists
+      ansible.builtin.file:
+        path: "{{ leaderboard_storage.local.directory }}"
+        state: directory
+        mode: "0644"
+      tags:
+        recurse: yes
+      tags:
+        - always
+      when:
+        - leaderboard_storage.local is defined
+        - leaderboard_status_conditions is defined
+
     - name: Copy assertion file into local directory
       ansible.builtin.copy:
         dest: "{{ leaderboard_storage.local.directory }}/assertion.json"
