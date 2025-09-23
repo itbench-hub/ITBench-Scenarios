@@ -48,7 +48,7 @@ python -m pip install -r ../../requirements-dev.txt
 make group_vars
 ```
 
-3. The following variables are to be set in `group_vars/development/kops_cluster.yaml`
+3. The following variables are to be set in `inventory/group_vars/development/kops_cluster.yaml`
 ```
 cluster:
   s3:
@@ -68,7 +68,7 @@ aws configure
 ### 1. Create the Cluster
 Create a new Kubernetes cluster using EC2 resources. Skip this step if you already have a cluster running.
 
-The cluster configuration is defined in `group_vars/development/kops_cluster.yaml`.
+The cluster configuration is defined in `inventory/group_vars/development/kops_cluster.yaml`.
 
 ```bash
 make create_kops_cluster
@@ -81,7 +81,7 @@ Export the cluster's kubeconfig to access the remote Kubernetes cluster:
 make export_kops_kubeconfig
 ```
 
-To export a cluster other than the one defined in `group_vars/development/kops_cluster.yaml`, get the full name of the cluster by running the following command:
+To export a cluster other than the one defined in `inventory/group_vars/development/kops_cluster.yaml`, get the full name of the cluster by running the following command:
 
 ```bash
 make list_kops_clusters
@@ -111,7 +111,7 @@ kubectl get pods --all-namespaces
 Update the `kubeconfig` path in your global configuration:
 
 ```bash
-vim ../group_vars/environment/cluster.yaml
+vim ../inventory/group_vars/environment/cluster.yaml
 ```
 
 Set the absolute path where the kubeconfig should be downloaded:
@@ -133,7 +133,7 @@ To delete the cluster, run the following command:
 make destroy_kops_cluster
 ```
 
-To delete a cluster other than the one defined in `group_vars/development/kops_cluster.yaml`, get the full name of the cluster by running the following command:
+To delete a cluster other than the one defined in `inventory/group_vars/development/kops_cluster.yaml`, get the full name of the cluster by running the following command:
 
 ```bash
 make list_kops_clusters
