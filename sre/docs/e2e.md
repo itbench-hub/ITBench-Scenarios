@@ -62,11 +62,7 @@ Open your browser and navigate to: [http://127.0.0.1:30950/ui_next/overview](htt
 - Password: Retrieve using the command below:
 
 ```bash
-<<<<<<< HEAD
 KUBECONFIG=<path_to_kubeconfig> kubectl get secret awx-deployment-admin-password -n awx --template={{.data.password}} | base64 -d
-=======
-KUBECONFIG=/path_to_kubeconfig kubectl get secret awx-deployment-admin-password -n awx --template={{.data.password}} | base64 -d
->>>>>>> d31491c (bump: adding relevant bits for AWX)
 ```
 
 ### Step 5: Configure AWX Pipeline
@@ -113,11 +109,7 @@ agent_configuration:
       provider: "openai"              # LLM provider (openai, watsonx, etc.)
       model: "gpt-4o"                 # Model to use
       url: "https://api.openai.com/v1" # API endpoint
-<<<<<<< HEAD
       api_key: "your-api-key-here"    # Your API key # pragma: allowlist secret
-=======
-      api_key: "your-api-key-here"    # Your API key
->>>>>>> d31491c (bump: adding relevant bits for AWX)
       seed: "42"                      # For reproducible results
       top_p: "0.1"                    # Sampling parameter
       temperature: "0.000001"         # Response randomness (lower = more deterministic)
