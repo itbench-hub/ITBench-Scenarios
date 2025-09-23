@@ -6,14 +6,14 @@ on:
       - main
     paths:
       - sre/dev/local_cluster/go.*
-      - sre/playbooks/manage_agent_access.yaml
-      - sre/playbooks/manage_applications.yaml
-      - sre/playbooks/manage_documentation.yaml
-      - sre/playbooks/manage_incidents.yaml
-      - sre/playbooks/manage_recorders.yaml
-      - sre/playbooks/manage_tools.yaml
-      - sre/roles/**
-      - '!sre/roles/awx/**'
+      - sre/project/manage_agent_access.yaml
+      - sre/project/manage_applications.yaml
+      - sre/project/manage_documentation.yaml
+      - sre/project/manage_incidents.yaml
+      - sre/project/manage_recorders.yaml
+      - sre/project/manage_tools.yaml
+      - sre/project/roles/**
+      - '!sre/project/roles/awx/**'
 
 concurrency:
   group: ci-integration-${{ github.ref }}

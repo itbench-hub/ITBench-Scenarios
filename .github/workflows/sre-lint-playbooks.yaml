@@ -5,10 +5,8 @@ on:
     branches:
       - main
     paths:
-      - sre/playbooks/**
-      - sre/roles/**
-      - sre/dev/remote_cluster/playbooks/**
-      - sre/dev/remote_cluster/roles/**
+      - sre/project/**
+      - sre/dev/remote_cluster/project/**
 
 jobs:
   lint-main-playbooks:
@@ -45,6 +43,7 @@ jobs:
       - name: Run ansible-lint
         uses: ansible/ansible-lint@v25.11.1
         with:
+          args: project
           setup_python: "false"
           working_directory: sre/dev/remote_cluster
           requirements_file: ../../requirements.yaml

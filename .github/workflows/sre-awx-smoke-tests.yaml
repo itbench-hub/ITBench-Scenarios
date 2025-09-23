@@ -6,8 +6,8 @@ on:
       - main
     paths:
       - sre/dev/local_cluster/go.*
-      - sre/roles/awx/**
-      - sre/playbooks/manage_awx.yaml
+      - sre/project/roles/awx/**
+      - sre/project/manage_awx.yaml
 
 concurrency:
   group: ci-awx-${{ github.ref }}
