@@ -108,7 +108,6 @@
         path: "{{ leaderboard_storage.local.directory }}"
         state: directory
         mode: "0644"
-      tags:
         recurse: yes
       tags:
         - always
