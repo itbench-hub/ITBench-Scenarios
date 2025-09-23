@@ -69,7 +69,440 @@
                     "items": {
                         "type": "array",
                         "items": {
-                            "type": "object"
+                            "type": "object",
+                            "properties": {
+                                "chaos_mesh": {
+                                    "type": "object",
+                                    "required": ["schedule"],
+                                    "properties": {
+                                        "schedule": {
+                                            "type": "object",
+                                            "required": ["name", "spec"],
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "spec": {
+                                                    "type": "object"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "custom": {
+                                    "type": "object",
+                                    "required": ["name"],
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "enum": ["invalid-command", "invalid-image", "invalid-node-selector", "misconfigured-horizontal-pod-autoscaler", "misconfigured-network-policy", "misconfigured-persitent-volume-claim", "misconfigured-resource-quota", "misconfigured-service-port", "modify-environment-variables", "unsupported-image"]
+                                        },
+                                        "invalid_command": {
+                                            "type": "object",
+                                            "required": ["workload"],
+                                            "properties": {
+                                                "workload": {
+                                                    "type": "object",
+                                                    "required": ["container", "kind", "name", "namespace"],
+                                                    "properties": {
+                                                        "container": {
+                                                            "type": "object",
+                                                            "required": ["name"],
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        },
+                                                        "kind": {
+                                                            "type": "string",
+                                                            "enum": ["Deployment", "ReplicaSet", "StatefulSet"]
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "namespace": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                },
+                                                "restart_policy": {
+                                                    "type": "string",
+                                                    "enum": ["force", "safe"]
+                                                }
+                                            }
+                                        },
+                                        "invalid_image": {
+                                            "type": "object",
+                                            "required": ["workload"],
+                                            "properties": {
+                                                "workload": {
+                                                    "type": "object",
+                                                    "required": ["container", "kind", "name", "namespace"],
+                                                    "properties": {
+                                                        "container": {
+                                                            "type": "object",
+                                                            "required": ["name"],
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        },
+                                                        "kind": {
+                                                            "type": "string",
+                                                            "enum": ["Deployment", "StatefulSet"]
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "namespace": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                },
+                                                "restart_policy": {
+                                                    "type": "string",
+                                                    "enum": ["force", "safe"]
+                                                }
+                                            }
+                                        },
+                                        "invalid_node_selector": {
+                                            "type": "object",
+                                            "required": ["workload"],
+                                            "properties": {
+                                                "workload": {
+                                                    "type": "object",
+                                                    "required": ["kind", "name", "namespace"],
+                                                    "properties": {
+                                                        "kind": {
+                                                            "type": "string",
+                                                            "enum": ["Deployment", "StatefulSet"]
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "namespace": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "misconfigured_horizontal_pod_autoscaler": {
+                                            "type": "object",
+                                            "required": ["autoscaler"],
+                                            "properties": {
+                                                "type": "object",
+                                                "required": ["name", "namespace"],
+                                                "properties": {
+                                                    "name": {
+                                                        "type": "string"
+                                                    },
+                                                    "namespace": {
+                                                        "type": "string"
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "misconfigured_network_policy": {
+                                            "type": "object",
+                                            "required": ["workload"],
+                                            "properties": {
+                                                "workload": {
+                                                    "type": "object",
+                                                    "required": ["kind", "name", "namespace"],
+                                                    "properties": {
+                                                        "kind": {
+                                                            "type": "string",
+                                                            "enum": ["Deployment", "StatefulSet"]
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "namespace": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "misconfigured_persitent_volume_claim": {
+                                            "type": "object",
+                                            "required": ["workload"],
+                                            "properties": {
+                                                "workload": {
+                                                    "type": "object",
+                                                    "required": ["container", "kind", "name", "namespace"],
+                                                    "properties": {
+                                                        "container": {
+                                                            "type": "object",
+                                                            "required": ["name"],
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        },
+                                                        "kind": {
+                                                            "type": "string",
+                                                            "enum": ["Deployment", "ReplicaSet", "StatefulSet"]
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "namespace": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "misconfigured_resource_quota": {
+                                            "type": "object",
+                                            "required": ["namespace", "workloads"],
+                                            "properties": {
+                                                "namespace": {
+                                                    "type": "object",
+                                                    "required": ["name"],
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                },
+                                                "workloads": {
+                                                    "type": "array",
+                                                    "minItems": 1,
+                                                    "items": {
+                                                        "type": "object",
+                                                        "required": ["kind", "name"],
+                                                        "properties": {
+                                                            "kind": {
+                                                                "type": "string",
+                                                                "enum": ["Deployment", "StatefulSet"]
+                                                            },
+                                                            "name": {
+                                                                "type": "string"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "misconfigured_service_port": {
+                                            "type": "object",
+                                            "required": ["service"],
+                                            "properties": {
+                                                "service": {
+                                                    "type": "object",
+                                                    "required": ["name", "namespace", "target_port"],
+                                                    "properties": {
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "namespace": {
+                                                            "type": "string"
+                                                        },
+                                                        "target_port": {
+                                                            "type": "integer"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        "modify_environment_variables": {
+                                            "type": "object",
+                                            "required": ["workload"],
+                                            "properties": {
+                                                "workload": {
+                                                    "type": "object",
+                                                    "required": ["container", "kind", "name", "namespace"],
+                                                    "properties": {
+                                                        "container": {
+                                                            "type": "object",
+                                                            "required": ["env", "name"],
+                                                            "properties": {
+                                                                "env": {
+                                                                    "type": "array",
+                                                                    "minItems": 1,
+                                                                    "items": {
+                                                                        "type": "object",
+                                                                        "required": ["name", "value"],
+                                                                        "properties": {
+                                                                            "name": {
+                                                                                "type": "string"
+                                                                            },
+                                                                            "value": {
+                                                                                "type": "string"
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "name": {
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        },
+                                                        "kind": {
+                                                            "type": "string",
+                                                            "enum": ["Deployment", "StatefulSet"]
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "namespace": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                },
+                                                "restart_policy": {
+                                                    "type": "string",
+                                                    "enum": ["force", "safe"]
+                                                }
+                                            }
+                                        },
+                                        "unsupported_image": {
+                                            "type": "object",
+                                            "required": ["workload"],
+                                            "properties": {
+                                                "workload": {
+                                                    "type": "object",
+                                                    "required": ["container", "kind", "name", "namespace"],
+                                                    "properties": {
+                                                        "container": {
+                                                            "type": "object",
+                                                            "required": ["name"],
+                                                            "properties": {
+                                                                "name": {
+                                                                    "type": "string"
+                                                                }
+                                                            }
+                                                        },
+                                                        "kind": {
+                                                            "type": "string",
+                                                            "enum": ["Deployment", "StatefulSet"]
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "namespace": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                },
+                                                "restart_policy": {
+                                                    "type": "string",
+                                                    "enum": ["force", "safe"]
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "otel_demo": {
+                                    "type": "object",
+                                    "required": ["flagd"],
+                                    "properties": {
+                                        "flagd": {
+                                            "type": "object",
+                                            "required": ["flags"],
+                                            "properties": {
+                                                "flags": {
+                                                    "type": "array",
+                                                    "minItems": 1,
+                                                    "items": {
+                                                        "type": "object",
+                                                        "required": ["name", "state"],
+                                                        "properties": {
+                                                            "name": {
+                                                                "type": "string",
+                                                                "enum": ["adHighCpu", "adFailure", "adManualGc", "cartFailure", "imageSlowLoad", "kafkaQueueProblems", "loadGeneratorFloodHomepage", "paymentFailure", "paymentUnreachable", "productCatalogFailure", "recommendationCacheFailure"]
+                                                            },
+                                                            "state": {
+                                                                "type": "string"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "valkey": {
+                                    "type": "object",
+                                    "required": ["name"],
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "enum": ["fill-storage", "invalid-password"]
+                                        },
+                                        "fill_storage": {
+                                            "required": ["workload"],
+                                            "properties": {
+                                                "workload": {
+                                                    "type": "object",
+                                                    "required": ["kind", "name", "namespace"],
+                                                    "properties": {
+                                                        "kind": {
+                                                            "type": "string",
+                                                            "enum": ["Deployment", "StatefulSet"]
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "namespace": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                },
+                                                "storage_size_mb": {
+                                                    "type": "integer"
+                                                }
+                                            }
+                                        },
+                                        "invalid_password": {
+                                            "required": ["workload"],
+                                            "properties": {
+                                                "workload": {
+                                                    "type": "object",
+                                                    "required": ["kind", "name", "namespace"],
+                                                    "properties": {
+                                                        "kind": {
+                                                            "type": "string",
+                                                            "enum": ["Deployment", "StatefulSet"]
+                                                        },
+                                                        "name": {
+                                                            "type": "string"
+                                                        },
+                                                        "namespace": {
+                                                            "type": "string"
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "wait": {
+                                    "type": "object",
+                                    "required": ["name"],
+                                    "properties": {
+                                        "name": {
+                                            "type": "string",
+                                            "enum": ["pause"]
+                                        },
+                                        "pause": {
+                                            "type": "object",
+                                            "required": ["seconds"],
+                                            "properties": {
+                                                "seconds": {
+                                                    "type": "integer"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
