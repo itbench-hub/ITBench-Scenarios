@@ -103,6 +103,12 @@
       when:
         - leaderboard_status_events is defined
   always:
+    - name: Pause
+      ansible.builtin.pause:
+        seconds: 600
+      tags:
+        - always
+
     - name: Ensure local directory exists
       ansible.builtin.file:
         path: "{{ leaderboard_storage.local.directory }}"
