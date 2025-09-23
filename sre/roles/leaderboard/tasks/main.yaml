@@ -113,8 +113,8 @@
       ansible.builtin.file:
         path: "{{ leaderboard_storage.local.directory }}"
         state: directory
-        mode: "0644"
-        recurse: yes
+        mode: "0755"
+        recurse: true
       tags:
         - always
       when:
