@@ -17,11 +17,11 @@ group_vars: ## Generates the group variables
 
 .PHONY: docs
 docs: ## Generates the documentation for the incidents
-	ansible-playbook -i inventory.yaml project/manage_documentation.yaml --tags "generate_docs"
+	ansible-playbook -i inventory project/manage_documentation.yaml --tags "generate_docs"
 
 .PHONY: validate_docs
 validate_docs: ## Validates the documents (ie: specs) used to run an incident
-	ansible-playbook -i inventory.yaml project/manage_documentation.yaml --tags "validate_docs"
+	ansible-playbook -i inventory project/manage_documentation.yaml --tags "validate_docs"
 
 .PHONY: deploy_tools
 deploy_tools: ## Deploys the observability and fault tools to cluster
@@ -133,11 +133,7 @@ generate_agent_bundle: ## Generates a bundle for an LLM Agent to interface with
 
 .PHONY: generate_leaderboard_bundle_status
 generate_leaderboard_bundle_status: ## Generates a bundle status for the Leaderboard to interface with
-	ansible-playbook -i inventory.yaml project/generate_leaderboard_bundle_status.yaml
-
-.PHONY: generate_leaderboard_bundle_status
-generate_leaderboard_bundle_status: ## Generates a bundle status for Leaderboard to interface with
-	ansible-playbook -i inventory.yaml project/generate_leaderboard_bundle_status.yaml
+	ansible-playbook -i inventory project/generate_leaderboard_bundle_status.yaml
 
 .PHONY: generate_leaderboard_bundle
 generate_leaderboard_bundle: ## Generates a bundle of scenarios for the Leaderboard to interface with
