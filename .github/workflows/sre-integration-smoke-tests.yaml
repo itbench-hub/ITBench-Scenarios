@@ -6,8 +6,8 @@ on:
       - main
     paths:
       - sre/dev/local_cluster/go.*
-      - sre/playbooks/manage_*
-      - sre/roles/**
+      - sre/project/manage_*
+      - sre/project/roles/**
       - sre/tools/kubernetes-topology-monitor/charts/kubernetes-topology-monitor/**
 
 concurrency:
