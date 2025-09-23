@@ -6,7 +6,12 @@ help: ## Display this help.
 
 .PHONY: create_cluster
 create_cluster:## Creates a Kind cluster
+	mkdir -p experiment_data
+	sudo chown -R 1000:1000 experiment_data
+	sudo chmod -R 755 experiment_data
 	$(GO) tool kind create cluster --config kind-config.yaml
+	kubectl config view --raw > ~/.kube/config-awx
+	sed -i 's/https:\/\/127\.0\.0\.1:[0-9]\+/https:\/\/kubernetes.default.svc.cluster.local:443/' ~/.kube/config-awx
 
 .PHONY: delete_cluster
 delete_cluster: ## Deletes a Kind cluster

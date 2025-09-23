@@ -8,23 +8,30 @@
     wait: true
   register: awx_service_info
   until:
-    - awx_service_info.resources[0].status.loadBalancer.ingress is defined
+    - awx_service_info.resources is defined
+    - awx_service_info.resources | length > 0
+    - >
+      (awx_use_nodeport) or
+      (awx_service_info.resources[0].status.loadBalancer.ingress is defined and
+       awx_service_info.resources[0].status.loadBalancer.ingress | length > 0)
   delay: 15
   retries: 12
 
-- name: Extract the service loadbalancer hostname information
+- name: Set AWX controller host
   ansible.builtin.set_fact:
-    awx_controller_host: "http://{{ awx_service_info.resources[0].status.loadBalancer.ingress[0].hostname }}"
+    awx_controller_host: >-
+      {%- if not awx_use_nodeport and
+             (awx_service_info.resources[0].status.loadBalancer.ingress | default([]) | length > 0) and
+             awx_service_info.resources[0].status.loadBalancer.ingress[0].ip is defined -%}
+        http://{{ awx_service_info.resources[0].status.loadBalancer.ingress[0].ip }}
+      {%- elif awx_use_nodeport -%}
+        {%- set nodeport = awx_service_info.resources[0].spec.ports | selectattr('name', 'equalto', 'http') | map(attribute='nodePort') | first -%}
+        {%- if awx_service_info.resources[0].spec.externalIPs | default([]) | length > 0 -%}
+          http://{{ awx_service_info.resources[0].spec.externalIPs[0] }}:{{ nodeport }}
+        {%- else -%}
+          http://127.0.0.1:{{ nodeport }}
+        {%- endif -%}
+      {%- endif -%}
   when:
-    - awx_service_info.resources[0].status.loadBalancer.ingress is defined
-    - awx_service_info.resources[0].status.loadBalancer.ingress | length > 0
-    - awx_service_info.resources[0].status.loadBalancer.ingress[0].hostname is defined
-
-- name: Extract the service loadbalancer ip information
-  ansible.builtin.set_fact:
-    awx_controller_host: "http://{{ awx_service_info.resources[0].status.loadBalancer.ingress[0].ip }}"
-  when:
-    - awx_service_info.resources[0].status.loadBalancer.ingress is defined
-    - awx_service_info.resources[0].status.loadBalancer.ingress | length > 0
-    - awx_service_info.resources[0].status.loadBalancer.ingress[0].hostname is undefined
-    - awx_service_info.resources[0].status.loadBalancer.ingress[0].ip is defined
+    - awx_service_info.resources is defined
+    - awx_service_info.resources | length > 0

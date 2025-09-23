@@ -181,6 +181,50 @@
     organization: ITBench
     pull: always
 
+- name: Create AWX Container Group with experiment data mount
+  awx.awx.instance_group:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    name: "experiment-data-containers"
+    is_container_group: true
+    pod_spec_override: |
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        namespace: awx
+      spec:
+        serviceAccountName: default
+        automountServiceAccountToken: false
+        initContainers:
+        - name: fix-permissions
+          image: busybox
+          command: ['sh', '-c', 'chown -R 1000:0 /mnt/experiment_data && chmod -R 755 /mnt/experiment_data']
+          volumeMounts:
+          - name: experiment-data
+            mountPath: /mnt/experiment_data
+          securityContext:
+            runAsUser: 0
+        containers:
+        - image: "quay.io/it-bench/awx-ee:1.0.0"
+          name: worker
+          args:
+            - ansible-runner
+            - worker
+            - '--private-data-dir=/runner'
+          resources:
+            requests:
+              cpu: 250m
+              memory: 100Mi
+          volumeMounts:
+          - name: experiment-data
+            mountPath: /mnt/experiment_data
+        volumes:
+        - name: experiment-data
+          persistentVolumeClaim:
+            claimName: experiment-data-pvc
+    state: present
+
 - name: Include AWX job configuration tasks
   ansible.builtin.include_tasks:
     file: configure_jobs.yaml
