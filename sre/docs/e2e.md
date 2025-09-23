@@ -130,7 +130,7 @@ agent_configuration:
 
 ### Credentials (credentials.yaml)
 
-Configure AWS credentials for accessing cloud resources. This only needs to be configured for runs on AWS, not for local Kind runs. Primarily the outputs from the experiment runs are uploaded 
+Configure AWS credentials for accessing cloud resources. This only needs to be configured for runs on AWS, not for local Kind cluster-based runs. Primarily the outputs from the experiment runs are uploaded.
 
 ```yaml
 credentials:
@@ -156,7 +156,7 @@ experiments:
 ```
 
 **Configuration tips:**
-- Start with a single scenario for initial testing. The local Kind cluster setup supports one scenario at at time
+- The local Kind cluster setup supports one scenario at at time. There is a plan to extend this to allow for scenario runs one after the other.
 - Increase `trials` for statistical significance
 - Available scenarios and their respective scenario IDs in open source: 1, 3, 16, 20, 23, 26, 27, 30, 31, 33, 34, 37, 38, 102, 105
 
@@ -196,8 +196,8 @@ stack:
     kubeconfig: ~/.kube/config       # Path to your local Kind clusters kubeconfig
   runners:
     kubeconfigs:
-      - ~/.kube/config               # Path to your local Kind cluster kubeconfig
+      - ~/.kube/config-aws           # Path to your local Kind cluster kubeconfig with the appropriate host name
 ```
 
 ## For AWS based runs
-Allows for multiple scenarios to run in across different available clusters. At this time we assume that each scenario has access to its own cluster. 
+Allows for multiple scenarios to run in across different available clusters. At this time we assume that each scenario has access to its own cluster.
