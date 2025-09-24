@@ -19,3 +19,17 @@
   when:
     - tools_service_info.resources[0].status.loadBalancer.ingress | length > 0
     - tools_service_info.resources[0].status.loadBalancer.ingress[0].hostname is defined
+
+- name: Extract the Ingress IP (fallback if hostname not available)
+  ansible.builtin.set_fact:
+    tools_ingress_hostname: "{{ tools_service_info.resources[0].status.loadBalancer.ingress[0].ip }}"
+  when:
+    - tools_service_info.resources[0].status.loadBalancer.ingress | length > 0
+    - tools_service_info.resources[0].status.loadBalancer.ingress[0].ip is defined
+    - tools_ingress_hostname is not defined
+
+- name: Verify ingress endpoint was found
+  ansible.builtin.fail:
+    msg: "No hostname or IP found for ingress controller"
+  when:
+    - tools_ingress_hostname is not defined 
