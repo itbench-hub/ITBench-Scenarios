@@ -53,4 +53,5 @@ spec:
       selected:
         - kubernetes-metrics-server
         - kubernetes-topology-monitor
-  faults: []
+  disruption:
+    injections: []

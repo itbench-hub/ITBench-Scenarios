@@ -48,7 +48,7 @@ def main():
 
     runners = []
 
-    for group in range(0, len(spec["spec"]["faults"])):
+    for group in range(0, len(spec["spec"]["disruption"]["injections"])):
         logger.info("start fault tasks for group {0}".format(group))
 
         _, runner = ansible_runner.interface.run_async(
@@ -58,7 +58,7 @@ def main():
                 spec["metadata"]["id"],
                 group
             ),
-            cmdline="--tags {0} --extra-vars incident_id={1} --extra-vars fault_group={2}".format(
+            cmdline="--tags {0} --extra-vars incident_id={1} --extra-vars injection_index={2}".format(
                 args.run_tags,
                 spec["metadata"]["id"],
                 group
