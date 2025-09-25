@@ -17,4 +17,5 @@ spec:
       category: sre
       selected:
         - kubernetes-topology-monitor
-  faults: []
+  disruption:
+    injections: []
