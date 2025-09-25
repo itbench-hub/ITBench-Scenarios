@@ -14,13 +14,15 @@ spec:
       category: sre
       selected:
         - kubernetes-topology-monitor
-  faults:
-    - - custom:
-          name: invalid-image
-          invalid_image:
-            workload:
-              kind: Deployment
-              name: product-catalog
-              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
-              container:
-                name: product-catalog
+  disruption:
+    injections:
+      - - fault:
+            custom:
+              name: invalid-image
+              invalid_image:
+                workload:
+                  kind: Deployment
+                  name: product-catalog
+                  namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+                  container:
+                    name: product-catalog
