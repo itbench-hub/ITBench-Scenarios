@@ -1,5 +1,5 @@
 ---
-- name: Validate spec content
+- name: Validate spec content for incident {{ incidents_file.id }}
   ansible.utils.validate:
     data: "{{ incidents_spec }}"
     criteria: "{{ lookup('ansible.builtin.file', 'files/schemas/spec.json') | from_json }}"

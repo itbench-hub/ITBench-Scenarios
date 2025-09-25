@@ -1,5 +1,5 @@
 ---
-- name: Validate truth content
+- name: Validate truth content for incident {{ incidents_file.id }}
   ansible.utils.validate:
     data: "{{ incidents_ground_truth }}"
     criteria: "{{ lookup('ansible.builtin.file', 'files/schemas/ground_truth.json') | from_json }}"

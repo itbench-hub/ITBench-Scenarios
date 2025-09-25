@@ -14,9 +14,11 @@ spec:
       category: sre
       selected:
         - kubernetes-topology-monitor
-  faults:
-    - - otel_demo:
-          flagd:
-            flags:
-              - name: adHighCpu
-                state: "on"
+  disruption:
+    injections:
+      - - fault:
+            otel_demo:
+              flagd:
+                flags:
+                  - name: adHighCpu
+                    state: "on"
