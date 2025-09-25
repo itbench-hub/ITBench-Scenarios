@@ -14,11 +14,13 @@ spec:
       category: sre
       selected:
         - kubernetes-topology-monitor
-  faults:
-    - - custom:
-          name: misconfigured-service-port
-          misconfigured_service_port:
-            service:
-              name: ad
-              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
-              target_port: 8080
+  disruption:
+    injections:
+      - - fault:
+            custom:
+              name: misconfigured-service-port
+              misconfigured_service_port:
+                service:
+                  name: ad
+                  namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+                  target_port: 8080

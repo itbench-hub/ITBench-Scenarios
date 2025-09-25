@@ -14,11 +14,13 @@ spec:
       category: sre
       selected:
         - kubernetes-topology-monitor
-  faults:
-    - - valkey:
-          name: invalid-password
-          invalid_password:
-            workload:
-              kind: Deployment
-              name: valkey-cart
-              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+  disruption:
+    injections:
+      - - fault:
+            valkey:
+              name: invalid-password
+              invalid_password:
+                workload:
+                  kind: Deployment
+                  name: valkey-cart
+                  namespace: "{{ applications_helm_releases.otel_demo.namespace }}"

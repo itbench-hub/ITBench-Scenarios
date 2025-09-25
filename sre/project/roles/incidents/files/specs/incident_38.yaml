@@ -54,22 +54,26 @@ spec:
       selected:
         - kubernetes-metrics-server
         - kubernetes-topology-monitor
-  faults:
-    - - custom:
-          name: misconfigured-horizontal-pod-autoscaler
-          misconfigured_horizontal_pod_autoscaler:
-            autoscaler:
-              name: fraud-detection
-              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
-      - custom:
-          name: misconfigured-horizontal-pod-autoscaler
-          misconfigured_horizontal_pod_autoscaler:
-            autoscaler:
-              name: frontend
-              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
-      - custom:
-          name: misconfigured-horizontal-pod-autoscaler
-          misconfigured_horizontal_pod_autoscaler:
-            autoscaler:
-              name: image-provider
-              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+  disruption:
+    injections:
+      - - fault:
+            custom:
+              name: misconfigured-horizontal-pod-autoscaler
+              misconfigured_horizontal_pod_autoscaler:
+                autoscaler:
+                  name: fraud-detection
+                  namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+        - fault:
+            custom:
+              name: misconfigured-horizontal-pod-autoscaler
+              misconfigured_horizontal_pod_autoscaler:
+                autoscaler:
+                  name: frontend
+                  namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+        - fault:
+            custom:
+              name: misconfigured-horizontal-pod-autoscaler
+              misconfigured_horizontal_pod_autoscaler:
+                autoscaler:
+                  name: image-provider
+                  namespace: "{{ applications_helm_releases.otel_demo.namespace }}"

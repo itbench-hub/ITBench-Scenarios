@@ -11,11 +11,11 @@
       tags:
         - always
 
-    - name: Ensure fault group is defined
+    - name: Ensure injection index is defined
       ansible.builtin.assert:
-        that: fault_group is defined
-        fail_msg: fault_group is not defined. Please run playbook with variable defined via CLI arguments.
-        success_msg: fault_group is defined.
+        that: injection_index is defined
+        fail_msg: injection_index is not defined. Please run playbook with variable defined via CLI arguments.
+        success_msg: injection_index is defined.
       tags:
         - always
 
@@ -48,13 +48,13 @@
         incidents_file:
           id: "{{ incident_id }}"
 
-    - name: Ensure fault group is valid
+    - name: Ensure injection index is valid
       ansible.builtin.assert:
         that:
-          - (fault_group | int) >= 0
-          - (fault_group | int) < (incidents_spec.spec.faults | length)
-        fail_msg: fault_group is not a valid index for the fault array.
-        success_msg: fault_group is a valid index.
+          - (injection_index | int) >= 0
+          - (injection_index | int) < (incidents_spec.spec.disruption.injections | length)
+        fail_msg: injection_index is not a valid index for the fault array.
+        success_msg: injection_index is a valid index.
       tags:
         - always
   tasks:
@@ -74,7 +74,7 @@
           vars:
             faults_cluster:
               kubeconfig: "{{ cluster.kubeconfig }}"
-            faults_specs: "{{ [incidents_spec.spec.faults[fault_group | int]] }}"
+            faults_specs: "{{ incidents_spec.spec.disruption.injections[(injection_index | int)] }}"
 
         - name: Import leaderboard role
           ansible.builtin.import_role:

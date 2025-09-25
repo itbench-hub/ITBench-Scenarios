@@ -14,11 +14,13 @@ spec:
       category: sre
       selected:
         - kubernetes-topology-monitor
-  faults:
-    - - custom:
-          name: misconfigured-network-policy
-          misconfigured_network_policy:
-            workload:
-              kind: Deployment
-              name: frontend
-              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+  disruption:
+    injections:
+      - - fault:
+            custom:
+              name: misconfigured-network-policy
+              misconfigured_network_policy:
+                workload:
+                  kind: Deployment
+                  name: frontend
+                  namespace: "{{ applications_helm_releases.otel_demo.namespace }}"

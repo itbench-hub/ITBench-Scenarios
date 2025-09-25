@@ -14,12 +14,14 @@ spec:
       category: sre
       selected:
         - kubernetes-topology-monitor
-  faults:
-    - valkey:
-        name: fill-storage
-        fill_storage:
-          workload:
-            kind: Deployment
-            name: valkey-cart
-            namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
-          storage_size_mb: 500
+  disruption:
+    injections:
+      - - fault:
+            valkey:
+              name: fill-storage
+              fill_storage:
+                workload:
+                  kind: Deployment
+                  name: valkey-cart
+                  namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+                storage_size_mb: 500

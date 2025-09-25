@@ -14,12 +14,14 @@ spec:
       category: sre
       selected:
         - kubernetes-topology-monitor
-  faults:
-    - - custom:
-          name: misconfigured-resource-quota
-          misconfigured_resource_quota:
-            namespace:
-              name: "{{ applications_helm_releases.otel_demo.namespace }}"
-            workloads:
-              - kind: Deployment
-                name: ad
+  disruption:
+    injections:
+      - - fault:
+            custom:
+              name: misconfigured-resource-quota
+              misconfigured_resource_quota:
+                namespace:
+                  name: "{{ applications_helm_releases.otel_demo.namespace }}"
+                workloads:
+                  - kind: Deployment
+                    name: ad
