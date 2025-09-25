@@ -3,4 +3,4 @@
   ansible.builtin.import_tasks:
     file: remove_otel_demo_flagd.yaml
   when:
-    - fault.otel_demo.flagd is defined
+    - fault_spec.otel_demo.flagd is defined
