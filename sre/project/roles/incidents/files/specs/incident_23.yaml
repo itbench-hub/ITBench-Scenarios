@@ -14,13 +14,15 @@ spec:
       category: sre
       selected:
         - kubernetes-topology-monitor
-  faults:
-    - - custom:
-          name: unsupported-image
-          unsupported_image:
-            workload:
-              kind: Deployment
-              name: checkout
-              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
-              container:
-                name: checkout
+  disruption:
+    injections:
+      - - fault:
+            custom:
+              name: unsupported-image
+              unsupported_image:
+                workload:
+                  kind: Deployment
+                  name: checkout
+                  namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+                  container:
+                    name: checkout

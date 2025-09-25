@@ -14,18 +14,21 @@ spec:
       category: sre
       selected:
         - kubernetes-topology-monitor
-  faults:
-    - - custom:
-          name: invalid-node-selector
-          invalid_node_selector:
-            workload:
-              kind: Deployment
-              name: ad
-              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
-      - custom:
-          name: invalid-node-selector
-          invalid_node_selector:
-            workload:
-              kind: Deployment
-              name: cart
-              namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+  disruption:
+    injections:
+      - - fault:
+            custom:
+              name: invalid-node-selector
+              invalid_node_selector:
+                workload:
+                  kind: Deployment
+                  name: ad
+                  namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+        - fault:
+            custom:
+              name: invalid-node-selector
+              invalid_node_selector:
+                workload:
+                  kind: Deployment
+                  name: cart
+                  namespace: "{{ applications_helm_releases.otel_demo.namespace }}"

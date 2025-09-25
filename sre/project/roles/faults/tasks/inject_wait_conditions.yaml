@@ -1,0 +1,14 @@
+---
+- name: Include wait tasks
+  ansible.builtin.include_tasks:
+    file: wait.yaml
+    apply:
+      tags:
+        - inject_faults
+  loop: "{{ fault_spec.wait_conditions }}"
+  loop_control:
+    index_var: wait_condition_index
+    label: wait-condition-{{ condition_index }}
+    loop_var: wait_condition
+  tags:
+    - inject_faults
