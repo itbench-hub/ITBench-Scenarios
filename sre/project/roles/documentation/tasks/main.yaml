@@ -4,9 +4,3 @@
     file: generate_incidents_docs.yaml
   tags:
     - generate_docs
-
-- name: Import incident docs validation tasks
-  ansible.builtin.import_tasks:
-    file: validate_incidents_docs.yaml
-  tags:
-    - validate_docs
