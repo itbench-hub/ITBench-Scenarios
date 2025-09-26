@@ -21,8 +21,8 @@
   loop_control:
     label: "incident-{{ item }}"
   vars:
-    spec_path: "{{ playbook_dir }}/../roles/incidents/files/specs/incident_{{ item }}.yaml"
-    truth_path: "{{ playbook_dir }}/../roles/incidents/files/ground_truths/incident_{{ item }}.yaml"
+    spec_path: "{{ playbook_dir }}/roles/incidents/files/specs/incident_{{ item }}.yaml"
+    truth_path: "{{ playbook_dir }}/roles/incidents/files/ground_truths/incident_{{ item }}.yaml"
 
 - name: Generate Incidents README file
   ansible.builtin.copy:
