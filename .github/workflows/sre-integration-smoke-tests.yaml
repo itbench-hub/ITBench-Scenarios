@@ -174,6 +174,21 @@ jobs:
       - name: Run remove custom resource definitions
         run: |
           make -C sre remove_tools_crds
+  incident-files:
+    name: Incident Files Validations
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5.0.0
+      - uses: actions/setup-python@v6.0.0
+        with:
+          python-version: '3.13'
+      - name: Install Python and Ansible dependencies
+        run: |
+          pip install -r sre/requirements.txt
+          ansible-galaxy install -r sre/requirements.yaml
+      - name: Validation documents
+        run: |
+          make -C sre validate_incidents
   istio:
     name: Istio Smoke Tests
     runs-on: ubuntu-24.04
@@ -527,6 +542,7 @@ jobs:
   sre-incident-1:
     name: SRE Incident 1 Smoke Test
     needs:
+      - incident-files
       - kubernetes-topology-monitor
       - opentelemetry
       - otel-demo
@@ -571,6 +587,7 @@ jobs:
   sre-incident-3:
     name: SRE Incident 3 Smoke Test
     needs:
+      - incident-files
       - kubernetes-topology-monitor
       - opentelemetry
       - otel-demo
@@ -615,6 +632,7 @@ jobs:
   sre-incident-16:
     name: SRE Incident 16 Smoke Test
     needs:
+      - incident-files
       - kubernetes-topology-monitor
       - opentelemetry
       - otel-demo
@@ -659,6 +677,7 @@ jobs:
   sre-incident-20:
     name: SRE Incident 20 Smoke Test
     needs:
+      - incident-files
       - kubernetes-topology-monitor
       - opentelemetry
       - otel-demo
@@ -703,6 +722,7 @@ jobs:
   sre-incident-23:
     name: SRE Incident 23 Smoke Test
     needs:
+      - incident-files
       - kubernetes-topology-monitor
       - opentelemetry
       - otel-demo
@@ -748,6 +768,7 @@ jobs:
     name: SRE Incident 26 Smoke Test
     needs:
       - chaos-mesh
+      - incident-files
       - kubernetes-topology-monitor
       - opentelemetry
       - otel-demo
@@ -792,6 +813,7 @@ jobs:
   sre-incident-30:
     name: SRE Incident 30 Smoke Test
     needs:
+      - incident-files
       - kubernetes-topology-monitor
       - opentelemetry
       - otel-demo
@@ -836,6 +858,7 @@ jobs:
   sre-incident-31:
     name: SRE Incident 31 Smoke Test
     needs:
+      - incident-files
       - kubernetes-topology-monitor
       - opentelemetry
       - otel-demo
@@ -880,6 +903,7 @@ jobs:
   sre-incident-33:
     name: SRE Incident 33 Smoke Test
     needs:
+      - incident-files
       - kubernetes-topology-monitor
       - opentelemetry
       - otel-demo
@@ -924,6 +948,7 @@ jobs:
   sre-incident-34:
     name: SRE Incident 34 Smoke Test
     needs:
+      - incident-files
       - kubernetes-topology-monitor
       - opentelemetry
       - otel-demo
@@ -968,6 +993,7 @@ jobs:
   sre-incident-39:
     name: SRE Incident 39 Smoke Test
     needs:
+      - incident-files
       - kubernetes-topology-monitor
       - opentelemetry
       - otel-demo
@@ -1051,6 +1077,7 @@ jobs:
   sre-incident-102:
     name: SRE Incident 102 Smoke Test
     needs:
+      - incident-files
       - kubernetes-topology-monitor
       - opentelemetry
       - otel-demo
@@ -1095,6 +1122,7 @@ jobs:
   sre-incident-105:
     name: SRE Incident 105 Smoke Test
     needs:
+      - incident-files
       - kubernetes-topology-monitor
       - opentelemetry
       - otel-demo
@@ -1139,6 +1167,7 @@ jobs:
   finops-incident-37:
     name: FinOps Incident 37 Smoke Test
     needs:
+      - incident-files
       - kubernetes-metrics-server
       - kubernetes-topology-monitor
       - opentelemetry
@@ -1185,6 +1214,7 @@ jobs:
   finops-incident-38:
     name: FinOps Incident 38 Smoke Test
     needs:
+      - incident-files
       - kubernetes-metrics-server
       - kubernetes-topology-monitor
       - opentelemetry
