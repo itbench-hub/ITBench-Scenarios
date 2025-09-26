@@ -24,6 +24,7 @@
     values:
       apiService:
         insecureSkipTLSVerify: false
+      args: "{{ ['--kubelet-insecure-tls'] if (tools_cluster.provider == 'kind') else [] }}"
       tls:
         type: helm
       serviceMonitor:
