@@ -5,77 +5,11 @@
   tags:
     - install_tools
 
-- name: Download assertion file from local directory
-  ansible.builtin.copy:
-    src: "{{ leaderboard_storage.local.directory }}/assertion.json"
-    dest: "/tmp/assertion.json"
-    mode: "0644"
-  ignore_errors: true
+- name: Import load tasks
+  ansible.builtin.import_tasks:
+    file: store_status_file.yaml
   tags:
     - always
-  when:
-    - leaderboard_storage.local is defined
-    - leaderboard_storage.local.directory is defined
-
-- name: Download assertion file from S3 bucket
-  amazon.aws.s3_object:
-    endpoint_url: "{{ leaderboard_storage.s3.endpoint }}"
-    bucket: "{{ leaderboard_storage.s3.bucket }}"
-    object: "/{{ leaderboard_storage.s3.directory }}/assertion.json"
-    dest: /tmp/assertion.json
-    mode: get
-  ignore_errors: true
-  tags:
-    - always
-  when:
-    - leaderboard_storage.s3 is defined
-    - leaderboard_storage.local is not defined
-
-- name: Download status file from local directory
-  ansible.builtin.copy:
-    src: "{{ leaderboard_storage.local.directory }}/status.json"
-    dest: "/tmp/status.json"
-    mode: "0644"
-  ignore_errors: true
-  tags:
-    - always
-  when:
-    - leaderboard_storage.local is defined
-    - leaderboard_storage.local.directory is defined
-
-- name: Download status file from S3 bucket
-  amazon.aws.s3_object:
-    endpoint_url: "{{ leaderboard_storage.s3.endpoint }}"
-    bucket: "{{ leaderboard_storage.s3.bucket }}"
-    object: "/{{ leaderboard_storage.s3.directory }}/status.json"
-    dest: /tmp/status.json
-    mode: get
-  ignore_errors: true
-  tags:
-    - always
-  when:
-    - leaderboard_storage.s3 is defined
-    - leaderboard_storage.local is not defined
-
-- name: Load assertion file contents
-  ansible.builtin.set_fact:
-    leaderboard_current_assertion: "{{ lookup('ansible.builtin.file', '/tmp/assertion.json') | from_json }}"
-  tags:
-    - always
-  vars:
-    leaderboard_current_assertion_exists: "{{ '/tmp/assertion.json' is exists }}"
-  when:
-    - leaderboard_current_assertion_exists
-
-- name: Load status file contents
-  ansible.builtin.set_fact:
-    leaderboard_current_status: "{{ lookup('ansible.builtin.file', '/tmp/status.json') | from_json }}"
-  tags:
-    - always
-  vars:
-    leaderboard_current_status_exists: "{{ '/tmp/status.json' is exists }}"
-  when:
-    - leaderboard_current_status_exists
 
 - name: Perform update tasks
   when:
@@ -155,6 +89,7 @@
       when:
         - leaderboard_status_events is defined
   always:
+<<<<<<< HEAD
     - name: Ensure local directory exists
       ansible.builtin.file:
         path: "{{ leaderboard_storage.local.directory }}"
@@ -172,45 +107,10 @@
         dest: "{{ leaderboard_storage.local.directory }}/assertion.json"
         mode: "0644"
         src: /tmp/assertion.json
+=======
+    - name: Import store tasks
+      ansible.builtin.import_tasks:
+        file: store_status_file.yaml
+>>>>>>> c6e3713 (feat: load status from storage - particularly for AWX pipeline)
       tags:
         - always
-      when:
-        - leaderboard_storage.local is defined
-        - leaderboard_status_conditions is defined
-
-    - name: Upload assertion file to S3 bucket
-      amazon.aws.s3_object:
-        endpoint_url: "{{ leaderboard_storage.s3.endpoint }}"
-        bucket: "{{ leaderboard_storage.s3.bucket }}"
-        object: "/{{ leaderboard_storage.s3.directory }}/assertion.json"
-        src: /tmp/assertion.json
-        mode: put
-      tags:
-        - always
-      when:
-        - leaderboard_storage.s3 is defined
-        - leaderboard_status_conditions is defined
-
-    - name: Copy status file into local directory
-      ansible.builtin.copy:
-        dest: "{{ leaderboard_storage.local.directory }}/status.json"
-        mode: "0644"
-        src: /tmp/status.json
-      tags:
-        - always
-      when:
-        - leaderboard_storage.local is defined
-        - leaderboard_status_events is defined
-
-    - name: Upload status file to S3 bucket
-      amazon.aws.s3_object:
-        endpoint_url: "{{ leaderboard_storage.s3.endpoint }}"
-        bucket: "{{ leaderboard_storage.s3.bucket }}"
-        object: "/{{ leaderboard_storage.s3.directory }}/status.json"
-        src: /tmp/status.json
-        mode: put
-      tags:
-        - always
-      when:
-        - leaderboard_storage.s3 is defined
-        - leaderboard_status_events is defined
