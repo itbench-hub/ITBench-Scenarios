@@ -1,4 +1,5 @@
-ansible-core==2.19.1
+ansible-core==2.19.2
+ansible-runner==2.4.1
 jmespath==1.0.1
 jsonschema==4.25.1
 kubernetes==33.1.0
