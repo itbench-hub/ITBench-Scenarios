@@ -37,7 +37,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -115,7 +115,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -150,7 +150,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -194,7 +194,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -234,7 +234,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -278,7 +278,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -313,7 +313,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -359,7 +359,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -380,7 +380,22 @@ jobs:
       - name: Run uninstallation smoke test
         run: |
           make -C sre undeploy_tools
-      - name: Run remove custom resource definitions
+  opensearch:
+    name: OpenSearch Smoke Tests
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5.0.1
+      - uses: actions/setup-python@v6.0.0
+        with:
+          python-version: '3.13'
+      - uses: actions/setup-go@v6.0.0
+        with:
+          go-version-file: sre/dev/local_cluster/go.mod
+          cache-dependency-path: sre/dev/local_cluster/go.sum
+      - uses: azure/setup-helm@v4.3.1
+        with:
+          version: v3.19.0
+      - name: Install Python and Ansible dependencies
         run: |
           make -C sre remove_tools_crds
   opentelemetry:
@@ -399,7 +414,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -441,7 +456,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -479,7 +494,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -527,7 +542,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -571,7 +586,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -615,7 +630,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -659,7 +674,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -703,7 +718,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -748,7 +763,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -792,7 +807,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -836,7 +851,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -880,7 +895,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -924,7 +939,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -968,7 +983,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -1051,7 +1066,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -1095,7 +1110,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -1141,7 +1156,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
@@ -1187,7 +1202,7 @@ jobs:
           cache-dependency-path: sre/dev/local_cluster/go.sum
       - uses: azure/setup-helm@v4.3.1
         with:
-          version: v3.18.6
+          version: v3.19.0
       - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
