@@ -1,8 +1,5 @@
 # Makefile to run Ansible playbooks
 
-NUMBER_OF_RUNS = 1
-
-
 .PHONY: help
 help: ## Display this help.
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<target>\033[0m\n"} /^[a-zA-Z_0-9-]+:.*?##/ { printf "  \033[36m%-24s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
@@ -19,9 +16,9 @@ group_vars: ## Generates the group variables
 docs: ## Generates the documentation for the incidents
 	ansible-playbook -i inventory project/manage_documentation.yaml --tags "generate_docs"
 
-.PHONY: validate_docs
-validate_docs: ## Validates the documents (ie: specs) used to run an incident
-	ansible-playbook -i inventory project/manage_documentation.yaml --tags "validate_docs"
+.PHONY: validate_incidents
+validate_incidents: ## Validates the documents (ie: specs) used to run an incident
+	ansible-playbook -i inventory project/validate_incidents.yaml --tags "validate_files"
 
 .PHONY: deploy_tools
 deploy_tools: ## Deploys the observability and fault tools to cluster
