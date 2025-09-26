@@ -1,0 +1,48 @@
+---
+- name: Save status as legacy assertion file to storage
+  when:
+    - assertion_file_exists
+  block:
+    - name: Copy assertion file into local directory
+      ansible.builtin.copy:
+        dest: "{{ leaderboard_storage.local.directory }}/assertion.json"
+        mode: "0644"
+        src: /tmp/assertion.json
+      when:
+        - leaderboard_storage.local is defined
+
+    - name: Upload assertion file to S3 bucket
+      amazon.aws.s3_object:
+        endpoint_url: "{{ leaderboard_storage.s3.endpoint }}"
+        bucket: "{{ leaderboard_storage.s3.bucket }}"
+        object: "/{{ leaderboard_storage.s3.directory }}/assertion.json"
+        src: /tmp/assertion.json
+        mode: put
+      when:
+        - leaderboard_storage.s3 is defined
+  vars:
+    assertion_file_exists: "{{ '/tmp/assertion.json' is exists }}"
+
+- name: Save status as status file to storage
+  when:
+    - status_file_exists
+  block:
+    - name: Copy status file into local directory
+      ansible.builtin.copy:
+        dest: "{{ leaderboard_storage.local.directory }}/status.json"
+        mode: "0644"
+        src: /tmp/status.json
+      when:
+        - leaderboard_storage.local is defined
+
+    - name: Upload status file to S3 bucket
+      amazon.aws.s3_object:
+        endpoint_url: "{{ leaderboard_storage.s3.endpoint }}"
+        bucket: "{{ leaderboard_storage.s3.bucket }}"
+        object: "/{{ leaderboard_storage.s3.directory }}/status.json"
+        src: /tmp/status.json
+        mode: put
+      when:
+        - leaderboard_storage.s3 is defined
+  vars:
+    status_file_exists: "{{ '/tmp/status.json' is exists }}"
