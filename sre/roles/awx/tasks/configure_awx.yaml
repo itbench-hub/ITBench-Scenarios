@@ -20,8 +20,18 @@
           label: kubeconfig
           secret: true
           multiline: true
+        - id: platform
+          type: string
+          label: platform
+          secret: false
+        - id: provider
+          type: string
+          label: provider
+          secret: false
       required:
         - kubeconfig
+        - platform
+        - provider
     injectors: "{{ lookup('ansible.builtin.file', 'files/credential_type_kubeconfig_injectors.json') }}"
     kind: cloud
     name: Kubeconfig
@@ -45,6 +55,8 @@
     description: Kubeconfig file for a Kubernetes cluster
     inputs:
       kubeconfig: "{{ lookup('ansible.builtin.file', item) }}"
+      provider: "{{ awx_cluster.cloud_provider }}"
+      platform: "{{ awx_cluster.cluster_platform }}"
     name: Cluster-{{ runner_index + 1 }}-Kubeconfig
     organization: ITBench
   loop: "{{ awx_runners.kubeconfigs }}"
@@ -178,7 +190,6 @@
     description: Custom environment for running ITBench scenarios
     image: quay.io/it-bench/awx-ee:1.0.0
     name: AWX-EE-Custom
-    organization: ITBench
     pull: always
 
 - name: Create AWX Container Group with experiment data mount
@@ -196,6 +207,7 @@
       spec:
         serviceAccountName: default
         automountServiceAccountToken: false
+        restartPolicy: Never
         initContainers:
         - name: fix-permissions
           image: busybox
@@ -214,8 +226,11 @@
             - '--private-data-dir=/runner'
           resources:
             requests:
-              cpu: 250m
-              memory: 100Mi
+              cpu: 500m
+              memory: 512Mi
+            limits:
+              cpu: 1000m
+              memory: 1024Mi
           volumeMounts:
           - name: experiment-data
             mountPath: /mnt/experiment_data
