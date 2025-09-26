@@ -1,0 +1,8 @@
+---
+- name: Import validation tasks
+  ansible.builtin.import_tasks:
+    file: validate_spec.yaml
+
+- name: Import validation tasks
+  ansible.builtin.import_tasks:
+    file: validate_ground_truth.yaml
