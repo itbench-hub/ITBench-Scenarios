@@ -45,12 +45,6 @@
     - tools_cluster.provider == 'kind'
     - item.status.conditions is not defined
 
-- name: Debug pause
-  ansible.builtin.pause:
-    seconds: 600
-  when:
-    - tools_required.prometheus 
-
 - name: Import Prometheus installation tasks
   ansible.builtin.import_tasks:
     file: install_prometheus.yaml
