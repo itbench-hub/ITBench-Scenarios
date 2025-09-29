@@ -15,8 +15,8 @@
     credentials:
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     extra_vars:
       incident_id: "{{ incident }}"
     inventory: ITBench
@@ -36,8 +36,8 @@
     credentials:
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     extra_vars:
       incident_id: "{{ incident }}"
     inventory: ITBench
@@ -57,8 +57,8 @@
     credentials:
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     extra_vars:
       incident_id: "{{ incident }}"
     inventory: ITBench
@@ -78,8 +78,8 @@
     credentials:
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     inventory: ITBench
     job_type: run
     name: "Scenario-{{ incident }}--Check-for-Alerts"
@@ -96,8 +96,8 @@
     credentials:
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     extra_vars:
       incident_id: "{{ incident }}"
     inventory: ITBench
@@ -117,8 +117,8 @@
     credentials:
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     extra_vars:
       incident_id: "{{ incident }}"
     inventory: ITBench
@@ -138,8 +138,8 @@
     credentials:
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     extra_vars:
       incident_id: "{{ incident }}"
     inventory: ITBench
@@ -159,8 +159,8 @@
     credentials:
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     extra_vars:
       incident_id: "{{ incident }}"
     inventory: ITBench
@@ -180,8 +180,8 @@
     credentials:
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     extra_vars:
       incident_id: "{{ incident }}"
     inventory: ITBench
@@ -201,8 +201,8 @@
     credentials:
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     extra_vars:
       incident_id: "{{ incident }}"
     inventory: ITBench
@@ -223,8 +223,8 @@
     credentials:
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     extra_vars:
       incident_id: "{{ incident }}"
     inventory: ITBench
@@ -245,8 +245,8 @@
     credentials:
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     extra_vars:
       incident_id: "{{ incident }}"
       tools:
@@ -270,8 +270,8 @@
     credentials:
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     extra_vars:
       incident_id: "{{ incident }}"
       tools:
@@ -292,8 +292,8 @@
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     inventory: ITBench
     job_tags: pause
     job_type: run
@@ -311,8 +311,8 @@
     credentials:
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     extra_vars:
       incident_id: "{{ incident }}"
     inventory: ITBench
@@ -332,8 +332,8 @@
     credentials:
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     extra_vars:
       incident_id: "{{ incident }}"
     inventory: ITBench
@@ -353,8 +353,8 @@
     credentials:
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     inventory: ITBench
     job_tags: agent_handover
     job_type: run
@@ -372,8 +372,8 @@
     credentials:
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     inventory: ITBench
     job_tags: agent_handback
     job_type: run
@@ -391,8 +391,8 @@
     credentials:
       - Cluster-{{ incident_index + 1 }}-Kubeconfig
       - AWS
-    execution_environment: AWX-EE-Custom
-    instance_groups: ["experiment-data-containers"]
+    execution_environment: "AWX EE"
+    # instance_groups: ["experiment-data-containers"]
     inventory: ITBench
     job_tags: sre_agent
     job_type: run

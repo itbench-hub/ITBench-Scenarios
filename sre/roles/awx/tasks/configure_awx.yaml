@@ -211,10 +211,10 @@
         initContainers:
         - name: fix-permissions
           image: busybox
-          command: ['sh', '-c', 'chown -R 1000:0 /mnt/experiment_data && chmod -R 755 /mnt/experiment_data']
+          command: ['sh', '-c', 'chown -R 1000:0 /mnt/experiment-data && chmod -R 755 /mnt/experiment-data']
           volumeMounts:
           - name: experiment-data
-            mountPath: /mnt/experiment_data
+            mountPath: /mnt/experiment-data
           securityContext:
             runAsUser: 0
         containers:
@@ -233,7 +233,7 @@
               memory: 1024Mi
           volumeMounts:
           - name: experiment-data
-            mountPath: /mnt/experiment_data
+            mountPath: /mnt/experiment-data
         volumes:
         - name: experiment-data
           persistentVolumeClaim:

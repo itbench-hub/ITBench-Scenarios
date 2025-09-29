@@ -8,8 +8,8 @@ nodes:
       hostPort: 30950
       protocol: TCP
     extraMounts:
-    - hostPath: ./experiment_data
-      containerPath: /mnt/experiment_data
+    - hostPath: ./experiment-data
+      containerPath: /mnt/experiment-data
     kubeadmConfigPatches:
     - |
       kind: ClusterConfiguration
