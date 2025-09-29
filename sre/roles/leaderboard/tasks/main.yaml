@@ -1,4 +1,10 @@
 ---
+- name: Pausing for debugging reasons
+  ansible.bultin.pause:
+    seconds: 300
+  tags:
+    - install_tools
+
 - name: Import status file creation tasks
   ansible.builtin.import_tasks:
     file: create_status.yaml
