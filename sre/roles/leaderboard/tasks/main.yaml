@@ -1,6 +1,6 @@
 ---
 - name: Pausing for debugging reasons
-  ansible.bultin.pause:
+  ansible.builtin.pause:
     seconds: 300
   tags:
     - install_tools
