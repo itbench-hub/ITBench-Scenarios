@@ -1,10 +1,4 @@
 ---
-- name: Pause
-  ansible.builtin.pause:
-    seconds: 600
-  tags:
-    - install_tools
-
 - name: Import status file creation tasks
   ansible.builtin.import_tasks:
     file: create_status.yaml
