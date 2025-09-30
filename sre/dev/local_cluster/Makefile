@@ -9,7 +9,15 @@ create_cluster:## Creates a Kind cluster
 	mkdir -p experiment-data
 	sudo chown -R 1000:1000 experiment-data
 	sudo chmod -R 755 experiment-data
-	$(GO) tool kind create cluster --config kind-config.yaml
+	@# Checking CPU count and use appropriate config
+	@CPU_COUNT=$$(nproc); \
+	if [ $$CPU_COUNT -ge 24 ]; then \
+		echo "CPU count is $$CPU_COUNT (>= 24), creating cluster with 3 nodes (1 control-plane + 2 workers)"; \
+		$(GO) tool kind create cluster --config kind-config-multinode.yaml; \
+	else \
+		echo "CPU count is $$CPU_COUNT (< 24), creating cluster with 1 node (control-plane only)"; \
+		$(GO) tool kind create cluster --config kind-config.yaml; \
+	fi
 	kubectl config view --raw > ~/.kube/config-awx
 	sed -i 's/https:\/\/127\.0\.0\.1:[0-9]\+/https:\/\/kubernetes.default.svc.cluster.local:443/' ~/.kube/config-awx
 
