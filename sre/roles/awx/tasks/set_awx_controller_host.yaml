@@ -17,21 +17,41 @@
   delay: 15
   retries: 12
 
-- name: Set AWX controller host
+- name: Set AWX controller host - LoadBalancer with IP address
   ansible.builtin.set_fact:
-    awx_controller_host: >-
-      {%- if not awx_use_nodeport and
-             (awx_service_info.resources[0].status.loadBalancer.ingress | default([]) | length > 0) and
-             awx_service_info.resources[0].status.loadBalancer.ingress[0].ip is defined -%}
-        http://{{ awx_service_info.resources[0].status.loadBalancer.ingress[0].ip }}
-      {%- elif awx_use_nodeport -%}
-        {%- set nodeport = awx_service_info.resources[0].spec.ports | selectattr('name', 'equalto', 'http') | map(attribute='nodePort') | first -%}
-        {%- if awx_service_info.resources[0].spec.externalIPs | default([]) | length > 0 -%}
-          http://{{ awx_service_info.resources[0].spec.externalIPs[0] }}:{{ nodeport }}
-        {%- else -%}
-          http://127.0.0.1:{{ nodeport }}
-        {%- endif -%}
-      {%- endif -%}
+    awx_controller_host: "http://{{ awx_service_info.resources[0].status.loadBalancer.ingress[0].ip }}"
   when:
-    - awx_service_info.resources is defined
-    - awx_service_info.resources | length > 0
+    - not awx_use_nodeport
+    - awx_service_info.resources[0].status.loadBalancer.ingress is defined
+    - awx_service_info.resources[0].status.loadBalancer.ingress | length > 0
+    - awx_service_info.resources[0].status.loadBalancer.ingress[0].ip is defined
+
+- name: Set AWX controller host - LoadBalancer with hostname
+  ansible.builtin.set_fact:
+    awx_controller_host: "http://{{ awx_service_info.resources[0].status.loadBalancer.ingress[0].hostname }}"
+  when:
+    - not awx_use_nodeport
+    - awx_service_info.resources[0].status.loadBalancer.ingress is defined
+    - awx_service_info.resources[0].status.loadBalancer.ingress | length > 0
+    - awx_service_info.resources[0].status.loadBalancer.ingress[0].hostname is defined
+    - awx_controller_host is not defined
+
+- name: Set AWX controller host - NodePort with external IP address
+  ansible.builtin.set_fact:
+    awx_controller_host: "http://{{ awx_service_info.resources[0].spec.externalIPs[0] }}:{{ nodeport }}"
+  vars:
+    nodeport: "{{ awx_service_info.resources[0].spec.ports | selectattr('name', 'equalto', 'http') | map(attribute='nodePort') | first }}"
+  when:
+    - awx_use_nodeport
+    - awx_service_info.resources[0].spec.externalIPs is defined
+    - awx_service_info.resources[0].spec.externalIPs | length > 0
+    - awx_controller_host is not defined
+
+- name: Set AWX controller host - NodePort localhost
+  ansible.builtin.set_fact:
+    awx_controller_host: "http://127.0.0.1:{{ nodeport }}"
+  vars:
+    nodeport: "{{ awx_service_info.resources[0].spec.ports | selectattr('name', 'equalto', 'http') | map(attribute='nodePort') | first }}"
+  when:
+    - awx_use_nodeport
+    - awx_controller_host is not defined
