@@ -32,6 +32,8 @@
     state: absent
     wait: true
     wait_timeout: 300
+  when:
+    - awx_use_nodeport
 
 - name: Delete experiment data PersistentVolume
   kubernetes.core.k8s:
@@ -55,3 +57,5 @@
         name: "{{ awx_helm_releases.awx_operator.namespace }}"
     state: absent
     wait: true
+  when:
+    - awx_use_nodeport

@@ -182,24 +182,25 @@
     wait: true
     timeout: 300
 
-- name: Create execution environment
+- name: Update existing default execution environment
   awx.awx.execution_environment:
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    description: Custom environment for running ITBench scenarios
     image: quay.io/it-bench/awx-ee:1.0.0
-    name: AWX-EE-Custom
+    name: "AWX EE (latest)"
     pull: always
 
-- name: Create AWX Container Group with experiment data mount
+- name: Update default container group with experiment data mount
   awx.awx.instance_group:
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    name: "experiment-data-containers"
-    is_container_group: true
-    pod_spec_override: |
+    name: "default"
+    pod_spec_override: "{{ pod_spec_yaml }}"
+    state: present
+  vars:
+    pod_spec_yaml: |
       apiVersion: v1
       kind: Pod
       metadata:
@@ -207,38 +208,28 @@
       spec:
         serviceAccountName: default
         automountServiceAccountToken: false
-        restartPolicy: Never
-        initContainers:
-        - name: fix-permissions
-          image: busybox
-          command: ['sh', '-c', 'chown -R 1000:0 /mnt/experiment-data && chmod -R 755 /mnt/experiment-data']
-          volumeMounts:
-          - name: experiment-data
-            mountPath: /mnt/experiment-data
-          securityContext:
-            runAsUser: 0
         containers:
-        - image: "quay.io/it-bench/awx-ee:1.0.0"
-          name: worker
-          args:
-            - ansible-runner
-            - worker
-            - '--private-data-dir=/runner'
-          resources:
-            requests:
-              cpu: 500m
-              memory: 512Mi
-            limits:
-              cpu: 1000m
-              memory: 1024Mi
-          volumeMounts:
-          - name: experiment-data
-            mountPath: /mnt/experiment-data
+          - image: quay.io/ansible/awx-ee:24.6.1
+            name: worker
+            args:
+              - ansible-runner
+              - worker
+              - '--private-data-dir=/runner'
+            resources:
+              requests:
+                cpu: 250m
+                memory: 100Mi
+      {%- if awx_cluster.cloud_provider == "kind" %}
+            volumeMounts:
+            - name: experiment-data
+              mountPath: /mnt/experiment-data
+      {%- endif %}
+      {%- if awx_cluster.cloud_provider == "kind" %}
         volumes:
         - name: experiment-data
           persistentVolumeClaim:
             claimName: experiment-data-pvc
-    state: present
+      {%- endif %}
 
 - name: Include AWX job configuration tasks
   ansible.builtin.include_tasks:

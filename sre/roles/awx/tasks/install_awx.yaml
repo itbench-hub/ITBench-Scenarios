@@ -30,6 +30,8 @@
           type: DirectoryOrCreate
         persistentVolumeReclaimPolicy: Retain
     state: present
+  when:
+    - awx_use_nodeport
 
 - name: Create experiment data PersistentVolumeClaim
   kubernetes.core.k8s:
@@ -49,6 +51,8 @@
         volumeName: experiment-data-pv
         storageClassName: ""
     state: present
+  when:
+    - awx_use_nodeport
 
 - name: Install AWX
   kubernetes.core.k8s:
