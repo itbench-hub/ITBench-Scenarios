@@ -1,0 +1,48 @@
+---
+- name: Set status phase (tool installation)
+  ansible.builtin.set_fact:
+    status_leaderboard_event_phase: tool-installation
+  tags:
+    - install_tools
+
+- name: Set status phase (tool removal)
+  ansible.builtin.set_fact:
+    status_leaderboard_event_phase: tool-removal
+  tags:
+    - uninstall_tools
+
+- name: Set status phase (application installation)
+  ansible.builtin.set_fact:
+    status_leaderboard_event_phase: application-installation
+  tags:
+    - install_applications
+
+- name: Set status phase (application removal)
+  ansible.builtin.set_fact:
+    status_leaderboard_event_phase: application-removal
+  tags:
+    - uninstall_applications
+
+- name: Set status phase (recorders installation)
+  ansible.builtin.set_fact:
+    status_leaderboard_event_phase: recorders-installation
+  tags:
+    - install_recorders
+
+- name: Set status phase (recorders removal)
+  ansible.builtin.set_fact:
+    status_leaderboard_event_phase: recorders-removal
+  tags:
+    - uninstall_recorders
+
+- name: Set status phase (fault injection)
+  ansible.builtin.set_fact:
+    status_fault_event_phase: fault-injection
+  tags:
+    - inject_faults
+
+- name: Set status phase (fault removal)
+  ansible.builtin.set_fact:
+    status_fault_event_phase: fault-removal
+  tags:
+    - remove_faults

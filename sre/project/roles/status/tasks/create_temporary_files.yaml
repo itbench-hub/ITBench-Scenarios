@@ -1,0 +1,20 @@
+---
+- name: Create assertion file in temporary directory
+  ansible.builtin.tempfile:
+    prefix: assertion
+    suffix: json
+  register: status_assertion_temp_file
+
+- name: Create status file in temporary directory
+  ansible.builtin.tempfile:
+    prefix: status
+    suffix: json
+  register: status_status_temp_file
+
+- name: Create fault status file in temporary directory
+  ansible.builtin.tempfile:
+    prefix: fault_{{ status_fault.group_id }}_status
+    suffix: json
+  register: status_fault_status_temp_file
+  when:
+    - status_fault is defined

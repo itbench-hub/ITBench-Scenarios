@@ -1,0 +1,20 @@
+---
+- name: Import variable setting tasks
+  ansible.builtin.import_tasks:
+    file: set_condition_type.yaml
+
+- name: Update assertion file with new condition ({{ status_state }})
+  ansible.builtin.copy:
+    content: "{{ {'status': {'conditions': status.conditions + new_conditions}} | to_nice_json(indent=2) }}"
+    dest: "{{ status_assertion_temp_file.path }}"
+    mode: "0644"
+  tags:
+    - always
+  vars:
+    status: "{{ lookup('ansible.builtin.file', status_assertion_temp_file.path) | from_json }}"
+    new_conditions:
+      - lastTransitionTime: "{{ now(utc=True, fmt='%Y-%m-%dT%H:%M:%SZ') }}"
+        status: "{{ status_state == 'progressing' }}"
+        type: "{{ status_condition_type }}"
+  when:
+    - status_condition_type is defined

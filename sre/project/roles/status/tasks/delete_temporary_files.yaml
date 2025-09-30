@@ -1,0 +1,17 @@
+---
+- name: Delete assertion file in temporary directory
+  ansible.builtin.file:
+    path: "{{ status_assertion_temp_file.path }}"
+    state: absent
+
+- name: Delete status file in temporary directory
+  ansible.builtin.file:
+    path: "{{ status_status_temp_file.path }}"
+    state: absent
+
+- name: Delete fault status file in temporary directory
+  ansible.builtin.file:
+    path: "{{ status_fault_status_temp_file.path }}"
+    state: absent
+  when:
+    - status_fault_status_temp_file is defined

@@ -1,36 +1,40 @@
 ---
 argument_specs:
   main:
-    short_description: Main entry point for leaderboard role
+    short_description: Main entry point for status role
     description:
-      - This is the main entry point for the leaderboard role.
+      - This is the main entry point for the status role.
       - This role is responsible for updating the status tracker.
     author:
       - Gerard Vanloo
     options:
-      leaderboard_status:
-        required: true
+      status_fault:
+        required: false
         type: dict
         options:
-          failed_task:
-            required: false
-            type: dict
-            options:
-              name:
-                required: true
-                type: str
-              result:
-                required: true
-                type: dict
-          status:
-            choices:
-              - failed
-              - progressing
-              - succeeded
+          group_id:
+            required: true
+            type: int
+      status_failed_task:
+        required: false
+        type: dict
+        options:
+          name:
             required: true
             type: str
-      leaderboard_storage:
-        required: false
+          result:
+            required: true
+            type: dict
+      status_state:
+        choices:
+          - failed
+          - initializing
+          - progressing
+          - succeeded
+        required: true
+        type: str
+      status_storage:
+        required: true
         type: dict
         options:
           local:

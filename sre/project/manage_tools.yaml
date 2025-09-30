@@ -34,13 +34,23 @@
       when:
         - incident_id is defined
   tasks:
-    - name: Import leaderboard role
+    - name: Import status role
       ansible.builtin.import_role:
-        name: leaderboard
+        name: status
       vars:
-        leaderboard_status:
-          status: progressing
-        leaderboard_storage: "{{ storage }}"
+        status_state: initializing
+        status_storage: "{{ storage }}"
+      when:
+        - storage.keys() | length > 0
+
+    - name: Import status role
+      ansible.builtin.import_role:
+        name: status
+      vars:
+        status_state: progressing
+        status_storage: "{{ storage }}"
+      when:
+        - storage.keys() | length > 0
 
     - name: Attempt to perform tools role tasks
       block:
@@ -79,24 +89,26 @@
             tools_uninstallation_plan:
               remove_crds: "{{ remove_crds | default(false) | bool }}"
 
-        - name: Import leaderboard role
+        - name: Import status role
           ansible.builtin.import_role:
-            name: leaderboard
+            name: status
           vars:
-            leaderboard_status:
-              status: succeeded
-            leaderboard_storage: "{{ storage }}"
+            status_state: succeeded
+            status_storage: "{{ storage }}"
+          when:
+            - storage.keys() | length > 0
       rescue:
-        - name: Import leaderboard role
+        - name: Import status role
           ansible.builtin.import_role:
-            name: leaderboard
+            name: status
           vars:
-            leaderboard_status:
-              failed_task:
-                name: "{{ ansible_failed_task.name }}"
-                result: "{{ ansible_failed_result }}"
-              status: failed
-            leaderboard_storage: "{{ storage }}"
+            status_failed_task:
+              name: "{{ ansible_failed_task.name }}"
+              result: "{{ ansible_failed_result }}"
+            status_state: failed
+            status_storage: "{{ storage }}"
+          when:
+            - storage.keys() | length > 0
 
         - name: Fail playbook
           ansible.builtin.fail:

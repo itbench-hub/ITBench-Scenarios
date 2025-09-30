@@ -1,0 +1,140 @@
+---
+- name: Import storage validation tasks
+  ansible.builtin.import_tasks:
+    file: validate_storage.yaml
+  tags:
+    - always
+
+- name: Import temporary file creation tasks
+  ansible.builtin.import_tasks:
+    file: create_temporary_files.yaml
+  tags:
+    - always
+
+- name: Initialize status files
+  when:
+    - status_state == 'initializing'
+  block:
+    - name: Initialize assertion file
+      ansible.builtin.copy:
+        content: "{{ {'status': {'conditions': []}} | to_nice_json(indent=2) }}"
+        dest: "{{ status_assertion_temp_file.path }}"
+        mode: "0644"
+      tags:
+        - install_tools
+
+    - name: Initialize status file
+      ansible.builtin.copy:
+        content: "{{ {'events': []} | to_nice_json }}"
+        dest: "{{ status_status_temp_file.path }}"
+        mode: "0644"
+      tags:
+        - install_tools
+
+    - name: Initialize fault status file
+      ansible.builtin.copy:
+        content: "{{ {'events': []} | to_nice_json }}"
+        dest: "{{ status_fault_status_temp_file.path }}"
+        mode: "0644"
+      tags:
+        - inject_faults
+      when:
+        - status_fault_status_temp_file is defined
+
+- name: Retrieve status files from persistent storage
+  when:
+    - status_state != 'initializing'
+  block:
+    - name: Import leaderboard assertion file retrieval tasks
+      ansible.builtin.import_tasks:
+        file: retrieve_status_file.yaml
+      vars:
+        schema_file:
+          name: assertion
+        temp_file:
+          name: assertion
+          path: status_assertion_temp_file.path
+
+    - name: Import leaderboard status file retrieval tasks
+      ansible.builtin.import_tasks:
+        file: retrieve_status_file.yaml
+      vars:
+        schema_file:
+          name: status
+        temp_file:
+          name: status
+          path: status_status_temp_file.path
+
+    - name: Import fault status retrieval tasks
+      ansible.builtin.import_tasks:
+        file: retrieve_status_file.yaml
+      vars:
+        schema_file:
+          name: status
+        temp_file:
+          name: fault_{{ status_fault.group_id }}_status
+          path: status_fault_status_temp_file.path
+      when:
+        - status_fault is defined
+        - status_fault_status_temp_file is defined
+
+- name: Update status files
+  when:
+    - status_state != 'initializing'
+  block:
+    - name: Import fault status consolidation tasks
+      ansible.builtin.import_tasks:
+        file: consolidate_fault_statuses.yaml
+      tags:
+        - uninstall_applications
+
+    - name: Import assertion file update tasks
+      ansible.builtin.import_tasks:
+        file: update_leaderboard_assertion.yaml
+
+    - name: Import status file update tasks
+      ansible.builtin.import_tasks:
+        file: update_leaderboard_status.yaml
+      when:
+        - status_fault is undefined
+
+    - name: Import fault status file update tasks
+      ansible.builtin.import_tasks:
+        file: update_fault_status.yaml
+      when:
+        - status_fault is defined
+
+- name: Store status files in persistent storage
+  tags:
+    - always
+  block:
+    - name: Store assertion file
+      ansible.builtin.import_tasks:
+        file: store_status_file.yaml
+      vars:
+        temp_file:
+          name: assertion
+          path: status_assertion_temp_file.path
+
+    - name: Store status file
+      ansible.builtin.import_tasks:
+        file: store_status_file.yaml
+      vars:
+        temp_file:
+          name: status
+          path: status_status_temp_file.path
+
+    - name: Store fault status file
+      ansible.builtin.import_tasks:
+        file: store_status_file.yaml
+      vars:
+        temp_file:
+          name: fault_{{ status_fault.group_id }}_status
+          path: status_fault_status_temp_file.path
+      when:
+        - status_fault is defined
+        - status_fault_status_temp_file is defined
+  always:
+    - name: Import temporary file deletion tasks
+      ansible.builtin.import_tasks:
+        file: delete_temporary_files.yaml

@@ -1,0 +1,42 @@
+---
+- name: Validation that storage is configured
+  ansible.builtin.assert:
+    that: status_storage.keys() | length > 0
+    fail_msg: Storage has not been configured. Please configure storage.
+    success_msg: Storage is configured.
+
+- name: Validating that local directory exists
+  ansible.builtin.assert:
+    that: local_storage_exists
+    fail_msg: Local storage directory path does not exist. Please create.
+    success_msg: Local storage directory path exists.
+  vars:
+    local_storage_exists: "{{ status_storage.local.directory is exists }}"
+  when:
+    - status_storage.local is defined
+
+- name: Validating that local directory is a directory
+  ansible.builtin.assert:
+    that: local_storage_is_directory
+    fail_msg: Local storage directory path is not a directory. Please configure storage.
+    success_msg: Local storage directory path is a directory.
+  vars:
+    local_storage_is_directory: "{{ status_storage.local.directory is exists }}"
+  when:
+    - status_storage.local is defined
+
+- name: Retrieve bucket at endpoint
+  amazon.aws.s3_bucket_info:
+    endpoint_url: "{{ status_storage.s3.endpoint }}"
+    name: "{{ status_storage.s3.bucket }}"
+  register: status_s3_buckets
+  when:
+    - status_storage.s3 is defined
+
+- name: Validating that S3 bucket exists
+  ansible.builtin.assert:
+    that: status_s3_buckets.buckets | length > 0
+    fail_msg: S3 bucket could not be found. Please configure storage.
+    success_msg: S3 bucket found.
+  when:
+    - status_storage.s3 is defined

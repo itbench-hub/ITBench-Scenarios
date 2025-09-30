@@ -1,0 +1,39 @@
+---
+- name: Copy status file from local directory into temporary directory
+  ansible.builtin.copy:
+    dest: "{{ temp_file.path }}"
+    mode: "0644"
+    src: "{{ status_storage.local.directory }}/{{ temp_file.name }}.json"
+  when:
+    - status_storage.local is defined
+
+- name: Retrieve information on status file in S3 bucket
+  amazon.aws.s3_object_info:
+    bucket_name: "{{ status_storage.s3.bucket }}"
+    endpoint_url: "{{ status_storage.s3.endpoint }}"
+    prefix: "{{ status_storage.s3.directory }}/{{ temp_file.name }}.json"
+  register: status_s3_object_info
+  when:
+    - status_storage.s3 is defined
+
+- name: Copy status file from s3 directory into temporary directory
+  amazon.aws.s3_object:
+    endpoint_url: "{{ status_storage.s3.endpoint }}"
+    bucket: "{{ status_storage.s3.bucket }}"
+    object: "{{ status_storage.s3.directory }}/{{ temp_file.name }}.json"
+    dest: "{{ temp_file.path }}"
+    mode: get
+  when:
+    - status_storage.s3 is defined
+    - status_s3_object_info.s3_keys is defined
+    - status_s3_object_info.s3_keys | length == 1
+
+- name: Validate status file
+  ansible.utils.validate:
+    data: "{{ lookup('ansible.builtin.file', temp_file.path) | from_json }}"
+    criteria: "{{ lookup('ansible.builtin.file', schema_file_path) | from_json }}"
+    engine: ansible.utils.jsonschema
+  vars:
+    schema_file_path: files/schema/{{ schema_file.name }}.json
+  when:
+    - status_storage.keys() | length > 0
