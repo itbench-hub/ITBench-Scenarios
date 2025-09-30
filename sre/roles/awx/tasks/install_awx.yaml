@@ -63,8 +63,12 @@
       metadata:
         name: awx-deployment
         namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
-      spec: "{{ awx_base_spec | combine(awx_nodeport_spec if awx_cluster.cloud_provider == 'kind' | default(false) else {}) | combine(awx_volume_spec if awx_cluster.cloud_provider
-        == 'kind' | default(false) else {}) }}"
+      spec: >-
+        {{
+          awx_base_spec |
+          combine(awx_nodeport_spec if awx_cluster.cloud_provider == 'kind' | default(false) else {}) |
+          combine(awx_volume_spec if awx_cluster.cloud_provider == 'kind' | default(false) else {})
+        }}
     state: present
     wait: "{{ awx_cluster.cloud_provider != 'kind' }}"
     wait_condition:
@@ -128,6 +132,7 @@
       vars:
         cluster_files:
           kubeconfig: "{{ awx_cluster.kubeconfig }}"
+
     - name: Wait for AWX to be ready
       kubernetes.core.k8s_info:
         api_version: awx.ansible.com/v1beta1
