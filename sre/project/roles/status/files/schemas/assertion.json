@@ -1,0 +1,31 @@
+{
+    "type": "object",
+    "required": ["status"],
+    "properties": {
+        "status": {
+            "type": "object",
+            "required": ["conditions"],
+            "properties": {
+                "conditions": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "required": ["lastTransitionTime", "status", "type"],
+                        "properties": {
+                            "lastTransitionTime": {
+                                "type": "string"
+                            },
+                            "status": {
+                                "type": "boolean"
+                            },
+                            "type": {
+                                "type": "string",
+                                "enum": ["Deployed", "Destroyed", "FaultInjected"]
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
