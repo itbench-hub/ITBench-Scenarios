@@ -16,21 +16,6 @@
        awx_service_info.resources[0].status.loadBalancer.ingress | length > 0)
   delay: 15
   retries: 12
-  when:
-    - not awx_use_nodeport
-
-- name: Get AWX service information
-  kubernetes.core.k8s_info:
-    kind: Service
-    kubeconfig: "{{ awx_cluster.kubeconfig }}"
-    name: awx-deployment-service
-    namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
-    wait: true
-  register: awx_service_info
-  delay: 15
-  retries: 12
-  when:
-    - awx_use_nodeport
 
 - name: Set AWX controller host - LoadBalancer with IP address
   ansible.builtin.set_fact:
