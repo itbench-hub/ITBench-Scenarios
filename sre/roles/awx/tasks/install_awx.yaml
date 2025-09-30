@@ -140,11 +140,8 @@
         kubeconfig: "{{ awx_cluster.kubeconfig }}"
         name: awx-deployment
         namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
-      register: awx_status
-      until:
-        - awx_status.resources is defined
-        - awx_status.resources | length > 0
-        - awx_status.resources[0].status.conditions is defined
-        - awx_status.resources[0].status.conditions | selectattr('type', 'equalto', 'Successful') | selectattr('status', 'equalto', 'True') | list | length > 0
-      retries: 90
-      delay: 10
+        wait: true
+        wait_condition:
+          type: Successful
+          status: "True"
+        wait_timeout: 900
