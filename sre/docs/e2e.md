@@ -158,7 +158,7 @@ experiments:
 **Configuration tips:**
 - The local Kind cluster setup supports one scenario at at time. There is a plan to extend this to allow for scenario runs one after the other.
 - Increase `trials` for statistical significance
-- Available scenarios and their respective scenario IDs in open source: 1, 3, 16, 20, 23, 26, 27, 30, 31, 33, 34, 37, 38, 102, 105
+- Available scenarios and their respective scenario IDs in open source are documented [here](https://github.com/itbench-hub/ITBench-Scenarios/blob/main/sre/docs/incidents.md).
 
 ### GitHub Configuration (github.yaml)
 
