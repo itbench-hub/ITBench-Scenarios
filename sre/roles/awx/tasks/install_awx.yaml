@@ -63,9 +63,10 @@
       metadata:
         name: awx-deployment
         namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
-      spec: "{{ awx_base_spec | combine(awx_nodeport_spec if awx_cluster.cloud_provider == 'kind' | default(false) else {}) | combine(awx_volume_spec if awx_cluster.cloud_provider == 'kind' | default(false) else {}) }}"
+      spec: "{{ awx_base_spec | combine(awx_nodeport_spec if awx_cluster.cloud_provider == 'kind' | default(false) else {}) | combine(awx_volume_spec if awx_cluster.cloud_provider
+        == 'kind' | default(false) else {}) }}"
     state: present
-    wait: true
+    wait: "{{ awx_cluster.cloud_provider != 'kind' }}"
     wait_condition:
       reason: Successful
       status: "True"
@@ -102,3 +103,41 @@
         chown -R 1000:0 /mnt/experiment-data
         chmod -R 755 /mnt/experiment-data
         chmod g+s /mnt/experiment-data
+
+- name: Handle certificate signing requests on Kind
+  when:
+    - awx_cluster.cloud_provider == 'kind'
+  block:
+    - name: Wait for AWX pods to be created
+      kubernetes.core.k8s_info:
+        api_version: v1
+        kind: Pod
+        kubeconfig: "{{ awx_cluster.kubeconfig }}"
+        namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
+        label_selectors:
+          - "app.kubernetes.io/managed-by=awx-operator"
+      register: awx_pods
+      until: awx_pods.resources | length > 0
+      retries: 30
+      delay: 10
+
+    - name: Include tasks to approve pending certificate requests
+      ansible.builtin.include_role:
+        name: cluster
+        tasks_from: approve_certificates
+
+    - name: Wait for AWX to be ready
+      kubernetes.core.k8s_info:
+        api_version: awx.ansible.com/v1beta1
+        kind: AWX
+        kubeconfig: "{{ awx_cluster.kubeconfig }}"
+        name: awx-deployment
+        namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
+      register: awx_status
+      until:
+        - awx_status.resources is defined
+        - awx_status.resources | length > 0
+        - awx_status.resources[0].status.conditions is defined
+        - awx_status.resources[0].status.conditions | selectattr('type', 'equalto', 'Successful') | selectattr('status', 'equalto', 'True') | list | length > 0
+      retries: 90
+      delay: 10
