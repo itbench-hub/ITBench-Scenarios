@@ -31,7 +31,7 @@
         persistentVolumeReclaimPolicy: Retain
     state: present
   when:
-    - awx_use_nodeport
+    - awx_cluster.cloud_provider == "kind"
 
 - name: Create experiment data PersistentVolumeClaim
   kubernetes.core.k8s:
@@ -52,7 +52,7 @@
         storageClassName: ""
     state: present
   when:
-    - awx_use_nodeport
+    - awx_cluster.cloud_provider == "kind"
 
 - name: Install AWX
   kubernetes.core.k8s:
@@ -63,7 +63,7 @@
       metadata:
         name: awx-deployment
         namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
-      spec: "{{ awx_base_spec | combine(awx_nodeport_spec if awx_use_nodeport | default(false) else {}) | combine(awx_volume_spec if awx_use_nodeport | default(false) else {}) }}"
+      spec: "{{ awx_base_spec | combine(awx_nodeport_spec if awx_cluster.cloud_provider == 'kind' | default(false) else {}) | combine(awx_volume_spec if awx_cluster.cloud_provider == 'kind' | default(false) else {}) }}"
     state: present
     wait: true
     wait_condition:
@@ -73,14 +73,14 @@
     wait_timeout: 900
   vars:
     awx_base_spec:
-      service_type: "{{ 'nodeport' if awx_use_nodeport | default(false) else 'loadbalancer' }}"
+      service_type: "{{ 'nodeport' if awx_cluster.cloud_provider == 'kind' | default(false) else 'loadbalancer' }}"
       postgres_data_volume_init: true
       postgres_init_container_commands: |
         chown 26:0 /var/lib/pgsql/data
         chmod 700 /var/lib/pgsql/data
       postgres_storage_requirements:
         requests:
-          storage: "{{ '4Gi' if awx_use_nodeport | default(false) else '32Gi' }}"
+          storage: "{{ '4Gi' if awx_cluster.cloud_provider == 'kind' | default(false) else '32Gi' }}"
     awx_nodeport_spec:
       nodeport_port: 30950
     awx_volume_spec:
