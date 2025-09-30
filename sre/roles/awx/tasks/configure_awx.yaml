@@ -170,12 +170,11 @@
     wait: true
     timeout: 300
 
-- name: Create execution environment
+- name: Update existing default execution environment
   awx.awx.execution_environment:
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    description: Custom environment for running ITBench scenarios
     image: quay.io/it-bench/awx-ee:1.0.0
     name: ITBench-Custom-EE
     organization: ITBench
