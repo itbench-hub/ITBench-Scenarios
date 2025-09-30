@@ -62,7 +62,7 @@ Open your browser and navigate to: [http://127.0.0.1:30950/ui_next/overview](htt
 - Password: Retrieve using the command below:
 
 ```bash
-KUBECONFIG=/path_to_kubeconfig kubectl get secret awx-deployment-admin-password -n awx --template={{.data.password}} | base64 -d
+KUBECONFIG=<path_to_kubeconfig> kubectl get secret awx-deployment-admin-password -n awx --template={{.data.password}} | base64 -d
 ```
 
 ### Step 5: Configure AWX Pipeline
