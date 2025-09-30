@@ -29,7 +29,6 @@
     - tools_service_loadbalancer_info.resources[0].status.loadBalancer.ingress is defined
   delay: 15
   retries: 12
-  when: tools_service_info.resources[0].spec.type == "LoadBalancer"
 
 - name: Extract the Ingress hostname information
   ansible.builtin.set_fact:
