@@ -37,7 +37,6 @@
           storage: "{{ storage }}"
           trials: "{{ experiments.trials }}"
         awx_github: "{{ github }}"
-        awx_use_nodeport: "{{ stack.awx.use_nodeport }}"
         awx_runners:
           kubeconfigs: "{{ stack.runners.kubeconfigs }}"
         awx_agent:
