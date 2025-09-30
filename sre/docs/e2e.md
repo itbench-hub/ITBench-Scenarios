@@ -192,7 +192,6 @@ Kubernetes cluster configuration:
 ```yaml
 stack:
   awx:
-    use_nodeport: true               # Enable NodePort for local access
     kubeconfig: ~/.kube/config       # Path to your local Kind clusters kubeconfig
   runners:
     kubeconfigs:

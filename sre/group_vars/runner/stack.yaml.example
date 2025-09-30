@@ -1,7 +1,6 @@
 ---
 stack:
   awx:
-    use_nodeport: false
     kubeconfig: ~/.kube/config
   runners:
     kubeconfigs:
