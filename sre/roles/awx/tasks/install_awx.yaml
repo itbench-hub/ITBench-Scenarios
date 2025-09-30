@@ -124,8 +124,10 @@
     - name: Include tasks to approve pending certificate requests
       ansible.builtin.include_role:
         name: cluster
-        tasks_from: approve_certificates
-
+        tasks_from: approve_certificate_requests
+      vars:
+        cluster_files:
+          kubeconfig: "{{ awx_cluster.kubeconfig }}"
     - name: Wait for AWX to be ready
       kubernetes.core.k8s_info:
         api_version: awx.ansible.com/v1beta1
