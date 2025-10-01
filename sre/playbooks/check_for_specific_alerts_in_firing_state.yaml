@@ -80,7 +80,7 @@
                          'CPUEfficiency',
                          'MemoryEfficiency'
                        ]) |
-                       list | length }} specific alerts in firing state
+                       list }} specific alerts in firing state
           when: alerts_api_result is defined and alerts_api_result.json is defined
 
         - name: Save filtered firing alerts to file
