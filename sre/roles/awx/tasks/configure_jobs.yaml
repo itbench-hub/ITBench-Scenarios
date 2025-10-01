@@ -23,7 +23,7 @@
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    execution_environment: AWX-EE-Custom
+    execution_environment: "AWX EE (latest)"
     inventory: ITBench
     job_tags: sync_scenarios
     job_type: run
