@@ -1,0 +1,26 @@
+---
+metadata:
+  complexity: Medium
+  id: 102
+  name: Misconfigured resource quota
+  platform: kubernetes
+spec:
+  environment:
+    applications:
+      otel_demo:
+        enabled: true
+    tools:
+      category: sre
+      selected:
+        - kubernetes-topology-monitor
+  disruption:
+    injections:
+      - - fault:
+            custom:
+              name: misconfigured-resource-quota
+              misconfigured_resource_quota:
+                namespace:
+                  name: "{{ applications_helm_releases.otel_demo.namespace }}"
+                workloads:
+                  - kind: Deployment
+                    name: ad

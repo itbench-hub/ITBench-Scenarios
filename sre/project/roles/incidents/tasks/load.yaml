@@ -1,0 +1,28 @@
+---
+- name: Include Helm Release variables from applications role
+  ansible.builtin.include_vars:
+    file: ../applications/defaults/main/helm_releases.yaml
+
+- name: Fail incident spec file existence validation
+  ansible.builtin.fail:
+    msg: Incident {{ incidents_file.id }} could not be loaded (spec does not exist).
+  vars:
+    spec_file_exists: "{{ (playbook_dir + '/roles/incidents/files/specs/incident_' + (incidents_file.id | string) + '.yaml') is exists }}"
+  when:
+    - not spec_file_exists
+
+- name: Fail incident spec file existence validation
+  ansible.builtin.fail:
+    msg: Incident {{ incidents_file.id }} could not be loaded (ground truth does not exist).
+  vars:
+    truth_file_exists: "{{ (playbook_dir + '/roles/incidents/files/ground_truths/incident_' + (incidents_file.id | string) + '.yaml') is exists }}"
+  when:
+    - not truth_file_exists
+
+- name: Load incident files
+  ansible.builtin.set_fact:
+    incidents_ground_truth: "{{ lookup('ansible.builtin.file', truth_file_path) | from_yaml }}"
+    incidents_spec: "{{ lookup('ansible.builtin.template', spec_file_path) | from_yaml }}"
+  vars:
+    spec_file_path: files/specs/incident_{{ incidents_file.id }}.yaml
+    truth_file_path: files/ground_truths/incident_{{ incidents_file.id }}.yaml
