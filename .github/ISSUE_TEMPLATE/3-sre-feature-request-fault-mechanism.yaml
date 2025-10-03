@@ -1,0 +1,30 @@
+---
+name: New SRE Fault Mechanism Request
+description: Request to add a new fault mechanism to the SRE fault catalog
+labels:
+  - enhancement
+  - fault mechanism
+  - sre
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filling out this feature request! Please verify that there is not a fault mechanism which covers the request before submitting.
+  - type: dropdown
+    id: fault-type
+    attributes:
+      label: What type is the fault mechanism?
+      options:
+        - Application
+        - Chaos Mesh
+        - Custom (Generic)
+        - Valkey
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What does the fault mechanism do?
+    validations:
+      required: true
