@@ -415,3 +415,4 @@
       agent_analytics_sdk_username: "{{ awx_agent.configuration['agent_analytics_sdk']['git_username'] }}"
       agent_analytics_sdk_token: "{{ awx_agent.configuration['agent_analytics_sdk']['git_token'] }}"
       sre_agent_max_runtime_in_seconds: 900
+      run_mode: remote
