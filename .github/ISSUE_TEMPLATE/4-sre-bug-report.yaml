@@ -1,0 +1,36 @@
+---
+name: New SRE Bug Report
+description: Report describing a bug encountered.
+labels:
+  - bug
+  - sre
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filling out this report!
+  - type: input
+    id: os
+    attributes:
+      label: Machine Information
+      description: Please list the OS version, number of CPUs, and RAM
+    validations:
+      required: true
+  - type: dropdown
+    id: cluster-type
+    attributes:
+      label: Where did the bug occur?
+      options:
+        - AWS Cluster
+        - AWX Stack
+        - Kind Cluster
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What happened? Please include logs from the playbook or command if possible.
+    validations:
+      required: true
