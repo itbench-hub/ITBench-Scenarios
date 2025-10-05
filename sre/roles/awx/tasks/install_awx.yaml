@@ -63,12 +63,7 @@
       metadata:
         name: awx-deployment
         namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
-      spec: >-
-        {{
-          awx_base_spec |
-          combine(awx_nodeport_spec if awx_cluster.cloud_provider == 'kind' | default(false) else {}) |
-          combine(awx_volume_spec if awx_cluster.cloud_provider == 'kind' | default(false) else {})
-        }}
+      spec: "{{ lookup('file', spec_file) | from_yaml }}"
     state: present
     wait: "{{ awx_cluster.cloud_provider != 'kind' }}"
     wait_condition:
@@ -77,36 +72,7 @@
       type: Successful
     wait_timeout: 900
   vars:
-    awx_base_spec:
-      service_type: "{{ 'nodeport' if awx_cluster.cloud_provider == 'kind' | default(false) else 'loadbalancer' }}"
-      postgres_data_volume_init: true
-      postgres_init_container_commands: |
-        chown 26:0 /var/lib/pgsql/data
-        chmod 700 /var/lib/pgsql/data
-      postgres_storage_requirements:
-        requests:
-          storage: "{{ '4Gi' if awx_cluster.cloud_provider == 'kind' | default(false) else '32Gi' }}"
-    awx_nodeport_spec:
-      nodeport_port: 30950
-    awx_volume_spec:
-      extra_volumes: |
-        - name: experiment-data
-          persistentVolumeClaim:
-            claimName: experiment-data-pvc
-      ee_extra_volume_mounts: |
-        - name: experiment-data
-          mountPath: /mnt/experiment-data
-      task_extra_volume_mounts: |
-        - name: experiment-data
-          mountPath: /mnt/experiment-data
-      init_container_extra_volume_mounts: |
-        - name: experiment-data
-          mountPath: /mnt/experiment-data
-      init_container_extra_commands: |
-        mkdir -p /mnt/experiment-data
-        chown -R 1000:0 /mnt/experiment-data
-        chmod -R 755 /mnt/experiment-data
-        chmod g+s /mnt/experiment-data
+    spec_file: "{{ role_path }}/files/{{ 'awx_spec_kind.yaml' if awx_cluster.cloud_provider == 'kind' | default(false) else 'awx_spec_base.yaml' }}"
 
 - name: Handle certificate signing requests on Kind
   when:
