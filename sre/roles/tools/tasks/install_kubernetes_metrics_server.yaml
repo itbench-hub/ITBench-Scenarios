@@ -42,8 +42,8 @@
         namespace: "{{ helm_release.namespace }}"
         label_selectors:
           - "app.kubernetes.io/name=metrics-server"
-      register: kubernetes_metrics_server_pods
-      until: kubernetes_metrics_server_pods.resources | length > 0
+      register: tools_kubernetes_metrics_server_pods
+      until: tools_kubernetes_metrics_server_pods.resources | length > 0
       retries: 30
       delay: 10
 
