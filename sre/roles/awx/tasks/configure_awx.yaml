@@ -56,7 +56,7 @@
     inputs:
       kubeconfig: "{{ lookup('ansible.builtin.file', item) }}"
       provider: "{{ awx_cluster.cloud_provider }}"
-      platform: "{{ awx_cluster.cluster_platform }}"
+      platform: "{{ awx_cluster.platform }}"
     name: Cluster-{{ runner_index + 1 }}-Kubeconfig
     organization: ITBench
   loop: "{{ awx_runners.kubeconfigs }}"
@@ -182,16 +182,18 @@
     wait: true
     timeout: 300
 
-- name: Update existing default execution environment
+- name: Create execution environment
   awx.awx.execution_environment:
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
+    description: Custom environment for running ITBench scenarios
     image: quay.io/it-bench/awx-ee:1.0.0
-    name: "AWX EE (latest)"
+    name: AWX-EE-Custom
+    organization: ITBench
     pull: always
 
-- name: Update default container group with experiment data mount
+- name: Update existing container group with experiment data mount
   awx.awx.instance_group:
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
