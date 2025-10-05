@@ -189,7 +189,7 @@
     controller_username: admin
     description: Custom environment for running ITBench scenarios
     image: quay.io/it-bench/awx-ee:1.0.0
-    name: AWX-EE-Custom
+    name: ITBench-Custom-EE
     organization: ITBench
     pull: always
 
