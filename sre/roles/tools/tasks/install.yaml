@@ -3,9 +3,10 @@
   ansible.builtin.import_role:
     name: cluster
     tasks_from: approve_certificate_requests
-    vars:
-      cluster_files:
-        kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    apply:
+      vars:
+        cluster_files:
+          kubeconfig: "{{ tools_cluster.kubeconfig }}"
   when:
     - tools_cluster.provider == 'kind'
 
