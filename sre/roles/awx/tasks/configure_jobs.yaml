@@ -18,7 +18,7 @@
     job_type: run
     name: "Sync-Scenarios"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/sync_scenarios.yaml
+    playbook: sre/playbooks/sync_scenarios.yaml
     project: GitHub-ITBench
     state: present
 
@@ -38,7 +38,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Deploy-Tools"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/manage_tools.yaml
+    playbook: sre/playbooks/manage_tools.yaml
     project: GitHub-ITBench
     state: present
 
@@ -58,7 +58,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Reinit-Tools"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/manage_tools.yaml
+    playbook: sre/playbooks/manage_tools.yaml
     project: GitHub-ITBench
     state: present
 
@@ -78,7 +78,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Undeploy-Tools"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/manage_tools.yaml
+    playbook: sre/playbooks/manage_tools.yaml
     project: GitHub-ITBench
     state: present
 
@@ -95,7 +95,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Check-for-Alerts"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/check_for_specific_alerts_in_firing_state.yaml
+    playbook: sre/playbooks/check_for_specific_alerts_in_firing_state.yaml
     project: GitHub-ITBench
     state: present
 
@@ -115,7 +115,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Deploy-Applications"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/manage_applications.yaml
+    playbook: sre/playbooks/manage_applications.yaml
     project: GitHub-ITBench
     state: present
 
@@ -135,7 +135,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Undeploy-Applications"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/manage_applications.yaml
+    playbook: sre/playbooks/manage_applications.yaml
     project: GitHub-ITBench
     state: present
 
@@ -155,7 +155,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Inject-Faults"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/manage_incidents.yaml
+    playbook: sre/playbooks/manage_incidents.yaml
     project: GitHub-ITBench
     state: present
 
@@ -175,7 +175,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Remove-Faults"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/manage_incidents.yaml
+    playbook: sre/playbooks/manage_incidents.yaml
     project: GitHub-ITBench
     state: present
 
@@ -195,7 +195,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Install-Data-Recorders"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/manage_recorders.yaml
+    playbook: sre/playbooks/manage_recorders.yaml
     project: GitHub-ITBench
     state: present
 
@@ -215,7 +215,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Uninstall-Data-Recorders"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/manage_recorders.yaml
+    playbook: sre/playbooks/manage_recorders.yaml
     project: GitHub-ITBench
     state: present
 
@@ -236,7 +236,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Install-Data-Recorders"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/manage_recorders.yaml
+    playbook: sre/playbooks/manage_recorders.yaml
     project: GitHub-ITBench
     state: present
 
@@ -261,7 +261,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Install-Topology-Data-Recorder"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/manage_recorders.yaml
+    playbook: sre/playbooks/manage_recorders.yaml
     project: GitHub-ITBench
     state: present
 
@@ -285,7 +285,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Uninstall-Topology-Data-Recorder"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/manage_recorders.yaml
+    playbook: sre/playbooks/manage_recorders.yaml
     project: GitHub-ITBench
     state: present
 
@@ -300,7 +300,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Pause"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/pause_execution.yaml
+    playbook: sre/playbooks/pause_execution.yaml
     project: GitHub-ITBench
     state: present
 
@@ -320,7 +320,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Grant-Access-To-Agent"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/manage_agent_access.yaml
+    playbook: sre/playbooks/manage_agent_access.yaml
     project: GitHub-ITBench
     state: present
 
@@ -340,7 +340,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Remove-Access-From-Agent"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/manage_agent_access.yaml
+    playbook: sre/playbooks/manage_agent_access.yaml
     project: GitHub-ITBench
     state: present
 
@@ -358,7 +358,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Handover-To-Agent"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/manage_agent_transition.yaml
+    playbook: sre/playbooks/manage_agent_transition.yaml
     project: GitHub-ITBench
     state: present
 
@@ -376,7 +376,7 @@
     job_type: run
     name: "Scenario-{{ incident }}--Handback-From-Agent"
     organization: ITBench
-    playbook: ITBench-Scenarios/sre/playbooks/manage_agent_transition.yaml
+    playbook: sre/playbooks/manage_agent_transition.yaml
     project: GitHub-ITBench
     state: present
 
