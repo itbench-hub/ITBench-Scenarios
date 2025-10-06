@@ -1,3 +1,4 @@
+---
 service_type: loadbalancer
 postgres_data_volume_init: true
 postgres_init_container_commands: |

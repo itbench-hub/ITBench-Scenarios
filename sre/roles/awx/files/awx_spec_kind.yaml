@@ -1,3 +1,4 @@
+---
 service_type: nodeport
 nodeport_port: 30950
 postgres_data_volume_init: true

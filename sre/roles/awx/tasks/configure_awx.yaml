@@ -220,18 +220,15 @@
             resources:
               requests:
                 cpu: 250m
-                memory: 100Mi
-      {%- if awx_cluster.cloud_provider == "kind" %}
+                memory: 100Mi{%- if awx_cluster.cloud_provider == "kind" %}
             volumeMounts:
             - name: experiment-data
-              mountPath: /mnt/experiment-data
-      {%- endif %}
+              mountPath: /mnt/experiment-data{%- endif %}
       {%- if awx_cluster.cloud_provider == "kind" %}
         volumes:
         - name: experiment-data
           persistentVolumeClaim:
-            claimName: experiment-data-pvc
-      {%- endif %}
+            claimName: experiment-data-pvc{%- endif %}
 
 - name: Include AWX job configuration tasks
   ansible.builtin.include_tasks:
