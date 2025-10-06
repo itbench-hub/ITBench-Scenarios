@@ -109,7 +109,7 @@ agent_configuration:
       provider: "openai"              # LLM provider (openai, watsonx, etc.)
       model: "gpt-4o"                 # Model to use
       url: "https://api.openai.com/v1" # API endpoint
-      api_key: "your-api-key-here"    # Your API key
+      api_key: "your-api-key-here"    # Your API key # pragma: allowlist secret
       seed: "42"                      # For reproducible results
       top_p: "0.1"                    # Sampling parameter
       temperature: "0.000001"         # Response randomness (lower = more deterministic)
@@ -136,7 +136,7 @@ Configure AWS credentials for accessing cloud resources. This only needs to be c
 credentials:
   aws:
     access_key_id: "YOUR_ACCESS_KEY_ID"
-    secret_access_key: "YOUR_SECRET_ACCESS_KEY"
+    secret_access_key: "YOUR_SECRET_ACCESS_KEY" # pragma: allowlist secret
 ```
 
 ### Experiments (experiments.yaml)
@@ -168,7 +168,7 @@ Repository settings for test scenarios and agent code:
 github:
   it_bench:
     ssh:
-      private_key_passphrase: "your-passphrase"
+      private_key_passphrase: "your-passphrase" # pragma: allowlist secret
       private_key_path: "/path/to/your/ssh/key"
     url: git@github.com:itbench-hub/ITBench-LeaderboardScenarios.git
     branch: v1-refactor-incidents
