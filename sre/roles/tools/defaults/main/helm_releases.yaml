@@ -12,6 +12,9 @@ tools_helm_releases:
   ingress:
     name: ingress-nginx
     namespace: ingress-nginx
+  istio:
+    name: istio-system
+    namespace: istio-system
   kubernetes_metrics_server:
     name: metrics-server
     namespace: metrics-server
