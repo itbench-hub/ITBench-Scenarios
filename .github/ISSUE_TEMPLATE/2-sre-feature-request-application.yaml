@@ -1,0 +1,44 @@
+---
+name: New SRE Application Request
+description: Request to add a new opensource application to the SRE application stack
+labels:
+  - application
+  - enhancement
+  - sre
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for filling out this feature request!
+  - type: input
+    id: application
+    attributes:
+      label: Name
+      description: Name of the application
+      placeholder: OpenTelemetry Demo
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What does the application do?
+      placeholder: OpenTelemetry Demo (aka Astronomy Shop) simulates a shop to buy telescopes using microservices.
+    validations:
+      required: true
+  - type: input
+    id: git
+    attributes:
+      label: Git Repository URL
+      description: The public URL to the Git repository for the application.
+      placeholder: https://github.com/open-telemetry/opentelemetry-demo
+    validations:
+      required: true
+  - type: input
+    id: helm
+    attributes:
+      label: Helm Chart Git Repository URL
+      description: The public URL to the Git repository for the Helm chart. Sometimes, this is the same as the git repository.
+      placeholder: https://github.com/open-telemetry/opentelemetry-helm-charts
+    validations:
+      required: true
