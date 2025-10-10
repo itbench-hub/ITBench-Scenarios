@@ -1,0 +1,9 @@
+---
+- name: Import invalid password injection tasks
+  ansible.builtin.import_tasks:
+    file: inject_valkey_invalid_password.yaml
+  vars:
+    spec: "{{ fault_spec.valkey.invalid_password }}"
+  when:
+    - fault_spec.valkey.name == 'invalid-password'
+    - fault_spec.valkey.invalid_password is defined

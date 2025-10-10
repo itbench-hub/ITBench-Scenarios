@@ -1,0 +1,27 @@
+---
+- name: Validate SRE and FinOps Incident Files
+  hosts:
+    - environment
+  tasks:
+    - name: Include docs role
+      ansible.builtin.include_role:
+        name: documentation
+        tasks_from: set_incidents_ids.yaml
+        apply:
+          tags:
+            - always
+      tags:
+        - always
+
+    - name: Include the incidents role to run the validation on all incidents
+      ansible.builtin.include_role:
+        name: incidents
+        apply:
+          vars:
+            incidents_file:
+              id: "{{ item }}"
+      loop: "{{ documentation_incidents_ids }}"
+      loop_control:
+        label: "incident-{{ item }}"
+      tags:
+        - always

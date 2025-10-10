@@ -1,0 +1,102 @@
+---
+- name: Manage SRE and FinOps Incident Environment Tool Stack
+  hosts:
+    - environment
+  pre_tasks:
+    - name: Import system role
+      ansible.builtin.import_role:
+        name: system
+      tags:
+        - always
+      vars:
+        system_cluster:
+          kubeconfig: "{{ cluster.kubeconfig }}"
+
+    - name: Import cluster role
+      ansible.builtin.import_role:
+        name: cluster
+      tags:
+        - always
+      vars:
+        cluster_files:
+          kubeconfig: "{{ cluster.kubeconfig }}"
+        cluster_tools_enabled:
+          oc: "{{ system_oc_exists }}"
+
+    - name: Import variables for incident
+      ansible.builtin.import_role:
+        name: incidents
+      tags:
+        - always
+      vars:
+        incidents_file:
+          id: "{{ incident_id }}"
+      when:
+        - incident_id is defined
+  tasks:
+    - name: Import status role
+      ansible.builtin.import_role:
+        name: status
+      vars:
+        status_state: initializing
+        status_storage: "{{ storage }}"
+      when:
+        - storage.keys() | length > 0
+
+    - name: Import status role
+      ansible.builtin.import_role:
+        name: status
+      vars:
+        status_state: progressing
+        status_storage: "{{ storage }}"
+      when:
+        - storage.keys() | length > 0
+
+    - name: Attempt to perform tools role tasks
+      block:
+        - name: Import tools role
+          ansible.builtin.import_role:
+            name: tools
+          vars:
+            tools_cluster:
+              kubeconfig: "{{ cluster.kubeconfig }}"
+              provider: "{{ cluster_provider }}"
+              platform: "{{ cluster_platform }}"
+            tools_required:
+              chaos_mesh: "{{ incidents_tools.chaos_mesh | default(tools.chaos_mesh) }}"
+              clickhouse: "{{ incidents_tools.clickhouse | default(tools.clickhouse) }}"
+              ingress: "{{ incidents_tools.ingress | default(tools.ingress) }}"
+              jaeger: "{{ incidents_tools.jaeger | default(tools.jaeger) }}"
+              kubernetes_metrics_server: "{{ incidents_tools.kubernetes_metrics_server | default(tools.kubernetes_metrics_server) }}"
+              kubernetes_topology_monitor: "{{ incidents_tools.kubernetes_topology_monitor | default(tools.kubernetes_topology_monitor) }}"
+              opencost: "{{ incidents_tools.opencost | default(tools.opencost) }}"
+              opensearch: "{{ incidents_tools.opensearch | default(tools.opensearch) }}"
+              opentelemetry: "{{ incidents_tools.opentelemetry | default(tools.opentelemetry) }}"
+              prometheus: "{{ incidents_tools.prometheus | default(tools.prometheus) }}"
+
+        - name: Import status role
+          ansible.builtin.import_role:
+            name: status
+          vars:
+            status_state: succeeded
+            status_storage: "{{ storage }}"
+          when:
+            - storage.keys() | length > 0
+      rescue:
+        - name: Import status role
+          ansible.builtin.import_role:
+            name: status
+          vars:
+            status_failed_task:
+              name: "{{ ansible_failed_task.name }}"
+              result: "{{ ansible_failed_result }}"
+            status_state: failed
+            status_storage: "{{ storage }}"
+          when:
+            - storage.keys() | length > 0
+
+        - name: Fail playbook
+          ansible.builtin.fail:
+            msg: Playbook failed to complete successfully. Please check log for more info.
+          tags:
+            - always
