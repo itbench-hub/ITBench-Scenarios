@@ -178,25 +178,6 @@
     project: GitHub-ITBench
     state: present
 
-- name: Add job template for installing data recorders
-  awx.awx.job_template:
-    ask_variables_on_launch: true
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    credentials: "{{ awx_job_credentials }}"
-    execution_environment: "ITBench-Custom-EE"
-    extra_vars:
-      incident_id: "{{ incident }}"
-    inventory: ITBench
-    job_tags: install_recorders
-    job_type: run
-    name: "Scenario-{{ incident }}--Run-Topology-Data-Recorder"
-    organization: ITBench
-    playbook: sre/playbooks/manage_recorders.yaml
-    project: GitHub-ITBench
-    state: present
-
 - name: Add job template for uninstalling data recorders
   awx.awx.job_template:
     controller_host: "{{ awx_controller_host }}"
