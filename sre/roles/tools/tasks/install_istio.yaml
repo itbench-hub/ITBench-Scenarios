@@ -7,7 +7,7 @@
       apiVersion: v1
       kind: Namespace
       metadata:
-        name: "{{ helm_release.namespace }}"
+        name: "{{ helm_release.system.namespace }}"
         labels:
           istio-injection: enabled
           it-bench/monitoring: "true"
@@ -17,7 +17,7 @@
     release_name: istio-base
     chart_ref: base
     chart_repo_url: https://istio-release.storage.googleapis.com/charts
-    release_namespace: "{{ helm_release.namespace }}"
+    release_namespace: "{{ helm_release.system.namespace }}"
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     release_state: present
     values:
@@ -29,7 +29,7 @@
     release_name: istiod
     chart_ref: istiod
     chart_repo_url: https://istio-release.storage.googleapis.com/charts
-    release_namespace: "{{ helm_release.namespace }}"
+    release_namespace: "{{ helm_release.system.namespace }}"
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     release_state: present
     wait: true
@@ -42,17 +42,17 @@
       apiVersion: v1
       kind: Namespace
       metadata:
-        name: istio-ingress
+        name: "{{ helm_release.ingress.namespace }}"
         labels:
           istio-injection: enabled
           it-bench/monitoring: "true"
 
 - name: Install Istio ingress gateway
   kubernetes.core.helm:
-    release_name: istio-ingress
+    release_name: "{{ helm_release.ingress.name }}"
     chart_ref: gateway
     chart_repo_url: https://istio-release.storage.googleapis.com/charts
-    release_namespace: istio-ingress
+    release_namespace: "{{ helm_release.ingress.namespace }}"
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     release_state: present
     values:
@@ -67,7 +67,7 @@
     api_version: v1
     kind: Pod
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    namespace: "{{ helm_release.namespace }}"
+    namespace: "{{ helm_release.system.namespace }}"
     label_selectors:
       - app=istiod
     wait: true
