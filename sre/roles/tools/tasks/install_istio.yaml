@@ -57,9 +57,10 @@
     release_state: present
     values:
       service:
-        type: NodePort
+        type: "{{ 'NodePort' if (tools_cluster.provider == 'kind') else 'LoadBalancer' }}"
         nodePorts:
-          http: 8123
+          http: 30080
+          https: 30443
     wait: true
 
 - name: Wait for Istio pods to be ready
