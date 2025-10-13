@@ -2,8 +2,8 @@
 - name: Uninstall Istio ingress gateway
   kubernetes.core.helm:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    release_name: istio-ingress
-    release_namespace: istio-ingress
+    release_name: "{{ helm_release.ingress.name }}"
+    release_namespace: "{{ helm_release.ingress.namespace }}"
     release_state: absent
     wait: true
   when:
@@ -13,7 +13,7 @@
   kubernetes.core.k8s:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     kind: Namespace
-    name: istio-ingress
+    name: "{{ helm_release.ingress.namespace }}"
     state: absent
     wait: true
     wait_timeout: 300
@@ -24,7 +24,7 @@
   kubernetes.core.helm:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     release_name: istiod
-    release_namespace: "{{ helm_release.namespace }}"
+    release_namespace: "{{ helm_release.system.namespace }}"
     release_state: absent
     wait: true
   when:
@@ -34,7 +34,7 @@
   kubernetes.core.helm:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     release_name: istio-base
-    release_namespace: "{{ helm_release.namespace }}"
+    release_namespace: "{{ helm_release.system.namespace }}"
     release_state: absent
     wait: true
   when:
@@ -44,7 +44,7 @@
   kubernetes.core.k8s:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     kind: Namespace
-    name: "{{ helm_release.namespace }}"
+    name: "{{ helm_release.system.namespace }}"
     state: absent
     wait: true
     wait_timeout: 300
