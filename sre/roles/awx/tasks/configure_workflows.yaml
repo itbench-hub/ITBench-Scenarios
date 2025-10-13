@@ -89,12 +89,12 @@
           type: job_template
         related:
           success_nodes:
-            - identifier: node-install-topology-recorder-post-fault-injection
+            - identifier: node-install-run-topology-recorder-post-fault-injection
           failure_nodes: []
           always_nodes: []
-      - identifier: node-install-topology-recorder-post-fault-injection
+      - identifier: node-install-run-topology-recorder-post-fault-injection
         unified_job_template:
-          name: "Scenario-{{ incident }}--Install-Topology-Data-Recorder"
+          name: "Scenario-{{ incident }}--Run-Topology-Data-Recorder"
           type: job_template
         extra_data:
           recorders_awx_topology_filename_prefix: "post_fault_injection"
@@ -157,10 +157,10 @@
           success_nodes: []
           failure_nodes: []
           always_nodes:
-            - identifier: node-install-topology-recorder-post-agent-execution
-      - identifier: node-install-topology-recorder-post-agent-execution
+            - identifier: node-install-run-topology-recorder-post-agent-execution
+      - identifier: node-install-run-topology-recorder-post-agent-execution
         unified_job_template:
-          name: "Scenario-{{ incident }}--Install-Topology-Data-Recorder"
+          name: "Scenario-{{ incident }}--Run-Topology-Data-Recorder"
           type: job_template
         extra_data:
           recorders_awx_topology_filename_prefix: "end"
