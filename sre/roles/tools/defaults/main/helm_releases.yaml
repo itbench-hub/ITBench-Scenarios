@@ -16,7 +16,7 @@ tools_helm_releases:
     components:
       system:
         name: istio-system
-        namespace: isito-system
+        namespace: istio-system
       ingress:
         name: istio-ingress
         namespace: istio-ingress
