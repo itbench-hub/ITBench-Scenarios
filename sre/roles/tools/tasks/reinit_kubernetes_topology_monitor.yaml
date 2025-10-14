@@ -19,3 +19,4 @@
     namespace: "{{ helm_release.namespace }}"
     replicas: 1
     wait: true
+    wait_timeout: 300
