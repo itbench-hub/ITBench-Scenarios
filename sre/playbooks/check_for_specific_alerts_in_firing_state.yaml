@@ -108,6 +108,7 @@
                 } | to_nice_json
               }}
             dest: "/tmp/alerts_in_alerting_state_{{ ansible_date_time.iso8601_micro | replace(':', '') | replace('+00:00', '') }}.json"
+            mode: "0644"
           register: alerts_file
 
         - name: Copy alerts file into local directory

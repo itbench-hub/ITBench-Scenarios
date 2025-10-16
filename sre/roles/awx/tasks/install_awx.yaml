@@ -98,7 +98,7 @@
       vars:
         cluster_files:
           kubeconfig: "{{ awx_cluster.kubeconfig }}"
-          
+
     - name: Wait for AWX to be ready
       kubernetes.core.k8s_info:
         api_version: awx.ansible.com/v1beta1
