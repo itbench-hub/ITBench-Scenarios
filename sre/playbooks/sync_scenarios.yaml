@@ -6,7 +6,7 @@
     - name: Setup repository with submodules and content
       ansible.builtin.shell: |
         cd {{ playbook_dir }}/../../../
-        
+
         if [ -f "scripts/copy-scenarios-to-submodule.sh" ]; then
             chmod +x scripts/copy-scenarios-to-submodule.sh
             ./scripts/copy-scenarios-to-submodule.sh
