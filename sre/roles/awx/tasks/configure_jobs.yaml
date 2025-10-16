@@ -18,6 +18,21 @@
   when:
     - awx_credentials.aws is defined
 
+- name: Add job template to sync scenarios
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    execution_environment: "AWX EE (latest)"
+    inventory: ITBench
+    job_tags: sync_scenarios
+    job_type: run
+    name: "Sync-Scenarios"
+    organization: ITBench
+    playbook: sre/playbooks/sync_scenarios.yaml
+    project: GitHub-ITBench
+    state: present
+
 - name: Add job template for installing tools
   awx.awx.job_template:
     controller_host: "{{ awx_controller_host }}"
@@ -352,4 +367,5 @@
       god_mode: "{{ awx_agent.configuration['agents_config']['god_mode'] }}"
       agent_analytics_sdk_username: "{{ awx_agent.configuration['agent_analytics_sdk']['git_username'] }}"
       agent_analytics_sdk_token: "{{ awx_agent.configuration['agent_analytics_sdk']['git_token'] }}"
+      run_mode: remote
       sre_agent_max_runtime_in_seconds: 900

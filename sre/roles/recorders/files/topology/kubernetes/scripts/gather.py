@@ -46,8 +46,8 @@ def main():
 
             logger.info("retrieved {0} data".format(item))
 
-            utc_seconds = (datetime.now(timezone.utc) - datetime(1970, 1, 1, tzinfo=timezone.utc)).total_seconds()
-            file_path = os.path.join(os.path.expanduser("~"), "records", "{0}{1}__{2}.json".format(filename_prefix, item, round(utc_seconds)))
+            timestamp = datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%S.%f')
+            file_path = os.path.join(os.path.expanduser("~"), "records", "{0}{1}__{2}.json".format(filename_prefix, item, timestamp))
 
             with open(file_path, "w") as f:
                 json.dump(content, f, indent=4)
