@@ -8,6 +8,7 @@ sre/group_vars/e2e.yaml
 sre/group_vars/all/*.yaml
 sre/group_vars/environment/*.yaml
 sre/group_vars/runner/*.yaml
+sre/inventory/group_vars/*/*.yaml
 
 # Files associate with the local cluster setup
 sre/local_cluster/experiment-data/
@@ -19,6 +20,7 @@ sre/remote_cluster/playbooks/batch_variables.yaml
 sre/dev/remote_cluster/group_vars/all/ansible.yaml
 sre/dev/remote_cluster/group_vars/development/awx_stack.yaml
 sre/dev/remote_cluster/group_vars/development/kops_cluster.yaml
+sre/dev/remote_cluster/inventory/group_vars/*/*.yaml
 
 # Sample application downloads
 sre/roles/sample_applications/DeathStarBench/

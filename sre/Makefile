@@ -9,82 +9,82 @@ help: ## Display this help.
 
 .PHONY: group_vars
 group_vars: ## Generates the group variables
-	echo "ansible_python_interpreter: $(shell which python)" > group_vars/all/ansible.yaml
-	cp group_vars/all/storage.yaml.example group_vars/all/storage.yaml
-	cp group_vars/environment/applications.yaml.example group_vars/environment/applications.yaml
-	cp group_vars/environment/cluster.yaml.example group_vars/environment/cluster.yaml
-	cp group_vars/environment/tools.yaml.example group_vars/environment/tools.yaml
+	echo "ansible_python_interpreter: $(shell which python)" > inventory/group_vars/all/ansible.yaml
+	cp inventory/group_vars/all/storage.yaml.example inventory/group_vars/all/storage.yaml
+	cp inventory/group_vars/environment/applications.yaml.example inventory/group_vars/environment/applications.yaml
+	cp inventory/group_vars/environment/cluster.yaml.example inventory/group_vars/environment/cluster.yaml
+	cp inventory/group_vars/environment/tools.yaml.example inventory/group_vars/environment/tools.yaml
 
 .PHONY: docs
 docs: ## Generates the documentation for the incidents
-	ansible-playbook -i inventory.yaml playbooks/manage_documentation.yaml --tags "generate_docs"
+	ansible-playbook -i inventory playbooks/manage_documentation.yaml --tags "generate_docs"
 
 .PHONY: validate_docs
 validate_docs: ## Validates the documents (ie: specs) used to run an incident
-	ansible-playbook -i inventory.yaml playbooks/manage_documentation.yaml --tags "validate_docs"
+	ansible-playbook -i inventory playbooks/manage_documentation.yaml --tags "validate_docs"
 
 .PHONY: deploy_tools
 deploy_tools: ## Deploys the observability and fault tools to cluster
 ifdef INCIDENT_NUMBER
-	ansible-playbook -i inventory.yaml playbooks/manage_tools.yaml --tags "install_tools" \
+	ansible-playbook -i inventory playbooks/manage_tools.yaml --tags "install_tools" \
 		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
 else
-	ansible-playbook -i inventory.yaml playbooks/manage_tools.yaml --tags "install_tools"
+	ansible-playbook -i inventory playbooks/manage_tools.yaml --tags "install_tools"
 endif
 
 .PHONY: reinit_tools
 reinit_tools: ## Re-initialize observability and fault tools to cluster
-	ansible-playbook -i inventory.yaml playbooks/manage_tools.yaml --tags "reinit_tools"
+	ansible-playbook -i inventory playbooks/manage_tools.yaml --tags "reinit_tools"
 
 .PHONY: undeploy_tools
 undeploy_tools: ## Undeploys the observability and fault tools to cluster
 ifdef INCIDENT_NUMBER
-	ansible-playbook -i inventory.yaml playbooks/manage_tools.yaml --tags "uninstall_tools" \
+	ansible-playbook -i inventory playbooks/manage_tools.yaml --tags "uninstall_tools" \
 		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
 else
-	ansible-playbook -i inventory.yaml playbooks/manage_tools.yaml --tags "uninstall_tools"
+	ansible-playbook -i inventory playbooks/manage_tools.yaml --tags "uninstall_tools"
 endif
 
 .PHONY: deploy_applications
 deploy_applications: ## Deploys the applications to cluster
 ifdef INCIDENT_NUMBER
-	ansible-playbook -i inventory.yaml playbooks/manage_applications.yaml --tags "install_applications" \
+	ansible-playbook -i inventory playbooks/manage_applications.yaml --tags "install_applications" \
 		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
 else
-	ansible-playbook -i inventory.yaml playbooks/manage_applications.yaml --tags "install_applications"
+	ansible-playbook -i inventory playbooks/manage_applications.yaml --tags "install_applications"
 endif
 
 .PHONY: undeploy_applications
 undeploy_applications: ## Undeploys the applications to cluster
 ifdef INCIDENT_NUMBER
-	ansible-playbook -i inventory.yaml playbooks/manage_applications.yaml --tags "uninstall_applications" \
+	ansible-playbook -i inventory playbooks/manage_applications.yaml --tags "uninstall_applications" \
 		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
 else
-	ansible-playbook -i inventory.yaml playbooks/manage_applications.yaml --tags "uninstall_applications"
+	ansible-playbook -i inventory playbooks/manage_applications.yaml --tags "uninstall_applications"
 endif
 
 .PHONY: deploy_recorders
 deploy_recorders: ## Deploys the data recorders to cluster
 ifdef INCIDENT_NUMBER
-	ansible-playbook -i inventory.yaml playbooks/manage_recorders.yaml --tags "install_recorders" \
+	ansible-playbook -i inventory playbooks/manage_recorders.yaml --tags "install_recorders" \
 		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
 else
-	ansible-playbook -i inventory.yaml playbooks/manage_recorders.yaml --tags "install_recorders"
+	ansible-playbook -i inventory playbooks/manage_recorders.yaml --tags "install_recorders"
 endif
 
 .PHONY: undeploy_recorders
 undeploy_recorders: ## Undeploys the data recorders to cluster
 ifdef INCIDENT_NUMBER
-	ansible-playbook -i inventory.yaml playbooks/manage_recorders.yaml --tags "uninstall_recorders" \
+	ansible-playbook -i inventory playbooks/manage_recorders.yaml --tags "uninstall_recorders" \
 		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
 else
-	ansible-playbook -i inventory.yaml playbooks/manage_recorders.yaml --tags "uninstall_recorders"
+	ansible-playbook -i inventory playbooks/manage_recorders.yaml --tags "uninstall_recorders"
 endif
 
 .PHONY: inject_incident_fault
 inject_incident_fault: ## Injects the fault used in a specific incident
 ifdef INCIDENT_NUMBER
-	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "inject_faults" \
+	ansible-playbook -i inventory playbooks/manage_incidents.yaml --tags "inject_faults" \
 		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
 else
 	@echo "Missing INCIDENT_NUMBER argument. Please run this command with this variable."
@@ -93,7 +93,7 @@ endif
 .PHONY: remove_incident_fault
 remove_incident_fault: ## Removes the fault used in a specific incident
 ifdef INCIDENT_NUMBER
-	ansible-playbook -i inventory.yaml playbooks/manage_incidents.yaml --tags "remove_faults" \
+	ansible-playbook -i inventory playbooks/manage_incidents.yaml --tags "remove_faults" \
 		--extra-vars "incident_id=$(INCIDENT_NUMBER)"
 else
 	@echo "Missing INCIDENT_NUMBER argument. Please run this command with this variable."
@@ -113,23 +113,23 @@ stop_incident: undeploy_recorders remove_incident_fault destroy_environment ## S
 
 .PHONY: enable_agent_access
 enable_agent_access: ## Adds access controls for llm agent
-	ansible-playbook -i inventory.yaml playbooks/manage_agent_access.yaml --tags "grant_access"
+	ansible-playbook -i inventory playbooks/manage_agent_access.yaml --tags "grant_access"
 
 .PHONY: disable_agent_access
 disable_agent_access: ## Removes access controls for llm agent
-	ansible-playbook -i inventory.yaml playbooks/manage_agent_access.yaml --tags "revoke_access"
+	ansible-playbook -i inventory playbooks/manage_agent_access.yaml --tags "revoke_access"
 
 .PHONY: generate_agent_bundle
 generate_agent_bundle: ## Generates a bundle for an LLM Agent to interface with
-	ANSIBLE_STDOUT_CALLBACK=ansible.posix.json ansible-playbook -i inventory.yaml playbooks/generate_agent_bundle.yaml | jq -r '.plays[].tasks[] | select(.task.name == "Print agent bundle") | .hosts.localhost.msg'
+	ANSIBLE_STDOUT_CALLBACK=ansible.posix.json ansible-playbook -i inventory playbooks/generate_agent_bundle.yaml | jq -r '.plays[].tasks[] | select(.task.name == "Print agent bundle") | .hosts.localhost.msg'
 
 .PHONY: generate_leaderboard_bundle_status
 generate_leaderboard_bundle_status: ## Generates a bundle status for Leaderboard to interface with
-	ansible-playbook -i inventory.yaml playbooks/generate_leaderboard_bundle_status.yaml
+	ansible-playbook -i inventory playbooks/generate_leaderboard_bundle_status.yaml
 
 .PHONY: generate_leaderboard_bundle
 generate_leaderboard_bundle: ## Generates a bundle of scenarios for the Leaderboard to interface
-	ansible-playbook -i inventory.yaml playbooks/generate_leaderboard_bundle.yaml
+	ansible-playbook -i inventory playbooks/generate_leaderboard_bundle.yaml
 
 PHONY: fetch_alerts
 fetch_alerts: ## Checks the Prometheus for firing alerts
