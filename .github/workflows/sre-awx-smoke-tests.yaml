@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - sre/dev/local_cluster/go.*
+      - sre/inventory/group_vars/**
       - sre/roles/awx/**
       - sre/playbooks/manage_awx.yaml
 

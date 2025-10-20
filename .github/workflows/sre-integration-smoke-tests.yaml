@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - sre/dev/local_cluster/go.*
+      - sre/inventory/group_vars/**
       - sre/playbooks/manage_agent_access.yaml
       - sre/playbooks/manage_applications.yaml
       - sre/playbooks/manage_documentation.yaml
@@ -13,6 +14,7 @@ on:
       - sre/playbooks/manage_recorders.yaml
       - sre/playbooks/manage_tools.yaml
       - sre/roles/**
+      - '!sre/inventory/group_vars/runner/**'
       - '!sre/roles/awx/**'
 
 concurrency:
@@ -82,7 +84,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          mv sre/tests/files/chaos-mesh.yaml sre/group_vars/environment/tools.yaml
+          mv sre/tests/files/chaos-mesh.yaml sre/inventory/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
@@ -119,7 +121,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          mv sre/tests/files/clickhouse.yaml sre/group_vars/environment/tools.yaml
+          mv sre/tests/files/clickhouse.yaml sre/inventory/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
@@ -156,7 +158,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          mv sre/tests/files/jaeger.yaml sre/group_vars/environment/tools.yaml
+          mv sre/tests/files/jaeger.yaml sre/inventory/group_vars/environment/tools.yaml
       - name: Install tools
         run: |
           make -C sre deploy_tools
@@ -193,7 +195,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          mv sre/tests/files/kubernetes-topology-monitor.yaml sre/group_vars/environment/tools.yaml
+          mv sre/tests/files/kubernetes-topology-monitor.yaml sre/inventory/group_vars/environment/tools.yaml
       - name: Install tools
         run: |
           make -C sre deploy_tools
@@ -230,7 +232,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          mv sre/tests/files/prometheus.yaml sre/group_vars/environment/tools.yaml
+          mv sre/tests/files/prometheus.yaml sre/inventory/group_vars/environment/tools.yaml
       - name: Install tools
         run: |
           make -C sre deploy_tools
@@ -265,7 +267,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          mv sre/tests/files/ingress.yaml sre/group_vars/environment/tools.yaml
+          mv sre/tests/files/ingress.yaml sre/inventory/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
@@ -303,7 +305,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          mv sre/tests/files/jaeger.yaml sre/group_vars/environment/tools.yaml
+          mv sre/tests/files/jaeger.yaml sre/inventory/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
@@ -338,7 +340,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          mv sre/tests/files/kubernetes-metrics-server.yaml sre/group_vars/environment/tools.yaml
+          mv sre/tests/files/kubernetes-metrics-server.yaml sre/inventory/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
@@ -375,7 +377,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          mv sre/tests/files/kubernetes-topology-monitor.yaml sre/group_vars/environment/tools.yaml
+          mv sre/tests/files/kubernetes-topology-monitor.yaml sre/inventory/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
@@ -413,7 +415,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          mv sre/tests/files/opencost.yaml sre/group_vars/environment/tools.yaml
+          mv sre/tests/files/opencost.yaml sre/inventory/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
@@ -445,7 +447,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          mv sre/tests/files/opensearch.yaml sre/group_vars/environment/tools.yaml
+          mv sre/tests/files/opensearch.yaml sre/inventory/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
@@ -482,7 +484,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          mv sre/tests/files/opentelemetry.yaml sre/group_vars/environment/tools.yaml
+          mv sre/tests/files/opentelemetry.yaml sre/inventory/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
@@ -521,7 +523,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          mv sre/tests/files/otel-demo.yaml sre/group_vars/environment/tools.yaml
+          mv sre/tests/files/otel-demo.yaml sre/inventory/group_vars/environment/tools.yaml
       - name: Install tools
         run: |
           INCIDENT_NUMBER=1 make -C sre deploy_tools
@@ -558,7 +560,7 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          mv sre/tests/files/prometheus.yaml sre/group_vars/environment/tools.yaml
+          mv sre/tests/files/prometheus.yaml sre/inventory/group_vars/environment/tools.yaml
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
