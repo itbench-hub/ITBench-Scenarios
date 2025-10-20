@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - sre/dev/local_cluster/go.*
+      - sre/inventory/group_vars/**
       - sre/project/manage_agent_access.yaml
       - sre/project/manage_applications.yaml
       - sre/project/manage_documentation.yaml
@@ -13,6 +14,7 @@ on:
       - sre/project/manage_recorders.yaml
       - sre/project/manage_tools.yaml
       - sre/project/roles/**
+      - '!sre/inventory/group_vars/runner/**'
       - '!sre/project/roles/awx/**'
 
 concurrency:
