@@ -31,7 +31,7 @@
         persistentVolumeReclaimPolicy: Retain
     state: present
   when:
-    - awx_cluster.cloud_provider == "kind"
+    - awx_cluster.provider == "kind"
 
 - name: Create experiment data PersistentVolumeClaim
   kubernetes.core.k8s:
@@ -52,7 +52,7 @@
         storageClassName: ""
     state: present
   when:
-    - awx_cluster.cloud_provider == "kind"
+    - awx_cluster.provider == "kind"
 
 - name: Install AWX
   kubernetes.core.k8s:
@@ -65,18 +65,18 @@
         namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
       spec: "{{ lookup('file', spec_file) | from_yaml }}"
     state: present
-    wait: "{{ awx_cluster.cloud_provider != 'kind' }}"
+    wait: "{{ awx_cluster.provider != 'kind' }}"
     wait_condition:
       reason: Successful
       status: "True"
       type: Successful
     wait_timeout: 900
   vars:
-    spec_file: "{{ role_path }}/files/{{ 'awx_spec_kind.yaml' if awx_cluster.cloud_provider == 'kind' | default(false) else 'awx_spec_base.yaml' }}"
+    spec_file: "{{ role_path }}/files/{{ 'awx_spec_kind.yaml' if awx_cluster.provider == 'kind' | default(false) else 'awx_spec_base.yaml' }}"
 
 - name: Handle certificate signing requests on Kind
   when:
-    - awx_cluster.cloud_provider == 'kind'
+    - awx_cluster.provider == 'kind'
   block:
     - name: Wait for AWX pods to be created
       kubernetes.core.k8s_info:

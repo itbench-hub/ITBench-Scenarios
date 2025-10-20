@@ -234,11 +234,11 @@
             resources:
               requests:
                 cpu: 250m
-                memory: 100Mi{%- if awx_cluster.cloud_provider == "kind" %}
+                memory: 100Mi{%- if awx_cluster.provider == "kind" %}
             volumeMounts:
             - name: experiment-data
               mountPath: /mnt/experiment-data{%- endif %}
-      {%- if awx_cluster.cloud_provider == "kind" %}
+      {%- if awx_cluster.provider == "kind" %}
         volumes:
         - name: experiment-data
           persistentVolumeClaim:
