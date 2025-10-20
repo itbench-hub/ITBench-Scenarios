@@ -15,6 +15,16 @@
   register: kops_export_output
   changed_when: kops_export_output.rc == 0
 
+- name: Update cluster group variables file
+  ansible.builtin.copy:
+    content: "{{ cluster_definition | to_nice_yaml(indent=2) }}"
+    dest: "../../../inventory/group_vars/environment/cluster.yaml"
+    mode: "0644"
+  vars:
+    cluster_definition:
+      cluster:
+        kubeconfig: /tmp/{{ cluster_name }}.yaml
+
 - name: Display file path of kubeconfig
   ansible.builtin.debug:
     msg:
