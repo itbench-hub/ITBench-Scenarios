@@ -20,7 +20,7 @@
   ansible.builtin.import_tasks:
     file: uninstall_istio.yaml
   vars:
-    helm_release: "{{ tools_helm_releases.istio }}"
+    helm_release: "{{ tools_helm_releases.istio.components }}"
   when:
     - tools_required.istio
 
