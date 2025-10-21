@@ -1,0 +1,23 @@
+---
+metadata:
+  complexity: Low
+  id: 32
+  name: Low Mem CPU Constraints
+  platform: kubernetes
+spec:
+  environment:
+    applications:
+      otel_demo:
+        enabled: true
+    tools:
+      category: sre
+      selected:
+        - kubernetes-topology-monitor
+  faults:
+    - custom: 
+        name: misconfigured-resource-quota
+        misconfigured_network_policy:
+          workload:
+            kind: Deployment
+            name: frontend
+            namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
