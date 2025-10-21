@@ -38,7 +38,7 @@
     workflow_nodes:
       - identifier: node-deploy-tools
         unified_job_template:
-          name: "Scenario-{{ incident }}--Deploy-Tools"
+          name: Deploy-Tools
           type: job_template
         related:
           success_nodes: []
@@ -236,7 +236,7 @@
     workflow_nodes:
       - identifier: node-undeploy-tools
         unified_job_template:
-          name: "Scenario-{{ incident }}--Undeploy-Tools"
+          name: Undeploy-Tools
           type: job_template
         related:
           success_nodes: []
