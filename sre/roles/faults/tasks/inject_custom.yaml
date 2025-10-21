@@ -1,4 +1,13 @@
 ---
+- name: Low Mem CPU Constraints
+  ansible.builtin.import_tasks:
+    file: inject_low_mem_cpu_constraints.yaml
+  vars:
+    spec: "{{ fault.custom.misconfigured_service_port }}"
+  when:
+    - fault.custom.name == 'low-mem-cpu-constraints'
+    - fault.custom.low_mem_cpu_constraints is defined
+      
 - name: Import invalid command injection tasks
   ansible.builtin.import_tasks:
     file: inject_custom_invalid_command.yaml
