@@ -338,6 +338,9 @@
                   - debug
                   - otlp
                   - spanmetrics
+        image:
+          repository: quay.io/it-bench/opentelemetry-collector
+          tag: 1.0.0
         serviceMonitor:
           enabled: true
           metricsEndpoints:
