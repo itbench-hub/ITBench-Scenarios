@@ -6,9 +6,14 @@ on:
       - main
     paths:
       - sre/dev/local_cluster/go.*
-      - sre/playbooks/manage_*
+      - sre/playbooks/manage_agent_access.yaml
+      - sre/playbooks/manage_applications.yaml
+      - sre/playbooks/manage_documentation.yaml
+      - sre/playbooks/manage_incidents.yaml
+      - sre/playbooks/manage_recorders.yaml
+      - sre/playbooks/manage_tools.yaml
       - sre/roles/**
-      - sre/tools/kubernetes-topology-monitor/charts/kubernetes-topology-monitor/**
+      - '!sre/roles/awx/**'
 
 concurrency:
   group: ci-integration-${{ github.ref }}
@@ -39,7 +44,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -73,7 +78,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -110,7 +115,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -147,7 +152,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -184,7 +189,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -221,7 +226,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -256,7 +261,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -294,7 +299,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -329,7 +334,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -366,7 +371,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -404,7 +409,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -436,7 +441,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -473,7 +478,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -512,7 +517,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -549,7 +554,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -588,7 +593,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -629,7 +634,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -670,7 +675,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -711,7 +716,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -752,7 +757,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -794,7 +799,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -835,7 +840,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -876,7 +881,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -917,7 +922,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -958,7 +963,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -999,7 +1004,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1040,7 +1045,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1083,7 +1088,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1126,7 +1131,7 @@ jobs:
           ansible-galaxy install -r sre/requirements.yaml
       - name: Create Kind cluster
         run: |
-          make -C sre/dev/local_cluster create_cluster
+          make -C sre/dev/local_cluster create_single_node_cluster
       - name: Create group vars
         run: |
           make -C sre group_vars
