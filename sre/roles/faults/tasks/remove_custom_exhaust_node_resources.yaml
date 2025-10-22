@@ -1,0 +1,48 @@
+---
+- name: Get all nodes in the cluster
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    kind: Node
+  register: node_list
+
+- name: Select the node labeled for this fault, if exists
+  set_fact:
+    target_node: "{{ (node_list.resources | selectattr('metadata.labels.itbench-fault','defined') | list)[0].metadata.name }}"
+  when: node_list.resources | selectattr('metadata.labels.itbench-fault','defined') | list | length > 0
+
+- name: Delete fake workload deployment
+  kubernetes.core.k8s:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    api_version: apps/v1
+    kind: Deployment
+    name: fake-resource-hog
+    namespace: "{{ spec.workload.namespace | default('default') }}"
+    state: absent
+
+- name: Remove node label from target node
+  kubernetes.core.k8s:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: v1
+      kind: Node
+      metadata:
+        name: "{{ target_node }}"
+        labels:
+          itbench-fault: null
+    state: present
+  when: target_node is defined
+
+- name: Remove affinity rule from target application
+  kubernetes.core.k8s:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: apps/v1
+      kind: "{{ spec.workload.kind }}"
+      metadata:
+        name: "{{ spec.workload.name }}"
+        namespace: "{{ spec.workload.namespace }}"
+      spec:
+        template:
+          spec:
+            affinity: {}
+    state: patched

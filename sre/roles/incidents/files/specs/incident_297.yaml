@@ -1,0 +1,31 @@
+metadata:
+  complexity: Medium
+  id: 297
+  name: Node resource exhaustion from load generator pods
+  platform: kubernetes
+
+spec:
+  environment:
+    applications:
+      otel_demo:
+        enabled: true
+        configuration:
+          load_generator:
+            spawn_rate: 50
+            users: 300
+    tools:
+      category: sre
+      selected:
+        - prometheus
+        - grafana
+        - jaeger
+        - chaos-mesh
+  faults:
+    - custom:
+        name: exhaust-node-resources
+        exhaust_node_resources:
+          workload:
+            kind: Deployment
+            name: loadgenerator
+            namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
+

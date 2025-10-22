@@ -1,0 +1,81 @@
+---
+- name: Get all nodes in the cluster
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    kind: Node
+  register: node_list
+
+- name: Select the first available node as target
+  set_fact:
+    target_node: "{{ node_list.resources[0].metadata.name }}"
+
+- name: Label the target node for this fault
+  kubernetes.core.k8s:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: v1
+      kind: Node
+      metadata:
+        name: "{{ target_node }}"
+        labels:
+          itbench-fault: exhaust-node
+    state: present
+
+- name: Deploy fake high-load workload to consume node resources
+  kubernetes.core.k8s:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: fake-resource-hog
+        namespace: "{{ spec.workload.namespace | default('default') }}"
+        labels:
+          app: fake-resource-hog
+      spec:
+        replicas: 1
+        selector:
+          matchLabels:
+            app: fake-resource-hog
+        template:
+          metadata:
+            labels:
+              app: fake-resource-hog
+          spec:
+            nodeSelector:
+              itbench-fault: exhaust-node
+            containers:
+              - name: stress-container
+                image: progrium/stress
+                args: ["--cpu", "8", "--io", "4", "--vm", "2", "--vm-bytes", "512M", "--timeout", "600s"]
+                resources:
+                  requests:
+                    cpu: "4000m"
+                    memory: "2Gi"
+                  limits:
+                    cpu: "8000m"
+                    memory: "4Gi"
+    state: present
+
+- name: Patch target application to prefer the same node (force contention)
+  kubernetes.core.k8s:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: apps/v1
+      kind: "{{ spec.workload.kind }}"
+      metadata:
+        name: "{{ spec.workload.name }}"
+        namespace: "{{ spec.workload.namespace }}"
+      spec:
+        template:
+          spec:
+            affinity:
+              nodeAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  nodeSelectorTerms:
+                    - matchExpressions:
+                        - key: itbench-fault
+                          operator: In
+                          values:
+                            - "exhaust-node"
+    state: patched
