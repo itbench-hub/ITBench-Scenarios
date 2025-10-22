@@ -63,16 +63,15 @@
           https: 30443
     wait: true
 
-- name: Wait for Istio pods to be ready
-  kubernetes.core.k8s_info:
-    api_version: v1
-    kind: Pod
+- name: Label otel-demo namespace for sidecar injection
+  kubernetes.core.k8s:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    namespace: "{{ helm_release.system.namespace }}"
-    label_selectors:
-      - app=istiod
-    wait: true
-    wait_condition:
-      type: Ready
-      status: "True"
-    wait_timeout: 300
+    state: present
+    resource_definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: otel-demo
+        labels:
+          istio-injection: enabled
+          it-bench/monitoring: "true"
