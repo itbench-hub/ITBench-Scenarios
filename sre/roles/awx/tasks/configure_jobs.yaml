@@ -1,17 +1,4 @@
 ---
-- name: Import variable setting tasks
-  ansible.builtin.import_tasks:
-    file: set_awx_controller_host.yaml
-
-- name: Import variable setting tasks
-  ansible.builtin.import_tasks:
-    file: set_awx_controller_password.yaml
-
-- name: Set job credentials variable
-  ansible.builtin.set_fact:
-    awx_job_credentials:
-      - Cluster-{{ incident_index + 1 }}-Kubeconfig
-
 - name: Add AWS credentials to job credentials
   ansible.builtin.set_fact:
     awx_job_credentials: "{{ awx_job_credentials + ['AWS'] }}"
@@ -23,11 +10,11 @@
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    execution_environment: "AWX EE (latest)"
+    execution_environment: AWX EE (latest)
     inventory: ITBench
     job_tags: sync_scenarios
     job_type: run
-    name: "Sync-Scenarios"
+    name: Sync-Scenarios
     organization: ITBench
     playbook: sre/playbooks/sync_scenarios.yaml
     project: GitHub-ITBench
@@ -39,13 +26,11 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     credentials: "{{ awx_job_credentials }}"
-    execution_environment: "ITBench-Custom-EE"
-    extra_vars:
-      incident_id: "{{ incident }}"
+    execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: install_tools
     job_type: run
-    name: "Scenario-{{ incident }}--Deploy-Tools"
+    name: Deploy-Tools
     organization: ITBench
     playbook: sre/playbooks/manage_tools.yaml
     project: GitHub-ITBench
@@ -57,13 +42,11 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     credentials: "{{ awx_job_credentials }}"
-    execution_environment: "ITBench-Custom-EE"
-    extra_vars:
-      incident_id: "{{ incident }}"
+    execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: reinit_tools
     job_type: run
-    name: "Scenario-{{ incident }}--Reinit-Tools"
+    name: Reinit-Tools
     organization: ITBench
     playbook: sre/playbooks/manage_tools.yaml
     project: GitHub-ITBench
@@ -75,13 +58,11 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     credentials: "{{ awx_job_credentials }}"
-    execution_environment: "ITBench-Custom-EE"
-    extra_vars:
-      incident_id: "{{ incident }}"
+    execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: uninstall_tools
     job_type: run
-    name: "Scenario-{{ incident }}--Undeploy-Tools"
+    name: Undeploy-Tools
     organization: ITBench
     playbook: sre/playbooks/manage_tools.yaml
     project: GitHub-ITBench
@@ -93,10 +74,10 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     credentials: "{{ awx_job_credentials }}"
-    execution_environment: "ITBench-Custom-EE"
+    execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_type: run
-    name: "Scenario-{{ incident }}--Check-for-Alerts"
+    name: Check-for-Alerts
     organization: ITBench
     playbook: sre/playbooks/check_for_specific_alerts_in_firing_state.yaml
     project: GitHub-ITBench
@@ -108,13 +89,11 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     credentials: "{{ awx_job_credentials }}"
-    execution_environment: "ITBench-Custom-EE"
-    extra_vars:
-      incident_id: "{{ incident }}"
+    execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: install_applications
     job_type: run
-    name: "Scenario-{{ incident }}--Deploy-Applications"
+    name: Deploy-Applications
     organization: ITBench
     playbook: sre/playbooks/manage_applications.yaml
     project: GitHub-ITBench
@@ -126,13 +105,11 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     credentials: "{{ awx_job_credentials }}"
-    execution_environment: "ITBench-Custom-EE"
-    extra_vars:
-      incident_id: "{{ incident }}"
+    execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: uninstall_applications
     job_type: run
-    name: "Scenario-{{ incident }}--Undeploy-Applications"
+    name: Undeploy-Applications
     organization: ITBench
     playbook: sre/playbooks/manage_applications.yaml
     project: GitHub-ITBench
@@ -144,13 +121,11 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     credentials: "{{ awx_job_credentials }}"
-    execution_environment: "ITBench-Custom-EE"
-    extra_vars:
-      incident_id: "{{ incident }}"
+    execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: inject_faults
     job_type: run
-    name: "Scenario-{{ incident }}--Inject-Faults"
+    name: Inject-Faults
     organization: ITBench
     playbook: sre/playbooks/manage_incidents.yaml
     project: GitHub-ITBench
@@ -162,13 +137,11 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     credentials: "{{ awx_job_credentials }}"
-    execution_environment: "ITBench-Custom-EE"
-    extra_vars:
-      incident_id: "{{ incident }}"
+    execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: remove_faults
     job_type: run
-    name: "Scenario-{{ incident }}--Remove-Faults"
+    name: Remove-Faults
     organization: ITBench
     playbook: sre/playbooks/manage_incidents.yaml
     project: GitHub-ITBench
@@ -181,13 +154,11 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     credentials: "{{ awx_job_credentials }}"
-    execution_environment: "ITBench-Custom-EE"
-    extra_vars:
-      incident_id: "{{ incident }}"
+    execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: install_recorders
     job_type: run
-    name: "Scenario-{{ incident }}--Install-Data-Recorders"
+    name: Install-Data-Recorders
     organization: ITBench
     playbook: sre/playbooks/manage_recorders.yaml
     project: GitHub-ITBench
@@ -199,13 +170,11 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     credentials: "{{ awx_job_credentials }}"
-    execution_environment: "ITBench-Custom-EE"
-    extra_vars:
-      incident_id: "{{ incident }}"
+    execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: uninstall_recorders
     job_type: run
-    name: "Scenario-{{ incident }}--Uninstall-Data-Recorders"
+    name: Uninstall-Data-Recorders
     organization: ITBench
     playbook: sre/playbooks/manage_recorders.yaml
     project: GitHub-ITBench
@@ -218,9 +187,8 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     credentials: "{{ awx_job_credentials }}"
-    execution_environment: "ITBench-Custom-EE"
+    execution_environment: ITBench-Custom-EE
     extra_vars:
-      incident_id: "{{ incident }}"
       tools:
         prometheus: false
         jaeger: false
@@ -228,7 +196,7 @@
     inventory: ITBench
     job_tags: install_recorders
     job_type: run
-    name: "Scenario-{{ incident }}--Run-Topology-Data-Recorder"
+    name: Run-Topology-Data-Recorder
     organization: ITBench
     playbook: sre/playbooks/manage_recorders.yaml
     project: GitHub-ITBench
@@ -239,11 +207,11 @@
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    execution_environment: "ITBench-Custom-EE"
+    execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: pause
     job_type: run
-    name: "Scenario-{{ incident }}--Pause"
+    name: Pause
     organization: ITBench
     playbook: sre/playbooks/pause_execution.yaml
     project: GitHub-ITBench
@@ -255,13 +223,11 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     credentials: "{{ awx_job_credentials }}"
-    execution_environment: "ITBench-Custom-EE"
-    extra_vars:
-      incident_id: "{{ incident }}"
+    execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: grant_access
     job_type: run
-    name: "Scenario-{{ incident }}--Grant-Access-To-Agent"
+    name: Grant-Access-To-Agent
     organization: ITBench
     playbook: sre/playbooks/manage_agent_access.yaml
     project: GitHub-ITBench
@@ -273,13 +239,11 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     credentials: "{{ awx_job_credentials }}"
-    execution_environment: "ITBench-Custom-EE"
-    extra_vars:
-      incident_id: "{{ incident }}"
+    execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: revoke_access
     job_type: run
-    name: "Scenario-{{ incident }}--Remove-Access-From-Agent"
+    name: Remove-Access-From-Agent
     organization: ITBench
     playbook: sre/playbooks/manage_agent_access.yaml
     project: GitHub-ITBench
@@ -291,11 +255,11 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     credentials: "{{ awx_job_credentials }}"
-    execution_environment: "ITBench-Custom-EE"
+    execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: agent_handover
     job_type: run
-    name: "Scenario-{{ incident }}--Handover-To-Agent"
+    name: Handover-To-Agent
     organization: ITBench
     playbook: sre/playbooks/manage_agent_transition.yaml
     project: GitHub-ITBench
@@ -307,11 +271,11 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     credentials: "{{ awx_job_credentials }}"
-    execution_environment: "ITBench-Custom-EE"
+    execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: agent_handback
     job_type: run
-    name: "Scenario-{{ incident }}--Handback-From-Agent"
+    name: Handback-From-Agent
     organization: ITBench
     playbook: sre/playbooks/manage_agent_transition.yaml
     project: GitHub-ITBench
@@ -323,11 +287,11 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     credentials: "{{ awx_job_credentials }}"
-    execution_environment: "ITBench-Custom-EE"
+    execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: sre_agent
     job_type: run
-    name: "Scenario-{{ incident }}--Run-Agent"
+    name: Run-Agent
     organization: ITBench
     playbook: deployments/ansible/base.yaml
     project: GitHub-LLM-Agent
