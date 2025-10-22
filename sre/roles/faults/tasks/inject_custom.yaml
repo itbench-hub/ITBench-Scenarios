@@ -71,6 +71,15 @@
     - fault.custom.name == 'misconfigured-service-port'
     - fault.custom.misconfigured_service_port is defined
 
+- name: Import misconfigured service mesh injection tasks
+  ansible.builtin.import_tasks:
+    file: inject_custom_misconfigured_service_mesh.yaml
+  vars:
+    spec: "{{ fault.custom.misconfigured_service_mesh }}"
+  when:
+    - fault.custom.name == 'misconfigured-service-mesh'
+    - fault.custom.misconfigured_service_mesh is defined
+
 - name: Import modify environment variables injection tasks
   ansible.builtin.import_tasks:
     file: inject_custom_modify_environment_variables.yaml
