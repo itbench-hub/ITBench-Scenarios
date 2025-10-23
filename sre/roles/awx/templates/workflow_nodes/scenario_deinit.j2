@@ -5,7 +5,7 @@
     type: job_template
   related:
     credentials:
-      - Cluster-{{ group.cluster_index + 1 }}-Kubeconfig
+      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
       - AWS
 {% endif %}

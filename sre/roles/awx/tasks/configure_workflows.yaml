@@ -1,26 +1,6 @@
 ---
-- name: Generate scenario and cluster runner groupings
-  ansible.builtin.set_fact:
-    awx_scenario_cluster_groups: |
-      {{
-        (
-          awx_scenario_cluster_groups | default([])
-        ) +
-        [
-          {
-            'cluster_index': scenario_index % (awx_runners.kubeconfigs | length),
-            'scenario_id': item
-          }
-        ]
-      }}
-  loop: "{{ awx_experiments.scenarios }}"
-  loop_control:
-    label: Scenario-{{ item }}
-    index_var: scenario_index
-
 - name: Create workflow for syncing scenario repositories
   awx.awx.workflow_job_template:
-    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
@@ -32,92 +12,88 @@
         unified_job_template:
           name: Sync-Scenarios
           type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes: []
 
 - name: Create workflow template for partial scenario execution (start - without agent)
   awx.awx.workflow_job_template:
-    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     inventory: ITBench
-    name: Scenario-{{ group.scenario_id }}-Partial-Execution-Start
+    name: Scenario-{{ item }}-Partial-Execution-Start
     state: present
     workflow_nodes: "{{ lookup('ansible.builtin.template', 'templates/workflow_nodes/scenario_exec_start.j2') | from_yaml }}"
-  loop: "{{ awx_scenario_cluster_groups }}"
+  loop: "{{ awx_experiments.scenarios }}"
   loop_control:
-    label: Scenario-{{ group.scenario_id }}
-    loop_var: group
+    index_var: scenario_index
+    label: Scenario-{{ item }}
   vars:
+    cluster_index: scenario_index % (awx_runners.kubeconfigs | length)
     requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
 
 - name: Create workflow template for partial scenario execution (stop - without agent)
   awx.awx.workflow_job_template:
-    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     inventory: ITBench
-    name: Scenario-{{ group.scenario_id }}-Partial-Execution-Stop
+    name: Scenario-{{ item }}-Partial-Execution-Stop
     state: present
     workflow_nodes: "{{ lookup('ansible.builtin.template', 'templates/workflow_nodes/scenario_exec_stop.j2') | from_yaml }}"
-  loop: "{{ awx_scenario_cluster_groups }}"
+  loop: "{{ awx_experiments.scenarios }}"
   loop_control:
-    label: Scenario-{{ group.scenario_id }}
-    loop_var: group
+    index_var: scenario_index
+    label: Scenario-{{ item }}
   vars:
+    cluster_index: scenario_index % (awx_runners.kubeconfigs | length)
     requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
 
 - name: Create workflow template for scenario initialization
   awx.awx.workflow_job_template:
-    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     inventory: ITBench
-    name: Scenario-{{ group.scenario_id }}-Init
+    name: Scenario-{{ item }}-Init
     state: present
     workflow_nodes: "{{ lookup('ansible.builtin.template', 'templates/workflow_nodes/scenario_init.j2') | from_yaml }}"
-  loop: "{{ awx_scenario_cluster_groups }}"
+  loop: "{{ awx_experiments.scenarios }}"
   loop_control:
-    label: Scenario-{{ group.scenario_id }}
-    loop_var: group
+    index_var: scenario_index
+    label: Scenario-{{ item }}
   vars:
+    cluster_index: scenario_index % (awx_runners.kubeconfigs | length)
     requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
 
 - name: Create workflow template for full scenario execution (with agent)
   awx.awx.workflow_job_template:
-    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     inventory: ITBench
-    name: Scenario-{{ group.scenario_id }}-Full-Execution
+    name: Scenario-{{ item }}-Full-Execution
     state: present
     workflow_nodes: "{{ lookup('ansible.builtin.template', 'templates/workflow_nodes/scenario_exec_full.j2') | from_yaml }}"
-  loop: "{{ awx_scenario_cluster_groups }}"
+  loop: "{{ awx_experiments.scenarios }}"
   loop_control:
-    label: Scenario-{{ group.scenario_id }}
-    loop_var: group
+    index_var: scenario_index
+    label: Scenario-{{ item }}
   vars:
+    cluster_index: scenario_index % (awx_runners.kubeconfigs | length)
     requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
 
 - name: Create workflow template for scenario deinitialization
   awx.awx.workflow_job_template:
-    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     inventory: ITBench
-    name: Scenario-{{ group.scenario_id }}-Deinit
+    name: Scenario-{{ item }}-Deinit
     state: present
     workflow_nodes: "{{ lookup('ansible.builtin.template', 'templates/workflow_nodes/scenario_deinit.j2') | from_yaml }}"
-  loop: "{{ awx_scenario_cluster_groups }}"
+  loop: "{{ awx_experiments.scenarios }}"
   loop_control:
-    label: Scenario-{{ group.scenario_id }}
-    loop_var: group
+    index_var: scenario_index
+    label: Scenario-{{ item }}
   vars:
+    cluster_index: scenario_index % (awx_runners.kubeconfigs | length)
     requires_aws_credentials: "{{ awx_credentials.aws is defined }}"

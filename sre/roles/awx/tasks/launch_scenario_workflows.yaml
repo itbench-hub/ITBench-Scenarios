@@ -47,13 +47,13 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     extra_vars: "{{ lookup('ansible.builtin.template', 'templates/workflow_vars/storage.j2') | from_yaml }}"
-    workflow_template: Scenario-{{ group.scenario_id }}-Partial-Execution-Start
+    workflow_template: Scenario-{{ item[0] }}-Partial-Execution-Start
     wait: false
   loop: "{{ awx_scenario_trial_groups }}"
   loop_control:
     label: Scenario-{{ item[0] }}/Trial-{{ item[1] }}
   vars:
-    run_directory: "{{ awx_agent.version }}/{{ awx_run_uuid.stdout }}/{{ item[0] | string }}/{{ item[1] | string }}"
+    run_directory: "{{ awx_agent.version }}/{{ awx_run_uuid.stdout }}/{{ item[0] }}/{{ item[1] }}"
   when:
     - awx_experiments.phase == "start"
 
@@ -63,13 +63,13 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     extra_vars: "{{ lookup('ansible.builtin.template', 'templates/workflow_vars/storage.j2') | from_yaml }}"
-    workflow_template: Scenario-{{ group.scenario_id }}-Partial-Execution-Stop
+    workflow_template: Scenario-{{ item[0] }}-Partial-Execution-Stop
     wait: false
   loop: "{{ awx_scenario_trial_groups }}"
   loop_control:
     label: Scenario-{{ item[0] }}/Trial-{{ item[1] }}
   vars:
-    run_directory: "{{ awx_agent.version }}/{{ awx_run_uuid.stdout }}/{{ item[0] | string }}/{{ item[1] | string }}"
+    run_directory: "{{ awx_agent.version }}/{{ awx_run_uuid.stdout }}/{{ item[0] }}/{{ item[1] }}"
   when:
     - awx_experiments.phase == "stop"
 
@@ -112,13 +112,13 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     extra_vars: "{{ lookup('ansible.builtin.template', 'templates/workflow_vars/storage.j2') | from_yaml }}"
-    workflow_template: Scenario-{{ group.scenario_id }}-Full-Execution
+    workflow_template: Scenario-{{ item[0] }}-Full-Execution
     wait: false
   loop: "{{ awx_scenario_trial_groups }}"
   loop_control:
     label: Scenario-{{ item[0] }}/Trial-{{ item[1] }}
   vars:
-    run_directory: "{{ awx_agent.version }}/{{ awx_run_uuid.stdout }}/{{ item[0] | string }}/{{ item[1] | string }}"
+    run_directory: "{{ awx_agent.version }}/{{ awx_run_uuid.stdout }}/{{ item[0] }}/{{ item[1] }}"
   when:
     - awx_experiments.phase == "full"
 
@@ -135,7 +135,7 @@
     label: Scenario-{{ item }}
   register: awx_scenario_deinit_workflows
   vars:
-    run_directory: "{{ awx_agent.version }}/{{ awx_run_uuid.stdout }}/{{ item | string }}/1"
+    run_directory: "{{ awx_agent.version }}/{{ awx_run_uuid.stdout }}/{{ item }}/1"
   when:
     - awx_experiments.phase == "deinit"
 

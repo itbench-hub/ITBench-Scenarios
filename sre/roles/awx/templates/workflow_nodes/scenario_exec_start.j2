@@ -5,7 +5,7 @@
     type: job_template
   related:
     credentials:
-      - Cluster-{{ group.cluster_index + 1 }}-Kubeconfig
+      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
       - AWS
 {% endif %}
@@ -17,7 +17,7 @@
     type: job_template
   related:
     credentials:
-      - Cluster-{{ group.cluster_index + 1 }}-Kubeconfig
+      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
       - AWS
 {% endif %}
@@ -31,7 +31,7 @@
     recorders_awx_topology_filename_prefix: init
   related:
     credentials:
-      - Cluster-{{ group.cluster_index + 1 }}-Kubeconfig
+      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
       - AWS
 {% endif %}
@@ -50,7 +50,7 @@
     type: job_template
   related:
     credentials:
-      - Cluster-{{ group.cluster_index + 1 }}-Kubeconfig
+      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
       - AWS
 {% endif %}
@@ -62,7 +62,7 @@
     type: job_template
   related:
     credentials:
-      - Cluster-{{ group.cluster_index + 1 }}-Kubeconfig
+      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
       - AWS
 {% endif %}
@@ -76,7 +76,7 @@
     recorders_awx_topology_filename_prefix: post_fault_injection
   related:
     credentials:
-      - Cluster-{{ group.cluster_index + 1 }}-Kubeconfig
+      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
       - AWS
 {% endif %}
@@ -95,7 +95,7 @@
     type: job_template
   related:
     credentials:
-      - Cluster-{{ group.cluster_index + 1 }}-Kubeconfig
+      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
       - AWS
 {% endif %}
