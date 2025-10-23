@@ -1,22 +1,8 @@
 ---
-- name: Add job template to sync scenarios
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    execution_environment: ITBench-Custom-EE
-    inventory: ITBench
-    job_tags: sync_scenarios
-    job_type: run
-    name: Sync-Scenarios
-    organization: ITBench
-    playbook: sre/playbooks/sync_scenarios.yaml
-    project: GitHub-ITBench
-    state: present
-
 - name: Add job template for installing tools
   awx.awx.job_template:
     ask_credential_on_launch: true
+    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
@@ -33,6 +19,7 @@
 - name: Add job template for re-initilaizing tools
   awx.awx.job_template:
     ask_credential_on_launch: true
+    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
@@ -49,6 +36,7 @@
 - name: Add job template for uninstalling tools
   awx.awx.job_template:
     ask_credential_on_launch: true
+    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
@@ -65,6 +53,7 @@
 - name: Add job template for installing applicaions
   awx.awx.job_template:
     ask_credential_on_launch: true
+    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
@@ -81,6 +70,7 @@
 - name: Add job template for uninstalling applications
   awx.awx.job_template:
     ask_credential_on_launch: true
+    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
@@ -97,6 +87,7 @@
 - name: Add job template for injecting faults
   awx.awx.job_template:
     ask_credential_on_launch: true
+    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
@@ -113,6 +104,7 @@
 - name: Add job template for removing faults
   awx.awx.job_template:
     ask_credential_on_launch: true
+    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
@@ -146,6 +138,7 @@
 - name: Add job template for uninstalling data recorders
   awx.awx.job_template:
     ask_credential_on_launch: true
+    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
@@ -230,7 +223,6 @@
 
 - name: Add job template for pause
   awx.awx.job_template:
-    ask_credential_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
@@ -244,7 +236,7 @@
     project: GitHub-ITBench
     state: present
 
-- name: Handover to Agent
+- name: Add job template for handing over to agent
   awx.awx.job_template:
     ask_credential_on_launch: true
     controller_host: "{{ awx_controller_host }}"
@@ -260,7 +252,7 @@
     project: GitHub-ITBench
     state: present
 
-- name: Handback from Agent
+- name: Add job template for handing back from agent
   awx.awx.job_template:
     ask_credential_on_launch: true
     controller_host: "{{ awx_controller_host }}"
@@ -276,7 +268,7 @@
     project: GitHub-ITBench
     state: present
 
-- name: Run the SRE Agent
+- name: Add job template for running agent
   awx.awx.job_template:
     ask_credential_on_launch: true
     controller_host: "{{ awx_controller_host }}"
@@ -328,3 +320,17 @@
       agent_analytics_sdk_token: "{{ awx_agent.configuration['agent_analytics_sdk']['git_token'] }}"
       run_mode: remote
       sre_agent_max_runtime_in_seconds: 900
+
+- name: Add job template to sync scenarios
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    execution_environment: ITBench-Custom-EE
+    inventory: ITBench
+    job_type: run
+    name: Sync-Scenarios
+    organization: ITBench
+    playbook: sre/playbooks/sync_scenarios.yaml
+    project: GitHub-ITBench
+    state: present

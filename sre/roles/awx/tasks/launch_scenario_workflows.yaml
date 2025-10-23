@@ -46,7 +46,8 @@
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    extra_vars: "{{ lookup('ansible.builtin.template', 'templates/workflow_vars/storage.j2') | from_yaml }}"
+    extra_vars:
+      storage: "{{ lookup('ansible.builtin.template', 'templates/workflow_vars/storage.j2') | from_yaml }}"
     workflow_template: Scenario-{{ item[0] }}-Partial-Execution-Start
     wait: false
   loop: "{{ awx_scenario_trial_groups }}"
@@ -62,7 +63,8 @@
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    extra_vars: "{{ lookup('ansible.builtin.template', 'templates/workflow_vars/storage.j2') | from_yaml }}"
+    extra_vars:
+      storage: "{{ lookup('ansible.builtin.template', 'templates/workflow_vars/storage.j2') | from_yaml }}"
     workflow_template: Scenario-{{ item[0] }}-Partial-Execution-Stop
     wait: false
   loop: "{{ awx_scenario_trial_groups }}"
@@ -78,7 +80,8 @@
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    extra_vars: "{{ lookup('ansible.builtin.template', 'templates/workflow_vars/storage.j2') | from_yaml }}"
+    extra_vars:
+      storage: "{{ lookup('ansible.builtin.template', 'templates/workflow_vars/storage.j2') | from_yaml }}"
     workflow_template: Scenario-{{ item }}-Init
     wait: false
   loop: "{{ awx_experiments.scenarios }}"
@@ -111,7 +114,8 @@
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    extra_vars: "{{ lookup('ansible.builtin.template', 'templates/workflow_vars/storage.j2') | from_yaml }}"
+    extra_vars:
+      storage: "{{ lookup('ansible.builtin.template', 'templates/workflow_vars/storage.j2') | from_yaml }}"
     workflow_template: Scenario-{{ item[0] }}-Full-Execution
     wait: false
   loop: "{{ awx_scenario_trial_groups }}"
@@ -127,7 +131,8 @@
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    extra_vars: "{{ lookup('ansible.builtin.template', 'templates/workflow_vars/storage.j2') | from_yaml }}"
+    extra_vars:
+      storage: "{{ lookup('ansible.builtin.template', 'templates/workflow_vars/storage.j2') | from_yaml }}"
     workflow_template: Scenario-{{ item }}-Deinit
     wait: false
   loop: "{{ awx_experiments.scenarios }}"

@@ -14,5 +14,3 @@
         else
             echo "Copy script not found, skipping content copy"
         fi
-      tags:
-        - sync_scenarios

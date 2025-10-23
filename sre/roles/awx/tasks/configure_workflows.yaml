@@ -19,13 +19,14 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     inventory: ITBench
-    name: Scenario-{{ item }}-Partial-Execution-Start
+    name: Scenario-{{ scenario_id }}-Partial-Execution-Start
     state: present
     workflow_nodes: "{{ lookup('ansible.builtin.template', 'templates/workflow_nodes/scenario_exec_start.j2') | from_yaml }}"
   loop: "{{ awx_experiments.scenarios }}"
   loop_control:
     index_var: scenario_index
-    label: Scenario-{{ item }}
+    label: Scenario-{{ scenario_id }}
+    loop_var: scenario_id
   vars:
     cluster_index: scenario_index % (awx_runners.kubeconfigs | length)
     requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
@@ -36,13 +37,14 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     inventory: ITBench
-    name: Scenario-{{ item }}-Partial-Execution-Stop
+    name: Scenario-{{ scenario_id }}-Partial-Execution-Stop
     state: present
     workflow_nodes: "{{ lookup('ansible.builtin.template', 'templates/workflow_nodes/scenario_exec_stop.j2') | from_yaml }}"
   loop: "{{ awx_experiments.scenarios }}"
   loop_control:
     index_var: scenario_index
-    label: Scenario-{{ item }}
+    label: Scenario-{{ scenario_id }}
+    loop_var: scenario_id
   vars:
     cluster_index: scenario_index % (awx_runners.kubeconfigs | length)
     requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
@@ -53,13 +55,14 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     inventory: ITBench
-    name: Scenario-{{ item }}-Init
+    name: Scenario-{{ scenario_id }}-Init
     state: present
     workflow_nodes: "{{ lookup('ansible.builtin.template', 'templates/workflow_nodes/scenario_init.j2') | from_yaml }}"
   loop: "{{ awx_experiments.scenarios }}"
   loop_control:
     index_var: scenario_index
-    label: Scenario-{{ item }}
+    label: Scenario-{{ scenario_id }}
+    loop_var: scenario_id
   vars:
     cluster_index: scenario_index % (awx_runners.kubeconfigs | length)
     requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
@@ -70,13 +73,14 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     inventory: ITBench
-    name: Scenario-{{ item }}-Full-Execution
+    name: Scenario-{{ scenario_id }}-Full-Execution
     state: present
     workflow_nodes: "{{ lookup('ansible.builtin.template', 'templates/workflow_nodes/scenario_exec_full.j2') | from_yaml }}"
   loop: "{{ awx_experiments.scenarios }}"
   loop_control:
     index_var: scenario_index
-    label: Scenario-{{ item }}
+    label: Scenario-{{ scenario_id }}
+    loop_var: scenario_id
   vars:
     cluster_index: scenario_index % (awx_runners.kubeconfigs | length)
     requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
@@ -87,13 +91,14 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     inventory: ITBench
-    name: Scenario-{{ item }}-Deinit
+    name: Scenario-{{ scenario_id }}-Deinit
     state: present
     workflow_nodes: "{{ lookup('ansible.builtin.template', 'templates/workflow_nodes/scenario_deinit.j2') | from_yaml }}"
   loop: "{{ awx_experiments.scenarios }}"
   loop_control:
     index_var: scenario_index
-    label: Scenario-{{ item }}
+    label: Scenario-{{ scenario_id }}
+    loop_var: scenario_id
   vars:
     cluster_index: scenario_index % (awx_runners.kubeconfigs | length)
     requires_aws_credentials: "{{ awx_credentials.aws is defined }}"

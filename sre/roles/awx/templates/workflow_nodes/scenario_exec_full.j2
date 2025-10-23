@@ -1,33 +1,37 @@
 ---
 - identifier: node-reinit-tools
+  extra_data:
+    incident_id: {{ scenario_id }}
+  related:
+    credentials:
+      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
+{% if requires_aws_credentials %}
+      - AWS
+{% endif %}
+    success_nodes:
+      - identifier: node-deploy-applications
   unified_job_template:
     name: Reinit-Tools
     type: job_template
+- identifier: node-deploy-applications
+  extra_data:
+    incident_id: {{ scenario_id }}
   related:
     credentials:
       - Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
       - AWS
 {% endif %}
+    failure_nodes:
+      - identifier: node-undeploy-applications
     success_nodes:
-      - identifier: node-install-applications
-- identifier: node-install-applications
+      - identifier: node-install-recorders
   unified_job_template:
     name: Deploy-Applications
     type: job_template
-  related:
-    credentials:
-      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
-{% if requires_aws_credentials %}
-      - AWS
-{% endif %}
-    success_nodes:
-      - identifier: node-install-recorders
 - identifier: node-install-recorders
-  unified_job_template:
-    name: Install-Data-Recorders
-    type: job_template
   extra_data:
+    incident_id: {{ scenario_id }}
     recorders_awx_topology_filename_prefix: init
   related:
     credentials:
@@ -37,29 +41,33 @@
 {% endif %}
     success_nodes:
       - identifier: node-pause-at-start
-- identifier: node-pause-at-start
   unified_job_template:
-    name: Pause
+    name: Install-Data-Recorders
     type: job_template
+- identifier: node-pause-at-start
   related:
     success_nodes:
       - identifier: node-grant-access-to-agent
-- identifier: node-grant-access-to-agent
   unified_job_template:
-    name: Grant-Access-To-Agent
+    name: Pause
     type: job_template
+- identifier: node-grant-access-to-agent
   related:
     credentials:
       - Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
       - AWS
 {% endif %}
+    failure_nodes:
+      - identifier: node-remove-access-from-agent
     success_nodes:
       - identifier: node-inject-fault
-- identifier: node-inject-fault
   unified_job_template:
-    name: Inject-Faults
+    name: Grant-Access-To-Agent
     type: job_template
+- identifier: node-inject-fault
+  extra_data:
+    incident_id: {{ scenario_id }}
   related:
     credentials:
       - Cluster-{{ cluster_index + 1 }}-Kubeconfig
@@ -68,10 +76,10 @@
 {% endif %}
     success_nodes:
       - identifier: node-install-run-topology-recorder-post-fault-injection
-- identifier: node-install-run-topology-recorder-post-fault-injection
   unified_job_template:
-    name: Run-Topology-Data-Recorder
+    name: Inject-Faults
     type: job_template
+- identifier: node-install-run-topology-recorder-post-fault-injection
   extra_data:
     recorders_awx_topology_filename_prefix: post_fault_injection
   related:
@@ -82,17 +90,17 @@
 {% endif %}
     success_nodes:
       - identifier: node-pause-post-fault-injection
-- identifier: node-pause-post-fault-injection
   unified_job_template:
-    name: Pause
+    name: Run-Topology-Data-Recorder
     type: job_template
+- identifier: node-pause-post-fault-injection
   related:
     success_nodes:
       - identifier: node-check-for-alerts
-- identifier: node-check-for-alerts
   unified_job_template:
-    name: Check-for-Alerts
+    name: Pause
     type: job_template
+- identifier: node-check-for-alerts
   related:
     credentials:
       - Cluster-{{ cluster_index + 1 }}-Kubeconfig
@@ -103,10 +111,10 @@
       - identifier: node-uninstall-recorders
     success_nodes:
       - identifier: node-handover-to-agent
-- identifier: node-handover-to-agent
   unified_job_template:
-    name: Handover-To-Agent
+    name: Check-for-Alerts
     type: job_template
+- identifier: node-handover-to-agent
   related:
 {% if requires_aws_credentials %}
     credentials:
@@ -114,10 +122,10 @@
 {% endif %}
     success_nodes:
       - identifier: node-run-agent
-- identifier: node-run-agent
   unified_job_template:
-    name: Run-Agent
+    name: Handover-To-Agent
     type: job_template
+- identifier: node-run-agent
   related:
     always_nodes:
       - identifier: node-handback-from-agent
@@ -126,10 +134,10 @@
 {% if requires_aws_credentials %}
       - AWS
 {% endif %}
-- identifier: node-handback-from-agent
   unified_job_template:
-    name: Handback-From-Agent
+    name: Run-Agent
     type: job_template
+- identifier: node-handback-from-agent
   related:
     always_nodes:
       - identifier: node-remove-access-from-agent
@@ -137,10 +145,10 @@
     credentials:
       - AWS
 {% endif %}
-- identifier: node-remove-access-from-agent
   unified_job_template:
-    name: Remove-Access-From-Agent
+    name: Handback-From-Agent
     type: job_template
+- identifier: node-remove-access-from-agent
   related:
     always_nodes:
       - identifier: node-install-run-topology-recorder-post-agent-execution
@@ -149,10 +157,10 @@
 {% if requires_aws_credentials %}
       - AWS
 {% endif %}
-- identifier: node-install-run-topology-recorder-post-agent-execution
   unified_job_template:
-    name: Run-Topology-Data-Recorder
+    name: Remove-Access-From-Agent
     type: job_template
+- identifier: node-install-run-topology-recorder-post-agent-execution
   extra_data:
     recorders_awx_topology_filename_prefix: end
   related:
@@ -163,17 +171,19 @@
 {% if requires_aws_credentials %}
       - AWS
 {% endif %}
-- identifier: node-pause-post-agent-execution
   unified_job_template:
-    name: Pause
+    name: Run-Topology-Data-Recorder
     type: job_template
+- identifier: node-pause-post-agent-execution
   related:
     always_nodes:
       - identifier: node-uninstall-recorders
-- identifier: node-uninstall-recorders
   unified_job_template:
-    name: Uninstall-Data-Recorders
+    name: Pause
     type: job_template
+- identifier: node-uninstall-recorders
+  extra_data:
+    incident_id: {{ scenario_id }}
   related:
     always_nodes:
       - identifier: node-remove-fault
@@ -182,10 +192,12 @@
 {% if requires_aws_credentials %}
       - AWS
 {% endif %}
-- identifier: node-remove-fault
   unified_job_template:
-    name: Remove-Faults
+    name: Uninstall-Data-Recorders
     type: job_template
+- identifier: node-remove-fault
+  extra_data:
+    incident_id: {{ scenario_id }}
   related:
     always_nodes:
       - identifier: node-undeploy-applications
@@ -194,13 +206,18 @@
 {% if requires_aws_credentials %}
       - AWS
 {% endif %}
-- identifier: node-undeploy-applications
   unified_job_template:
-    name: Undeploy-Applications
+    name: Remove-Faults
     type: job_template
+- identifier: node-undeploy-applications
+  extra_data:
+    incident_id: {{ scenario_id }}
   related:
     credentials:
       - Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
       - AWS
 {% endif %}
+  unified_job_template:
+    name: Undeploy-Applications
+    type: job_template
