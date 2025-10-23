@@ -103,8 +103,6 @@
 {% if requires_aws_credentials %}
       - name: AWS
 {% endif %}
-    failure_nodes:
-      - identifier: node-uninstall-recorders
     success_nodes:
       - identifier: node-handover-to-agent
   unified_job_template:

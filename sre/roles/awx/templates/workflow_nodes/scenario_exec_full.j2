@@ -39,6 +39,8 @@
 {% if requires_aws_credentials %}
       - name: AWS
 {% endif %}
+    failure_nodes:
+      - identifier: node-uninstall-recorders
     success_nodes:
       - identifier: node-pause-at-start
   unified_job_template:
@@ -74,6 +76,8 @@
 {% if requires_aws_credentials %}
       - name: AWS
 {% endif %}
+    failure_nodes:
+      - identifier: node-remove-fault
     success_nodes:
       - identifier: node-install-run-topology-recorder-post-fault-injection
   unified_job_template:
@@ -107,8 +111,6 @@
 {% if requires_aws_credentials %}
       - name: AWS
 {% endif %}
-    failure_nodes:
-      - identifier: node-uninstall-recorders
     success_nodes:
       - identifier: node-handover-to-agent
   unified_job_template:
