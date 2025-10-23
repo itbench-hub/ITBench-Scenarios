@@ -22,7 +22,7 @@
     namespace: "{{ spec.workload.namespace }}"
     patch:
       - op: add
-        path: /spec/template/spec/containers/-
+        path: /spec/template/spec/containers
         value:
           name: storage-filler
           image: busybox:latest
