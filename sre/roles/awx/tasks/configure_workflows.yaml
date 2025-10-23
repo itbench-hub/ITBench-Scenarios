@@ -7,6 +7,25 @@
   ansible.builtin.import_tasks:
     file: set_awx_controller_password.yaml
 
+- name: Create workflow for syncing scenario repositories
+  awx.awx.workflow_job_template:
+    ask_variables_on_launch: true
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    inventory: ITBench
+    name: "Sync-Scenarios-Workflow"
+    state: present
+    workflow_nodes:
+      - identifier: node-sync-scenarios
+        unified_job_template:
+          name: "Sync-Scenarios"
+          type: job_template
+        related:
+          success_nodes: []
+          failure_nodes: []
+          always_nodes: []
+
 - name: Create workflow for initializing select or all scenarios end to end
   awx.awx.workflow_job_template:
     ask_variables_on_launch: true
@@ -36,15 +55,6 @@
     name: "Scenario-{{ incident }}"
     state: present
     workflow_nodes:
-      - identifier: node-reinit-tools
-        unified_job_template:
-          name: "Scenario-{{ incident }}--Reinit-Tools"
-          type: job_template
-        related:
-          success_nodes:
-            - identifier: node-install-applications
-          failure_nodes: []
-          always_nodes: []
       - identifier: node-install-applications
         unified_job_template:
           name: "Scenario-{{ incident }}--Deploy-Applications"
@@ -52,6 +62,15 @@
         related:
           success_nodes:
             - identifier: node-install-recorders
+          failure_nodes: []
+          always_nodes: []
+      - identifier: node-reinit-tools
+        unified_job_template:
+          name: "Scenario-{{ incident }}--Reinit-Tools"
+          type: job_template
+        related:
+          success_nodes:
+            - identifier: node-install-applications
           failure_nodes: []
           always_nodes: []
       - identifier: node-install-recorders
