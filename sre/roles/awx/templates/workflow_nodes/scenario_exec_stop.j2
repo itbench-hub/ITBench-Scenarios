@@ -5,7 +5,7 @@
       - identifier: node-remove-access-from-agent
 {% if requires_aws_credentials %}
     credentials:
-      - AWS
+      - name: AWS
 {% endif %}
   unified_job_template:
     name: Handback-From-Agent
@@ -15,9 +15,9 @@
     always_nodes:
       - identifier: node-install-run-topology-recorder-post-agent-execution
     credentials:
-      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
-      - AWS
+      - name: AWS
 {% endif %}
   unified_job_template:
     name: Remove-Access-From-Agent
@@ -29,9 +29,9 @@
     always_nodes:
       - identifier: node-pause-post-agent-execution
     credentials:
-      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
-      - AWS
+      - name: AWS
 {% endif %}
   unified_job_template:
     name: Run-Topology-Data-Recorder
@@ -50,9 +50,9 @@
     always_nodes:
       - identifier: node-remove-fault
     credentials:
-      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
-      - AWS
+      - name: AWS
 {% endif %}
   unified_job_template:
     name: Uninstall-Data-Recorders
@@ -64,9 +64,9 @@
     always_nodes:
       - identifier: node-undeploy-applications
     credentials:
-      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
-      - AWS
+      - name: AWS
 {% endif %}
   unified_job_template:
     name: Remove-Faults
@@ -78,9 +78,9 @@
     always_nodes:
       - identifier: node-undeploy-tools
     credentials:
-      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
-      - AWS
+      - name: AWS
 {% endif %}
   unified_job_template:
     name: Undeploy-Applications
@@ -90,9 +90,9 @@
     incident_id: {{ scenario_id }}
   related:
     credentials:
-      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
-      - AWS
+      - name: AWS
 {% endif %}
   unified_job_template:
     name: Undeploy-Tools

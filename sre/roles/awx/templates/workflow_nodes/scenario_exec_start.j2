@@ -4,9 +4,9 @@
     incident_id: {{ scenario_id }}
   related:
     credentials:
-      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
-      - AWS
+      - name: AWS
 {% endif %}
     success_nodes:
       - identifier: node-deploy-applications
@@ -18,9 +18,9 @@
     incident_id: {{ scenario_id }}
   related:
     credentials:
-      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
-      - AWS
+      - name: AWS
 {% endif %}
     success_nodes:
       - identifier: node-install-recorders
@@ -33,9 +33,9 @@
     recorders_awx_topology_filename_prefix: init
   related:
     credentials:
-      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
-      - AWS
+      - name: AWS
 {% endif %}
     success_nodes:
       - identifier: node-pause-at-start
@@ -52,9 +52,9 @@
 - identifier: node-grant-access-to-agent
   related:
     credentials:
-      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
-      - AWS
+      - name: AWS
 {% endif %}
     success_nodes:
       - identifier: node-inject-fault
@@ -66,9 +66,9 @@
     incident_id: {{ scenario_id }}
   related:
     credentials:
-      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
-      - AWS
+      - name: AWS
 {% endif %}
     success_nodes:
       - identifier: node-install-run-topology-recorder-post-fault-injection
@@ -80,9 +80,9 @@
     recorders_awx_topology_filename_prefix: post_fault_injection
   related:
     credentials:
-      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
-      - AWS
+      - name: AWS
 {% endif %}
     success_nodes:
       - identifier: node-pause-post-fault-injection
@@ -99,9 +99,9 @@
 - identifier: node-check-for-alerts
   related:
     credentials:
-      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
-      - AWS
+      - name: AWS
 {% endif %}
     failure_nodes:
       - identifier: node-uninstall-recorders
@@ -114,7 +114,7 @@
 {% if requires_aws_credentials %}
   related:
     credentials:
-      - AWS
+      - name: AWS
 {% endif %}
   unified_job_template:
     name: Handover-To-Agent

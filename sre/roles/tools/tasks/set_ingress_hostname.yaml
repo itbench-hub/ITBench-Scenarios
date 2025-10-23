@@ -1,5 +1,5 @@
 ---
-- name: Get Service object
+- name: Retrieve Ingress service
   kubernetes.core.k8s_info:
     api_version: v1
     kind: Service
@@ -8,19 +8,8 @@
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     wait: true
   register: tools_service_info
-
-- name: Wait for LoadBalancer ingress to be ready
-  kubernetes.core.k8s_info:
-    api_version: v1
-    kind: Service
-    name: "{{ tools_helm_releases.ingress.name }}-controller"
-    namespace: "{{ tools_helm_releases.ingress.namespace }}"
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    wait: true
-  register: tools_service_info
-  until: >
-    tools_service_info.resources[0].spec.type != "LoadBalancer" or
-    (tools_service_info.resources[0].status.loadBalancer.ingress is defined)
+  until:
+    - tools_service_info.resources[0].status.loadBalancer.ingress is defined
   delay: 15
   retries: 12
   when:

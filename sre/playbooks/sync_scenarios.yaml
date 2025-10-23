@@ -5,8 +5,6 @@
   tasks:
     - name: Setup repository with submodules and content
       ansible.builtin.shell: |
-        cd {{ playbook_dir }}/../../../
-
         if [ -f "scripts/copy-scenarios-to-submodule.sh" ]; then
             chmod +x scripts/copy-scenarios-to-submodule.sh
             ./scripts/copy-scenarios-to-submodule.sh
@@ -14,3 +12,6 @@
         else
             echo "Copy script not found, skipping content copy"
         fi
+      args:
+        chdir: "{{ playbook_dir }}/../../../"
+      changed_when: true

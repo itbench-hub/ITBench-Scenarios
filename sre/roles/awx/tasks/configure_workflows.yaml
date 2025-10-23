@@ -28,7 +28,7 @@
     label: Scenario-{{ scenario_id }}
     loop_var: scenario_id
   vars:
-    cluster_index: scenario_index % (awx_runners.kubeconfigs | length)
+    cluster_index: "{{ scenario_index % (awx_runners.kubeconfigs | length) }}"
     requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
 
 - name: Create workflow template for partial scenario execution (stop - without agent)
@@ -46,7 +46,7 @@
     label: Scenario-{{ scenario_id }}
     loop_var: scenario_id
   vars:
-    cluster_index: scenario_index % (awx_runners.kubeconfigs | length)
+    cluster_index: "{{ scenario_index % (awx_runners.kubeconfigs | length) }}"
     requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
 
 - name: Create workflow template for scenario initialization
@@ -64,7 +64,7 @@
     label: Scenario-{{ scenario_id }}
     loop_var: scenario_id
   vars:
-    cluster_index: scenario_index % (awx_runners.kubeconfigs | length)
+    cluster_index: "{{ scenario_index % (awx_runners.kubeconfigs | length) }}"
     requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
 
 - name: Create workflow template for full scenario execution (with agent)
@@ -82,7 +82,7 @@
     label: Scenario-{{ scenario_id }}
     loop_var: scenario_id
   vars:
-    cluster_index: scenario_index % (awx_runners.kubeconfigs | length)
+    cluster_index: "{{ scenario_index % (awx_runners.kubeconfigs | length) }}"
     requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
 
 - name: Create workflow template for scenario deinitialization
@@ -100,5 +100,5 @@
     label: Scenario-{{ scenario_id }}
     loop_var: scenario_id
   vars:
-    cluster_index: scenario_index % (awx_runners.kubeconfigs | length)
+    cluster_index: "{{ scenario_index % (awx_runners.kubeconfigs | length) }}"
     requires_aws_credentials: "{{ awx_credentials.aws is defined }}"

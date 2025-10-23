@@ -4,9 +4,9 @@
     incident_id: {{ scenario_id }}
   related:
     credentials:
-      - Cluster-{{ cluster_index + 1 }}-Kubeconfig
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
-      - AWS
+      - name: AWS
 {% endif %}
   unified_job_template:
     name: Deploy-Tools
