@@ -1,12 +1,4 @@
 ---
-- name: Validate storage configuration
-  ansible.builtin.assert:
-    that:
-      - awx_experiments.storage is defined
-      - awx_experiments.storage.local is defined or awx_experiments.storage.s3 is defined
-    fail_msg: Storage is not configured. Please configure local or s3 storage to be added to the run.
-    success_msg: Storage is configured.
-
 - name: Validate trails configuration
   ansible.builtin.assert:
     that: awx_experiments.trials > 0

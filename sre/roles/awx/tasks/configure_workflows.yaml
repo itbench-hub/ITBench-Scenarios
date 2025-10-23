@@ -15,6 +15,7 @@
 
 - name: Create workflow template for partial scenario execution (start - without agent)
   awx.awx.workflow_job_template:
+    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
@@ -33,6 +34,7 @@
 
 - name: Create workflow template for partial scenario execution (stop - without agent)
   awx.awx.workflow_job_template:
+    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
@@ -51,6 +53,7 @@
 
 - name: Create workflow template for scenario initialization
   awx.awx.workflow_job_template:
+    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
@@ -69,6 +72,7 @@
 
 - name: Create workflow template for full scenario execution (with agent)
   awx.awx.workflow_job_template:
+    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
@@ -87,6 +91,7 @@
 
 - name: Create workflow template for scenario deinitialization
   awx.awx.workflow_job_template:
+    ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
