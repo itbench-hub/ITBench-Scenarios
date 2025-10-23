@@ -36,6 +36,24 @@
     project: GitHub-ITBench
     state: present
 
+- name: Add job template for installing applicaions
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    credentials: "{{ awx_job_credentials }}"
+    execution_environment: "ITBench-Custom-EE"
+    extra_vars:
+      incident_id: "{{ incident }}"
+    inventory: ITBench
+    job_tags: install_applications
+    job_type: run
+    name: "Scenario-{{ incident }}--Deploy-Applications"
+    organization: ITBench
+    playbook: sre/playbooks/manage_applications.yaml
+    project: GitHub-ITBench
+    state: present
+
 - name: Add job template for re-initilaizing tools
   awx.awx.job_template:
     controller_host: "{{ awx_controller_host }}"
@@ -84,24 +102,6 @@
     name: "Scenario-{{ incident }}--Check-for-Alerts"
     organization: ITBench
     playbook: sre/playbooks/check_for_specific_alerts_in_firing_state.yaml
-    project: GitHub-ITBench
-    state: present
-
-- name: Add job template for installing applicaions
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    credentials: "{{ awx_job_credentials }}"
-    execution_environment: "ITBench-Custom-EE"
-    extra_vars:
-      incident_id: "{{ incident }}"
-    inventory: ITBench
-    job_tags: install_applications
-    job_type: run
-    name: "Scenario-{{ incident }}--Deploy-Applications"
-    organization: ITBench
-    playbook: sre/playbooks/manage_applications.yaml
     project: GitHub-ITBench
     state: present
 
