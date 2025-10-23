@@ -32,6 +32,7 @@
           provider: "{{ cluster_provider }}"
         awx_credentials: "{{ credentials }}"
         awx_experiments:
+          phase: "{{ run_phase | omit }}"
           scenarios: "{{ experiments.scenarios }}"
           storage: "{{ storage }}"
           trials: "{{ experiments.trials }}"

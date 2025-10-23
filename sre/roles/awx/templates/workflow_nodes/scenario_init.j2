@@ -1,0 +1,11 @@
+---
+- identifier: node-deploy-tools
+  unified_job_template:
+    name: Deploy-Tools
+    type: job_template
+  related:
+    credentials:
+      - Cluster-{{ group.cluster_index + 1 }}-Kubeconfig
+{% if requires_aws_credentials %}
+      - AWS
+{% endif %}

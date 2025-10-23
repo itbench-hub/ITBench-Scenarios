@@ -1,16 +1,10 @@
 ---
-- name: Add AWS credentials to job credentials
-  ansible.builtin.set_fact:
-    awx_job_credentials: "{{ awx_job_credentials + ['AWS'] }}"
-  when:
-    - awx_credentials.aws is defined
-
 - name: Add job template to sync scenarios
   awx.awx.job_template:
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    execution_environment: AWX EE (latest)
+    execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: sync_scenarios
     job_type: run
@@ -22,10 +16,10 @@
 
 - name: Add job template for installing tools
   awx.awx.job_template:
+    ask_credential_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    credentials: "{{ awx_job_credentials }}"
     execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: install_tools
@@ -38,10 +32,10 @@
 
 - name: Add job template for re-initilaizing tools
   awx.awx.job_template:
+    ask_credential_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    credentials: "{{ awx_job_credentials }}"
     execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: reinit_tools
@@ -54,10 +48,10 @@
 
 - name: Add job template for uninstalling tools
   awx.awx.job_template:
+    ask_credential_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    credentials: "{{ awx_job_credentials }}"
     execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: uninstall_tools
@@ -68,27 +62,12 @@
     project: GitHub-ITBench
     state: present
 
-- name: Add job template for checking alerts in firing state
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    credentials: "{{ awx_job_credentials }}"
-    execution_environment: ITBench-Custom-EE
-    inventory: ITBench
-    job_type: run
-    name: Check-for-Alerts
-    organization: ITBench
-    playbook: sre/playbooks/check_for_specific_alerts_in_firing_state.yaml
-    project: GitHub-ITBench
-    state: present
-
 - name: Add job template for installing applicaions
   awx.awx.job_template:
+    ask_credential_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    credentials: "{{ awx_job_credentials }}"
     execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: install_applications
@@ -101,10 +80,10 @@
 
 - name: Add job template for uninstalling applications
   awx.awx.job_template:
+    ask_credential_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    credentials: "{{ awx_job_credentials }}"
     execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: uninstall_applications
@@ -117,10 +96,10 @@
 
 - name: Add job template for injecting faults
   awx.awx.job_template:
+    ask_credential_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    credentials: "{{ awx_job_credentials }}"
     execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: inject_faults
@@ -133,10 +112,10 @@
 
 - name: Add job template for removing faults
   awx.awx.job_template:
+    ask_credential_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    credentials: "{{ awx_job_credentials }}"
     execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: remove_faults
@@ -149,11 +128,11 @@
 
 - name: Add job template for installing data recorders
   awx.awx.job_template:
+    ask_credential_on_launch: true
     ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    credentials: "{{ awx_job_credentials }}"
     execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: install_recorders
@@ -166,10 +145,10 @@
 
 - name: Add job template for uninstalling data recorders
   awx.awx.job_template:
+    ask_credential_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    credentials: "{{ awx_job_credentials }}"
     execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: uninstall_recorders
@@ -182,11 +161,11 @@
 
 - name: Add job template for running topology data recorder
   awx.awx.job_template:
+    ask_credential_on_launch: true
     ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    credentials: "{{ awx_job_credentials }}"
     execution_environment: ITBench-Custom-EE
     extra_vars:
       tools:
@@ -202,8 +181,56 @@
     project: GitHub-ITBench
     state: present
 
+- name: Add job template for enabling agent access
+  awx.awx.job_template:
+    ask_credential_on_launch: true
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    execution_environment: ITBench-Custom-EE
+    inventory: ITBench
+    job_tags: grant_access
+    job_type: run
+    name: Grant-Access-To-Agent
+    organization: ITBench
+    playbook: sre/playbooks/manage_agent_access.yaml
+    project: GitHub-ITBench
+    state: present
+
+- name: Add job template for disabling agent access
+  awx.awx.job_template:
+    ask_credential_on_launch: true
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    execution_environment: ITBench-Custom-EE
+    inventory: ITBench
+    job_tags: revoke_access
+    job_type: run
+    name: Remove-Access-From-Agent
+    organization: ITBench
+    playbook: sre/playbooks/manage_agent_access.yaml
+    project: GitHub-ITBench
+    state: present
+
+- name: Add job template for checking alerts in firing state
+  awx.awx.job_template:
+    ask_credential_on_launch: true
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    execution_environment: ITBench-Custom-EE
+    inventory: ITBench
+    job_type: run
+    name: Check-for-Alerts
+    organization: ITBench
+    playbook: sre/playbooks/check_for_specific_alerts_in_firing_state.yaml
+    project: GitHub-ITBench
+    state: present
+
 - name: Add job template for pause
   awx.awx.job_template:
+    ask_credential_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
@@ -217,44 +244,12 @@
     project: GitHub-ITBench
     state: present
 
-- name: Add job template for enabling agent access
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    credentials: "{{ awx_job_credentials }}"
-    execution_environment: ITBench-Custom-EE
-    inventory: ITBench
-    job_tags: grant_access
-    job_type: run
-    name: Grant-Access-To-Agent
-    organization: ITBench
-    playbook: sre/playbooks/manage_agent_access.yaml
-    project: GitHub-ITBench
-    state: present
-
-- name: Add job template for disabling agent access
-  awx.awx.job_template:
-    controller_host: "{{ awx_controller_host }}"
-    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
-    controller_username: admin
-    credentials: "{{ awx_job_credentials }}"
-    execution_environment: ITBench-Custom-EE
-    inventory: ITBench
-    job_tags: revoke_access
-    job_type: run
-    name: Remove-Access-From-Agent
-    organization: ITBench
-    playbook: sre/playbooks/manage_agent_access.yaml
-    project: GitHub-ITBench
-    state: present
-
 - name: Handover to Agent
   awx.awx.job_template:
+    ask_credential_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    credentials: "{{ awx_job_credentials }}"
     execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: agent_handover
@@ -267,10 +262,10 @@
 
 - name: Handback from Agent
   awx.awx.job_template:
+    ask_credential_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    credentials: "{{ awx_job_credentials }}"
     execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: agent_handback
@@ -283,10 +278,10 @@
 
 - name: Run the SRE Agent
   awx.awx.job_template:
+    ask_credential_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    credentials: "{{ awx_job_credentials }}"
     execution_environment: ITBench-Custom-EE
     inventory: ITBench
     job_tags: sre_agent

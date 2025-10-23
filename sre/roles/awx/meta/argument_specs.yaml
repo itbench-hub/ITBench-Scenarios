@@ -46,6 +46,15 @@ argument_specs:
         required: true
         type: dict
         options:
+          phase:
+            choices:
+              - deinit
+              - init
+              - full
+              - start
+              - stop
+            required: false
+            type: str
           scenarios:
             elements: int
             required: true

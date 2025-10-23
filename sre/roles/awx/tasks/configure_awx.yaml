@@ -12,7 +12,7 @@
     file: configure_projects.yaml
 
 - name: Import job configuration tasks
-  ansibel.builtin.import_tasks:
+  ansible.builtin.import_tasks:
     file: configure_jobs.yaml
 
 - name: Import workflow configuration tasks

@@ -1,11 +1,22 @@
 ---
-- name: Import variable setting tasks
-  ansible.builtin.import_tasks:
-    file: set_awx_controller_host.yaml
-
-- name: Import variable setting tasks
-  ansible.builtin.import_tasks:
-    file: set_awx_controller_password.yaml
+- name: Generate scenario and cluster runner groupings
+  ansible.builtin.set_fact:
+    awx_scenario_cluster_groups: |
+      {{
+        (
+          awx_scenario_cluster_groups | default([])
+        ) +
+        [
+          {
+            'cluster_index': scenario_index % (awx_runners.kubeconfigs | length),
+            'scenario_id': item
+          }
+        ]
+      }}
+  loop: "{{ awx_experiments.scenarios }}"
+  loop_control:
+    label: Scenario-{{ item }}
+    index_var: scenario_index
 
 - name: Create workflow for syncing scenario repositories
   awx.awx.workflow_job_template:
@@ -14,394 +25,99 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     inventory: ITBench
-    name: "Sync-Scenarios-Workflow"
+    name: Sync-Scenarios-Workflow
     state: present
     workflow_nodes:
       - identifier: node-sync-scenarios
         unified_job_template:
-          name: "Sync-Scenarios"
+          name: Sync-Scenarios
           type: job_template
         related:
           success_nodes: []
           failure_nodes: []
           always_nodes: []
 
-- name: Create workflow template for scenario initialization (with agent)
+- name: Create workflow template for partial scenario execution (start - without agent)
   awx.awx.workflow_job_template:
     ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     inventory: ITBench
-    name: Scenario-{{ item }}-Init
+    name: Scenario-{{ group.scenario_id }}-Partial-Execution-Start
     state: present
-    workflow_nodes:
-      - identifier: node-deploy-tools
-        unified_job_template:
-          name: Deploy-Tools
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes: []
-  loop: "{{ awx_experiments.scenarios }}"
+    workflow_nodes: "{{ lookup('ansible.builtin.template', 'files/workflow_nodes/scenario_exec.j2') }}"
+  loop: "{{ awx_scenario_cluster_groups }}"
   loop_control:
-    label: Scenario-{{ item }}
+    label: Scenario-{{ group.scenario_id }}
+    loop_var: group
+  vars:
+    requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
 
-- name: Create workflow template for scenario execution (with agent)
+- name: Create workflow template for partial scenario execution (stop - without agent)
   awx.awx.workflow_job_template:
     ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     inventory: ITBench
-    name: Scenario-{{ incident }}
+    name: Scenario-{{ group.scenario_id }}-Partial-Execution-Stop
     state: present
-    workflow_nodes:
-      - identifier: node-reinit-tools
-        unified_job_template:
-          name: Reinit-Tools
-          type: job_template
-        related:
-          success_nodes:
-            - identifier: node-install-applications
-          failure_nodes: []
-          always_nodes: []
-      - identifier: node-install-applications
-        unified_job_template:
-          name: Deploy-Applications
-          type: job_template
-        related:
-          success_nodes:
-            - identifier: node-install-recorders
-          failure_nodes: []
-          always_nodes: []
-      - identifier: node-install-recorders
-        unified_job_template:
-          name: Install-Data-Recorders
-          type: job_template
-        extra_data:
-          recorders_awx_topology_filename_prefix: "init"
-        related:
-          success_nodes:
-            - identifier: node-pause-at-start
-          failure_nodes: []
-          always_nodes: []
-      - identifier: node-pause-at-start
-        unified_job_template:
-          name: Pause"
-          type: job_template
-        related:
-          success_nodes:
-            - identifier: node-grant-access-to-agent
-          failure_nodes: []
-          always_nodes: []
-      - identifier: node-grant-access-to-agent
-        unified_job_template:
-          name: Grant-Access-To-Agent
-          type: job_template
-        related:
-          success_nodes:
-            - identifier: node-inject-fault
-          failure_nodes: []
-          always_nodes: []
-      - identifier: node-inject-fault
-        unified_job_template:
-          name: Inject-Faults
-          type: job_template
-        related:
-          success_nodes:
-            - identifier: node-install-run-topology-recorder-post-fault-injection
-          failure_nodes: []
-          always_nodes: []
-      - identifier: node-install-run-topology-recorder-post-fault-injection
-        unified_job_template:
-          name: Run-Topology-Data-Recorder
-          type: job_template
-        extra_data:
-          recorders_awx_topology_filename_prefix: "post_fault_injection"
-        related:
-          success_nodes:
-            - identifier: node-pause-post-fault-injection
-          failure_nodes: []
-          always_nodes: []
-      - identifier: node-pause-post-fault-injection
-        unified_job_template:
-          name: Pause
-          type: job_template
-        related:
-          success_nodes:
-            - identifier: node-check-for-alerts
-          failure_nodes: []
-          always_nodes: []
-      - identifier: node-check-for-alerts
-        unified_job_template:
-          name: Check-for-Alerts
-          type: job_template
-        related:
-          success_nodes:
-            - identifier: node-handover-to-agent
-          failure_nodes:
-            - identifier: node-uninstall-recorders
-          always_nodes: []
-      - identifier: node-handover-to-agent
-        unified_job_template:
-          name: Handover-To-Agent
-          type: job_template
-        related:
-          success_nodes:
-            - identifier: node-run-agent
-          failure_nodes: []
-          always_nodes: []
-      - identifier: node-run-agent
-        unified_job_template:
-          name: Run-Agent
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes:
-            - identifier: node-handback-from-agent
-      - identifier: node-handback-from-agent
-        unified_job_template:
-          name: Handback-From-Agent
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes:
-            - identifier: node-remove-access-from-agent
-      - identifier: node-remove-access-from-agent
-        unified_job_template:
-          name: Remove-Access-From-Agent
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes:
-            - identifier: node-install-run-topology-recorder-post-agent-execution
-      - identifier: node-install-run-topology-recorder-post-agent-execution
-        unified_job_template:
-          name: Run-Topology-Data-Recorder
-          type: job_template
-        extra_data:
-          recorders_awx_topology_filename_prefix: "end"
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes:
-            - identifier: node-pause-post-agent-execution
-      - identifier: node-pause-post-agent-execution
-        unified_job_template:
-          name: Pause
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes:
-            - identifier: node-uninstall-recorders
-      - identifier: node-uninstall-recorders
-        unified_job_template:
-          name: Uninstall-Data-Recorders
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes:
-            - identifier: node-remove-fault
-      - identifier: node-remove-fault
-        unified_job_template:
-          name: Remove-Faults
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes:
-            - identifier: node-undeploy-applications
-      - identifier: node-undeploy-applications
-        unified_job_template:
-          name: Undeploy-Applications
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes: []
-  loop: "{{ awx_experiments.scenarios }}"
+    workflow_nodes: "{{ lookup('ansible.builtin.template', 'files/workflow_nodes/scenario_exec.j2') }}"
+  loop: "{{ awx_scenario_cluster_groups }}"
   loop_control:
-    label: Scenario-{{ item }}
+    label: Scenario-{{ group.scenario_id }}
+    loop_var: group
+  vars:
+    requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
 
-- name: Create workflow template for scenario deinitialization (with agent)
+- name: Create workflow template for scenario initialization
   awx.awx.workflow_job_template:
     ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     inventory: ITBench
-    name: Scenario-{{ incident }}-Deinit
+    name: Scenario-{{ group.scenario_id }}-Init
     state: present
-    workflow_nodes:
-      - identifier: node-undeploy-tools
-        unified_job_template:
-          name: Undeploy-Tools
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes: []
-  loop: "{{ awx_experiments.scenarios }}"
+    workflow_nodes: "{{ lookup('ansible.builtin.template', 'files/workflow_nodes/scenario_init.j2') }}"
+  loop: "{{ awx_scenario_cluster_groups }}"
   loop_control:
-    label: Scenario-{{ item }}
+    label: Scenario-{{ group.scenario_id }}
+    loop_var: group
+  vars:
+    requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
 
-- name: Create workflow template for starting scenario (without agent)
+- name: Create workflow template for full scenario execution (with agent)
   awx.awx.workflow_job_template:
     ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     inventory: ITBench
-    name: Start-Scenario-{{ incident }}
+    name: Scenario-{{ group.scenario_id }}-Full-Execution
     state: present
-    workflow_nodes:
-      - identifier: node-deploy-tools
-        unified_job_template:
-          name: Deploy-Tools
-          type: job_template
-        related:
-          success_nodes:
-            - identifier: node-install-applications
-          failure_nodes: []
-          always_nodes: []
-      - identifier: node-install-applications
-        unified_job_template:
-          name: Deploy-Applications
-          type: job_template
-        related:
-          success_nodes:
-            - identifier: node-install-recorders
-          failure_nodes: []
-          always_nodes: []
-      - identifier: node-install-recorders
-        unified_job_template:
-          name: Install-Data-Recorders
-          type: job_template
-        related:
-          success_nodes:
-            - identifier: node-grant-access-to-agent
-          failure_nodes: []
-          always_nodes: []
-      - identifier: node-grant-access-to-agent
-        unified_job_template:
-          name: Grant-Access-To-Agent
-          type: job_template
-        related:
-          success_nodes:
-            - identifier: node-inject-fault
-          failure_nodes: []
-          always_nodes: []
-      - identifier: node-inject-fault
-        unified_job_template:
-          name: Inject-Faults"
-          type: job_template
-        related:
-          success_nodes:
-            - identifier: node-install-run-topology-recorder-post-fault-injection
-          failure_nodes: []
-          always_nodes: []
-      - identifier: node-install-run-topology-recorder-post-fault-injection
-        unified_job_template:
-          name: Run-Topology-Data-Recorder
-          type: job_template
-        extra_data:
-          recorders_awx_topology_filename_prefix: "post_fault_injection"
-        related:
-          success_nodes:
-            - identifier: node-check-for-alerts
-          failure_nodes: []
-          always_nodes: []
-      - identifier: node-check-for-alerts
-        unified_job_template:
-          name: Check-for-Alerts
-          type: job_template
-        related:
-          success_nodes:
-            - identifier: node-handover-to-agent
-          failure_nodes: []
-          always_nodes: []
-      - identifier: node-handover-to-agent
-        unified_job_template:
-          name: Handover-To-Agent
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes: []
-  loop: "{{ awx_experiments.scenarios }}"
+    workflow_nodes: "{{ lookup('ansible.builtin.template', 'files/workflow_nodes/scenario_exec.j2') }}"
+  loop: "{{ awx_scenario_cluster_groups }}"
   loop_control:
-    label: Scenario-{{ item }}
+    label: Scenario-{{ group.scenario_id }}
+    loop_var: group
+  vars:
+    requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
 
-- name: Create workflow template for stopping incidents (without agent)
+- name: Create workflow template for scenario deinitialization
   awx.awx.workflow_job_template:
     ask_variables_on_launch: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
-    name: "Stop-Scenario-{{ incident }}"
     inventory: ITBench
+    name: Scenario-{{ group.scenario_id }}-Deinit
     state: present
-    workflow_nodes:
-      - identifier: node-handback-from-agent
-        unified_job_template:
-          name: Handback-From-Agent
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes:
-            - identifier: node-remove-access-from-agent
-      - identifier: node-remove-access-from-agent
-        unified_job_template:
-          name: Remove-Access-From-Agent
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes:
-            - identifier: node-uninstall-recorders
-      - identifier: node-uninstall-recorders
-        unified_job_template:
-          name: Uninstall-Data-Recorders
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes:
-            - identifier: node-remove-fault
-      - identifier: node-remove-fault
-        unified_job_template:
-          name: Remove-Faults
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes:
-            - identifier: node-undeploy-applications
-      - identifier: node-undeploy-applications
-        unified_job_template:
-          name: Undeploy-Applications
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes:
-            - identifier: node-undeploy-tools
-      - identifier: node-undeploy-tools
-        unified_job_template:
-          name: Undeploy-Tools
-          type: job_template
-        related:
-          success_nodes: []
-          failure_nodes: []
-          always_nodes: []
-  loop: "{{ awx_experiments.scenarios }}"
+    workflow_nodes: "{{ lookup('ansible.builtin.template', 'files/workflow_nodes/scenario_deinit.j2') }}"
+  loop: "{{ awx_scenario_cluster_groups }}"
   loop_control:
-    label: Scenario-{{ item }}
+    label: Scenario-{{ group.scenario_id }}
+    loop_var: group
+  vars:
+    requires_aws_credentials: "{{ awx_credentials.aws is defined }}"

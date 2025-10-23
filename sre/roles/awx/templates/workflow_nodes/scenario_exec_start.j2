@@ -1,0 +1,112 @@
+---
+- identifier: node-deploy-tools
+  unified_job_template:
+    name: Deploy-Tools
+    type: job_template
+  related:
+    credentials:
+      - Cluster-{{ group.cluster_index + 1 }}-Kubeconfig
+{% if requires_aws_credentials %}
+      - AWS
+{% endif %}
+    success_nodes:
+      - identifier: node-install-applications
+- identifier: node-install-applications
+  unified_job_template:
+    name: Deploy-Applications
+    type: job_template
+  related:
+    credentials:
+      - Cluster-{{ group.cluster_index + 1 }}-Kubeconfig
+{% if requires_aws_credentials %}
+      - AWS
+{% endif %}
+    success_nodes:
+      - identifier: node-install-recorders
+- identifier: node-install-recorders
+  unified_job_template:
+    name: Install-Data-Recorders
+    type: job_template
+  extra_data:
+    recorders_awx_topology_filename_prefix: init
+  related:
+    credentials:
+      - Cluster-{{ group.cluster_index + 1 }}-Kubeconfig
+{% if requires_aws_credentials %}
+      - AWS
+{% endif %}
+    success_nodes:
+      - identifier: node-pause-at-start
+- identifier: node-pause-at-start
+  unified_job_template:
+    name: Pause
+    type: job_template
+  related:
+    success_nodes:
+      - identifier: node-grant-access-to-agent
+- identifier: node-grant-access-to-agent
+  unified_job_template:
+    name: Grant-Access-To-Agent
+    type: job_template
+  related:
+    credentials:
+      - Cluster-{{ group.cluster_index + 1 }}-Kubeconfig
+{% if requires_aws_credentials %}
+      - AWS
+{% endif %}
+    success_nodes:
+      - identifier: node-inject-fault
+- identifier: node-inject-fault
+  unified_job_template:
+    name: Inject-Faults
+    type: job_template
+  related:
+    credentials:
+      - Cluster-{{ group.cluster_index + 1 }}-Kubeconfig
+{% if requires_aws_credentials %}
+      - AWS
+{% endif %}
+    success_nodes:
+      - identifier: node-install-run-topology-recorder-post-fault-injection
+- identifier: node-install-run-topology-recorder-post-fault-injection
+  unified_job_template:
+    name: Run-Topology-Data-Recorder
+    type: job_template
+  extra_data:
+    recorders_awx_topology_filename_prefix: post_fault_injection
+  related:
+    credentials:
+      - Cluster-{{ group.cluster_index + 1 }}-Kubeconfig
+{% if requires_aws_credentials %}
+      - AWS
+{% endif %}
+    success_nodes:
+      - identifier: node-pause-post-fault-injection
+- identifier: node-pause-post-fault-injection
+  unified_job_template:
+    name: Pause
+    type: job_template
+  related:
+    success_nodes:
+      - identifier: node-check-for-alerts
+- identifier: node-check-for-alerts
+  unified_job_template:
+    name: Check-for-Alerts
+    type: job_template
+  related:
+    credentials:
+      - Cluster-{{ group.cluster_index + 1 }}-Kubeconfig
+{% if requires_aws_credentials %}
+      - AWS
+{% endif %}
+    success_nodes:
+      - identifier: node-handover-to-agent
+- identifier: node-handover-to-agent
+  unified_job_template:
+    name: Handover-To-Agent
+    type: job_template
+{% if requires_aws_credentials %}
+  related:
+    credentials:
+      - AWS
+{% endif %}
