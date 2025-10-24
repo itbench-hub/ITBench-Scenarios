@@ -1,0 +1,22 @@
+---
+argument_specs:
+  main:
+    short_description: Main entry point for faults role
+    description:
+      - This is the main entry point for the environment role.
+      - This role is responsible for modifying the environment before fault injection and after fault removal.
+    author:
+      - Gerard Vanloo
+    options:
+      faults_cluster:
+        required: true
+        type: dict
+        options:
+          kubeconfig:
+            default: ~/.kube/config
+            required: false
+            type: str
+      faults_specs:
+        elements: dict
+        required: true
+        type: list

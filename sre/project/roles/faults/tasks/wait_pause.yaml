@@ -1,0 +1,4 @@
+---
+- name: Pause before fault injection
+  ansible.builtin.pause:
+    seconds: "{{ spec.seconds }}"

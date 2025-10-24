@@ -1,0 +1,93 @@
+---
+- name: Find all fault status files
+  ansible.builtin.find:
+    path: "{{ status_storage.local.directory }}"
+    patterns:
+      - "fault_*_status.json"
+  register: status_local_fault_status_files
+  when:
+    - status_storage.local is defined
+
+- name: Load fault status information from files
+  ansible.builtin.set_fact:
+    status_fault_events: "{{ (status_fault_events | default([])) + events }}"
+  loop: "{{ status_local_fault_status_files.files }}"
+  loop_control:
+    label: file/{{ file.path }}
+    loop_var: file
+  vars:
+    events: |
+      {{
+        lookup('ansible.builtin.file', file.path) |
+        from_json |
+        community.general.json_query('events')
+      }}
+  when:
+    - status_storage.local is defined
+    - status_local_fault_status_files is defined
+
+- name: Retrieve information on fault status files in S3 bucket
+  amazon.aws.s3_object_info:
+    bucket_name: "{{ status_storage.s3.bucket }}"
+    endpoint_url: "{{ status_storage.s3.endpoint }}"
+    prefix: "{{ status_storage.s3.directory }}/fault_"
+  register: status_s3_object_info
+  when:
+    - status_storage.s3 is defined
+
+- name: Create temporary destination for s3 storage file
+  ansible.builtin.tempfile:
+    suffix: json
+  register: status_temp_dest_file
+  when:
+    - status_storage.s3 is defined
+
+- name: Copy files from s3 storage
+  amazon.aws.s3_object:
+    bucket_name: "{{ status_storage.s3.bucket }}"
+    endpoint_url: "{{ status_storage.s3.endpoint }}"
+    object: "{{ object_key }}"
+    dest: "{{ status_temp_dest_file.path }}"
+    mode: get
+  loop: "{{ status_s3_object_info.s3_keys }}"
+  loop_control:
+    label: key/{{ object_key }}
+    loop_var: object_key
+  register: status_s3_objects
+  when:
+    - status_storage.s3 is defined
+    - status_s3_object_info.s3_keys is defined
+    - status_s3_object_info.s3_keys | length == 1
+
+- name: Combine the contents of s3 objects into one array
+  ansible.builtin.set_fact:
+    status_fault_events: "{{ (status_fault_events | default([])) + events }}"
+  loop: "{{ status_s3_objects.results }}"
+  loop_control:
+    label: object/{{ object.key }}
+    loop_var: object
+  vars:
+    events: |
+      {{
+        object.contents |
+        from_json |
+        community.general.json_query('events')
+      }}
+  when:
+    - status_storage.s3 is defined
+    - status_s3_objects is defined
+
+- name: Update status file with new event ({{ status_state }})
+  ansible.builtin.copy:
+    content: "{{ {'events': events + status_fault_events} | to_nice_json }}"
+    dest: "{{ status_status_temp_file.path }}"
+    mode: "0644"
+  vars:
+    events: |
+      {{
+        lookup('ansible.builtin.file', status_status_temp_file) |
+        from_json |
+        community.general.json_query('events')
+      }}
+  when:
+    - status_fault_events is defined
