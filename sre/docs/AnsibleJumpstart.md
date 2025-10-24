@@ -52,7 +52,7 @@ The `---` at the top is an optional affectation that YAML uses to mark the top o
 Similarly, documents *should* end `___`, although we often forget to do that.
 If you leave it out, I don't think anything breaks, but it's simple enough to do, so please just include it.
 
-After that are a few global values as defined in [the DEVELOPER GUIDE](DEVELOPER_GUIDE.md)
+After that are a few global values as defined in [the CONTRIBUTING guide](../../../CONTRIBUTING.md)
 formatted in standard [YAML syntax](https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html).
 
 The documentation block has a name that will be referenced in the `tasks/main.yaml` block described below.
