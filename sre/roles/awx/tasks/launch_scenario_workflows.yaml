@@ -29,7 +29,7 @@
 
 - name: Generate run identifier (UUID4)
   ansible.builtin.command:
-    cmd: uuidgen -r
+    cmd: uuidgen
   changed_when: false
   register: awx_run_uuid
 
