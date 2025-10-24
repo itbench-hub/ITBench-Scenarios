@@ -57,25 +57,33 @@
       - name: AWS
 {% endif %}
     success_nodes:
-      - identifier: node-inject-fault
+{% for index in fault_injection_indexes %}
+      - identifier: node-inject-fault-{{ index + 1 }}
+{% endfor %}
   unified_job_template:
     name: Grant-Access-To-Agent
     type: job_template
-- identifier: node-inject-fault
+{% for index in fault_injection_indexes %}
+- identifier: node-inject-fault-{{ index + 1 }}
   extra_data:
     incident_id: {{ scenario_id }}
+    injection_index: {{ index }}
   related:
     credentials:
       - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
       - name: AWS
 {% endif %}
+    failure_nodes:
+      - identifier: node-remove-access-from-agent
     success_nodes:
       - identifier: node-install-run-topology-recorder-post-fault-injection
   unified_job_template:
     name: Inject-Faults
     type: job_template
+{% endfor %}
 - identifier: node-install-run-topology-recorder-post-fault-injection
+  all_parents_must_converge: true
   extra_data:
     recorders_awx_topology_filename_prefix: post_fault_injection
   related:

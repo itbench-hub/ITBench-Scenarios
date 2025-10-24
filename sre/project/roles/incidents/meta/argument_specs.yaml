@@ -14,3 +14,11 @@ argument_specs:
           id:
             required: true
             type: int
+  set_injection_group_count:
+    author:
+      - Gerard Vanloo
+    options:
+      incidents_ids:
+        elements: int
+        required: true
+        type: list
