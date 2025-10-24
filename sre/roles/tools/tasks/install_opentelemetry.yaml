@@ -138,54 +138,37 @@
   when:
     - tools_required.opentelemetry
 
-- name: Install OpenTelemetry Collector for Kubernetes Events
-  kubernetes.core.helm:
-    chart_ref: opentelemetry-collector
-    chart_repo_url: https://open-telemetry.github.io/opentelemetry-helm-charts
-    chart_version: 0.134.0
+- name: Install Kubernetes object collector
+  kubernetes.core.k8s:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    release_name: "{{ helm_releases.collectors.names.kubernetes_events }}"
-    release_namespace: "{{ helm_releases.collectors.namespace }}"
-    release_state: present
-    timeout: 10m0s
-    values:
-      mode: deployment
-      replicaCount: 1
-      presets:
-        kubernetesEvents:
-          enabled: true
-      image:
-        repository: quay.io/it-bench/opentelemetry-collector
-        tag: 1.0.0
-      podAnnotations:
-        openshift.io/required-scc: restricted-v2
-      ports:
-        jaeger-compact:
-          enabled: false
-        jaeger-thrift:
-          enabled: false
-        jaeger-grpc:
-          enabled: false
-        zipkin:
-          enabled: false
-        metrics:
-          enabled: "{{ tools_required.prometheus }}"
-      serviceMonitor:
-        enabled: "{{ tools_required.prometheus }}"
-      config:
-        exporters:
-          clickhouse:
-            username: "{{ tools_clickhouse_username }}"
-            password: "{{ tools_clickhouse_password }}"
-            endpoint: "{{ tools_clickhouse_endpoint }}"
-            logs_table_name: kubernetes_events
-        service:
-          pipelines:
-            logs:
-              exporters:
-                - debug
-                - clickhouse
+    name: "{{ helm_releases.collectors.names.kubernetes_events }}"
+    namespace: "{{ helm_releases.collectors.namespace }}"
+    template: templates/opentelemetry/collectors/kubernetes-objects.j2
+    state: present
+  vars:
+    container_image: |
+      {{
+        lookup('ansible.builtin.file', 'files/opentelemetry/collectors/kubernetes-objects.yaml') |
+        from_yaml |
+        community.general.json_query('spec.image')
+      }}
+  when:
+    - tools_required.opentelemetry
+
+- name: Wait for Kubernetes object collector deployment to complete
+  kubernetes.core.k8s_info:
+    api_version: opentelemetry.io/v1beta1
+    kind: OpenTelemetryCollector
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    name: "{{ helm_releases.collectors.names.kubernetes_events }}"
+    namespace: "{{ helm_releases.collectors.namespace }}"
     wait: true
+  register: tools_kubernetes_objects_collector_info
+  until:
+    - tools_kubernetes_objects_collector_info.resources[0].status.scale is defined
+    - tools_kubernetes_objects_collector_info.resources[0].status.scale.statusReplicas | split('/') | unique | length == 1
+  retries: 10
+  delay: 30
   when:
     - tools_required.opentelemetry
 
@@ -194,13 +177,12 @@
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     name: "{{ instances.jaeger.name }}"
     namespace: "{{ helm_releases.collectors.namespace }}"
-    template: templates/jaeger/collector.j2
+    template: templates/opentelemetry/collectors/jaeger.j2
     state: present
-  register: tools_jaeger_collector
   vars:
     container_image: |
       {{
-        lookup('ansible.builtin.file', 'files/jaeger/collector.yaml') |
+        lookup('ansible.builtin.file', 'files/opentelemetry/collectors/jaeger.yaml') |
         from_yaml |
         community.general.json_query('spec.image')
       }}
@@ -209,13 +191,13 @@
   when:
     - tools_required.jaeger
 
-- name: Wait for Jaeger deployment to complete
+- name: Wait for Jaeger collector to complete
   kubernetes.core.k8s_info:
-    api_version: "{{ tools_jaeger_collector.result.apiVersion }}"
-    kind: "{{ tools_jaeger_collector.result.kind }}"
+    api_version: opentelemetry.io/v1beta1
+    kind: OpenTelemetryCollector
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    name: "{{ tools_jaeger_collector.result.metadata.name }}"
-    namespace: "{{ tools_jaeger_collector.result.metadata.namespace }}"
+    name: "{{ helm_releases.collectors.names.jaeger }}"
+    namespace: "{{ helm_releases.collectors.namespace }}"
     wait: true
   register: tools_jaeger_collector_info
   until:
@@ -225,4 +207,3 @@
   delay: 30
   when:
     - tools_required.jaeger
-    - tools_jaeger_collector is defined

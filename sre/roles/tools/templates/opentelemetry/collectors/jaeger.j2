@@ -1,12 +1,15 @@
 ---
 apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
+metadata:
+  name: {{ tools_helm_releases.opentelemetry_collectors.names.jaeger }}
+  namespace: {{ tools_helm_releases.opentelemetry_collectors.namespace }}
 spec:
   image: {{ container_image }}
   mode: deployment
   observability:
     metrics:
-      enableMetrics: true
+      enableMetrics: {{ tools_required.prometheus }}
   podAnnotations:
     openshift.io/required-scc: restricted-v2
   ports:
