@@ -52,11 +52,11 @@ The `---` at the top is an optional affectation that YAML uses to mark the top o
 Similarly, documents *should* end `___`, although we often forget to do that.
 If you leave it out, I don't think anything breaks, but it's simple enough to do, so please just include it.
 
-After that are a few global values as defined in the [CONTRIBUTING guide](https://github.com/itbench-hub/ITBench-Scenarios/blob/main/CONTRIBUTING.md)
+After that are a few global values as defined in the [CONTRIBUTING guide](../../CONTRIBUTING.md)
 formatted in standard [YAML syntax](https://docs.ansible.com/ansible/latest/reference_appendices/YAMLSyntax.html).
 
 The documentation block has a name that will be referenced in the `tasks/main.yaml` block described below.
-Its contents must match the [incidents_schema.yaml](https://github.com/itbench-hub/ITBench-Scenarios/tree/main/sre/roles/incidents/files/specs)
+Its contents must match the [incidents_schema.yaml](../roles/incidents/files/specs)
 [JSON schema](https://json-schema.org/overview/what-is-jsonschema).  Note that JSON maps one-to-one with YAML
 (pretty much), which is why a JSON schema can specify the contents of the documentation block in this YAML file.
 
