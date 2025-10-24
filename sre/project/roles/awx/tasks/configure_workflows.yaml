@@ -1,4 +1,11 @@
 ---
+- name: Import incidents role
+  ansible.builtin.include_role:
+    name: incidents
+    tasks_from: set_injection_group_count
+  vars:
+    incidents_ids: "{{ awx_experiments.scenarios }}"
+
 - name: Create workflow for syncing scenario repositories
   awx.awx.workflow_job_template:
     controller_host: "{{ awx_controller_host }}"
@@ -30,6 +37,7 @@
     loop_var: scenario_id
   vars:
     cluster_index: "{{ scenario_index % (awx_runners.kubeconfigs | length) }}"
+    fault_injection_indexes: "{{ range(0, incidents_injection_group_count[scenario_id]) | list }}"
     requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
 
 - name: Create workflow template for partial scenario execution (stop - without agent)
@@ -49,6 +57,7 @@
     loop_var: scenario_id
   vars:
     cluster_index: "{{ scenario_index % (awx_runners.kubeconfigs | length) }}"
+    fault_injection_indexes: "{{ range(0, incidents_injection_group_count[scenario_id]) | list }}"
     requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
 
 - name: Create workflow template for full scenario execution (with agent)
@@ -68,4 +77,5 @@
     loop_var: scenario_id
   vars:
     cluster_index: "{{ scenario_index % (awx_runners.kubeconfigs | length) }}"
+    fault_injection_indexes: "{{ range(0, incidents_injection_group_count[scenario_id]) | list }}"
     requires_aws_credentials: "{{ awx_credentials.aws is defined }}"
