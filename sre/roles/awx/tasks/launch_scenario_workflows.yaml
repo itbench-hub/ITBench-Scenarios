@@ -83,7 +83,7 @@
   vars:
     run_directory: "{{ awx_agent.version }}/{{ awx_run_uuid.stdout }}/{{ item | string }}/1"
   when:
-    - awx_experiments.phase == "init" or awx_experiments.phase == "full"
+    - awx_experiments.phase == "init"
 
 - name: Wait for initialization workflows to complete
   awx.awx.workflow_node_wait:
@@ -99,7 +99,8 @@
   loop_control:
     label: Workflow-{{ item.id }}
   when:
-    - awx_experiments.phase == "init" or awx_experiments.phase == "full"
+    - awx_experiments.phase == "init"
+    - awx_scenario_init_workflows is defined
 
 - name: Launch the scenario full execution workflow
   awx.awx.workflow_launch:
@@ -146,8 +147,9 @@
     request_timeout: 30
     timeout: 600
     workflow_job_id: "{{ item.id }}"
-  loop: "{{ awx_scenario_deinit_workflows.results if awx_experiments.phase == 'deinit' else [] }}"
+  loop: "{{ awx_scenario_deinit_workflows.results }}"
   loop_control:
     label: Workflow-{{ item.id }}
   when:
     - awx_experiments.phase == "deinit"
+    - awx_scenario_deinit_workflows is defined
