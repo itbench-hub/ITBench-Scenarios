@@ -6,3 +6,18 @@
     release_name: "{{ helm_release.name }}"
     release_namespace: "{{ helm_release.namespace }}"
     wait: true
+
+- name: Delete topology-monitor PVCs (if applicable)
+  kubernetes.core.k8s:
+    state: absent
+    api_version: v1
+    kind: PersistentVolumeClaim
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    name: "{{ item }}"
+    namespace: kube-system
+  loop:
+    - data-topology-monitor-0
+    - import-topology-monitor-0
+    - logs-topology-monitor-0
+    - metrics-topology-monitor-0
+  ignore_errors: true
