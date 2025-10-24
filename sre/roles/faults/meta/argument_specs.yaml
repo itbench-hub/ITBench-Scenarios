@@ -246,6 +246,23 @@ argument_specs:
                       target_port:
                         required: true
                         type: int
+              misconfigured_service_mesh:
+                required: false
+                type: dict
+                options:
+                  service:
+                    required: false
+                    type: dict
+                    options:
+                      name:
+                        required: true
+                        type: str
+                      namespace:
+                        required: true
+                        type: str
+                      target_port:
+                        required: true
+                        type: int
               modify_environment_variables:
                 required: false
                 type: dict

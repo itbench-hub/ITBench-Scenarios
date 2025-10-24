@@ -99,6 +99,14 @@ Injection tasks are described [here](../roles/faults/tasks/inject_custom_misconf
 
 **Example:** [Incident 30](../roles/incidents/files/specs/incident_30.yaml)
 
+## Custom - Misconfigured Service Mesh
+
+This fault adds an Istio service mesh with a misconfiguration. ** more to say
+
+Injection tasks are described [here](../roles/faults/tasks/inject_custom_misconfigured_service_mesh.yaml).
+
+**Example:** [Incident ##](../roles/incidents/files/specs/incident_##.yaml) ** add an incident?
+
 ## Custom - Modify Environment Variables
 
 This fault changes the matching environment variable(s) of a given workload's container. Many workloads use environment variables to configure or change their behavior. Thus the expression of this change is dynamic.
