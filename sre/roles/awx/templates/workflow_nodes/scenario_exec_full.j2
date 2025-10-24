@@ -113,7 +113,7 @@
 {% if requires_aws_credentials %}
       - name: AWS
 {% endif %}
-    failures_nodes:
+    failure_nodes:
       - identifier: node-remove-access-from-agent
     success_nodes:
       - identifier: node-handover-to-agent
@@ -126,7 +126,7 @@
     credentials:
       - name: AWS
 {% endif %}
-    failures_nodes:
+    failure_nodes:
       - identifier: node-remove-access-from-agent
     success_nodes:
       - identifier: node-run-agent
