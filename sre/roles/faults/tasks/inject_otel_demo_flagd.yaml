@@ -55,7 +55,15 @@
 
 - name: Determine which deployments need to be restarted based on flags
   ansible.builtin.set_fact:
-    deployments_to_restart: "{{ spec.flags | map(attribute='name') | map('extract', flagd_failure_flag_deployment_mapping) | select('defined') | unique | list }}"
+    deployments_to_restart: |
+      {{
+        spec.flags |
+        map(attribute='name') |
+        map('extract', flagd_failure_flag_deployment_mapping) |
+        select('defined') |
+        unique |
+        list
+      }}
 
 - name: Restart only the deployments associated with the modified flags
   ansible.builtin.command:
