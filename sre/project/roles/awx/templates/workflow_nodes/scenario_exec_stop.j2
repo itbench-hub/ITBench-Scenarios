@@ -48,7 +48,9 @@
     incident_id: {{ scenario_id }}
   related:
     always_nodes:
-      - identifier: node-remove-fault
+{% for index in fault_injection_indexes %}
+      - identifier: node-remove-fault-{{ index + 1 }}
+{% endfor %}
     credentials:
       - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
 {% if requires_aws_credentials %}
@@ -57,9 +59,11 @@
   unified_job_template:
     name: Uninstall-Data-Recorders
     type: job_template
-- identifier: node-remove-fault
+{% for index in fault_injection_indexes %}
+- identifier: node-remove-fault-{{ index + 1 }}
   extra_data:
     incident_id: {{ scenario_id }}
+    injection_index: {{ index }}
   related:
     always_nodes:
       - identifier: node-undeploy-applications
@@ -71,7 +75,9 @@
   unified_job_template:
     name: Remove-Faults
     type: job_template
+{% endfor %}
 - identifier: node-undeploy-applications
+  all_parents_must_converge: true
   extra_data:
     incident_id: {{ scenario_id }}
   related:
