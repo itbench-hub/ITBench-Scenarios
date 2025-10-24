@@ -14,7 +14,7 @@ spec:
       selected:
         - kubernetes-topology-monitor
   faults:
-    - custom: 
+    - custom:
         name: misconfigured-resource-quota
         misconfigured_network_policy:
           workload:
