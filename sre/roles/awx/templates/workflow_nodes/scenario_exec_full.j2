@@ -1,18 +1,4 @@
 ---
-- identifier: node-reinit-tools
-  extra_data:
-    incident_id: {{ scenario_id }}
-  related:
-    credentials:
-      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
-{% if requires_aws_credentials %}
-      - name: AWS
-{% endif %}
-    success_nodes:
-      - identifier: node-deploy-applications
-  unified_job_template:
-    name: Reinit-Tools
-    type: job_template
 - identifier: node-deploy-applications
   extra_data:
     incident_id: {{ scenario_id }}
@@ -25,9 +11,23 @@
     failure_nodes:
       - identifier: node-undeploy-applications
     success_nodes:
-      - identifier: node-install-recorders
+      - identifier: node-reinit-tools
   unified_job_template:
     name: Deploy-Applications
+    type: job_template
+- identifier: node-reinit-tools
+  extra_data:
+    incident_id: {{ scenario_id }}
+  related:
+    credentials:
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
+{% if requires_aws_credentials %}
+      - name: AWS
+{% endif %}
+    success_nodes:
+      - identifier: node-install-recorders
+  unified_job_template:
+    name: Reinit-Tools
     type: job_template
 - identifier: node-install-recorders
   extra_data:
