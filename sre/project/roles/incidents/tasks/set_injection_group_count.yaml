@@ -1,0 +1,24 @@
+---
+- name: Create list of scenario files to load
+  ansible.builtin.set_fact:
+    incidents_spec_file_paths: "{{ (incidents_spec_file_paths | default([])) + [file_path] }}"
+  loop: "{{ incidents_ids }}"
+  vars:
+    file_path: files/specs/incident_{{ item }}.yaml
+
+- name: Create scenario injection group count lookup (dictionary)
+  ansible.builtin.set_fact:
+    incidents_injection_group_count: |
+      {{
+        (
+          incidents_injection_group_count | default({})
+        ) |
+        combine(
+          {
+            item: scenario_spec.spec.disruptions.injections | length
+          }
+        )
+      }}
+  loop: "{{ incidents_spec_file_paths }}"
+  vars:
+    scenario_spec: "{{ lookup('ansible.builtin.file', item) | from_yaml }}"
