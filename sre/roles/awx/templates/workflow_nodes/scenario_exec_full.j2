@@ -77,7 +77,7 @@
       - name: AWS
 {% endif %}
     failure_nodes:
-      - identifier: node-remove-fault
+      - identifier: node-remove-access-from-agent
     success_nodes:
       - identifier: node-install-run-topology-recorder-post-fault-injection
   unified_job_template:
@@ -92,6 +92,8 @@
 {% if requires_aws_credentials %}
       - name: AWS
 {% endif %}
+    failure_nodes:
+      - identifier: node-remove-access-from-agent
     success_nodes:
       - identifier: node-pause-post-fault-injection
   unified_job_template:
@@ -111,6 +113,8 @@
 {% if requires_aws_credentials %}
       - name: AWS
 {% endif %}
+    failures_nodes:
+      - identifier: node-remove-access-from-agent
     success_nodes:
       - identifier: node-handover-to-agent
   unified_job_template:
@@ -122,6 +126,8 @@
     credentials:
       - name: AWS
 {% endif %}
+    failures_nodes:
+      - identifier: node-remove-access-from-agent
     success_nodes:
       - identifier: node-run-agent
   unified_job_template:
