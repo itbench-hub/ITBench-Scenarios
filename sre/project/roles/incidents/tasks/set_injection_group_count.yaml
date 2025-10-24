@@ -15,7 +15,7 @@
         ) |
         combine(
           {
-            item: scenario_spec.spec.disruptions.injections | length
+            scenario_spec.metadata.id: scenario_spec.spec.disruption.injections | length
           }
         )
       }}
