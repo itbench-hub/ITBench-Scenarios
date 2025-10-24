@@ -7,7 +7,7 @@
   when:
     - fault.custom.name == 'low-mem-cpu-constraints'
     - fault.custom.low_mem_cpu_constraints is defined
-      
+
 - name: Import invalid command injection tasks
   ansible.builtin.import_tasks:
     file: inject_custom_invalid_command.yaml
