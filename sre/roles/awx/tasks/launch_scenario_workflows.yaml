@@ -95,7 +95,7 @@
     request_timeout: 30
     timeout: 600
     workflow_job_id: "{{ item.id }}"
-  loop: "{{ awx_scenario_init_workflows.results }}"
+  loop: "{{ awx_scenario_init_workflows.results if awx_experiments.phase == 'init' else [] }}"
   loop_control:
     label: Workflow-{{ item.id }}
   when:
@@ -147,7 +147,7 @@
     request_timeout: 30
     timeout: 600
     workflow_job_id: "{{ item.id }}"
-  loop: "{{ awx_scenario_deinit_workflows.results }}"
+  loop: "{{ awx_scenario_deinit_workflows.results if awx_experiments.phase == 'deinit' else [] }}"
   loop_control:
     label: Workflow-{{ item.id }}
   when:
