@@ -63,7 +63,7 @@ Its contents must match the [incidents_schema.yaml](https://github.com/itbench-h
 ## `tasks/main.yaml` file
 
 This is the part of the incident definition that actually effects change to the running scenario.
-By way of example, let's consider [incident_1]()
+By way of example, let's consider incident_1.
 
 In the example of incident_1. The first block looks like this:
 
