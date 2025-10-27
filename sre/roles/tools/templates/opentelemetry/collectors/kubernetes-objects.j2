@@ -15,11 +15,10 @@ metadata:
   name: kubernetes-events-otel-collector
 rules:
   - apiGroups:
-      - ''
+      - events.k8s.io
     resources:
-      - pods
+      - events
     verbs:
-      - get
       - list
       - watch
 ---
