@@ -1,23 +1,5 @@
 ---
-- name: Create ResourceQuota with hard memory limits
-  kubernetes.core.k8s:
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: v1
-      kind: ResourceQuota
-      metadata:
-        name: "{{ spec.namespace.name }}-memory"
-        namespace: "{{ spec.namespace.name }}"
-      spec:
-        hard:
-          requests.memory: 1Gi
-          limits.memory: 2Gi
-          requests.cpu: "1"
-          limits.cpu: "2"
-          pods: "10"
-    state: present
-
-- name: Retrieve workload replica information
+- name: Retrieve workload information for target services
   kubernetes.core.k8s_info:
     api_version: apps/v1
     kind: "{{ workload.kind }}"
@@ -30,18 +12,29 @@
     label: "{{ workload.kind | lower }}/{{ workload.name }}"
     loop_var: workload
   when:
-    - workload.name != 'otel-collector'
+    - workload.name in ['valkey', 'postgresql']  # Only target specific services
 
-- name: Scale down workloads to 0 replicas
-  kubernetes.core.k8s_scale:
+- name: Patch workloads with restrictive resource limits
+  kubernetes.core.k8s:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    state: patched
     api_version: "{{ result.resources[0].apiVersion }}"
     kind: "{{ result.resources[0].kind }}"
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
     name: "{{ result.resources[0].metadata.name }}"
     namespace: "{{ result.resources[0].metadata.namespace }}"
-    replicas: 0
-    wait: true
-    wait_timeout: 60
+    definition:
+      spec:
+        template:
+          spec:
+            containers:
+            - name: "{{ result.resources[0].spec.template.spec.containers[0].name }}"
+              resources:
+                limits:
+                  memory: "256Mi" 
+                  cpu: "200m"
+                requests:
+                  memory: "128Mi"
+                  cpu: "100m"
   loop: "{{ faults_workloads_info.results }}"
   loop_control:
     label: "{{ result.resources[0].kind | lower }}/{{ result.resources[0].metadata.name }}"
@@ -50,15 +43,20 @@
     - faults_workloads_info is defined
     - result.resources | length == 1
 
-- name: Scale up workloads to original replica count
-  kubernetes.core.k8s_scale:
+- name: Restart workloads to apply new resource limits
+  kubernetes.core.k8s:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    state: patched
     api_version: "{{ result.resources[0].apiVersion }}"
     kind: "{{ result.resources[0].kind }}"
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
     name: "{{ result.resources[0].metadata.name }}"
     namespace: "{{ result.resources[0].metadata.namespace }}"
-    replicas: "{{ result.resources[0].spec.replicas }}"
-    wait: false
+    definition:
+      spec:
+        template:
+          metadata:
+            annotations:
+              kubectl.kubernetes.io/restartedAt: "{{ ansible_date_time.iso8601 }}"
   loop: "{{ faults_workloads_info.results }}"
   loop_control:
     label: "{{ result.resources[0].kind | lower }}/{{ result.resources[0].metadata.name }}"
