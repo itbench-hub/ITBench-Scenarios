@@ -9,7 +9,7 @@ spec:
   mode: deployment
   observability:
     metrics:
-      enableMetrics: {{ tools_required.prometheus }}
+      enableMetrics: {{ tools_required.prometheus | default(true) }}
   podAnnotations:
     openshift.io/required-scc: restricted-v2
   ports:
@@ -37,7 +37,7 @@ spec:
           traces_store:
             opensearch:
               server_urls:
-                - - http://opensearch-cluster-master.{{ tools_helm_releases.opensearch.namespace }}.svc.cluster.local:9200
+                - http://opensearch-cluster-master.{{ tools_helm_releases.opensearch.namespace }}.svc.cluster.local:9200
     receivers:
       otlp:
         protocols:
