@@ -6,6 +6,6 @@
 apiVersion: opentelemetry.io/v1beta1
 kind: OpenTelemetryCollector
 metadata:
-  name: jaeger
+  name: kubernetes
 spec:
   image: quay.io/it-bench/opentelemetry-collector:1.0.0
