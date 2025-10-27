@@ -2,7 +2,7 @@
 metadata:
   complexity: Low
   id: 32
-  name: Low Mem CPU Constraints
+  name: Low Resource Limits
   platform: kubernetes
 spec:
   environment:
