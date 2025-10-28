@@ -23,7 +23,7 @@
         path: /spec/template/spec/containers
         value:
           name: storage-filler
-          image: busybox:latest
+          image: docker.io/library/busybox:latest
           command:
             - /bin/sh
             - -c
