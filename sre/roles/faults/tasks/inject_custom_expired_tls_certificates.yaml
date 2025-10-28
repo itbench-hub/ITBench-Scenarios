@@ -1,0 +1,75 @@
+---
+
+- name: Retrieve current istiod deployment
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: istiod
+    namespace: "{{ spec.istio_namespace | default('istio-system') }}"
+  register: istiod_deployment_info
+
+- name: Set original environment variables fact
+  ansible.builtin.set_fact:
+    original_istiod_env: "{{ istiod_deployment_info.resources[0].spec.template.spec.containers[0].env | default([]) }}"
+
+- name: Construct new environment variables
+  ansible.builtin.set_fact:
+    new_istiod_env: >-
+      {{
+        original_istiod_env |
+        rejectattr('name', 'in', ['DEFAULT_WORKLOAD_CERT_TTL', 'MAX_WORKLOAD_CERT_TTL', 'WORKLOAD_CERT_ROTATION_GRACE_PERIOD']) |
+        list + [
+          {
+            "name": "DEFAULT_WORKLOAD_CERT_TTL",
+            "value": spec.cert_ttl | default('1m')
+          },
+          {
+            "name": "MAX_WORKLOAD_CERT_TTL",
+            "value": spec.max_cert_ttl | default('2m')
+          },
+          {
+            "name": "WORKLOAD_CERT_ROTATION_GRACE_PERIOD",
+            "value": spec.grace_period | default('30s')
+          }
+        ]
+      }}
+
+- name: Inject fault (expired TLS certificates)
+  kubernetes.core.k8s_json_patch:
+    api_version: apps/v1
+    kind: Deployment
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: istiod
+    namespace: "{{ spec.istio_namespace | default('istio-system') }}"
+    patch:
+      - op: replace
+        path: /spec/template/spec/containers/0/env
+        value: "{{ new_istiod_env }}"
+
+- name: Wait for istiod pods to restart with new configuration
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Pod
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    namespace: "{{ spec.istio_namespace | default('istio-system') }}"
+    label_selectors:
+      - app=istiod
+    wait: true
+    wait_condition:
+      type: Ready
+      status: "True"
+    wait_timeout: 300
+
+- name: Display fault injection confirmation
+  ansible.builtin.debug:
+    msg: |
+      TLS certificate expiration fault injected successfully!
+      
+      Configuration applied:
+      - Default certificate TTL: {{ spec.cert_ttl | default('1m') }}
+      - Maximum certificate TTL: {{ spec.max_cert_ttl | default('2m') }}
+      - Certificate rotation grace period: {{ spec.grace_period | default('30s') }}
+      
+      This will cause certificates to expire quickly, disrupting service mesh communication.
+      Monitor your applications for TLS handshake failures and certificate validation errors.

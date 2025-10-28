@@ -1,0 +1,33 @@
+fault:
+  - category: network
+    condition: "Expired TLS Certificates"
+    entity:
+      kind: "kubernetes"
+      name: "istiod"
+    fault_mechanism: "Modifying Istio control plane environment variables"
+
+groups:
+  - kind: kubernetes
+    id: "istio-control-plane"
+    namespace: "istio-system"
+    root_cause: true
+    filter:
+      - "app=istiod"
+
+alerts:
+  - id: "RequestErrorRate"
+    group_id: "istio-control-plane"
+    metadata:
+      description: "Increased error rates due to TLS handshake failures"
+
+recommended_actions:
+  - solution:
+      id: "restore-istio-config"
+      actions:
+        - "Remove the fault by restoring the original istiod deployment configuration."
+        - "Monitor service mesh communication to ensure TLS handshakes are successful."
+
+aliases:
+  - ["istio-control-plane"]
+
+propagations: []
