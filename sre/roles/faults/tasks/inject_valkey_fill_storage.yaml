@@ -30,6 +30,6 @@
           command:
             - /bin/sh
             - -c
-            - dd if=/dev/zero of=/tmp/filler bs=1M count={{ storage_size_mb }} && sleep infinity
+            - dd if=/dev/zero of=/tmp/filler bs=1M count={{ spec.storage_size_mb | default(500) }} && sleep infinity
   when:
     - faults_storage_size_mb is defined
