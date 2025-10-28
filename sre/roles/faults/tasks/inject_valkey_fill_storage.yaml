@@ -7,13 +7,7 @@
     namespace: "{{ spec.workload.namespace }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
   register: faults_workload_info
-
-- name: Set storage size to fill (container filesystem)
-  ansible.builtin.set_fact:
-    faults_storage_size_mb: "{{ spec.storage_size_mb | default(500) }}"
-  when:
-    - faults_workload_info.resources | length > 0
-
+  
 - name: Add storage filler sidecar container to deployment
   kubernetes.core.k8s_json_patch:
     api_version: apps/v1
@@ -31,5 +25,4 @@
             - /bin/sh
             - -c
             - dd if=/dev/zero of=/tmp/filler bs=1M count={{ spec.storage_size_mb | default(500) }} && sleep infinity
-  when:
-    - faults_storage_size_mb is defined
+  
