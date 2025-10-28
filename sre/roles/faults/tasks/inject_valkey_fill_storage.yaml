@@ -8,7 +8,7 @@
   register: faults_workload_info
 - name: Set storage size to fill (container filesystem)
   ansible.builtin.set_fact:
-    storage_size_mb: "{{ spec.storage_size_mb | default(500) }}"
+    faults_storage_size_mb: "{{ spec.storage_size_mb | default(500) }}"
   when:
     - faults_workload_info.resources | length > 0
 - name: Add storage filler sidecar container to deployment
@@ -29,4 +29,4 @@
             - -c
             - dd if=/dev/zero of=/tmp/filler bs=1M count={{ storage_size_mb }} && sleep infinity
   when:
-    - storage_size_mb is defined
+    - faults_storage_size_mb is defined
