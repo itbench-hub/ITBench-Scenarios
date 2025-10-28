@@ -1,7 +1,7 @@
 ---
 metadata:
   complexity: Medium
-  id: 298
+  id: 40
   name: Fill Database Storage
   platform: kubernetes
 spec:
@@ -21,4 +21,4 @@ spec:
             kind: Deployment
             name: valkey-cart
             namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
-          storage_fill_percentage: 90
+          storage_size_mb: 500

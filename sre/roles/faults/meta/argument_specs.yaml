@@ -406,7 +406,7 @@ argument_specs:
                       namespace:
                         required: true
                         type: str
-                  storage_fill_percentage:
+                  storage_size_mb:
                     required: false
                     type: int
-                    default: 90
+                    default: 500
