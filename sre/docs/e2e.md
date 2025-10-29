@@ -65,7 +65,7 @@ Open your browser and navigate to: [http://127.0.0.1:30950/ui_next/overview](htt
 KUBECONFIG=<path_to_kubeconfig> kubectl get secret awx-deployment-admin-password -n awx --template={{.data.password}} | base64 -d
 ```
 
-### Step 5: Configure AWX Pipeline
+### Step 5: Configure AWX Pipeline (this and make export_awx_kubeconfigs in dev/remote_cluster has to be run before every experiment)
 
 Set up job templates and workflows for your test scenarios:
 
@@ -73,19 +73,50 @@ Set up job templates and workflows for your test scenarios:
 make -f Makefile.runner configure_awx_pipeline
 ```
 
-### Step 6: Launch Test Execution
-
-Run your selected scenarios the specified number of times:
-
+### Step 6: Sync and fix ebtables
+Exec into the AWX task container on the head cluster and run:
 ```bash
-make -f Makefile.runner launch_experiment_workflow
+cd ~ && cd projects/_8__github_itbench
+```
+then  
+```bash
+./scripts/copy-scenarios-to-submodule.sh
 ```
 
-### Step 7: Monitor Execution
+Fix the ebtables with:  
+```bash
+for i in {1..<number of clusters>}; do                              
+    echo "=== Processing runner $i ==="
+    export KUBECONFIG=/tmp/<runner-prefix>-${i}-aws.k8s.local.yaml
+
+    # Ensure ebtables is loaded on the runner nodes
+    for node in $(kubectl get nodes -o jsonpath='{.items[*].status.addresses[?(@.type=="ExternalIP")].address}'); do
+      ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /home/rohanarora/.ssh/id_lambdalabs_ed25519 ubuntu@$node "sudo apt-get update && sudo apt-get install -y ebtables && sudo modprobe ebtable_broute && sudo modprobe ebtable_nat"
+    done
+
+    # Check if the ebtables modules are now loaded
+    for node in $(kubectl get nodes -o jsonpath='{.items[*].status.addresses[?(@.type=="ExternalIP")].address}'); do
+      echo "=== Node: $node ==="
+      ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /home/rohanarora/.ssh/id_lambdalabs_ed25519 ubuntu@$node "lsmod | grep ebtable"
+    done
+done
+```
+
+### Step 7: Launch the Experiment
+
+Run these 3 commands
+
+```bash
+make -f Makefile.runner launch_init_workflow
+make -f Makefile.runner launch_full_workflow
+make -f Makefile.runner launch_deinit_workflow
+```
+
+### Step 8: Monitor Execution
 
 After launching the workflow, monitor progress in the AWX console: [http://127.0.0.1:30950/ui_next/jobs?page=1&perPage=10&sort=-finished](http://127.0.0.1:30950/ui_next/jobs?page=1&perPage=10&sort=-finished)
 
-### Step 8: Cleanup
+### Step 9: Cleanup
 
 Remove the AWX stack when testing is complete:
 
