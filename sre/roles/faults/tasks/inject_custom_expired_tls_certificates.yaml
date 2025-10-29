@@ -1,23 +1,22 @@
 ---
-
 - name: Retrieve current istiod deployment
   kubernetes.core.k8s_info:
     api_version: apps/v1
     kind: Deployment
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
     name: istiod
-    namespace: "{{ spec.istio_namespace | default('istio-system') }}"
-  register: istiod_deployment_info
+    namespace: "{{ spec.istio_namespace | default('istio-control') }}"
+  register: faults_istiod_deployment_info
 
 - name: Set original environment variables fact
   ansible.builtin.set_fact:
-    original_istiod_env: "{{ istiod_deployment_info.resources[0].spec.template.spec.containers[0].env | default([]) }}"
+    faults_original_istiod_env: "{{ faults_istiod_deployment_info.resources[0].spec.template.spec.containers[0].env | default([]) }}"
 
 - name: Construct new environment variables
   ansible.builtin.set_fact:
-    new_istiod_env: >-
+    faults_new_istiod_env: >-
       {{
-        original_istiod_env |
+        faults_original_istiod_env |
         rejectattr('name', 'in', ['DEFAULT_WORKLOAD_CERT_TTL', 'MAX_WORKLOAD_CERT_TTL', 'WORKLOAD_CERT_ROTATION_GRACE_PERIOD']) |
         list + [
           {
@@ -41,20 +40,21 @@
     kind: Deployment
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
     name: istiod
-    namespace: "{{ spec.istio_namespace | default('istio-system') }}"
+    namespace: "{{ spec.istio_namespace | default('istio-control') }}"
     patch:
       - op: replace
         path: /spec/template/spec/containers/0/env
-        value: "{{ new_istiod_env }}"
+        value: "{{ faults_new_istiod_env }}"
 
 - name: Wait for istiod pods to restart with new configuration
   kubernetes.core.k8s_info:
     api_version: v1
     kind: Pod
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    namespace: "{{ spec.istio_namespace | default('istio-system') }}"
+    namespace: "{{ spec.istio_namespace | default('istio-control') }}"
     label_selectors:
       - app=istiod
+      - istio=pilot
     wait: true
     wait_condition:
       type: Ready
@@ -63,7 +63,7 @@
 
 - name: Display fault injection confirmation
   ansible.builtin.debug:
-    msg: |
+    msg: >
       TLS certificate expiration fault injected successfully!
       
       Configuration applied:
