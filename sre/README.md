@@ -5,7 +5,8 @@
 ## Overview
 ITBench uses open source technologies to create completely repeatable and reproducible scenarios on a Kubernetes platform. A SRE scenario involves deploying a set of observability tools, a sample application, and triggering an incident (referred to as task) in the environment.
 
-![itbench_sre_task_scenario.png](./images/itbench_sre_task_scenario.png)
+![itbench_sre_task_scenario.png](./images/itbench_sre_scenarios_flow.png)
+
 While this repository focuses on scenarios, an open-source Language Model (LM)-based SRE-Agent that aims to diagnose and remediate issues in these scenario environments can be found [here](https://github.com/IBM/ITBench-SRE-Agent).
 
 ### Structure
