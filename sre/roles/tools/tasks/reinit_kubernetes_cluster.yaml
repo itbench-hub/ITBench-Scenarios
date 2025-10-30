@@ -1,0 +1,7 @@
+---
+- name: Delete all events
+  kubernetes.core.k8s:
+    apiVersion: events.k8s.io/v1
+    delete_all: true
+    kind: Event
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
