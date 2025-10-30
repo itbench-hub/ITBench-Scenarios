@@ -114,3 +114,17 @@
         value: true
   when:
     - tools_cluster.platform == "openshift"
+
+- name: Label otel-demo namespace for sidecar injection
+  kubernetes.core.k8s:
+
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    state: present
+    resource_definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: otel-demo
+        labels:
+          istio-injection: enabled
+          it-bench/monitoring: "true"
