@@ -10,7 +10,7 @@
 
 - name: Build containers list with storage filler
   ansible.builtin.set_fact:
-    updated_containers: "{{ faults_workload_info.resources[0].spec.template.spec.containers + [storage_filler_container] }}"
+    faults_updated_containers: "{{ faults_workload_info.resources[0].spec.template.spec.containers + [storage_filler_container] }}"
   vars:
     storage_filler_container:
       name: storage-filler
@@ -32,5 +32,5 @@
       spec:
         template:
           spec:
-            containers: "{{ updated_containers }}"
+            containers: "{{ faults_updated_containers }}"
     state: patched
