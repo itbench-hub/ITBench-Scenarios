@@ -68,18 +68,19 @@
 
 - name: Parse all Chaos Mesh CRDs
   ansible.builtin.set_fact:
-    tools_chaos_mesh_crds_info: |
-      {{
-        tools_crd_info.resources |
-        selectattr('spec.group', '==', 'chaos-mesh.org')
-      }}
+    tools_chaos_mesh_crds_info:
+      resources: |
+        {{
+          tools_crd_info.resources |
+          selectattr('spec.group', '==', 'chaos-mesh.org')
+        }}
   when:
     - tools_crd_info is defined
 
 - name: Delete all Chaos Mesh experiment instances
   when:
     - tools_chaos_mesh_crds_info is defined
-    - tools_chaos_mesh_crds_info.resources | length == 1
+    - tools_chaos_mesh_crds_info.resources | length > 0
   block:
     - name: Get all experiment instances
       kubernetes.core.k8s_info:
@@ -118,21 +119,35 @@
       loop_control:
         label: "{{ experiement.kind }}/{{ experiment.metadata.name }}"
         loop_var: experiment
+      when:
+        - tools_chaos_mesh_instances_info is defined
 
-- name: Delete Chaos Mesh schedules
-  kubernetes.core.k8s_info:
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: chaos-mesh.org/v1alpha1
-      kind: Schedule
-      metadata:
-        name: "{{ spec.schedule.name }}"
-        namespace: "{{ tools_helm_releases.chaos_mesh.namespace }}"
-    state: absent
-    wait: true
-  loop: "{{ tools_chaos_mesh_schedules_info.resources }}"
-  loop_control:
-    label: schedule/{{ schedule.metadata.name }}
-    loop_var: schedule
+- name: Delete Chaos Mesh Schedules
   when:
-    - tools_chaos_mesh_schedules_info is defined
+    - tools_chaos_mesh_schedules_crd_info is defined
+    - tools_chaos_mesh_schedules_crd_info.resources | length == 1
+  block:
+    - name: Retrive all instances of Chaos Mesh Schedule
+      kubernetes.core.k8s_info:
+        api_version: chaos-mesh.org/v1alpha1
+        kind: Schedule
+        kubeconfig: "{{ tools_cluster.kubeconfig }}"
+      register: tools_chaos_mesh_schedules_info
+
+    - name: Delete Chaos Mesh schedules
+      kubernetes.core.k8s:
+        kubeconfig: "{{ tools_cluster.kubeconfig }}"
+        resource_definition:
+          apiVersion: chaos-mesh.org/v1alpha1
+          kind: Schedule
+          metadata:
+            name: "{{ spec.schedule.name }}"
+            namespace: "{{ tools_helm_releases.chaos_mesh.namespace }}"
+        state: absent
+        wait: true
+      loop: "{{ tools_chaos_mesh_schedules_info.resources }}"
+      loop_control:
+        label: schedule/{{ schedule.metadata.name }}
+        loop_var: schedule
+      when:
+        - tools_chaos_mesh_schedules_info is defined

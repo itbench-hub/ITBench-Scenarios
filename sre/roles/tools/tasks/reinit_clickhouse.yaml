@@ -27,7 +27,7 @@
         api_version: clickhouse.altinity.com/v1
         kind: ClickHouseInstallation
         kubeconfig: "{{ tools_cluster.kubeconfig }}"
-        namespace: "{{ tools_clickhouse_namespace_info.resources[0].metadata.namespace }}"
+        namespace: "{{ tools_clickhouse_namespace_info.resources[0].metadata.name }}"
         wait: true
       register: tools_clickhouse_installations_info
 
@@ -45,18 +45,6 @@
       when:
         - tools_clickhouse_installations_info is defined
 
-    - name: Verify there is output for each installation
-      ansible.builtin.assert:
-        that: output_count == installation_count
-        fail_msg: Received output from {{ output_count }} instances when only {{ installation_count }} exist.
-        success_msg: Received output from all installations.
-      vars:
-        installation_count: tools_clickhouse_installations_info.resources | length
-        output_count: tools_clickhouse_installation_tables_output.results | length
-      when:
-        - tools_clickhouse_installations_info is defined
-        - tools_clickhouse_installation_tables_output is defined
-
     - name: Create flattened list of table and instance groupings
       ansible.builtin.set_fact:
         tools_clickhouse_instance_table_groups: |
@@ -65,18 +53,15 @@
               tools_clickhouse_instance_table_groups | default([])
             ) +
             (
-              output.result.stdout_lines |
-              product([installations[output_index]]) |
+              output.stdout_lines |
+              product([output.installation]) |
               flatten
             )
           }}
       loop: "{{ tools_clickhouse_installation_tables_output.results }}"
       loop_control:
-        index_var: output_index
-        label: clickhouseinstallation/{{ installations[output_index].metadata.name }}
+        label: clickhouseinstallation/{{ output.installation.metadata.name }}
         loop_var: output
-      vars:
-        installations: "{{ tools_clickhouse_installations_info.resources }}"
       when:
         - tools_clickhouse_installations_info is defined
         - tools_clickhouse_installation_tables_output is defined

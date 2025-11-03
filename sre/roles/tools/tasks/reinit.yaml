@@ -6,10 +6,6 @@
 - name: Import Prometheus reinitialization tasks
   ansible.builtin.import_tasks:
     file: reinit_prometheus.yaml
-  vars:
-    helm_release: "{{ tools_helm_releases.prometheus }}"
-  when:
-    - tools_required.prometheus or tools_required.opencost
 
 - name: Import OpenTelemetry reinitialization tasks
   ansible.builtin.import_tasks:
@@ -22,15 +18,6 @@
 - name: Import Clickhouse reinitialization tasks
   ansible.builtin.import_tasks:
     file: reinit_clickhouse.yaml
-
-- name: Import Kubernetes Metrics Server reinitialization tasks
-  ansible.builtin.import_tasks:
-    file: reinit_kubernetes_metrics_server.yaml
-  vars:
-    helm_release: "{{ tools_helm_releases.kubernetes_metrics_server }}"
-  when:
-    - tools_required.kubernetes_metrics_server
-    - tools_cluster.platform == "kubernetes"
 
 - name: Import Kubernetes Topology Monitor uninstallation task
   ansible.builtin.import_tasks:
@@ -47,6 +34,12 @@
     helm_release: "{{ tools_helm_releases.kubernetes_topology_monitor }}"
   when:
     - tools_required.kubernetes_topology_monitor
+
+- name: Import Kubernetes Metrics Server reinitialization tasks
+  ansible.builtin.import_tasks:
+    file: reinit_kubernetes_metrics_server.yaml
+  when:
+    - tools_cluster.platform == "kubernetes"
 
 - name: Import Kubernetes Cluster reinitialization tasks
   ansible.builtin.import_tasks:
