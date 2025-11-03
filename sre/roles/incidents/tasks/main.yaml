@@ -37,7 +37,9 @@
       jaeger: "{{ 'jaeger' in incidents_spec.scenario.spec.environment.tools.selected or true }}"
       kubernetes_metrics_server: "{{ 'kubernetes-metrics-server' in incidents_spec.scenario.spec.environment.tools.selected or true }}"
       kubernetes_topology_monitor: "{{ 'kubernetes-topology-monitor' in incidents_spec.scenario.spec.environment.tools.selected }}"
-      opencost: "{{ 'opencost' in incidents_spec.scenario.spec.environment.tools.selected or incidents_spec.scenario.spec.environment.tools.category == 'finops' }}"
+      opencost: >-
+        {{ 'opencost' in incidents_spec.scenario.spec.environment.tools.selected or
+           incidents_spec.scenario.spec.environment.tools.category == 'finops' }}
       opensearch: "{{ 'opensearch' in incidents_spec.scenario.spec.environment.tools.selected }}"
       opentelemetry: "{{ 'opentelemetry' in incidents_spec.scenario.spec.environment.tools.selected or true }}"
       prometheus: "{{ 'prometheus' in incidents_spec.scenario.spec.environment.tools.selected or true }}"
