@@ -1,6 +1,6 @@
 ---
 metadata:
-  version: "1.0"
+  version: "v1"
 scenario:
   metadata:
     complexity: Medium
