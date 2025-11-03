@@ -15,7 +15,7 @@
     - name: Create jobs to delete OpenSearch indexes
       kubernetes.core.k8s:
         kubeconfig: "{{ tools_cluster.kubeconfig }}"
-        namespace: "{{ tools_opensearch_namespace_info.resources[0].metadata }}"
+        namespace: "{{ tools_opensearch_namespace_info.resources[0].metadata.name }}"
         state: present
         src: files/opensearch/index-jobs.yaml
       register: tools_opensearch_reinit_jobs
