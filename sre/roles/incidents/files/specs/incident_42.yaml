@@ -28,4 +28,3 @@ spec:
           cert_ttl: 30s
           max_cert_ttl: 1m
           grace_period: 10s
-# ground truth
