@@ -3,88 +3,88 @@
   ansible.builtin.import_tasks:
     file: inject_custom_invalid_command.yaml
   vars:
-    spec: "{{ fault_spec.custom.invalid_command }}"
+    spec: "{{ fault_spec.fault.custom.invalid_command }}"
   when:
-    - fault_spec.custom.name == 'invalid-command'
-    - fault_spec.custom.invalid_command is defined
+    - fault_spec.fault.custom.name == 'invalid-command'
+    - fault_spec.fault.custom.invalid_command is defined
 
 - name: Import invalid image injection tasks
   ansible.builtin.import_tasks:
     file: inject_custom_invalid_image.yaml
   vars:
-    spec: "{{ fault_spec.custom.invalid_image }}"
+    spec: "{{ fault_spec.fault.custom.invalid_image }}"
   when:
-    - fault_spec.custom.name == 'invalid-image'
-    - fault_spec.custom.invalid_image is defined
+    - fault_spec.fault.custom.name == 'invalid-image'
+    - fault_spec.fault.custom.invalid_image is defined
 
 - name: Import invalid node selector injection tasks
   ansible.builtin.import_tasks:
     file: inject_custom_invalid_node_selector.yaml
   vars:
-    spec: "{{ fault_spec.custom.invalid_node_selector }}"
+    spec: "{{ fault_spec.fault.custom.invalid_node_selector }}"
   when:
-    - fault_spec.custom.name == 'invalid-node-selector'
-    - fault_spec.custom.invalid_node_selector is defined
+    - fault_spec.fault.custom.name == 'invalid-node-selector'
+    - fault_spec.fault.custom.invalid_node_selector is defined
 
 - name: Import misconfigured horizontal pod autoscaler injection tasks
   ansible.builtin.import_tasks:
     file: inject_custom_misconfigured_horizontal_pod_autoscaler.yaml
   vars:
-    spec: "{{ fault_spec.custom.misconfigured_horizontal_pod_autoscaler }}"
+    spec: "{{ fault_spec.fault.custom.misconfigured_horizontal_pod_autoscaler }}"
   when:
-    - fault_spec.custom.name == 'misconfigured-horizontal-pod-autoscaler'
-    - fault_spec.custom.misconfigured_horizontal_pod_autoscaler is defined
+    - fault_spec.fault.custom.name == 'misconfigured-horizontal-pod-autoscaler'
+    - fault_spec.fault.custom.misconfigured_horizontal_pod_autoscaler is defined
 
 - name: Import misconfigured network policy injection tasks
   ansible.builtin.import_tasks:
     file: inject_custom_misconfigured_network_policy.yaml
   vars:
-    spec: "{{ fault_spec.custom.misconfigured_network_policy }}"
+    spec: "{{ fault_spec.fault.custom.misconfigured_network_policy }}"
   when:
-    - fault_spec.custom.name == 'misconfigured-network-policy'
-    - fault_spec.custom.misconfigured_network_policy is defined
+    - fault_spec.fault.custom.name == 'misconfigured-network-policy'
+    - fault_spec.fault.custom.misconfigured_network_policy is defined
 
 - name: Import misconfigured persistent volume claim injection tasks
   ansible.builtin.import_tasks:
     file: inject_custom_misconfigured_persistent_volume_claim.yaml
   vars:
-    spec: "{{ fault_spec.custom.misconfigured_persitent_volume_claim }}"
+    spec: "{{ fault_spec.fault.custom.misconfigured_persitent_volume_claim }}"
   when:
-    - fault_spec.custom.name == 'misconfigured-persitent-volume-claim'
-    - fault_spec.custom.misconfigured_persitent_volume_claim is defined
+    - fault_spec.fault.custom.name == 'misconfigured-persitent-volume-claim'
+    - fault_spec.fault.custom.misconfigured_persitent_volume_claim is defined
 
 - name: Import misconfigured resource quota injection tasks
   ansible.builtin.import_tasks:
     file: inject_custom_misconfigured_resource_quota.yaml
   vars:
-    spec: "{{ fault_spec.custom.misconfigured_resource_quota }}"
+    spec: "{{ fault_spec.fault.custom.misconfigured_resource_quota }}"
   when:
-    - fault_spec.custom.name == 'misconfigured-resource-quota'
-    - fault_spec.custom.misconfigured_resource_quota is defined
+    - fault_spec.fault.custom.name == 'misconfigured-resource-quota'
+    - fault_spec.fault.custom.misconfigured_resource_quota is defined
 
 - name: Import misconfigured service port injection tasks
   ansible.builtin.import_tasks:
     file: inject_custom_misconfigured_service_port.yaml
   vars:
-    spec: "{{ fault_spec.custom.misconfigured_service_port }}"
+    spec: "{{ fault_spec.fault.custom.misconfigured_service_port }}"
   when:
-    - fault_spec.custom.name == 'misconfigured-service-port'
-    - fault_spec.custom.misconfigured_service_port is defined
+    - fault_spec.fault.custom.name == 'misconfigured-service-port'
+    - fault_spec.fault.custom.misconfigured_service_port is defined
 
 - name: Import modify environment variables injection tasks
   ansible.builtin.import_tasks:
     file: inject_custom_modify_environment_variables.yaml
   vars:
-    spec: "{{ fault_spec.custom.modify_environment_variables }}"
+    spec: "{{ fault_spec.fault.custom.modify_environment_variables }}"
   when:
-    - fault_spec.custom.name == 'modify-environment-variables'
-    - fault_spec.custom.modify_environment_variables is defined
+    - fault_spec.fault.custom.name == 'modify-environment-variables'
+    - fault_spec.fault.custom.modify_environment_variables is defined
 
 - name: Import unsupported image injection tasks
   ansible.builtin.import_tasks:
     file: inject_custom_unsupported_image.yaml
   vars:
-    spec: "{{ fault_spec.custom.unsupported_image }}"
+    spec: "{{ fault_spec.fault.custom.unsupported_image }}"
   when:
-    - fault_spec.custom.name == 'unsupported-image'
-    - fault_spec.custom.unsupported_image is defined
+    - fault_spec.fault.custom.name == 'unsupported-image'
+    - fault_spec.fault.custom.unsupported_image is defined
