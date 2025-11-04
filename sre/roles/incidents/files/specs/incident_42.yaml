@@ -1,7 +1,7 @@
 ---
 metadata:
   complexity: High
-  id: 301
+  id: 42
   name: Istio Service Mesh TLS Certificate Expiration
   platform: kubernetes
 spec:

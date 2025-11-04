@@ -63,13 +63,13 @@
 
 - name: Display fault injection confirmation
   ansible.builtin.debug:
-    msg: >
+    msg: >-
       TLS certificate expiration fault injected successfully!
-      
+
       Configuration applied:
       - Default certificate TTL: {{ spec.cert_ttl | default('1m') }}
       - Maximum certificate TTL: {{ spec.max_cert_ttl | default('2m') }}
       - Certificate rotation grace period: {{ spec.grace_period | default('30s') }}
-      
+
       This will cause certificates to expire quickly, disrupting service mesh communication.
       Monitor your applications for TLS handshake failures and certificate validation errors.
