@@ -33,7 +33,7 @@ Currently, ITBench comprises of an initial set of 42 SRE scenarios and 2 FinOps 
 
 **Injected Faults**
 
-{% for fault in content.truth.fault %}
+{% for fault in content.truth.spec.fault %}
 - {{ fault.condition }}
 {% endfor %}
 
@@ -41,7 +41,7 @@ Currently, ITBench comprises of an initial set of 42 SRE scenarios and 2 FinOps 
 
 | Alert Name | Description |
 | --- | --- |
-{% for alert in content.truth.alerts %}
+{% for alert in content.truth.spec.alerts %}
 | {{ alert.id }} | {{ alert.metadata.description }} |
 {% endfor %}
 
