@@ -1,0 +1,67 @@
+[
+    {
+        "name": "Invalid Kubernetes Workload Container Command",
+        "description": "This fault injects an invalid command to a designated Kubernetes workload's container.",
+        "expectation": "The faulted pod will enter the crash back loop state and become unable to function.",
+        "arguments": {
+            "json_schema": {
+                "type": "object",
+                "required": ["k8s_object", "container"],
+                "properties": {
+                    "k8s_object": {
+                        "type": "object",
+                        "required": ["api_version", "kind", "metadata"],
+                        "properties": {
+                            "api_version": {
+                                "type": "string",
+                                "enum": ["apps/v1"]
+                            },
+                            "kind": {
+                                "type": "string",
+                                "enum": ["Deployment", "StatefulSet"]
+                            },
+                            "metadata": {
+                                "type": "object",
+                                "required": ["name", "namespace"],
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "namespace": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "container": {
+                        "type": "object",
+                        "required": ["name"],
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "platform": "Kubernetes",
+        "resources": [
+            "https://kubernetes.io/docs/concepts/containers/images/",
+            "https://kubernetes.io/docs/concepts/workloads/",
+            "https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/",
+            "https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/"
+        ],
+        "solutions": {
+            "templates": [
+                "Revert the change using the command: `kubectl -n {{ args.k8_object.metadata.namespace }} rollout undo {{ args.k8_object.kind }}/{{ args.k8_object.metadata.name }}`",
+                "Manually edit the manifest and change the container's command using the command: `kubectl -n {{ args.k8_object.metadata.namespace }} edit {{ args.k8_object.kind }} {{ args.k8_object.metadata.name }}`"
+            ]
+        },
+        "tags": [
+            "Deployment",
+            "Performance"
+        ]
+    }
+]
