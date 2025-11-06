@@ -65,8 +65,7 @@
       ManagedBy: ansible
   register: kops_nat_gateway
   when:
-    - kops_stack.runners.aws.elastic_ip_allocation_id is defined
-    - kops_stack.runners.aws.elastic_ip_allocation_id | length > 0
+    - kops_elastic_ip_available
 
 - name: Create a route table for the public utility subnets
   amazon.aws.ec2_vpc_route_table:
@@ -112,16 +111,6 @@
   when:
     - kops_nat_gateway is not defined or kops_nat_gateway.nat_gateway_id is not defined
 
-- name: Determine cluster topology based on NAT availability
-  ansible.builtin.set_fact:
-    kops_topology: >-
-      {%- if kops_stack.runners.aws.elastic_ip_allocation_id is defined and
-              kops_stack.runners.aws.elastic_ip_allocation_id | length > 0 -%}
-        private
-      {%- else -%}
-        public
-      {%- endif -%}
-
 - name: Asynchronously create kOps clusters
   ansible.builtin.command:
     argv:
@@ -132,7 +121,7 @@
       - --cloud
       - aws
       - --topology
-      - "{{ kops_topology }}"
+      - "{% if kops_elastic_ip_available %}private{% else %}public{% endif %}"
       - --network-id
       - "{{ kops_vpc_info.vpc.id }}"
       - --subnets
