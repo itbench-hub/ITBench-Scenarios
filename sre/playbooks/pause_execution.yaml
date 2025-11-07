@@ -1,10 +1,12 @@
 ---
-- name: Take a 2 minute pause during execution
+- name: Take a configurable pause during execution
   hosts:
     - environment
+  vars:
+    minutes: "{{ pause_duration_in_minutes | default(2) }}"
   tasks:
-    - name: Pausing for 120 seconds
+    - name: Pausing for {{ pause_minutes }} minutes
       ansible.builtin.pause:
-        seconds: 120
+        seconds: "{{ minutes | int * 60 }}"
       tags:
         - pause
