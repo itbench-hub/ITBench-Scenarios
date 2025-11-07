@@ -1,5 +1,5 @@
 ---
-- name: Take a pause during execution
+- name: Pause pipeline execution
   hosts:
     - environment
   tasks:
