@@ -1,0 +1,28 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ tools_helm_releases.istio.components.control_plane }}
+  namespace: {{ tools_helm_releases.istio.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ tools_helm_releases.istio.components.control_plane }}
+      app.kubernetes.io/part-of: istio
+  endpoints:
+    metricsEndpoints:
+      - port: 15014
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ tools_helm_releases.istio.components.cni }}
+  namespace: {{ tools_helm_releases.istio.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ tools_helm_releases.istio.components.cni }}
+      app.kubernetes.io/part-of: istio
+  endpoints:
+    metricsEndpoints:
+      - port: 15014

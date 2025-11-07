@@ -59,6 +59,20 @@
     values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/istio/ztunnel.j2') | from_yaml }}"
     wait: true
 
+- name: Deploy Istio Telemetry
+  kubernetes.core.k8s:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    template: templates/istio/telemetry.j2
+    state: present
+
+- name: Deploy ServiceMonitors
+  kubernetes.core.k8s:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    template: templates/istio/servicemonitor.j2
+    state: present
+  when:
+    - tools_required.prometheus
+
 - name: Create release namespace for Istio Gateway
   kubernetes.core.k8s:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"

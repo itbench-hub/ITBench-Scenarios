@@ -7,6 +7,20 @@
     release_state: absent
     wait: true
 
+- name: Undeploy ServiceMonitors
+  kubernetes.core.k8s:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    template: templates/istio/servicemonitor.j2
+    state: absent
+  when:
+    - tools_required.prometheus
+
+- name: Remove Istio Telemetry
+  kubernetes.core.k8s:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    template: templates/istio/telemetry.j2
+    state: absent
+
 - name: Uninstall Istio ZTunnel
   kubernetes.core.helm:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
