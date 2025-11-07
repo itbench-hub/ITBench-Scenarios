@@ -1,0 +1,53 @@
+{
+    "type": "array",
+    "items": {
+        "type": "object",
+        "required": [
+            "description",
+            "expectation",
+            "name",
+            "platform",
+            "resources",
+            "solutions",
+            "tags"
+        ],
+        "properties": {
+            "description": {
+                "type": "string"
+            },
+            "expectation": {
+                "type": "string"
+            },
+            "name": {
+                "type": "string"
+            },
+            "platform": {
+                "type": "string",
+                "enum": ["Kubernetes"]
+            },
+            "resources": {
+                "type": "array",
+                "items": {
+                    "type": "string"
+                }
+            },
+            "solutions": {
+                "type": "object",
+                "required": ["templates"],
+                "properties": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "tags": {
+                "type": "array",
+                "items": {
+                    "type": "string",
+                    "enum": ["Deployment", "Performance"]
+                }
+            }
+        }
+    }
+}

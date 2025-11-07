@@ -1,0 +1,13 @@
+---
+- name: Generate Incidents README file
+  ansible.builtin.copy:
+    content: "{{ lookup('ansible.builtin.template', 'templates/faults-readme.j2') }}"
+    dest: "{{ playbook_dir }}/../docs/faults.md"
+    mode: "0644"
+  vars:
+    documentation_contents: |
+      {{
+        lookup('ansible.builtin.file', 'files/library/faults/index.json') |
+        from_json |
+        sort(attribute='name')
+      }}
