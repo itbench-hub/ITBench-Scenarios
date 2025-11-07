@@ -6,18 +6,25 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 | Name | Platform | Tags |
 | --- | --- | --- |
-| [Invalid Kubernetes Workload Container Command](#Invalid Kubernetes Workload Container Command) | Kubernetes | Deployment,Performance |
-| [Nonexistent Kubernetes Workload Container Image](#Nonexistent Kubernetes Workload Container Image) | Kubernetes | Deployment,Performance |
-| [OpenTelemetry Demo Feature Flag](#OpenTelemetry Demo Feature Flag) | Kubernetes | Deployment,Performance |
+| [Invalid Kubernetes Workload Container Command](#Invalid-Kubernetes-Workload-Container-Command) | Kubernetes | Deployment, Performance |
+| [Nonexistent Kubernetes Workload Container Image](#Nonexistent-Kubernetes-Workload-Container-Image) | Kubernetes | Deployment, Performance |
+| [OpenTelemetry Demo Feature Flag](#OpenTelemetry-Demo-Feature-Flag) | Kubernetes | Deployment, Performance |
 
 ## Detailed Summary of Faults
 
 ### Invalid Kubernetes Workload Container Command
 
-Description: This fault injects an invalid command to a designated Kubernetes workload's container.
-Expectation: The faulted pod(s) will enter the `CrashLoopBackOff` state and container will enter the `Terminated` state. The workload will become unable to function.
+**Description:** This fault injects an invalid command to a designated Kubernetes workload's container.
 
-Arguments Schema
+**Expectation:** The faulted pod(s) will enter the `CrashLoopBackOff` state and container will enter the `Terminated` state. The workload will become unable to function.
+
+**Resources:**
+- https://kubernetes.io/docs/concepts/containers/images/
+- https://kubernetes.io/docs/concepts/workloads/
+- https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+- https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/
+
+**Arguments Schema:**
 ```json
 {
     "properties": {
@@ -78,19 +85,19 @@ Arguments Schema
     "type": "object"
 }
 ```
-
-Resources:
-- https://kubernetes.io/docs/concepts/containers/images/
-- https://kubernetes.io/docs/concepts/workloads/
-- https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
-- https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/
-
 ### Nonexistent Kubernetes Workload Container Image
 
-Description: This fault injects an nonexsitent image to a designated Kubernetes workload's container.
-Expectation: The faulted pod(s) will enter the `Pending` state due to an `ImagePullBackOff` error. The workload will become unable to function.
+**Description:** This fault injects an nonexsitent image to a designated Kubernetes workload's container.
 
-Arguments Schema
+**Expectation:** The faulted pod(s) will enter the `Pending` state due to an `ImagePullBackOff` error. The workload will become unable to function.
+
+**Resources:**
+- https://kubernetes.io/docs/concepts/containers/images/
+- https://kubernetes.io/docs/concepts/workloads/
+- https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+- https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/
+
+**Arguments Schema:**
 ```json
 {
     "properties": {
@@ -151,19 +158,18 @@ Arguments Schema
     "type": "object"
 }
 ```
-
-Resources:
-- https://kubernetes.io/docs/concepts/containers/images/
-- https://kubernetes.io/docs/concepts/workloads/
-- https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
-- https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/
-
 ### OpenTelemetry Demo Feature Flag
 
-Description: This fault activates an inplemented fault in the OpenTelemetry Demo.
-Expectation: The effects of the faults are listed [here](https://opentelemetry.io/docs/demo/feature-flags/#implemented-feature-flags).
+**Description:** This fault activates an inplemented fault in the OpenTelemetry Demo.
 
-Arguments Schema
+**Expectation:** The effects of the faults are listed [here](https://opentelemetry.io/docs/demo/feature-flags/#implemented-feature-flags).
+
+**Resources:**
+- https://opentelemetry.io/docs/demo/
+- https://opentelemetry.io/docs/demo/feature-flags/
+- https://opentelemetry.io/docs/demo/services/
+
+**Arguments Schema:**
 ```json
 {
     "properties": {
@@ -189,8 +195,3 @@ Arguments Schema
     "type": "object"
 }
 ```
-
-Resources:
-- https://opentelemetry.io/docs/demo/
-- https://opentelemetry.io/docs/demo/feature-flags/
-- https://opentelemetry.io/docs/demo/services/
