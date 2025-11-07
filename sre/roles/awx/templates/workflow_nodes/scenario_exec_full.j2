@@ -50,7 +50,7 @@
     type: job_template
 - identifier: node-pause-at-start
   extra_data:
-    pause_duration_in_minutes: 2
+    duration_in_minutes: 2
   related:
     success_nodes:
       - identifier: node-grant-access-to-agent
@@ -105,7 +105,7 @@
     type: job_template
 - identifier: node-pause-post-fault-injection
   extra_data:
-    pause_duration_in_minutes: 2
+    duration_in_minutes: 2
   related:
     success_nodes:
       - identifier: node-check-for-alerts
@@ -190,7 +190,7 @@
     type: job_template
 - identifier: node-pause-post-agent-execution
   extra_data:
-    pause_duration_in_minutes: 10
+    duration_in_minutes: 10
   related:
     always_nodes:
       - identifier: node-uninstall-recorders
