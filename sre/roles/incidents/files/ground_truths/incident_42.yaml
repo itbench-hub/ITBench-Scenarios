@@ -6,6 +6,12 @@ fault:
       name: "istiod"
     fault_mechanism: "Modifying Istio control plane environment variables"
 
+metadata:
+  version: v1
+scenario:
+  metadata: {}
+  spec: {}
+
 groups:
   - kind: kubernetes
     id: "istio-control-plane"

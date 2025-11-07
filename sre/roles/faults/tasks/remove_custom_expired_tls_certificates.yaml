@@ -11,6 +11,16 @@
     namespace: "{{ spec.istio_namespace | default('istio-control') }}"
   register: faults_istiod_deployment_info
 
+- name: Ensure istiod deployment exists
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: istiod
+    namespace: "{{ spec.istio_namespace | default('istio-control') }}"
+  register: istiod_deployment_info
+  failed_when: istiod_deployment_info.resources | length == 0
+
 - name: Remove fault (restore original TLS certificate configuration)
   kubernetes.core.k8s_json_patch:
     api_version: apps/v1
