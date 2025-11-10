@@ -6,15 +6,149 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 | Name | Platform | Tags |
 | --- | --- | --- |
+| [Ingress Port Blocking Network Policy](#Ingress-Port-Blocking-Network-Policy) | Kubernetes | Deployment, Networking |
+| [Insufficent Kubernetes Resource Quota](#Insufficent-Kubernetes-Resource-Quota) | Kubernetes | Deployment, Performance |
 | [Invalid Kubernetes Workload Container Command](#Invalid-Kubernetes-Workload-Container-Command) | Kubernetes | Deployment, Performance |
+| [Invalid Valkey Password](#Invalid-Valkey-Password) | Kubernetes | Authentication, Deployment |
+| [Misconfigured Kubernetes Horizontal Pod Autoscaler](#Misconfigured-Kubernetes-Horizontal-Pod-Autoscaler) | Kubernetes | Deployment, Performance |
+| [Modified Kubernetes Workload Container Environment Variable](#Modified-Kubernetes-Workload-Container-Environment-Variable) | Kubernetes | Deployment, Performance |
+| [Modified Target Port Kubernetes Service](#Modified-Target-Port-Kubernetes-Service) | Kubernetes | Deployment, Networking |
 | [Nonexistent Kubernetes Workload Container Image](#Nonexistent-Kubernetes-Workload-Container-Image) | Kubernetes | Deployment, Performance |
+| [Nonexistent Kubernetes Workload Node](#Nonexistent-Kubernetes-Workload-Node) | Kubernetes | Deployment, Performance |
 | [OpenTelemetry Demo Feature Flag](#OpenTelemetry-Demo-Feature-Flag) | Kubernetes | Deployment, Performance |
+| [Scheduled Chaos Mesh Experiment](#Scheduled-Chaos-Mesh-Experiment) | Kubernetes | Deployment, Performance |
+| [Unsupported Architecture Kubernetes Workload Container Image](#Unsupported-Architecture-Kubernetes-Workload-Container-Image) | Kubernetes | Deployment, Performance |
 
 ## Detailed Summary of Faults
 
+### Ingress Port Blocking Network Policy
+
+**Description:** This fault injects a network policy which blocks traffic on all ingress ports of a given workload.
+
+**Expectation:** Other workloads will be unable to communicate with the faulted pod(s) on the correct port. This usually results in increased latency and errors in applications.
+
+**Resources:**
+- https://kubernetes.io/docs/concepts/workloads/
+- https://kubernetes.io/docs/concepts/services-networking/network-policies/
+- https://kubernetes.io/docs/tasks/administer-cluster/quota-api-object/
+- https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/
+- https://kubernetes.io/docs/reference/kubernetes-api/policy-resources/network-policy-v1/
+
+**Arguments Schema:**
+```json
+{
+    "properties": {
+        "k8s_object": {
+            "properties": {
+                "api_version": {
+                    "enum": [
+                        "apps/v1"
+                    ],
+                    "type": "string"
+                },
+                "kind": {
+                    "enum": [
+                        "Deployment",
+                        "StatefulSet"
+                    ],
+                    "type": "string"
+                },
+                "metadata": {
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "namespace"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "api_version",
+                "kind",
+                "metadata"
+            ],
+            "type": "object"
+        }
+    },
+    "required": [
+        "k8s_object"
+    ],
+    "type": "object"
+}
+```
+### Insufficent Kubernetes Resource Quota
+
+**Description:** This fault injects a resource quota with hard resource requirements that are underprovisioned for the namespace.
+
+**Expectation:** The new pod(s) for the workload in the faulted namespace will enter the `Pending` state.
+
+**Resources:**
+- https://kubernetes.io/docs/concepts/workloads/
+- https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+- https://kubernetes.io/docs/concepts/policy/resource-quotas/
+- https://kubernetes.io/docs/tasks/administer-cluster/quota-api-object/
+- https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/
+- https://kubernetes.io/docs/reference/kubernetes-api/policy-resources/resource-quota-v1/
+
+**Arguments Schema:**
+```json
+{
+    "properties": {
+        "k8s_object": {
+            "properties": {
+                "api_version": {
+                    "enum": [
+                        "apps/v1"
+                    ],
+                    "type": "string"
+                },
+                "kind": {
+                    "enum": [
+                        "Deployment",
+                        "StatefulSet"
+                    ],
+                    "type": "string"
+                },
+                "metadata": {
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "namespace"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "api_version",
+                "kind",
+                "metadata"
+            ],
+            "type": "object"
+        }
+    },
+    "required": [
+        "k8s_object"
+    ],
+    "type": "object"
+}
+```
 ### Invalid Kubernetes Workload Container Command
 
-**Description:** This fault injects an invalid command to a designated Kubernetes workload's container.
+**Description:** This fault injects an invalid command into a designated Kubernetes workload's container.
 
 **Expectation:** The faulted pod(s) will enter the `CrashLoopBackOff` state and container will enter the `Terminated` state. The workload will become unable to function.
 
@@ -85,9 +219,280 @@ A fault is a solvable issue injected into an environment to create an incident.
     "type": "object"
 }
 ```
+### Invalid Valkey Password
+
+**Description:** This fault changes the password of a Valkey workload.
+
+**Expectation:** Other workloads will be unable to authorize themselves with the Valkey workload. This usually causes increased latency and errors in applications.
+
+**Resources:**
+- https://valkey.io/
+
+**Arguments Schema:**
+```json
+{
+    "properties": {
+        "k8s_object": {
+            "properties": {
+                "api_version": {
+                    "enum": [
+                        "apps/v1"
+                    ],
+                    "type": "string"
+                },
+                "kind": {
+                    "enum": [
+                        "Deployment",
+                        "StatefulSet"
+                    ],
+                    "type": "string"
+                },
+                "metadata": {
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "namespace"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "api_version",
+                "kind",
+                "metadata"
+            ],
+            "type": "object"
+        }
+    },
+    "required": [
+        "k8s_object"
+    ],
+    "type": "object"
+}
+```
+### Misconfigured Kubernetes Horizontal Pod Autoscaler
+
+**Description:** This fault injects a configuration into a horizontal pod autoscaler that causes it to react to low resource usage
+
+**Expectation:** The faulted autoscaler will take scale up or down actions more aggressively (often more than required).
+
+**Resources:**
+- https://kubernetes.io/docs/concepts/workloads/autoscaling/
+- https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+- https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/
+- https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/horizontal-pod-autoscaler-v2/
+
+**Arguments Schema:**
+```json
+{
+    "properties": {
+        "k8s_object": {
+            "properties": {
+                "api_version": {
+                    "enum": [
+                        "apps/v1"
+                    ],
+                    "type": "string"
+                },
+                "kind": {
+                    "enum": [
+                        "Deployment",
+                        "StatefulSet"
+                    ],
+                    "type": "string"
+                },
+                "metadata": {
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "namespace"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "api_version",
+                "kind",
+                "metadata"
+            ],
+            "type": "object"
+        }
+    },
+    "required": [
+        "k8s_object"
+    ],
+    "type": "object"
+}
+```
+### Modified Kubernetes Workload Container Environment Variable
+
+**Description:** This fault overwrites an environment variable value with one provided in the argument.
+
+**Expectation:** Varies based on the effect/purpose of the environment variable.
+
+**Resources:**
+- https://kubernetes.io/docs/concepts/workloads/
+- https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+- https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/
+
+**Arguments Schema:**
+```json
+{
+    "properties": {
+        "container": {
+            "properties": {
+                "env": {
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "value": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "value"
+                    ],
+                    "type": "object"
+                },
+                "name": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "env",
+                "name"
+            ],
+            "type": "object"
+        },
+        "k8s_object": {
+            "properties": {
+                "api_version": {
+                    "enum": [
+                        "apps/v1"
+                    ],
+                    "type": "string"
+                },
+                "kind": {
+                    "enum": [
+                        "Deployment",
+                        "StatefulSet"
+                    ],
+                    "type": "string"
+                },
+                "metadata": {
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "namespace"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "api_version",
+                "kind",
+                "metadata"
+            ],
+            "type": "object"
+        }
+    },
+    "required": [
+        "k8s_object",
+        "container"
+    ],
+    "type": "object"
+}
+```
+### Modified Target Port Kubernetes Service
+
+**Description:** This fault overwrites the designated target port with a different number.
+
+**Expectation:** Other workloads will be unable to communicate with the faulted pod(s) on the correct port. This usually results in increased latency and errors in applications.
+
+**Resources:**
+- https://kubernetes.io/docs/concepts/workloads/
+- https://kubernetes.io/docs/concepts/services-networking/service/
+- https://kubernetes.io/docs/tasks/access-application-cluster/connecting-frontend-backend/
+- https://kubernetes.io/docs/reference/kubernetes-api/service-resources/service-v1/
+
+**Arguments Schema:**
+```json
+{
+    "properties": {
+        "k8s_object": {
+            "properties": {
+                "api_version": {
+                    "enum": [
+                        "v1"
+                    ],
+                    "type": "string"
+                },
+                "kind": {
+                    "enum": [
+                        "Service"
+                    ],
+                    "type": "string"
+                },
+                "metadata": {
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "namespace"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "api_version",
+                "kind",
+                "metadata"
+            ],
+            "type": "object"
+        },
+        "target_port": {
+            "type": "integer"
+        }
+    },
+    "required": [
+        "k8s_object",
+        "target_port"
+    ],
+    "type": "object"
+}
+```
 ### Nonexistent Kubernetes Workload Container Image
 
-**Description:** This fault injects an nonexsitent image to a designated Kubernetes workload's container.
+**Description:** This fault injects an nonexistent image into a designated Kubernetes workload's container.
 
 **Expectation:** The faulted pod(s) will enter the `Pending` state due to an `ImagePullBackOff` error. The workload will become unable to function.
 
@@ -158,9 +563,71 @@ A fault is a solvable issue injected into an environment to create an incident.
     "type": "object"
 }
 ```
+### Nonexistent Kubernetes Workload Node
+
+**Description:** This fault injects a node selector for an nonexistent node into a designated Kubernetes workload.
+
+**Expectation:** The faulted pod(s) will enter the `Pending` state. The workload will become unable to function.
+
+**Resources:**
+- https://kubernetes.io/docs/concepts/architecture/nodes/
+- https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+- https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
+- https://kubernetes.io/docs/tasks/configure-pod-container/assign-pods-nodes/
+- https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/
+
+**Arguments Schema:**
+```json
+{
+    "properties": {
+        "k8s_object": {
+            "properties": {
+                "api_version": {
+                    "enum": [
+                        "apps/v1"
+                    ],
+                    "type": "string"
+                },
+                "kind": {
+                    "enum": [
+                        "Deployment",
+                        "StatefulSet"
+                    ],
+                    "type": "string"
+                },
+                "metadata": {
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "namespace"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "api_version",
+                "kind",
+                "metadata"
+            ],
+            "type": "object"
+        }
+    },
+    "required": [
+        "k8s_object"
+    ],
+    "type": "object"
+}
+```
 ### OpenTelemetry Demo Feature Flag
 
-**Description:** This fault activates an inplemented fault in the OpenTelemetry Demo.
+**Description:** This fault activates an implemented fault in the OpenTelemetry Demo.
 
 **Expectation:** The effects of the faults are listed [here](https://opentelemetry.io/docs/demo/feature-flags/#implemented-feature-flags).
 
@@ -232,6 +699,115 @@ A fault is a solvable issue injected into an environment to create an incident.
     "required": [
         "k8s_object",
         "flag"
+    ],
+    "type": "object"
+}
+```
+### Scheduled Chaos Mesh Experiment
+
+**Description:** This fault injects a Chaos Mesh experiment into the environment. The experiment is [scheduled](https://chaos-mesh.org/docs/define-scheduling-rules/) to repeated fire so that the behavior persists.
+
+**Expectation:** Varies based on the Chaos Mesh experiment used.
+
+**Resources:**
+- https://chaos-mesh.org/docs/run-a-chaos-experiment/
+- https://chaos-mesh.org/docs/developer-guide-overview/
+
+**Arguments Schema:**
+```json
+{
+    "properties": {
+        "schedule": {
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "spec": {
+                    "type": "object"
+                }
+            },
+            "required": [
+                "name",
+                "spec"
+            ],
+            "type": "object"
+        }
+    },
+    "required": [
+        "schedule"
+    ],
+    "type": "object"
+}
+```
+### Unsupported Architecture Kubernetes Workload Container Image
+
+**Description:** This fault injects an image with an unsupported architecture into a designated Kubernetes workload's container and assigns it to a node.
+
+**Expectation:** The faulted pod(s) will enter the `Pending` state due to an `ImagePullBackOff` error. The workload will become unable to function.
+
+**Resources:**
+- https://kubernetes.io/docs/concepts/containers/images/
+- https://kubernetes.io/docs/concepts/workloads/
+- https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+- https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/
+
+**Arguments Schema:**
+```json
+{
+    "properties": {
+        "container": {
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "type": "object"
+        },
+        "k8s_object": {
+            "properties": {
+                "api_version": {
+                    "enum": [
+                        "apps/v1"
+                    ],
+                    "type": "string"
+                },
+                "kind": {
+                    "enum": [
+                        "Deployment",
+                        "StatefulSet"
+                    ],
+                    "type": "string"
+                },
+                "metadata": {
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "namespace"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "api_version",
+                "kind",
+                "metadata"
+            ],
+            "type": "object"
+        }
+    },
+    "required": [
+        "k8s_object",
+        "container"
     ],
     "type": "object"
 }
