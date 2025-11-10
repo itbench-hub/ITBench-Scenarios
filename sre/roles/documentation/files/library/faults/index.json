@@ -1,51 +1,69 @@
 [
     {
-        "name": "Invalid Kubernetes Workload Container Command",
+        "arguments": {
+            "json_schema": {
+                "properties": {
+                    "container": {
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "name"
+                        ],
+                        "type": "object"
+                    },
+                    "k8s_object": {
+                        "properties": {
+                            "api_version": {
+                                "enum": [
+                                    "apps/v1"
+                                ],
+                                "type": "string"
+                            },
+                            "kind": {
+                                "enum": [
+                                    "Deployment",
+                                    "StatefulSet"
+                                ],
+                                "type": "string"
+                            },
+                            "metadata": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "namespace": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "namespace"
+                                ],
+                                "type": "object"
+                            }
+                        },
+                        "required": [
+                            "api_version",
+                            "kind",
+                            "metadata"
+                        ],
+                        "type": "object"
+                    }
+                },
+                "required": [
+                    "k8s_object",
+                    "container"
+                ],
+                "type": "object"
+            }
+        },
         "description": "This fault injects an invalid command to a designated Kubernetes workload's container.",
         "expectation": "The faulted pod(s) will enter the `CrashLoopBackOff` state and container will enter the `Terminated` state. The workload will become unable to function.",
-        "arguments": {
-            "json_schema": {
-                "type": "object",
-                "required": ["k8s_object", "container"],
-                "properties": {
-                    "k8s_object": {
-                        "type": "object",
-                        "required": ["api_version", "kind", "metadata"],
-                        "properties": {
-                            "api_version": {
-                                "type": "string",
-                                "enum": ["apps/v1"]
-                            },
-                            "kind": {
-                                "type": "string",
-                                "enum": ["Deployment", "StatefulSet"]
-                            },
-                            "metadata": {
-                                "type": "object",
-                                "required": ["name", "namespace"],
-                                "properties": {
-                                    "name": {
-                                        "type": "string"
-                                    },
-                                    "namespace": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "container": {
-                        "type": "object",
-                        "required": ["name"],
-                        "properties": {
-                            "name": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
+        "id": "invalid-kubernetes-workload-container-command",
+        "name": "Invalid Kubernetes Workload Container Command",
         "platform": "Kubernetes",
         "resources": [
             "https://kubernetes.io/docs/concepts/containers/images/",
@@ -55,8 +73,22 @@
         ],
         "solutions": {
             "templates": [
-                "Revert the change using the command: `kubectl -n {{ args.k8_object.metadata.namespace }} rollout undo {{ args.k8_object.kind }}/{{ args.k8_object.metadata.name }}`",
-                "Manually edit the manifest and change the container's command using the command: `kubectl -n {{ args.k8_object.metadata.namespace }} edit {{ args.k8_object.kind }} {{ args.k8_object.metadata.name }}`"
+                {
+                    "steps": [
+                        {
+                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} rollout undo {{ args.k8_object.kind }}/{{ args.k8_object.metadata.name }}`",
+                            "text": "Revert the last change done to the manifest."
+                        }
+                    ]
+                },
+                {
+                    "steps": [
+                        {
+                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} edit {{ args.k8_object.kind }} {{ args.k8_object.metadata.name }}`",
+                            "text": "Manually edit the manifest and replace the invalid command with the correct value."
+                        }
+                    ]
+                }
             ]
         },
         "tags": [
@@ -65,52 +97,70 @@
         ]
     },
     {
-        "name": "Nonexistent Kubernetes Workload Container Image",
+        "arguments": {
+            "json_schema": {
+                "properties": {
+                    "container": {
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "name"
+                        ],
+                        "type": "object"
+                    },
+                    "k8s_object": {
+                        "properties": {
+                            "api_version": {
+                                "enum": [
+                                    "apps/v1"
+                                ],
+                                "type": "string"
+                            },
+                            "kind": {
+                                "enum": [
+                                    "Deployment",
+                                    "StatefulSet"
+                                ],
+                                "type": "string"
+                            },
+                            "metadata": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "namespace": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "namespace"
+                                ],
+                                "type": "object"
+                            }
+                        },
+                        "required": [
+                            "api_version",
+                            "kind",
+                            "metadata"
+                        ],
+                        "type": "object"
+                    }
+                },
+                "required": [
+                    "k8s_object",
+                    "container"
+                ],
+                "type": "object"
+            }
+        },
         "description": "This fault injects an nonexsitent image to a designated Kubernetes workload's container.",
         "expectation": "The faulted pod(s) will enter the `Pending` state due to an `ImagePullBackOff` error. The workload will become unable to function.",
-        "arguments": {
-            "json_schema": {
-                "type": "object",
-                "required": ["k8s_object", "container"],
-                "properties": {
-                    "k8s_object": {
-                        "type": "object",
-                        "required": ["api_version", "kind", "metadata"],
-                        "properties": {
-                            "api_version": {
-                                "type": "string",
-                                "enum": ["apps/v1"]
-                            },
-                            "kind": {
-                                "type": "string",
-                                "enum": ["Deployment", "StatefulSet"]
-                            },
-                            "metadata": {
-                                "type": "object",
-                                "required": ["name", "namespace"],
-                                "properties": {
-                                    "name": {
-                                        "type": "string"
-                                    },
-                                    "namespace": {
-                                        "type": "string"
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    "container": {
-                        "type": "object",
-                        "required": ["name"],
-                        "properties": {
-                            "name": {
-                                "type": "string"
-                            }
-                        }
-                    }
-                }
-            }
-        },
+        "id": "nonexistent-kubernetes-workload-container-image",
+        "name": "Nonexistent Kubernetes Workload Container Image",
         "platform": "Kubernetes",
         "resources": [
             "https://kubernetes.io/docs/concepts/containers/images/",
@@ -120,8 +170,22 @@
         ],
         "solutions": {
             "templates": [
-                "Revert the change using the command: `kubectl -n {{ args.k8_object.metadata.namespace }} rollout undo {{ args.k8_object.kind }}/{{ args.k8_object.metadata.name }}`",
-                "Manually edit the manifest and change the container's image using the command: `kubectl -n {{ args.k8_object.metadata.namespace }} edit {{ args.k8_object.kind }} {{ args.k8_object.metadata.name }}`"
+                {
+                    "steps": [
+                        {
+                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} rollout undo {{ args.k8_object.kind }}/{{ args.k8_object.metadata.name }}`",
+                            "text": "Revert the last change done to the manifest."
+                        }
+                    ]
+                },
+                {
+                    "steps": [
+                        {
+                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} edit {{ args.k8_object.kind }} {{ args.k8_object.metadata.name }}`",
+                            "text": "Manually edit the manifest and replace the invalid image with the correct value."
+                        }
+                    ]
+                }
             ]
         },
         "tags": [
@@ -130,17 +194,10 @@
         ]
     },
     {
-        "name": "OpenTelemetry Demo Feature Flag",
-        "description": "This fault activates an inplemented fault in the OpenTelemetry Demo.",
-        "expectation": "The effects of the faults are listed [here](https://opentelemetry.io/docs/demo/feature-flags/#implemented-feature-flags).",
         "arguments": {
             "json_schema": {
-                "type": "object",
-                "required": ["flag"],
                 "properties": {
                     "flag": {
-                        "type": "object",
-                        "required": ["name", "state"],
                         "properties": {
                             "name": {
                                 "type": "string"
@@ -148,11 +205,65 @@
                             "state": {
                                 "type": "string"
                             }
-                        }
+                        },
+                        "required": [
+                            "name",
+                            "state"
+                        ],
+                        "type": "object"
+                    },
+                    "k8s_object": {
+                        "properties": {
+                            "api_version": {
+                                "enum": [
+                                    "v1"
+                                ],
+                                "type": "string"
+                            },
+                            "kind": {
+                                "enum": [
+                                    "ConfigMap"
+                                ],
+                                "type": "string"
+                            },
+                            "metadata": {
+                                "properties": {
+                                    "name": {
+                                        "enum": [
+                                            "flagd-config"
+                                        ],
+                                        "type": "string"
+                                    },
+                                    "namespace": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "namespace"
+                                ],
+                                "type": "object"
+                            }
+                        },
+                        "required": [
+                            "api_version",
+                            "kind",
+                            "metadata"
+                        ],
+                        "type": "object"
                     }
-                }
+                },
+                "required": [
+                    "k8s_object",
+                    "flag"
+                ],
+                "type": "object"
             }
         },
+        "description": "This fault activates an inplemented fault in the OpenTelemetry Demo.",
+        "expectation": "The effects of the faults are listed [here](https://opentelemetry.io/docs/demo/feature-flags/#implemented-feature-flags).",
+        "id": "opentelemetry-demo-feature-flag",
+        "name": "OpenTelemetry Demo Feature Flag",
         "platform": "Kubernetes",
         "resources": [
             "https://opentelemetry.io/docs/demo/",
@@ -161,7 +272,18 @@
         ],
         "solutions": {
             "templates": [
-                "Disable the feature flag by editing the configmap: `kubectl -n otel-demo edit configmap flagd-config`. Then, restart the deployments: `kubectl -n otel-demo rollout restart deployment`"
+                {
+                    "steps": [
+                        {
+                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} edit configmap {{ args.k8_object.metadata.name }}",
+                            "text": "Disable the feature flag by manually editing the contents of the ConfigMap"
+                        },
+                        {
+                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} rollout restart deployment`",
+                            "text": "Restart all of the Deployment workloads."
+                        }
+                    ]
+                }
             ]
         },
         "tags": [

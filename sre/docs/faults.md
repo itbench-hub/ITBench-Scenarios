@@ -187,9 +187,50 @@ A fault is a solvable issue injected into an environment to create an incident.
                 "state"
             ],
             "type": "object"
+        },
+        "k8s_object": {
+            "properties": {
+                "api_version": {
+                    "enum": [
+                        "v1"
+                    ],
+                    "type": "string"
+                },
+                "kind": {
+                    "enum": [
+                        "ConfigMap"
+                    ],
+                    "type": "string"
+                },
+                "metadata": {
+                    "properties": {
+                        "name": {
+                            "enum": [
+                                "flagd-config"
+                            ],
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "namespace"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "api_version",
+                "kind",
+                "metadata"
+            ],
+            "type": "object"
         }
     },
     "required": [
+        "k8s_object",
         "flag"
     ],
     "type": "object"

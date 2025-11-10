@@ -37,7 +37,25 @@
                 "properties": {
                     "type": "array",
                     "items": {
-                        "type": "string"
+                        "type": "object",
+                        "required": ["steps"],
+                        "properties": {
+                            "steps": {
+                                "type": "array",
+                                "items": {
+                                    "type": "object",
+                                    "required": ["text"],
+                                    "properties": {
+                                        "command": {
+                                            "type": "string"
+                                        },
+                                        "text": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             },
