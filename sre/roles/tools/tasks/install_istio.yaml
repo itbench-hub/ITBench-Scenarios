@@ -15,7 +15,7 @@
   kubernetes.core.helm:
     chart_ref: base
     chart_repo_url: https://istio-release.storage.googleapis.com/charts
-    chart_version: 1.27.3
+    chart_version: 1.28.0
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     release_name: "{{ tools_helm_releases.istio.components.base }}"
     release_namespace: "{{ tools_helm_releases.istio.namespace }}"
@@ -27,7 +27,7 @@
   kubernetes.core.helm:
     chart_ref: istiod
     chart_repo_url: https://istio-release.storage.googleapis.com/charts
-    chart_version: 1.27.3
+    chart_version: 1.28.0
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     release_name: "{{ tools_helm_releases.istio.components.control_plane }}"
     release_namespace: "{{ tools_helm_releases.istio.namespace }}"
@@ -39,7 +39,7 @@
   kubernetes.core.helm:
     chart_ref: cni
     chart_repo_url: https://istio-release.storage.googleapis.com/charts
-    chart_version: 1.27.3
+    chart_version: 1.28.0
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     release_name: "{{ tools_helm_releases.istio.components.cni }}"
     release_namespace: "{{ 'kube-system' if tools_cluster.platform == 'openshift' else tools_helm_releases.istio.namespace }}"
@@ -51,7 +51,7 @@
   kubernetes.core.helm:
     chart_ref: ztunnel
     chart_repo_url: https://istio-release.storage.googleapis.com/charts
-    chart_version: 1.27.3
+    chart_version: 1.28.0
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     release_name: "{{ tools_helm_releases.istio.components.ztunnel }}"
     release_namespace: "{{ 'kube-system' if tools_cluster.platform == 'openshift' else tools_helm_releases.istio.namespace }}"
@@ -89,7 +89,7 @@
   kubernetes.core.helm:
     chart_ref: gateway
     chart_repo_url: https://istio-release.storage.googleapis.com/charts
-    chart_version: 1.27.3
+    chart_version: 1.28.0
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     release_name: "{{ tools_helm_releases.istio_gateway.name }}"
     release_namespace: "{{ tools_helm_releases.istio.namespace }}"
