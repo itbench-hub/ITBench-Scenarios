@@ -15,13 +15,13 @@ tools_helm_releases:
   istio:
     components:
       base: istio-base
-      control_plane: istio-control
-      cni: istio-cni
+      cni_node_agent: istio-cni
+      istiod_control_plane: istiod
       ztunnel: ztunnel
     namespace: istio-system
   istio_gateway:
-    name: istio-gateway
-    namespace: istio-gateway
+    name: istio-ingress
+    namespace: istio-ingress
   kubernetes_metrics_server:
     name: metrics-server
     namespace: metrics-server

@@ -14,3 +14,8 @@ spec:
         - name: jaeger
       randomSamplingPercentage: 0
 {% endif %}
+{% if tools_required.prometheus %}
+  metrics:
+    - providers:
+        - name: prometheus
+{% endif %}

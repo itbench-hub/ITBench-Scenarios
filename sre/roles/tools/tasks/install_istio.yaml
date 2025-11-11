@@ -23,28 +23,28 @@
     values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/istio/base.j2') | from_yaml }}"
     wait: true
 
-- name: Install Istio Control Plane
+- name: Install Istiod Control Plane
   kubernetes.core.helm:
     chart_ref: istiod
     chart_repo_url: https://istio-release.storage.googleapis.com/charts
     chart_version: 1.28.0
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    release_name: "{{ tools_helm_releases.istio.components.control_plane }}"
+    release_name: "{{ tools_helm_releases.istio.components.istiod_control_plane }}"
     release_namespace: "{{ tools_helm_releases.istio.namespace }}"
     release_state: present
-    values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/istio/control_plane.j2') | from_yaml }}"
+    values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/istio/istiod_control_plane.j2') | from_yaml }}"
     wait: true
 
-- name: Install Istio CNI
+- name: Install Istio CNI Node Agent
   kubernetes.core.helm:
     chart_ref: cni
     chart_repo_url: https://istio-release.storage.googleapis.com/charts
     chart_version: 1.28.0
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    release_name: "{{ tools_helm_releases.istio.components.cni }}"
+    release_name: "{{ tools_helm_releases.istio.components.cni_node_agent }}"
     release_namespace: "{{ 'kube-system' if tools_cluster.platform == 'openshift' else tools_helm_releases.istio.namespace }}"
     release_state: present
-    values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/istio/cni.j2') | from_yaml }}"
+    values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/istio/cni_node_agent.j2') | from_yaml }}"
     wait: true
 
 - name: Install Istio ZTunnel
@@ -85,14 +85,14 @@
         labels:
           it-bench/monitoring: "true"
 
-- name: Install Istio ingress gateway
+- name: Install Istio Ingress Gateway
   kubernetes.core.helm:
     chart_ref: gateway
     chart_repo_url: https://istio-release.storage.googleapis.com/charts
     chart_version: 1.28.0
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     release_name: "{{ tools_helm_releases.istio_gateway.name }}"
-    release_namespace: "{{ tools_helm_releases.istio.namespace }}"
+    release_namespace: "{{ tools_helm_releases.istio_gateway.namespace }}"
     release_state: present
     values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/istio_gateway.j2') | from_yaml }}"
     wait: true
