@@ -9,6 +9,7 @@
   loop:
     - installation.yaml
     - templates.yaml
+    - init-prometheus-configmap.yaml
     - secret.yaml
 
 - name: Uninstall Clickhouse Operator

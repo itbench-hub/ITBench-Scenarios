@@ -58,6 +58,7 @@
     src: files/clickhouse/{{ item }}
   loop:
     - secret.yaml
+    - init-prometheus-configmap.yaml
     - templates.yaml
     - installation.yaml
 
