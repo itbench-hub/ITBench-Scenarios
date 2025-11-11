@@ -1,4 +1,18 @@
 ---
+- name: Disable Routing via Host feature
+  kubernetes.core.k8s_json_patch:
+    api_version: operator.openshift.io/v1
+    kind: Network
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: cluster
+    namespace: default # TODO: Need to validate this namespace
+    patch:
+      - op: replace
+        path: /spec/defaultNetwork/ovnKubernetesConfig/gatewayConfig/routingViaHost
+        value: false
+  when:
+    - tools_cluster.platform == "openshift"
+
 - name: Uninstall Istio Ingress Gateway
   kubernetes.core.helm:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
@@ -6,6 +20,21 @@
     release_namespace: "{{ tools_helm_releases.istio_gateway.namespace }}"
     release_state: absent
     wait: true
+  when:
+    - tools_cluster.platform == "kubernetes"
+
+- name: Delete the release namespaces
+  kubernetes.core.k8s:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    resource_definition:
+      api_version: v1
+      kind: Namespace
+      metadata:
+        name: "{{ tools_helm_releases.istio_gateway.namespace }}"
+    state: absent
+    wait: true
+  when:
+    - tools_cluster.platform == "kubernetes"
 
 - name: Retrieve all CRDs
   kubernetes.core.k8s_info:
@@ -85,9 +114,6 @@
       api_version: v1
       kind: Namespace
       metadata:
-        name: "{{ item }}"
+        name: "{{ tools_helm_releases.istio.namespace }}"
     state: absent
     wait: true
-  loop:
-    - "{{ tools_helm_releases.istio_gateway.namespace }}"
-    - "{{ tools_helm_releases.istio.namespace }}"

@@ -84,6 +84,8 @@
         name: "{{ tools_helm_releases.istio_gateway.namespace }}"
         labels:
           it-bench/monitoring: "true"
+  when:
+    - tools_cluster.platform == "kubernetes"
 
 - name: Install Istio Ingress Gateway
   kubernetes.core.helm:
@@ -96,3 +98,19 @@
     release_state: present
     values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/istio_gateway.j2') | from_yaml }}"
     wait: true
+  when:
+    - tools_cluster.platform == "kubernetes"
+
+- name: Enable Routing via Host feature
+  kubernetes.core.k8s_json_patch:
+    api_version: operator.openshift.io/v1
+    kind: Network
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: cluster
+    namespace: default # TODO: Need to validate this namespace
+    patch:
+      - op: replace
+        path: /spec/defaultNetwork/ovnKubernetesConfig/gatewayConfig/routingViaHost
+        value: true
+  when:
+    - tools_cluster.platform == "openshift"
