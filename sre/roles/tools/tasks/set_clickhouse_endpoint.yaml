@@ -19,3 +19,6 @@
 - name: Extract in-cluster endpoint for main Clickhouse cluster
   ansible.builtin.set_fact:
     tools_clickhouse_endpoint: http://{{ tools_clickhouse_installation.resources[0].status.endpoint }}:8123
+  when:
+    - tools_clickhouse_installation_info is defined
+    - tools_clickhouse_installation_info.resources | length > 0
