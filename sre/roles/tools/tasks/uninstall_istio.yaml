@@ -42,7 +42,7 @@
   kubernetes.core.helm:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     release_name: "{{ tools_helm_releases.istio.components.cni_node_agent }}"
-    release_namespace: "{{ 'kube-system' if tools_cluster.platform == 'openshift' else tools_helm_releases.istio.namespace}}"
+    release_namespace: "{{ 'kube-system' if tools_cluster.platform == 'openshift' else tools_helm_releases.istio.namespace }}"
     release_state: absent
     wait: true
 
