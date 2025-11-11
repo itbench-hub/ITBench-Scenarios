@@ -17,6 +17,14 @@ prometheus:
       matchLabels:
         it-bench/monitoring: "true"
     serviceMonitorSelectorNilUsesHelmValues: false
+    additionalArgs:
+      - name: web.enable-otlp-receiver
+        value: ""
+    remoteWrite:
+      - url: "http://default:@{{ tools_instances.clickhouse.name }}-{{ tools_instances.clickhouse.name }}.{{ tools_instances.clickhouse.namespace }}.svc.cluster.local:9363/write"
+        queueConfig:
+          maxSamplesPerSend: 5000
+          batchSendDeadline: 10s
 {% if tools_installation_plan.istio.enabled | default(false) %}
     routePrefix: /prometheus
 {% endif %}
@@ -40,3 +48,28 @@ kubeProxy:
   enabled: {{ tools_cluster.provider == "kind" }}
 kubeScheduler:
   enabled: {{ tools_cluster.provider == "kind" }}
+
+
+          ruleSelectorNilUsesHelmValues: false
+          serviceMonitorNamespaceSelector:
+            matchLabels:
+              it-bench/monitoring: "true"
+          serviceMonitorSelectorNilUsesHelmValues: false
+          additionalArgs:
+            - name: web.enable-otlp-receiver
+              value: ""
+          remoteWrite:
+            - url: "http://default:@{{ tools_instances.clickhouse.name }}-{{ tools_instances.clickhouse.name }}.{{ tools_instances.clickhouse.namespace }}.svc.cluster.local:9363/write"
+              queueConfig:
+                maxSamplesPerSend: 5000
+                batchSendDeadline: 10s
+      defaultRules:
+        rules:
+          alertmanager: false
+      kubeEtcd:
+        enabled: "{{ tools_cluster.provider == 'kind' }}"
+      kubeProxy:
+        enabled: "{{ tools_cluster.provider == 'kind' }}"
+    wait: true
+  when:
+    - tools_cluster.platform == "kubernetes"
