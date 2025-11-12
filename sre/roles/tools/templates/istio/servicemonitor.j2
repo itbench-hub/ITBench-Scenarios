@@ -10,5 +10,5 @@ spec:
       app.kubernetes.io/name: {{ tools_helm_releases.istio.components.istiod_control_plane }}
       app.kubernetes.io/part-of: istio
   endpoints:
-    - metricsEndpoints:
-        - port: http-monitoring
+    - interval: 30s
+      port: http-monitoring
