@@ -138,10 +138,10 @@
   when:
     - tools_required.opentelemetry
 
-- name: Install Kubernetes object collector
+- name: Install Kubernetes object collector to collect events
   kubernetes.core.k8s:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    template: templates/opentelemetry/collectors/kubernetes-objects.j2
+    template: templates/opentelemetry/collectors/kubernetes-objects-events.j2
     state: present
   vars:
     container_image: |
@@ -153,12 +153,27 @@
   when:
     - tools_required.opentelemetry
 
-- name: Wait for Kubernetes object collector deployment to complete
+- name: Install Kubernetes object collector to snapshot select Kubernetes objects
+  kubernetes.core.k8s:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    template: templates/opentelemetry/collectors/kubernetes-objects-snapshot.j2
+    state: present
+  vars:
+    container_image: |
+      {{
+        lookup('ansible.builtin.file', 'files/opentelemetry/collectors/kubernetes-objects.yaml') |
+        from_yaml |
+        community.general.json_query('spec.image')
+      }}
+  when:
+    - tools_required.opentelemetry
+
+- name: Wait for Kubernetes object collector deployments to complete
   kubernetes.core.k8s_info:
     api_version: opentelemetry.io/v1beta1
     kind: OpenTelemetryCollector
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    name: "{{ tools_instances.opentelemetry_collectors.names.kubernetes_events }}"
+    name: "{{ item }}"
     namespace: "{{ tools_instances.opentelemetry_collectors.namespace }}"
     wait: true
   register: tools_kubernetes_objects_collector_info
@@ -167,6 +182,9 @@
     - tools_kubernetes_objects_collector_info.resources[0].status.scale.statusReplicas | split('/') | unique | length == 1
   retries: 10
   delay: 30
+  loop:
+    - "{{ tools_instances.opentelemetry_collectors.names.kubernetes_events }}"
+    - "{{ tools_instances.opentelemetry_collectors.names.kubernetes_objects_snapshot }}"
   when:
     - tools_required.opentelemetry
 
