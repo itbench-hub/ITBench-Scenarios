@@ -59,6 +59,7 @@ argument_specs:
                   - authorization-policy-deny
                   - hang-init-container
                   - strict-mutual-tls
+                  - dns-misconfiguration
               strict_mutual_tls:
                 required: false
                 type: dict
@@ -512,6 +513,30 @@ argument_specs:
                       namespace:
                         required: true
                         type: str
+              dns_misconfiguration:
+                required: false
+                type: dict
+                options:
+                  workload:
+                    required: true
+                    type: dict
+                    options:
+                      kind:
+                        choices:
+                          - Deployment
+                          - StatefulSet
+                        required: true
+                        type: str
+                      name:
+                        required: true
+                        type: str
+                      namespace:
+                        required: true
+                        type: str
+                  ndots_value:
+                    required: false
+                    type: int
+                    default: 10
           otel_demo:
             required: false
             type: dict
