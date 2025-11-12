@@ -1,5 +1,10 @@
 ---
+{% if tools_cluster.platform == "openshift" %}
+global:
+  platform: openshift
+{% endif %}
 meshConfig:
+  enablePrometheusMerge: false
   enableTracing: {{ tools_required.jaeger }}
   extensionProviders:
 {% if tools_required.jaeger %}
@@ -13,7 +18,3 @@ meshConfig:
         port: 4317
         service: {{ tools_instances.opentelemetry_collectors.names.istio }}-collector.{{ tools_instances.opentelemetry_collectors.namespace }}.svc.cluster.local
 profile: ambient
-{% if tools_cluster.platform == "openshift" %}
-global:
-  platform: openshift
-{% endif %}

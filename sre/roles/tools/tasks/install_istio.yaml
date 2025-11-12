@@ -65,10 +65,10 @@
     template: templates/istio/telemetry.j2
     state: present
 
-- name: Deploy ServiceMonitors
+- name: Deploy Prometheus Monitors
   kubernetes.core.k8s:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    template: templates/istio/servicemonitor.j2
+    template: templates/istio/monitoring.j2
     state: present
   when:
     - tools_required.prometheus
