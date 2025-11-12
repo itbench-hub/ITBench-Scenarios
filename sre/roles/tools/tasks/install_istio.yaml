@@ -62,3 +62,17 @@
         type: "{{ 'NodePort' if tools_cluster.provider == 'kind' else 'LoadBalancer' }}"
         nodePorts: "{{ {'http': 30080, 'https': 30443} if tools_cluster.provider == 'kind' else omit }}"
     wait: true
+
+- name: Label otel-demo namespace for sidecar injection
+  kubernetes.core.k8s:
+
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    state: present
+    resource_definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: otel-demo
+        labels:
+          istio-injection: enabled
+          it-bench/monitoring: "true"

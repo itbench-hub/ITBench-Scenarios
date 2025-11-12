@@ -1,0 +1,62 @@
+---
+# This task removes the expired TLS certificates fault by restoring
+# the original istiod deployment configuration
+
+- name: Retrieve current istiod deployment
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: istiod
+    namespace: "{{ spec.istio_namespace | default('istio-control') }}"
+  register: faults_istiod_deployment_info
+
+- name: Ensure istiod deployment exists
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: Deployment
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: istiod
+    namespace: "{{ spec.istio_namespace | default('istio-control') }}"
+  register: istiod_deployment_info
+  failed_when: istiod_deployment_info.resources | length == 0
+
+- name: Remove fault (restore original TLS certificate configuration)
+  kubernetes.core.k8s_json_patch:
+    api_version: apps/v1
+    kind: Deployment
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: istiod
+    namespace: "{{ spec.istio_namespace | default('istio-control') }}"
+    patch:
+      - op: replace
+        path: /spec/template/spec/containers/0/env
+        value: |
+          {{ (faults_istiod_deployment_info.resources[0].spec.template.spec.containers[0].env |
+            rejectattr('name', 'in', ['DEFAULT_WORKLOAD_CERT_TTL', 'MAX_WORKLOAD_CERT_TTL', 'WORKLOAD_CERT_ROTATION_GRACE_PERIOD']) |
+            list) | to_json }}
+
+- name: Wait for istiod pods to restart with restored configuration
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Pod
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    namespace: "{{ spec.istio_namespace | default('istio-control') }}"
+    label_selectors:
+      - istio=pilot
+    wait: true
+    wait_condition:
+      type: Ready
+      status: "True"
+    wait_timeout: 300
+
+- name: Display fault removal confirmation
+  ansible.builtin.debug:
+    msg: >
+      TLS certificate expiration fault removed successfully!
+
+      Original certificate TTL settings have been restored.
+      Istio will now use default certificate lifetimes for new certificates.
+
+      Note: Existing certificates with short TTLs may still be in use until they expire
+      and are automatically rotated. This process may take a few minutes.
