@@ -3,8 +3,8 @@
   kubernetes.core.helm:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     release_state: absent
-    release_name: "{{ helm_release.name }}"
-    release_namespace: "{{ helm_release.namespace }}"
+    release_name: "{{ tools_helm_releases.kubernetes_topology_monitor.name }}"
+    release_namespace: "{{ tools_helm_releases.kubernetes_topology_monitor.namespace }}"
     wait: true
 
 - name: Find all persistent volume claims used by the monitor
@@ -13,7 +13,7 @@
     kind: PersistentVolumeClaim
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     name: "{{ item }}"
-    namespace: "{{ helm_release.namespace }}"
+    namespace: "{{ tools_helm_releases.kubernetes_topology_monitor.namespace }}"
   loop:
     - data-topology-monitor-0
     - import-topology-monitor-0

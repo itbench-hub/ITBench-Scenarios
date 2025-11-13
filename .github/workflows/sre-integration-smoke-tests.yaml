@@ -241,7 +241,7 @@ jobs:
         run: |
           make -C sre undeploy_recorders
   ingress:
-    name: Ingress Smoke Tests
+    name: NGINX Fabric Gateway Smoke Tests
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5.0.0
@@ -601,6 +601,9 @@ jobs:
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
+      - name: Test connection
+        run: |
+          curl http://0.0.0.0:30950/prometheus/query
       - name: Run re-initialization smoke test
         run: |
           make -C sre reinit_tools

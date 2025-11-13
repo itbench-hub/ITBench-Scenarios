@@ -3,6 +3,9 @@ tools_instances:
   clickhouse:
     name: clickhouse
     namespace: clickhouse
+  kubernetes_gateways:
+    names:
+      tools: tools
   opentelemetry_collectors:
     names:
       istio: istio

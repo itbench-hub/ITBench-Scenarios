@@ -1,0 +1,73 @@
+---
+- name: Add Kubernetes Gateway API CRDs
+  kubernetes.core.k8s:
+    apply: true
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    server_side_apply:
+      field_manager: kubectl-client-side-apply
+    src: https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/standard-install.yaml
+
+- name: Create release namespace for NGINX Fabric Gateway
+  kubernetes.core.k8s:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    state: present
+    resource_definition:
+      apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: "{{ tools_helm_releases.nginx_fabric_gateway.namespace }}"
+        labels:
+          it-bench/monitoring: "true"
+
+- name: Install NGINX Fabric Gateway
+  kubernetes.core.helm:
+    chart_ref: oci://ghcr.io/nginx/charts/nginx-gateway-fabric
+    chart_version: 2.2.1
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    release_name: "{{ tools_helm_releases.nginx_fabric_gateway.name }}"
+    release_namespace: "{{ tools_helm_releases.nginx_fabric_gateway.namespace }}"
+    release_state: present
+    timeout: 10m0s
+    values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/nginx_fabric_gateway.j2') | from_yaml }}"
+    wait: true
+
+- name: Create Pod Monitors
+  kubernetes.core.k8s:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    template: templates/nginx_fabric_gateway/podmonitor.j2
+    state: present
+  when:
+    - tools_required.prometheus
+
+- name: Create HTTPRoutes
+  kubernetes.core.k8s:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    template: templates/networking/kubernetes/httproute.j2
+    state: present
+  loop: "{{ tools_gateway_http_routes }}"
+  loop_control:
+    label: httproute/{{ route.name }}
+    loop_var: route
+
+- name: Wait for HTTPRoute to be accepted
+  kubernetes.core.k8s_info:
+    api_version: gateway.networking.k8s.io/v1
+    kind: HTTPRoute
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    name: "{{ route.name }}"
+    namespace: "{{ route.namespace }}"
+    wait: true
+  loop: "{{ tools_gateway_http_routes }}"
+  loop_control:
+    label: httproute/{{ route.name }}
+    loop_var: route
+  register: tools_http_route_info
+  until:
+    - tools_http_route_info.resources[0].status is defined
+    - tools_http_route_info.resources[0].status.parents is defined
+    - tools_http_route_info.resources[0].status.parents | length == 1
+    - tools_http_route_info.resources[0].status.parents[0].conditions is defined
+    - tools_http_route_info.resources[0].status.parents[0].conditions | length > 0
+    - tools_http_route_info.resources[0].status.parents[0].conditions | selectattr('type', '==', 'Accepted') | length == 1
+  retries: 10
+  delay: 30

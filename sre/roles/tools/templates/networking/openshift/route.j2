@@ -2,8 +2,8 @@
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: "{{ route.name }}"
-  namespace: "{{ route.namespace }}"
+  name: {{ route.name }}
+  namespace: {{ route.namespace }}
 spec:
   httpHeaders:
     actions:
@@ -39,7 +39,7 @@ spec:
             set:
               value: "0"
   port:
-    targetPort: "{{ route.targetPort }}"
+    targetPort: {{ route.targetPort }}
   to:
     kind: Service
-    name: "{{ route.service }}"
+    name: {{ route.service }}

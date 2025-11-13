@@ -3,8 +3,6 @@
   ansible.builtin.set_fact:
     tools_gateway_http_routes: []
     tools_openshift_routes: []
-  when:
-    - tools_required.ingress
 
 - name: Import tasks to approve pending certificate requests
   ansible.builtin.include_role:
@@ -65,13 +63,12 @@
   when:
     - tools_required.kubernetes_topology_monitor
 
-- name: Import Ingress installation tasks
+- name: Import NGINX Gateway installation tasks
   ansible.builtin.import_tasks:
-    file: install_ingress.yaml
-  vars:
-    helm_release: "{{ tools_helm_releases.ingress }}"
+    file: install_gateway.yaml
   when:
     - tools_required.ingress
+    - tools_cluster.platform == "kubernetes"
 
 - name: Import Istio installation tasks
   ansible.builtin.import_tasks:
