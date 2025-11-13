@@ -3,6 +3,7 @@
     "items": {
         "type": "object",
         "required": [
+            "arguments",
             "description",
             "expectation",
             "name",
@@ -12,6 +13,17 @@
             "tags"
         ],
         "properties": {
+            "arguments": {
+                "type": "object",
+                "required": [
+                    "jsonSchema"
+                ],
+                "properties": {
+                    "jsonSchema": {
+                        "type": "object"
+                    }
+                }
+            },
             "description": {
                 "type": "string"
             },
@@ -23,7 +35,9 @@
             },
             "platform": {
                 "type": "string",
-                "enum": ["Kubernetes"]
+                "enum": [
+                    "Kubernetes"
+                ]
             },
             "resources": {
                 "type": "array",
@@ -33,18 +47,24 @@
             },
             "solutions": {
                 "type": "object",
-                "required": ["templates"],
+                "required": [
+                    "templates"
+                ],
                 "properties": {
                     "type": "array",
                     "items": {
                         "type": "object",
-                        "required": ["steps"],
+                        "required": [
+                            "steps"
+                        ],
                         "properties": {
                             "steps": {
                                 "type": "array",
                                 "items": {
                                     "type": "object",
-                                    "required": ["text"],
+                                    "required": [
+                                        "text"
+                                    ],
                                     "properties": {
                                         "command": {
                                             "type": "string"
@@ -63,7 +83,12 @@
                 "type": "array",
                 "items": {
                     "type": "string",
-                    "enum": ["Deployment", "Performance"]
+                    "enum": [
+                        "Authentication",
+                        "Deployment",
+                        "Networking",
+                        "Performance"
+                    ]
                 }
             }
         }

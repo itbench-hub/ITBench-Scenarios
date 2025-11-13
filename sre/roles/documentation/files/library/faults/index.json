@@ -1,11 +1,11 @@
 [
     {
         "arguments": {
-            "json_schema": {
+            "jsonSchema": {
                 "properties": {
-                    "k8s_object": {
+                    "kubernetesObject": {
                         "properties": {
-                            "api_version": {
+                            "apiVersion": {
                                 "enum": [
                                     "apps/v1"
                                 ],
@@ -35,7 +35,7 @@
                             }
                         },
                         "required": [
-                            "api_version",
+                            "apiVersion",
                             "kind",
                             "metadata"
                         ],
@@ -43,7 +43,7 @@
                     }
                 },
                 "required": [
-                    "k8s_object"
+                    "kubernetesObject"
                 ],
                 "type": "object"
             }
@@ -65,11 +65,11 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} get networkpolicy`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} get networkpolicy`",
                             "text": "Retrieve and review the configuration of the network policy(s) in the affected namespace."
                         },
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} edit networkpolicy << name of policy >>`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit networkpolicy << name of policy >>`",
                             "text": "Manually edit the manifest(s) and allow access to workload's ports of the network policy(s)."
                         }
                     ]
@@ -77,11 +77,11 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} get networkpolicy`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} get networkpolicy`",
                             "text": "Retrieve and review the configuration of the network policy(s) in the affected namespace."
                         },
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} edit networkpolicy << name of policy >>`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit networkpolicy << name of policy >>`",
                             "text": "Delete the offending network policy(s) if it is no longer required."
                         }
                     ]
@@ -95,11 +95,11 @@
     },
     {
         "arguments": {
-            "json_schema": {
+            "jsonSchema": {
                 "properties": {
-                    "k8s_object": {
+                    "kubernetesObject": {
                         "properties": {
-                            "api_version": {
+                            "apiVersion": {
                                 "enum": [
                                     "apps/v1"
                                 ],
@@ -129,7 +129,7 @@
                             }
                         },
                         "required": [
-                            "api_version",
+                            "apiVersion",
                             "kind",
                             "metadata"
                         ],
@@ -137,7 +137,7 @@
                     }
                 },
                 "required": [
-                    "k8s_object"
+                    "kubernetesObject"
                 ],
                 "type": "object"
             }
@@ -160,11 +160,11 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} get resourcequota`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} get resourcequota`",
                             "text": "Retrieve and review the configuration of the resource quota(s) in the affected namespace."
                         },
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} edit resourcequota << name of quota >>`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit resourcequota << name of quota >>`",
                             "text": "Manually edit the manifest(s) and increase the values of the resource quota(s)."
                         }
                     ]
@@ -172,11 +172,11 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} get resourcequota`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} get resourcequota`",
                             "text": "Retrieve and review the configuration of the resource quota(s) in the affected namespace."
                         },
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} delete resourcequota << name of quota >>`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} delete resourcequota << name of quota >>`",
                             "text": "Delete the offending resource quota(s) if it is no longer required."
                         }
                     ]
@@ -190,7 +190,7 @@
     },
     {
         "arguments": {
-            "json_schema": {
+            "jsonSchema": {
                 "properties": {
                     "container": {
                         "properties": {
@@ -203,9 +203,9 @@
                         ],
                         "type": "object"
                     },
-                    "k8s_object": {
+                    "kubernetesObject": {
                         "properties": {
-                            "api_version": {
+                            "apiVersion": {
                                 "enum": [
                                     "apps/v1"
                                 ],
@@ -235,7 +235,7 @@
                             }
                         },
                         "required": [
-                            "api_version",
+                            "apiVersion",
                             "kind",
                             "metadata"
                         ],
@@ -243,7 +243,7 @@
                     }
                 },
                 "required": [
-                    "k8s_object",
+                    "kubernetesObject",
                     "container"
                 ],
                 "type": "object"
@@ -265,7 +265,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} rollout undo {{ args.k8_object.kind }}/{{ args.k8_object.metadata.name }}`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind }}/{{ args.kubernetesObject.metadata.name }}`",
                             "text": "Revert the last change done to the manifest."
                         }
                     ]
@@ -273,7 +273,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} edit {{ args.k8_object.kind }} {{ args.k8_object.metadata.name }}`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind }} {{ args.kubernetesObject.metadata.name }}`",
                             "text": "Manually edit the manifest and replace the invalid command with the correct value."
                         }
                     ]
@@ -287,11 +287,11 @@
     },
     {
         "arguments": {
-            "json_schema": {
+            "jsonSchema": {
                 "properties": {
-                    "k8s_object": {
+                    "kubernetesObject": {
                         "properties": {
-                            "api_version": {
+                            "apiVersion": {
                                 "enum": [
                                     "apps/v1"
                                 ],
@@ -321,7 +321,7 @@
                             }
                         },
                         "required": [
-                            "api_version",
+                            "apiVersion",
                             "kind",
                             "metadata"
                         ],
@@ -329,7 +329,7 @@
                     }
                 },
                 "required": [
-                    "k8s_object"
+                    "kubernetesObject"
                 ],
                 "type": "object"
             }
@@ -347,7 +347,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} exec {{ args.k8_object.kind }}/{{ args.k8_object.metadata.name }} -- valkey-cli CONFIG SET requirepass << password >>`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} exec {{ args.kubernetesObject.kind }}/{{ args.kubernetesObject.metadata.name }} -- valkey-cli CONFIG SET requirepass << password >>`",
                             "text": "Change the password back to the original by access the pod directly."
                         }
                     ]
@@ -361,11 +361,11 @@
     },
     {
         "arguments": {
-            "json_schema": {
+            "jsonSchema": {
                 "properties": {
-                    "k8s_object": {
+                    "kubernetesObject": {
                         "properties": {
-                            "api_version": {
+                            "apiVersion": {
                                 "enum": [
                                     "apps/v1"
                                 ],
@@ -395,7 +395,7 @@
                             }
                         },
                         "required": [
-                            "api_version",
+                            "apiVersion",
                             "kind",
                             "metadata"
                         ],
@@ -403,7 +403,7 @@
                     }
                 },
                 "required": [
-                    "k8s_object"
+                    "kubernetesObject"
                 ],
                 "type": "object"
             }
@@ -424,7 +424,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} edit horizontalpodautoscaler {{ args.k8_object.metadata.name }}`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit horizontalpodautoscaler {{ args.kubernetesObject.metadata.name }}`",
                             "text": "Manually edit the manifest and replace the utilization values with the correct values."
                         }
                     ]
@@ -438,7 +438,7 @@
     },
     {
         "arguments": {
-            "json_schema": {
+            "jsonSchema": {
                 "properties": {
                     "container": {
                         "properties": {
@@ -467,9 +467,9 @@
                         ],
                         "type": "object"
                     },
-                    "k8s_object": {
+                    "kubernetesObject": {
                         "properties": {
-                            "api_version": {
+                            "apiVersion": {
                                 "enum": [
                                     "apps/v1"
                                 ],
@@ -499,7 +499,7 @@
                             }
                         },
                         "required": [
-                            "api_version",
+                            "apiVersion",
                             "kind",
                             "metadata"
                         ],
@@ -507,7 +507,7 @@
                     }
                 },
                 "required": [
-                    "k8s_object",
+                    "kubernetesObject",
                     "container"
                 ],
                 "type": "object"
@@ -528,7 +528,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} rollout undo {{ args.k8_object.kind }}/{{ args.k8_object.metadata.name }}`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind }}/{{ args.kubernetesObject.metadata.name }}`",
                             "text": "Revert the last change done to the manifest."
                         }
                     ]
@@ -536,7 +536,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} edit {{ args.k8_object.kind }} {{ args.k8_object.metadata.name }}`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind }} {{ args.kubernetesObject.metadata.name }}`",
                             "text": "Manually edit the manifest and replace the environment variable ({{ args.container.env.name }}) value with the correct value."
                         }
                     ]
@@ -550,11 +550,11 @@
     },
     {
         "arguments": {
-            "json_schema": {
+            "jsonSchema": {
                 "properties": {
-                    "k8s_object": {
+                    "kubernetesObject": {
                         "properties": {
-                            "api_version": {
+                            "apiVersion": {
                                 "enum": [
                                     "v1"
                                 ],
@@ -583,19 +583,19 @@
                             }
                         },
                         "required": [
-                            "api_version",
+                            "apiVersion",
                             "kind",
                             "metadata"
                         ],
                         "type": "object"
                     },
-                    "target_port": {
+                    "targetPort": {
                         "type": "integer"
                     }
                 },
                 "required": [
-                    "k8s_object",
-                    "target_port"
+                    "kubernetesObject",
+                    "targetPort"
                 ],
                 "type": "object"
             }
@@ -616,8 +616,8 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} edit {{ args.k8_object.kind }} {{ args.k8_object.metadata.name }}`",
-                            "text": "Manually edit the manifest and replace the target port ({{ args.target_port }}) with the correct value."
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind }} {{ args.kubernetesObject.metadata.name }}`",
+                            "text": "Manually edit the manifest and replace the target port ({{ args.targetPort }}) with the correct value."
                         }
                     ]
                 }
@@ -630,7 +630,7 @@
     },
     {
         "arguments": {
-            "json_schema": {
+            "jsonSchema": {
                 "properties": {
                     "container": {
                         "properties": {
@@ -643,9 +643,9 @@
                         ],
                         "type": "object"
                     },
-                    "k8s_object": {
+                    "kubernetesObject": {
                         "properties": {
-                            "api_version": {
+                            "apiVersion": {
                                 "enum": [
                                     "apps/v1"
                                 ],
@@ -675,7 +675,7 @@
                             }
                         },
                         "required": [
-                            "api_version",
+                            "apiVersion",
                             "kind",
                             "metadata"
                         ],
@@ -683,7 +683,7 @@
                     }
                 },
                 "required": [
-                    "k8s_object",
+                    "kubernetesObject",
                     "container"
                 ],
                 "type": "object"
@@ -705,7 +705,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} rollout undo {{ args.k8_object.kind }}/{{ args.k8_object.metadata.name }}`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind }}/{{ args.kubernetesObject.metadata.name }}`",
                             "text": "Revert the last change done to the manifest."
                         }
                     ]
@@ -713,7 +713,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} edit {{ args.k8_object.kind }} {{ args.k8_object.metadata.name }}`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind }} {{ args.kubernetesObject.metadata.name }}`",
                             "text": "Manually edit the manifest and replace the invalid image with the correct value."
                         }
                     ]
@@ -727,11 +727,11 @@
     },
     {
         "arguments": {
-            "json_schema": {
+            "jsonSchema": {
                 "properties": {
-                    "k8s_object": {
+                    "kubernetesObject": {
                         "properties": {
-                            "api_version": {
+                            "apiVersion": {
                                 "enum": [
                                     "apps/v1"
                                 ],
@@ -761,7 +761,7 @@
                             }
                         },
                         "required": [
-                            "api_version",
+                            "apiVersion",
                             "kind",
                             "metadata"
                         ],
@@ -769,7 +769,7 @@
                     }
                 },
                 "required": [
-                    "k8s_object"
+                    "kubernetesObject"
                 ],
                 "type": "object"
             }
@@ -791,7 +791,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} rollout undo {{ args.k8_object.kind }}/{{ args.k8_object.metadata.name }}`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind }}/{{ args.kubernetesObject.metadata.name }}`",
                             "text": "Revert the last change done to the manifest."
                         }
                     ]
@@ -799,7 +799,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} edit {{ args.k8_object.kind }} {{ args.k8_object.metadata.name }}`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind }} {{ args.kubernetesObject.metadata.name }}`",
                             "text": "Manually edit the manifest and replace the node selector with the correct value."
                         }
                     ]
@@ -813,7 +813,7 @@
     },
     {
         "arguments": {
-            "json_schema": {
+            "jsonSchema": {
                 "properties": {
                     "flag": {
                         "properties": {
@@ -830,9 +830,9 @@
                         ],
                         "type": "object"
                     },
-                    "k8s_object": {
+                    "kubernetesObject": {
                         "properties": {
-                            "api_version": {
+                            "apiVersion": {
                                 "enum": [
                                     "v1"
                                 ],
@@ -864,7 +864,7 @@
                             }
                         },
                         "required": [
-                            "api_version",
+                            "apiVersion",
                             "kind",
                             "metadata"
                         ],
@@ -872,7 +872,7 @@
                     }
                 },
                 "required": [
-                    "k8s_object",
+                    "kubernetesObject",
                     "flag"
                 ],
                 "type": "object"
@@ -893,11 +893,11 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} edit configmap {{ args.k8_object.metadata.name }}",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit configmap {{ args.kubernetesObject.metadata.name }}",
                             "text": "Disable the feature flag ({{ args.flag.name }}) by manually editing the contents of the ConfigMap"
                         },
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} rollout restart deployment`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout restart deployment`",
                             "text": "Restart all of the Deployment workloads."
                         }
                     ]
@@ -911,7 +911,7 @@
     },
     {
         "arguments": {
-            "json_schema": {
+            "jsonSchema": {
                 "properties": {
                     "schedule": {
                         "properties": {
@@ -954,7 +954,7 @@
     },
     {
         "arguments": {
-            "json_schema": {
+            "jsonSchema": {
                 "properties": {
                     "container": {
                         "properties": {
@@ -967,9 +967,9 @@
                         ],
                         "type": "object"
                     },
-                    "k8s_object": {
+                    "kubernetesObject": {
                         "properties": {
-                            "api_version": {
+                            "apiVersion": {
                                 "enum": [
                                     "apps/v1"
                                 ],
@@ -999,7 +999,7 @@
                             }
                         },
                         "required": [
-                            "api_version",
+                            "apiVersion",
                             "kind",
                             "metadata"
                         ],
@@ -1007,7 +1007,7 @@
                     }
                 },
                 "required": [
-                    "k8s_object",
+                    "kubernetesObject",
                     "container"
                 ],
                 "type": "object"
@@ -1029,7 +1029,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} rollout undo {{ args.k8_object.kind }}/{{ args.k8_object.metadata.name }}`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind }}/{{ args.kubernetesObject.metadata.name }}`",
                             "text": "Revert the last change done to the manifest."
                         }
                     ]
@@ -1037,7 +1037,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} edit {{ args.k8_object.kind }} {{ args.k8_object.metadata.name }}`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind }} {{ args.kubernetesObject.metadata.name }}`",
                             "text": "Manually edit the manifest and replace the invalid image with the correct value."
                         }
                     ]
@@ -1045,7 +1045,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.k8_object.metadata.namespace }} edit {{ args.k8_object.kind }} {{ args.k8_object.metadata.name }}`",
+                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind }} {{ args.kubernetesObject.metadata.name }}`",
                             "text": "Manually edit the manifest and replace the node selector to allow Kubernetes to schedule the workload on a supported node (if exists)."
                         }
                     ]

@@ -38,9 +38,9 @@ A fault is a solvable issue injected into an environment to create an incident.
 ```json
 {
     "properties": {
-        "k8s_object": {
+        "kubernetesObject": {
             "properties": {
-                "api_version": {
+                "apiVersion": {
                     "enum": [
                         "apps/v1"
                     ],
@@ -70,7 +70,7 @@ A fault is a solvable issue injected into an environment to create an incident.
                 }
             },
             "required": [
-                "api_version",
+                "apiVersion",
                 "kind",
                 "metadata"
             ],
@@ -78,7 +78,7 @@ A fault is a solvable issue injected into an environment to create an incident.
         }
     },
     "required": [
-        "k8s_object"
+        "kubernetesObject"
     ],
     "type": "object"
 }
@@ -101,9 +101,9 @@ A fault is a solvable issue injected into an environment to create an incident.
 ```json
 {
     "properties": {
-        "k8s_object": {
+        "kubernetesObject": {
             "properties": {
-                "api_version": {
+                "apiVersion": {
                     "enum": [
                         "apps/v1"
                     ],
@@ -133,7 +133,7 @@ A fault is a solvable issue injected into an environment to create an incident.
                 }
             },
             "required": [
-                "api_version",
+                "apiVersion",
                 "kind",
                 "metadata"
             ],
@@ -141,7 +141,7 @@ A fault is a solvable issue injected into an environment to create an incident.
         }
     },
     "required": [
-        "k8s_object"
+        "kubernetesObject"
     ],
     "type": "object"
 }
@@ -173,9 +173,9 @@ A fault is a solvable issue injected into an environment to create an incident.
             ],
             "type": "object"
         },
-        "k8s_object": {
+        "kubernetesObject": {
             "properties": {
-                "api_version": {
+                "apiVersion": {
                     "enum": [
                         "apps/v1"
                     ],
@@ -205,7 +205,7 @@ A fault is a solvable issue injected into an environment to create an incident.
                 }
             },
             "required": [
-                "api_version",
+                "apiVersion",
                 "kind",
                 "metadata"
             ],
@@ -213,7 +213,7 @@ A fault is a solvable issue injected into an environment to create an incident.
         }
     },
     "required": [
-        "k8s_object",
+        "kubernetesObject",
         "container"
     ],
     "type": "object"
@@ -232,9 +232,9 @@ A fault is a solvable issue injected into an environment to create an incident.
 ```json
 {
     "properties": {
-        "k8s_object": {
+        "kubernetesObject": {
             "properties": {
-                "api_version": {
+                "apiVersion": {
                     "enum": [
                         "apps/v1"
                     ],
@@ -264,7 +264,7 @@ A fault is a solvable issue injected into an environment to create an incident.
                 }
             },
             "required": [
-                "api_version",
+                "apiVersion",
                 "kind",
                 "metadata"
             ],
@@ -272,7 +272,7 @@ A fault is a solvable issue injected into an environment to create an incident.
         }
     },
     "required": [
-        "k8s_object"
+        "kubernetesObject"
     ],
     "type": "object"
 }
@@ -293,9 +293,9 @@ A fault is a solvable issue injected into an environment to create an incident.
 ```json
 {
     "properties": {
-        "k8s_object": {
+        "kubernetesObject": {
             "properties": {
-                "api_version": {
+                "apiVersion": {
                     "enum": [
                         "apps/v1"
                     ],
@@ -325,7 +325,7 @@ A fault is a solvable issue injected into an environment to create an incident.
                 }
             },
             "required": [
-                "api_version",
+                "apiVersion",
                 "kind",
                 "metadata"
             ],
@@ -333,7 +333,7 @@ A fault is a solvable issue injected into an environment to create an incident.
         }
     },
     "required": [
-        "k8s_object"
+        "kubernetesObject"
     ],
     "type": "object"
 }
@@ -380,9 +380,9 @@ A fault is a solvable issue injected into an environment to create an incident.
             ],
             "type": "object"
         },
-        "k8s_object": {
+        "kubernetesObject": {
             "properties": {
-                "api_version": {
+                "apiVersion": {
                     "enum": [
                         "apps/v1"
                     ],
@@ -412,7 +412,7 @@ A fault is a solvable issue injected into an environment to create an incident.
                 }
             },
             "required": [
-                "api_version",
+                "apiVersion",
                 "kind",
                 "metadata"
             ],
@@ -420,7 +420,7 @@ A fault is a solvable issue injected into an environment to create an incident.
         }
     },
     "required": [
-        "k8s_object",
+        "kubernetesObject",
         "container"
     ],
     "type": "object"
@@ -442,9 +442,9 @@ A fault is a solvable issue injected into an environment to create an incident.
 ```json
 {
     "properties": {
-        "k8s_object": {
+        "kubernetesObject": {
             "properties": {
-                "api_version": {
+                "apiVersion": {
                     "enum": [
                         "v1"
                     ],
@@ -473,19 +473,19 @@ A fault is a solvable issue injected into an environment to create an incident.
                 }
             },
             "required": [
-                "api_version",
+                "apiVersion",
                 "kind",
                 "metadata"
             ],
             "type": "object"
         },
-        "target_port": {
+        "targetPort": {
             "type": "integer"
         }
     },
     "required": [
-        "k8s_object",
-        "target_port"
+        "kubernetesObject",
+        "targetPort"
     ],
     "type": "object"
 }
@@ -517,9 +517,9 @@ A fault is a solvable issue injected into an environment to create an incident.
             ],
             "type": "object"
         },
-        "k8s_object": {
+        "kubernetesObject": {
             "properties": {
-                "api_version": {
+                "apiVersion": {
                     "enum": [
                         "apps/v1"
                     ],
@@ -549,7 +549,7 @@ A fault is a solvable issue injected into an environment to create an incident.
                 }
             },
             "required": [
-                "api_version",
+                "apiVersion",
                 "kind",
                 "metadata"
             ],
@@ -557,7 +557,7 @@ A fault is a solvable issue injected into an environment to create an incident.
         }
     },
     "required": [
-        "k8s_object",
+        "kubernetesObject",
         "container"
     ],
     "type": "object"
@@ -580,9 +580,9 @@ A fault is a solvable issue injected into an environment to create an incident.
 ```json
 {
     "properties": {
-        "k8s_object": {
+        "kubernetesObject": {
             "properties": {
-                "api_version": {
+                "apiVersion": {
                     "enum": [
                         "apps/v1"
                     ],
@@ -612,7 +612,7 @@ A fault is a solvable issue injected into an environment to create an incident.
                 }
             },
             "required": [
-                "api_version",
+                "apiVersion",
                 "kind",
                 "metadata"
             ],
@@ -620,7 +620,7 @@ A fault is a solvable issue injected into an environment to create an incident.
         }
     },
     "required": [
-        "k8s_object"
+        "kubernetesObject"
     ],
     "type": "object"
 }
@@ -655,9 +655,9 @@ A fault is a solvable issue injected into an environment to create an incident.
             ],
             "type": "object"
         },
-        "k8s_object": {
+        "kubernetesObject": {
             "properties": {
-                "api_version": {
+                "apiVersion": {
                     "enum": [
                         "v1"
                     ],
@@ -689,7 +689,7 @@ A fault is a solvable issue injected into an environment to create an incident.
                 }
             },
             "required": [
-                "api_version",
+                "apiVersion",
                 "kind",
                 "metadata"
             ],
@@ -697,7 +697,7 @@ A fault is a solvable issue injected into an environment to create an incident.
         }
     },
     "required": [
-        "k8s_object",
+        "kubernetesObject",
         "flag"
     ],
     "type": "object"
@@ -766,9 +766,9 @@ A fault is a solvable issue injected into an environment to create an incident.
             ],
             "type": "object"
         },
-        "k8s_object": {
+        "kubernetesObject": {
             "properties": {
-                "api_version": {
+                "apiVersion": {
                     "enum": [
                         "apps/v1"
                     ],
@@ -798,7 +798,7 @@ A fault is a solvable issue injected into an environment to create an incident.
                 }
             },
             "required": [
-                "api_version",
+                "apiVersion",
                 "kind",
                 "metadata"
             ],
@@ -806,7 +806,7 @@ A fault is a solvable issue injected into an environment to create an incident.
         }
     },
     "required": [
-        "k8s_object",
+        "kubernetesObject",
         "container"
     ],
     "type": "object"
