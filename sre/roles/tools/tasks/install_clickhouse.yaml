@@ -53,7 +53,7 @@
 - name: Create Clickhouse Kubernetes objects
   kubernetes.core.k8s:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    namespace: "{{ instance.namespace }}"
+    namespace: "{{ tools_instances.clickhouse.namespace }}"
     state: present
     src: files/clickhouse/{{ item }}
   loop:
@@ -61,17 +61,28 @@
     - templates.yaml
     - installation.yaml
 
-- name: Wait for Clickhouse install to complete
+- name: Fetch all Clickhouse Installations
   kubernetes.core.k8s_info:
     api_version: clickhouse.altinity.com/v1
     kind: ClickHouseInstallation
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    name: "{{ instance.name }}"
-    namespace: "{{ instance.namespace }}"
+    namespace: "{{ tools_instances.clickhouse.namespace }}"
+  register: tools_clickhouse_installations_info
+
+- name: Wait for all OpenTelemetry Collectors to reach ready state
+  kubernetes.core.k8s_info:
+    api_version: "{{ resource.apiVersion }}"
+    kind: "{{ resource.kind }}"
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    name: "{{ resource.metadata.name }}"
+    namespace: "{{ resource.metadata.namespace }}"
     wait: true
+  loop: "{{ tools_clickhouse_installations_info.resources }}"
+  loop_control:
+    label: clickhouseinstallation/{{ resource.metadata.name }}
+    loop_var: resource
   register: tools_clickhouse_installation_info
   until:
-    - tools_clickhouse_installation_info.resources | length > 0
     - tools_clickhouse_installation_info.resources[0].status is defined
     - tools_clickhouse_installation_info.resources[0].status.status is defined
     - tools_clickhouse_installation_info.resources[0].status.status == 'Completed'
