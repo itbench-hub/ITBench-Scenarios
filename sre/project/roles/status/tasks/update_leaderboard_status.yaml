@@ -1,0 +1,21 @@
+---
+- name: Import variable setting tasks
+  ansible.builtin.import_tasks:
+    file: set_event_phase.yaml
+
+- name: Update status file with new event ({{ status_state }})
+  ansible.builtin.copy:
+    content: "{{ {'events': status.events + new_events} | to_nice_json }}"
+    dest: "{{ status_status_temp_file.path }}"
+    mode: "0644"
+  tags:
+    - always
+  vars:
+    status: "{{ lookup('ansible.builtin.file', status_status_temp_file.path) | from_json }}"
+    new_events:
+      - failed_task: "{{ status_failed_task | default(omit) }}"
+        phase: "{{ status_event_phase }}"
+        status: "{{ status_state }}"
+        timestamp: "{{ now(utc=True, fmt='%Y-%m-%dT%H:%M:%SZ') }}"
+  when:
+    - status_event_phase is defined

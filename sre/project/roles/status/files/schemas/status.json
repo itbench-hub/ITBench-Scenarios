@@ -1,0 +1,38 @@
+{
+    "type": "object",
+    "required": ["events"],
+    "properties": {
+        "events": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "required": ["phase", "status", "timestamp"],
+                "properties": {
+                    "failed_task": {
+                        "type": "object",
+                        "required": ["name", "result"],
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "result": {
+                                "type": "object"
+                            }
+                        }
+                    },
+                    "phase": {
+                        "type": "string",
+                        "enum": ["failed", "progressing", "succeeded"]
+                    },
+                    "status": {
+                        "type": "string",
+                        "enum": ["application-installation", "application-removal", "fault-injection", "fault-removal", "recorders-installation", "recorders-removal", "tool-installation", "tool-removal"]
+                    },
+                    "timestamp": {
+                        "type": "string"
+                    }
+                }
+            }
+        }
+    }
+}

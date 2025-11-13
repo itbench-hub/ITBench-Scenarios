@@ -1,0 +1,61 @@
+---
+- name: Delete Clickhouse Kubernetes objects
+  kubernetes.core.k8s:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    namespace: "{{ tools_instances.clickhouse.namespace }}"
+    state: absent
+    src: files/clickhouse/{{ item }}
+    wait: true
+  loop:
+    - installation.yaml
+    - templates.yaml
+    - secret.yaml
+
+- name: Delete the instance namespace
+  kubernetes.core.k8s:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    resource_definition:
+      api_version: v1
+      kind: Namespace
+      metadata:
+        name: "{{ tools_instances.clickhouse.namespace }}"
+    state: absent
+    wait: true
+
+- name: Uninstall Clickhouse Operator
+  kubernetes.core.helm:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    release_name: "{{ tools_helm_releases.clickhouse_operator.name }}"
+    release_namespace: "{{ tools_helm_releases.clickhouse_operator.namespace }}"
+    release_state: absent
+    wait: true
+
+- name: Delete the release namespaces
+  kubernetes.core.k8s:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    resource_definition:
+      api_version: v1
+      kind: Namespace
+      metadata:
+        name: "{{ tools_helm_releases.clickhouse_operator.namespace }}"
+    state: absent
+    wait: true
+
+- name: Remove the Alinity ClickHouse related CRDs from the cluster
+  kubernetes.core.k8s:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    resource_definition:
+      api_version: "{{ crd.apiVersion }}"
+      kind: "{{ crd.kind }}"
+      metadata:
+        name: "{{ crd.metadata.name }}"
+    state: absent
+    wait: true
+  loop: |
+    {{
+      tools_crd_info.resources |
+      community.general.json_query("[?ends_with(spec.group, 'altinity.com')]")
+    }}
+  loop_control:
+    label: customresourcedefinition/{{ crd.metadata.name }}
+    loop_var: crd

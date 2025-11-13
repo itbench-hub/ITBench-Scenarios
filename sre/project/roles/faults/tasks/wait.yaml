@@ -1,0 +1,9 @@
+---
+- name: Import wait pause commands
+  ansible.builtin.import_tasks:
+    file: wait_pause.yaml
+  vars:
+    spec: "{{ wait_condition.pause }}"
+  when:
+    - wait_condition.name == 'pause'
+    - wait_condition.pause is defined
