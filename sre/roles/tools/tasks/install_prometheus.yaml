@@ -12,6 +12,7 @@
           metadata:
             name: "{{ tools_helm_releases.prometheus.namespace }}"
             labels:
+              it-bench/gateway: "true"
               it-bench/monitoring: "true"
         state: present
 
@@ -28,10 +29,20 @@
         values:
           alertmanager:
             enabled: false
+          defaultRules:
+            rules:
+              alertmanager: false
           grafana:
             enabled: false
+          kubeEtcd:
+            enabled: "{{ tools_cluster.provider == 'kind' }}"
+          kubeProxy:
+            enabled: "{{ tools_cluster.provider == 'kind' }}"
           prometheus:
             prometheusSpec:
+              additionalArgs:
+                - name: web.enable-otlp-receiver
+                  value: ""
               podMonitorNamespaceSelector:
                 matchLabels:
                   it-bench/monitoring: "true"
@@ -44,17 +55,19 @@
                 matchLabels:
                   it-bench/monitoring: "true"
               serviceMonitorSelectorNilUsesHelmValues: false
-              additionalArgs:
-                - name: web.enable-otlp-receiver
-                  value: ""
-          defaultRules:
-            rules:
-              alertmanager: false
-          kubeEtcd:
-            enabled: "{{ tools_cluster.provider == 'kind' }}"
-          kubeProxy:
-            enabled: "{{ tools_cluster.provider == 'kind' }}"
         wait: true
+
+    - name: Append networking information to list
+      ansible.builtin.set_fact:
+        tools_gateway_http_routes: "{{ tools_gateway_http_routes + [http_route] }}"
+      vars:
+        http_route:
+          name: "{{ tools_helm_releases.prometheus.name }}"
+          namespace: "{{ tools_helm_releases.prometheus.namespace }}"
+          path: /prometheus
+          service:
+            name: "{{ tools_helm_releases.prometheus.name }}-kube-prometheus-prometheus"
+            port: 9090
 
 - name: Install OpenShift Prometheus Stack
   when:

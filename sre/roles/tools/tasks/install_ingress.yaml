@@ -1,152 +1,65 @@
 ---
-- name: Create the release namespace
-  kubernetes.core.k8s:
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: "{{ helm_release.namespace }}"
-        labels:
-          it-bench/monitoring: "true"
-    state: present
+- name: Install NGINX Fabric Gateway on Kubernetes
   when:
     - tools_cluster.platform == "kubernetes"
+  block:
+    - name: Add Kubernetes Gateway API CRDs
+      kubernetes.core.k8s:
+        apply: true
+        kubeconfig: "{{ tools_cluster.kubeconfig }}"
+        server_side_apply:
+          field_manager: kubectl-client-side-apply
+        src: https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/standard-install.yaml
 
-- name: Install Nginx Ingress
-  kubernetes.core.helm:
-    chart_ref: ingress-nginx
-    chart_repo_url: https://kubernetes.github.io/ingress-nginx
-    chart_version: 4.14.0
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    release_name: "{{ helm_release.name }}"
-    release_namespace: "{{ helm_release.namespace }}"
-    release_state: present
-    timeout: 10m0s
-    values:
-      controller:
-        addHeaders:
-          "X-Content-Type-Options": nosniff
-          "X-Frame-Options": DENY
-          "X-XSS-Protection": "0"
-          "Strict-Transport-Security": max-age=31536000; includeSubDomains; preload
-          "Content-Security-Policy": "img-src 'self' data:; connect-src 'self'; font-src 'self'; object-src 'none'; form-action 'none'; frame-ancestors 'none'"
-          "Cross-Origin-Resource-Policy": same-origin
-          "Referrer-Policy": strict-origin-when-cross-origin
-        config:
-          server-tokens: "false"
-        service:
-          type: "{{ 'NodePort' if (tools_cluster.provider == 'kind') else 'LoadBalancer' }}"
-        metrics:
-          enabled: "{{ tools_required.prometheus }}"
-          serviceMonitor:
-            enabled: "{{ tools_required.prometheus }}"
-    wait: true
-  when:
-    - tools_cluster.platform == "kubernetes"
+    - name: Create release namespace for NGINX Fabric Gateway
+      kubernetes.core.k8s:
+        kubeconfig: "{{ tools_cluster.kubeconfig }}"
+        state: present
+        resource_definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: "{{ tools_helm_releases.nginx_fabric_gateway.namespace }}"
+            labels:
+              it-bench/monitoring: "true"
 
-- name: Create Ingress objects for Observability Stack
-  kubernetes.core.k8s:
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: networking.k8s.io/v1
-      kind: Ingress
-      metadata:
-        name: "{{ item.name }}"
-        namespace: "{{ item.namespace }}"
-        annotations: "{{ item.annotations }}"
-      spec:
-        ingressClassName: nginx
-        rules:
-          - http:
-              paths:
-                - pathType: ImplementationSpecific
-                  path: "{{ item.path }}"
-                  backend:
-                    service: "{{ item.service }}"
-    state: present
-  loop:
-    - enabled: "{{ tools_required.clickhouse }}"
-      annotations:
-        nginx.ingress.kubernetes.io/rewrite-target: /$2
-      name: "{{ tools_helm_releases.clickhouse.name }}"
-      namespace: "{{ tools_helm_releases.clickhouse.namespace }}"
-      path: /clickhouse(/|$)(.*)
-      service:
-        name: "{{ tools_helm_releases.clickhouse.name }}-clickhouse"
-        port:
-          number: 8123
-    - enabled: "{{ tools_required.jaeger }}"
-      annotations: {}
-      name: jaeger
-      namespace: "{{ tools_instances.opentelemetry_collectors.namespace }}"
-      path: /jaeger
-      service:
-        name: jaeger-collector
-        port:
-          number: 16686
-    - enabled: "{{ tools_required.opencost }}"
-      annotations: {}
-      name: "{{ tools_helm_releases.opencost.name }}"
-      namespace: "{{ tools_helm_releases.opencost.namespace }}"
-      path: /
-      service:
-        name: opencost
-        port:
-          number: 9090
-    - enabled: "{{ tools_required.prometheus }}"
-      annotations:
-        nginx.ingress.kubernetes.io/rewrite-target: /$2
-      name: "{{ tools_helm_releases.prometheus.name }}"
-      namespace: "{{ tools_helm_releases.prometheus.namespace }}"
-      path: /prometheus(/|$)(.*)
-      service:
-        name: "{{ tools_helm_releases.prometheus.name }}-kube-prometheus-prometheus"
-        port:
-          number: 9090
-  loop_control:
-    label: "{{ item.name }}"
-  when:
-    - tools_cluster.platform == "kubernetes"
-    - item.enabled
+    - name: Install NGINX Fabric Gateway
+      kubernetes.core.helm:
+        chart_ref: oci://ghcr.io/nginx/charts/nginx-gateway-fabric
+        chart_version: 2.2.1
+        kubeconfig: "{{ tools_cluster.kubeconfig }}"
+        release_name: "{{ tools_helm_releases.nginx_fabric_gateway.name }}"
+        release_namespace: "{{ tools_helm_releases.nginx_fabric_gateway.namespace }}"
+        release_state: present
+        values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/nginx_fabric_gateway.j2') | from_yaml }}"
+        wait: true
 
-- name: Create Route objects for Observability Stack
-  kubernetes.core.k8s:
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: route.openshift.io/v1
-      kind: Route
-      metadata:
-        name: "{{ item.name }}"
-        namespace: "{{ item.namespace }}"
-      spec:
-        httpHeaders:
-          actions:
-            response: "{{ lookup('ansible.builtin.file', 'files/openshift/route-response-actions.yaml') | from_yaml }}"
-        port:
-          targetPort: "{{ item.port }}"
-        to:
-          kind: Service
-          name: "{{ item.service }}"
-    state: present
-  loop:
-    - enabled: "{{ tools_required.clickhouse }}"
-      name: "{{ tools_helm_releases.clickhouse.name }}"
-      namespace: "{{ tools_helm_releases.clickhouse.namespace }}"
-      port: 8123
-      service: "{{ tools_helm_releases.clickhouse.name }}-clickhouse"
-    - enabled: "{{ tools_required.jaeger }}"
-      name: jaeger
-      namespace: "{{ tools_helm_releases.opentelemetry_collectors.namespace }}"
-      port: 16686
-      service: jaeger-collector
-    - enabled: "{{ tools_required.opencost }}"
-      name: "{{ tools_helm_releases.opencost.name }}"
-      namespace: "{{ tools_helm_releases.opencost.namespace }}"
-      port: 9090
-      service: "{{ tools_helm_releases.opencost.name }}"
-  loop_control:
-    label: "{{ item.name }}"
+    - name: Create Gateway
+      kubernetes.core.k8s:
+        kubeconfig: "{{ tools_cluster.kubeconfig }}"
+        template: templates/networking/kubernetes/gateway.j2
+        state: present
+
+    - name: Create HTTPRoute
+      kubernetes.core.k8s:
+        kubeconfig: "{{ tools_cluster.kubeconfig }}"
+        template: templates/networking/kubernetes/httproute.j2
+        state: present
+      loop: "{{ tools_gateway_http_routes }}"
+      loop_control:
+        label: httproute/{{ route.name }}
+        loop_var: route
+
+- name: Create Routes for Observability Stack
   when:
     - tools_cluster.platform == "openshift"
-    - item.enabled
+  block:
+    - name: Create Route objects for Observability Stack
+      kubernetes.core.k8s:
+        kubeconfig: "{{ tools_cluster.kubeconfig }}"
+        template: templates/networking/openshift/route.j2
+        state: present
+      loop: "{{ tools_openshift_routes }}"
+      loop_control:
+        label: route/{{ route.name }}
+        loop_var: route

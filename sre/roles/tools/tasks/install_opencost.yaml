@@ -12,6 +12,7 @@
           openshift.io/sa.scc.supplemental-groups: 1001/1000
           openshift.io/sa.scc.uid-range: 1000/10000
         labels:
+          it-bench/gateway: "true"
           it-bench/monitoring: "true"
     state: present
 
@@ -73,6 +74,24 @@
 - name: Create Prometheus rules for OpenCost
   kubernetes.core.k8s:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    namespace: "{{ helm_release.namespace }}"
+    namespace: "{{ tools_helm_releases.opencost.namespace }}"
     state: present
     src: files/rules/opencost.yaml
+
+- name: Append networking information to list
+  ansible.builtin.set_fact:
+    tools_gateway_http_routes: "{{ tools_gateway_http_routes + [http_route] }}"
+    tools_openshift_routes: "{{ tools_openshift_routes + [route] }}"
+  vars:
+    http_route:
+      name: "{{ tools_helm_releases.opencost.name }}"
+      namespace: "{{ tools_helm_releases.opencost.namespace }}"
+      path: /opencost
+      service:
+        name: opencost
+        port: 9090
+    route:
+      name: "{{ tools_helm_releases.opencost.name }}"
+      namespace: "{{ tools_helm_releases.opencost.namespace }}"
+      service: "{{ tools_helm_releases.opencost.name }}"
+      target_port: 9090

@@ -1,0 +1,14 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PodMonitor
+metadata:
+  name: {{ tools_helm_releases.nginx-fabric-gateway.name }}
+  namespace: {{ tools_helm_releases.nginx-fabric-gateway.namespace }}
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: {{ tools_helm_releases.nginx-fabric-gateway.name }}
+      app.kubernetes.io/instance: {{ tools_helm_releases.nginx-fabric-gateway.name }}
+  endpoints:
+    - interval: 30s
+      port: metrics

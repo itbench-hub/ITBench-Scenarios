@@ -1,0 +1,12 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: "{{ tools_helm_releases.nginx_fabric_gateway.name }}"
+  namespace: "{{ tools_helm_releases.nginx_fabric_gateway.namespace }}"
+spec:
+  gatewayClassName: nginx
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP

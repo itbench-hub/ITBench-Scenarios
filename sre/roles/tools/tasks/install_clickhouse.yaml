@@ -6,8 +6,9 @@
       apiVersion: v1
       kind: Namespace
       metadata:
-        name: "{{ helm_release.namespace }}"
+        name: "{{ tools_helm_releases.clickhouse_operator.namespace }}"
         labels:
+          it-bench/gateway: "true"
           it-bench/monitoring: "true"
     state: present
 
@@ -17,8 +18,8 @@
     chart_repo_url: https://docs.altinity.com/clickhouse-operator/
     chart_version: 0.25.5
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    release_name: "{{ helm_release.name }}"
-    release_namespace: "{{ helm_release.namespace }}"
+    release_name: "{{ tools_helm_releases.clickhouse_operator.name }}"
+    release_namespace: "{{ tools_helm_releases.clickhouse_operator.namespace }}"
     release_state: present
     timeout: 10m0s
     values:
@@ -27,7 +28,7 @@
           config.yaml:
             watch:
               namespaces:
-                - "{{ instance.namespace }}"
+                - "{{ tools_instances.clickhouse.namespace }}"
       podAnnotations:
         openshift.io/required-scc: restricted-v2
       serviceMonitor:
@@ -41,7 +42,7 @@
       apiVersion: v1
       kind: Namespace
       metadata:
-        name: "{{ instance.namespace }}"
+        name: "{{ tools_instances.clickhouse.namespace }}"
         annotations:
           openshift.io/sa.scc.mcs: s0:c30,c10
           openshift.io/sa.scc.uid-range: 100/100
@@ -88,3 +89,21 @@
     - tools_clickhouse_installation_info.resources[0].status.status == 'Completed'
   retries: 10
   delay: 30
+
+- name: Append networking information to list
+  ansible.builtin.set_fact:
+    tools_gateway_http_routes: "{{ tools_gateway_http_routes + [http_route] }}"
+    tools_openshift_routes: "{{ tools_openshift_routes + [route] }}"
+  vars:
+    http_route:
+      name: "{{ tools_instances.clickhouse.name }}"
+      namespace: "{{ tools_instances.clickhouse.namespace }}"
+      path: /clickhouse
+      service:
+        name: "{{ tools_helm_releases.clickhouse.name }}-clickhouse"
+        port: 8123
+    route:
+      name: "{{ tools_instances.clickhouse.name }}"
+      namespace: "{{ tools_instances.clickhouse.namespace }}"
+      service: "{{ tools_instances.clickhouse.name }}-clickhouse"
+      target_port: 8123

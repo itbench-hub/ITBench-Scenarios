@@ -278,6 +278,10 @@ jobs:
   istio:
     name: Istio Smoke Tests
     runs-on: ubuntu-24.04
+    needs:
+      - clickhouse
+      - opentelemetry
+      - jaeger
     steps:
       - uses: actions/checkout@v5.0.0
       - uses: actions/setup-python@v6.0.0

@@ -1,4 +1,11 @@
 ---
+- name: Create list of required tools needing external networking
+  ansible.builtin.set_fact:
+    tools_gateway_http_routes: []
+    tools_openshift_routes: []
+  when:
+    - tools_required.ingress
+
 - name: Import tasks to approve pending certificate requests
   ansible.builtin.include_role:
     name: cluster
@@ -8,14 +15,6 @@
       kubeconfig: "{{ tools_cluster.kubeconfig }}"
   when:
     - tools_cluster.provider == 'kind'
-
-- name: Add Kubernetes Gateway API CRDs
-  kubernetes.core.k8s:
-    apply: true
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    server_side_apply:
-      field_manager: kubectl-client-side-apply
-    src: https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/standard-install.yaml
 
 - name: Import Prometheus installation tasks
   ansible.builtin.import_tasks:
@@ -47,20 +46,6 @@
   when:
     - tools_required.opencost
 
-- name: Import Ingress installation tasks
-  ansible.builtin.import_tasks:
-    file: install_ingress.yaml
-  vars:
-    helm_release: "{{ tools_helm_releases.ingress }}"
-  when:
-    - tools_required.ingress
-
-- name: Import Istio installation tasks
-  ansible.builtin.import_tasks:
-    file: install_istio.yaml
-  when:
-    - tools_required.istio
-
 - name: Import Chaos Mesh installation tasks
   ansible.builtin.import_tasks:
     file: install_chaos_mesh.yaml
@@ -79,3 +64,17 @@
     file: install_kubernetes_topology_monitor.yaml
   when:
     - tools_required.kubernetes_topology_monitor
+
+- name: Import Ingress installation tasks
+  ansible.builtin.import_tasks:
+    file: install_ingress.yaml
+  vars:
+    helm_release: "{{ tools_helm_releases.ingress }}"
+  when:
+    - tools_required.ingress
+
+- name: Import Istio installation tasks
+  ansible.builtin.import_tasks:
+    file: install_istio.yaml
+  when:
+    - tools_required.istio

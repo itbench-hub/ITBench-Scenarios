@@ -1,0 +1,9 @@
+---
+nginx:
+  service:
+    type: {{ "NodePort" if tools_cluster.provider == "kind" else "LoadBalancer" }}
+{% if tools_cluster.provider == "kind" %}
+  nodePorts:
+    - port: 30950
+      listenerPort: 80
+{% endif %}

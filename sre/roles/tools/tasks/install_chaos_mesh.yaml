@@ -58,7 +58,7 @@
       apiVersion: v1
       kind: Namespace
       metadata:
-        name: "{{ helm_release.namespace }}"
+        name: "{{ tools_helm_releases.chaos_mesh.namespace }}"
         labels:
           it-bench/monitoring: "true"
     state: present
