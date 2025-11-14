@@ -1,0 +1,45 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: clickhouse-unified-recorder
+    app.kubernetes.io/part-of: it-bench
+  name: clickhouse-unified-recorder
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: clickhouse-unified-recorder
+      app.kubernetes.io/part-of: it-bench
+  template:
+    metadata:
+      annotations:
+        openshift.io/required-scc: restricted-v2
+      labels:
+        app.kubernetes.io/name: clickhouse-unified-recorder
+        app.kubernetes.io/part-of: it-bench
+    spec:
+      containers:
+        - name: clickhouse-unified-recorder
+          image: registry.access.redhat.com/ubi10-minimal:10.0-1758699349
+          command:
+            - /bin/sh
+          args:
+            - -c
+            - "sleep 600"
+          resources:
+            requests:
+              cpu: 500m
+              memory: 256Mi
+            limits:
+              memory: 512Mi
+          volumeMounts:
+            - name: records
+              mountPath: /opt/app-root/src/records
+      securityContext:
+        fsGroup: 1001
+      volumes:
+        - name: records
+          persistentVolumeClaim:
+            claimName: clickhouse-unified-records
+  replicas: 1
