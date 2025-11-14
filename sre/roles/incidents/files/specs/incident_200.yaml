@@ -1,0 +1,40 @@
+---
+metadata:
+  version: "v1"
+scenario:
+  metadata:
+    complexity: Medium
+    id: 200
+    name: Readiness Probe Flapping
+    platform: kubernetes
+  spec:
+    environment:
+      applications:
+        otel_demo:
+          enabled: true
+          configuration:
+            traffic_generator:
+              enabled: true
+      tools:
+        category: sre
+        selected:
+          - chaos-mesh
+          - prometheus
+          - grafana
+    faults:
+      - custom:
+          name: readiness-flap
+          readiness_flap:
+            workload:
+              kind: Deployment
+              name: frontend
+              namespace: default
+            probe_config:
+              flap_interval_seconds: 8
+              failure_threshold: 1
+              success_threshold: 1
+              period_seconds: 2
+            chaos_mesh:
+              latency_ms: 1000
+              drop_probability: 0.7
+            restart_policy: force
