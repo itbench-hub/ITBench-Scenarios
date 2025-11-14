@@ -89,6 +89,7 @@
       service:
         name: opencost
         port: 9090
+      ui_path: /opencost
 
 - name: Create Route for OpenCost UI
   kubernetes.core.k8s:

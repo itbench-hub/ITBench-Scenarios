@@ -43,6 +43,7 @@
               additionalArgs:
                 - name: web.enable-otlp-receiver
                   value: ""
+              routePrefix: /prometheus
               podMonitorNamespaceSelector:
                 matchLabels:
                   it-bench/monitoring: "true"
@@ -68,6 +69,7 @@
           service:
             name: "{{ tools_helm_releases.prometheus.name }}-kube-prometheus-prometheus"
             port: 9090
+          ui_path: /prometheus/query
 
 - name: Install OpenShift Prometheus Stack
   when:

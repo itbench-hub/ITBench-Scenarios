@@ -210,6 +210,7 @@
       service:
         name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}-collector"
         port: 16686
+      ui_path: /jaeger
   when:
     - tools_required.jaeger
 

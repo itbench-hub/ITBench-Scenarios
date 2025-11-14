@@ -67,7 +67,7 @@
   ansible.builtin.import_tasks:
     file: install_istio.yaml
   when:
-    - tools_required.istio or tools_required.ingress
+    - tools_required.istio
 
 - name: Import NGINX Gateway installation tasks
   ansible.builtin.import_tasks:

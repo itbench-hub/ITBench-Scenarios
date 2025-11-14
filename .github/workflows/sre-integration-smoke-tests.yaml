@@ -116,6 +116,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -123,9 +126,6 @@ jobs:
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
-      - name: Test connection
-        run: |
-          curl http://localhost:8080/clickhouse/play
       - name: Run re-initialization smoke test
         run: |
           make -C sre reinit_tools
@@ -156,6 +156,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -193,6 +196,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -230,6 +236,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -267,7 +276,7 @@ jobs:
           make -C sre/dev/local_cluster create_single_node_cluster
       - name: Run Cloud Provider
         run: |
-          make -C sre/dev/local_cluster run_cloud_provider &
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -275,9 +284,6 @@ jobs:
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
-      - name: Get gateway
-        run: |
-          kubectl -n gateways get gateway
       - name: Run re-initialization smoke test
         run: |
           make -C sre reinit_tools
@@ -348,6 +354,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -355,11 +364,6 @@ jobs:
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
-      - name: Test connection
-        run: |
-          kubectl -n nginx-gateway get svc
-          kubectl -n nginx-gateway port-forward svc/tools-nginx 8080:80 &
-          curl http://localhost:8080/jaeger
       - name: Run re-initialization smoke test
         run: |
           make -C sre reinit_tools
@@ -425,6 +429,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -463,6 +470,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -470,9 +480,6 @@ jobs:
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
-      - name: Test connection
-        run: |
-          curl http://localhost:8080/opencost
       - name: Run uninstallation smoke test
         run: |
           make -C sre undeploy_tools
@@ -574,6 +581,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -611,6 +621,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -618,9 +631,6 @@ jobs:
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
-      - name: Test connection
-        run: |
-          curl http://localhost:8080/prometheus/query
       - name: Run re-initialization smoke test
         run: |
           make -C sre reinit_tools
@@ -653,6 +663,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -694,6 +707,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -735,6 +751,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -776,6 +795,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -817,6 +839,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -859,6 +884,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -900,6 +928,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -941,6 +972,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -982,6 +1016,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1023,6 +1060,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1064,6 +1104,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1105,6 +1148,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1146,6 +1192,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1189,6 +1238,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1232,6 +1284,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars

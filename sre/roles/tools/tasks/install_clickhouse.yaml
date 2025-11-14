@@ -101,6 +101,7 @@
       service:
         name: "{{ tools_helm_releases.clickhouse.name }}-clickhouse"
         port: 8123
+      ui_path: /clickhouse/play
 
 - name: Create OpenShift Routes
   when:

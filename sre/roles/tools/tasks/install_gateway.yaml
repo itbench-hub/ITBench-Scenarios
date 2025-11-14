@@ -19,13 +19,14 @@
           it-bench/monitoring: "true"
     state: present
 
-# - name: Create Pod Monitors
-#   kubernetes.core.k8s:
-#     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-#     template: templates/nginx_fabric_gateway/podmonitor.j2
-#     state: present
-#   when:
-#     - tools_required.prometheus
+- name: Create Pod Monitors
+  kubernetes.core.k8s:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    template: templates/networking/kubernetes/servicemonitor.j2
+    state: present
+  when:
+    - tools_required.prometheus
+    - tools_required.istio
 
 - name: Create Gateway
   kubernetes.core.k8s:
@@ -34,9 +35,13 @@
     state: present
     wait: true
     wait_condition:
-      reason: Accepted
+      reason: Programmed
       status: "True"
-      type: Accepted
+      type: Programmed
+
+- name: Import variable setting tasks
+  ansible.builtin.import_tasks:
+    file: set_gateway_endpoint.yaml
 
 - name: Create HTTPRoutes
   kubernetes.core.k8s:
@@ -70,3 +75,11 @@
     - tools_http_route_info.resources[0].status.parents[0].conditions | selectattr('type', '==', 'Accepted') | length == 1
   retries: 10
   delay: 30
+
+- name: Attempt to reach UI for endpoint
+  ansible.builtin.uri:
+    url: "{{ tools_gateway_http_endpoint }}{{ route.ui_path }}"
+  loop: "{{ tools_gateway_http_routes }}"
+  loop_control:
+    label: httproute/{{ route.name }}
+    loop_var: route

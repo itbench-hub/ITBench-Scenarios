@@ -29,12 +29,6 @@
   when:
     - tools_required.chaos_mesh
 
-- name: Import Istio uninstallation tasks
-  ansible.builtin.import_tasks:
-    file: uninstall_istio.yaml
-  when:
-    - tools_required.istio or tools_required.ingress
-
 - name: Import OpenCost uninstallation tasks
   ansible.builtin.import_tasks:
     file: uninstall_opencost.yaml
@@ -71,6 +65,12 @@
   when:
     - tools_required.ingress
     - tools_cluster.platform == "kubernetes"
+
+- name: Import Istio uninstallation tasks
+  ansible.builtin.import_tasks:
+    file: uninstall_istio.yaml
+  when:
+    - tools_required.istio
 
 - name: Remove installed Custom Resource Definitions
   kubernetes.core.k8s:
