@@ -850,6 +850,9 @@ def main():
     username = os.environ.get("CLICKHOUSE_USERNAME", "default")
     password = os.environ.get("CLICKHOUSE_PASSWORD", "")
 
+	# Clean up the endpoint if it has protocol
+    endpoint = endpoint.replace('https://', '').replace('http://', '')
+
     if endpoint is None or username is None or password is None:
         sys.exit("error: CLICKHOUSE_ENDPOINT, USERNAME and PASSWORD environment variables are not set")
 
