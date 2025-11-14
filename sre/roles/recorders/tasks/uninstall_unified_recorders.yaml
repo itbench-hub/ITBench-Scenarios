@@ -1,6 +1,0 @@
----
-- name: Import unified ClickHouse uninstallation tasks
-  ansible.builtin.import_tasks:
-    file: uninstall_unified_clickhouse_recorders.yaml
-  when:
-    - recorders_required.unified.clickhouse | default(false)
