@@ -116,6 +116,12 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     execution_environment: ITBench-Custom-EE
+    extra_vars:
+      tools:
+        prometheus: true
+        jaeger: true
+        kubernetes_topology_monitor: true
+        clickhouse: false
     inventory: ITBench
     job_tags: install_recorders
     job_type: run
@@ -157,10 +163,35 @@
         prometheus: false
         jaeger: false
         kubernetes_topology_monitor: true
+        clickhouse: false
     inventory: ITBench
     job_tags: install_recorders
     job_type: run
     name: Run-Topology-Data-Recorder
+    organization: ITBench
+    playbook: sre/playbooks/manage_recorders.yaml
+    project: GitHub-ITBench
+    state: present
+
+- name: Add job template for running unified ClickHouse recorder
+  awx.awx.job_template:
+    allow_simultaneous: true
+    ask_credential_on_launch: true
+    ask_variables_on_launch: true
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    execution_environment: ITBench-Custom-EE
+    extra_vars:
+      tools:
+        prometheus: false
+        jaeger: false
+        kubernetes_topology_monitor: false
+        clickhouse: true
+    inventory: ITBench
+    job_tags: install_recorders
+    job_type: run
+    name: Run-Unified-ClickHouse-Recorder
     organization: ITBench
     playbook: sre/playbooks/manage_recorders.yaml
     project: GitHub-ITBench
