@@ -36,7 +36,7 @@ class ClickHouseEventStreamer:
         self,
         host: str = 'localhost',
         port: int = 8123,
-        user: str = 'default',
+        username: str = 'default',
         password: str = '',
         secure: bool = False,
         verify: bool = True,
@@ -47,7 +47,7 @@ class ClickHouseEventStreamer:
         Args:
             host: ClickHouse server hostname.
             port: ClickHouse server port.
-            user: Username for authentication.
+            username: Username for authentication.
             password: Password for authentication.
             secure: Whether to use HTTPS connection.
             verify: Whether to verify SSL certificates.
@@ -56,7 +56,7 @@ class ClickHouseEventStreamer:
         base_settings = {
             'host': host,
             'port': port,
-            'username': user,
+            'username': username,
             'password': password,
             'secure': secure,
             'verify': verify
