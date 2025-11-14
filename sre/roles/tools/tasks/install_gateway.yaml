@@ -5,39 +5,38 @@
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     server_side_apply:
       field_manager: kubectl-client-side-apply
-    src: https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.3.0/standard-install.yaml
+    src: https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/standard-install.yaml
 
-- name: Create release namespace for NGINX Fabric Gateway
+- name: Create release namespace for Kubernetes gateways
   kubernetes.core.k8s:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    state: present
     resource_definition:
       apiVersion: v1
       kind: Namespace
       metadata:
-        name: "{{ tools_helm_releases.nginx_fabric_gateway.namespace }}"
+        name: "{{ tools_instances.kubernetes_gateways.namespace }}"
         labels:
           it-bench/monitoring: "true"
+    state: present
 
-- name: Install NGINX Fabric Gateway
-  kubernetes.core.helm:
-    chart_ref: oci://ghcr.io/nginx/charts/nginx-gateway-fabric
-    chart_version: 2.2.1
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    release_name: "{{ tools_helm_releases.nginx_fabric_gateway.name }}"
-    release_namespace: "{{ tools_helm_releases.nginx_fabric_gateway.namespace }}"
-    release_state: present
-    timeout: 10m0s
-    values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/nginx_fabric_gateway.j2') | from_yaml }}"
-    wait: true
+# - name: Create Pod Monitors
+#   kubernetes.core.k8s:
+#     kubeconfig: "{{ tools_cluster.kubeconfig }}"
+#     template: templates/nginx_fabric_gateway/podmonitor.j2
+#     state: present
+#   when:
+#     - tools_required.prometheus
 
-- name: Create Pod Monitors
+- name: Create Gateway
   kubernetes.core.k8s:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    template: templates/nginx_fabric_gateway/podmonitor.j2
+    template: templates/networking/kubernetes/gateway.j2
     state: present
-  when:
-    - tools_required.prometheus
+    wait: true
+    wait_condition:
+      reason: Accepted
+      status: "True"
+      type: Accepted
 
 - name: Create HTTPRoutes
   kubernetes.core.k8s:

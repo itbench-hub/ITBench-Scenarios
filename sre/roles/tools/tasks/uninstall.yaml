@@ -33,7 +33,7 @@
   ansible.builtin.import_tasks:
     file: uninstall_istio.yaml
   when:
-    - tools_required.istio
+    - tools_required.istio or tools_required.ingress
 
 - name: Import OpenCost uninstallation tasks
   ansible.builtin.import_tasks:

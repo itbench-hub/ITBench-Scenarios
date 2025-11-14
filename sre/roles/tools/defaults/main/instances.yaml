@@ -6,6 +6,7 @@ tools_instances:
   kubernetes_gateways:
     names:
       tools: tools
+    namespace: gateways
   opentelemetry_collectors:
     names:
       istio: istio

@@ -1,11 +1,11 @@
 ---
-- name: Uninstall NGINX Fabric Gateway
-  kubernetes.core.helm:
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    release_name: "{{ tools_helm_releases.nginx_fabric_gateway.name }}"
-    release_namespace: "{{ tools_helm_releases.nginx_fabric_gateway.namespace }}"
-    release_state: absent
-    wait: true
+# - name: Uninstall NGINX Fabric Gateway
+#   kubernetes.core.helm:
+#     kubeconfig: "{{ tools_cluster.kubeconfig }}"
+#     release_name: "{{ tools_helm_releases.nginx_fabric_gateway.name }}"
+#     release_namespace: "{{ tools_helm_releases.nginx_fabric_gateway.namespace }}"
+#     release_state: absent
+#     wait: true
 
 - name: Delete the release namespace
   kubernetes.core.k8s:
@@ -14,7 +14,7 @@
       api_version: v1
       kind: Namespace
       metadata:
-        name: "{{ tools_helm_releases.nginx_fabric_gateway.namespace }}"
+        name: "{{ tools_instances.kubernetes_gateways.namespace  }}"
     state: absent
     wait: true
 

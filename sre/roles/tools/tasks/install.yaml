@@ -63,15 +63,15 @@
   when:
     - tools_required.kubernetes_topology_monitor
 
+- name: Import Istio installation tasks
+  ansible.builtin.import_tasks:
+    file: install_istio.yaml
+  when:
+    - tools_required.istio or tools_required.ingress
+
 - name: Import NGINX Gateway installation tasks
   ansible.builtin.import_tasks:
     file: install_gateway.yaml
   when:
     - tools_required.ingress
     - tools_cluster.platform == "kubernetes"
-
-- name: Import Istio installation tasks
-  ansible.builtin.import_tasks:
-    file: install_istio.yaml
-  when:
-    - tools_required.istio

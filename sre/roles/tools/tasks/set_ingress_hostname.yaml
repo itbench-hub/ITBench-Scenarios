@@ -7,7 +7,7 @@
     name: "{{ tools_instances.kubernetes_gateways.names.tools }}-nginx"
     namespace: "{{ tools_helm_releases.nginx_fabric_gateway.namespace }}"
     wait: true
-  reigster: tools_gateway_service_info
+  register: tools_gateway_service_info
 
 - name: Validate service's existence
   ansible.builtin.assert:
