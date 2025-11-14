@@ -59,13 +59,18 @@
   retries: 8
   delay: 15
 
-- name: Install Clickhouse Unified Recorder
+- name: Install ClickHouse unified recorder
   kubernetes.core.k8s:
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
     namespace: "{{ recorders_namespace.name }}"
-    template: templates/unified/clickhouse/deployment.yaml
+    template: templates/unified/clickhouse/job.j2
     state: present
-  register: recorders_clickhouse_workload
   vars:
-    container_image: "{{ recorders_clickhouse_statefulset.spec.template.spec.containers[0].image }}"
-    container_environment_variables: "{{ recorders_clickhouse_env_vars }}"
+    container_image: "{{ recorders_unified_clickhouse_job.spec.template.spec.containers[0].image }}"
+    container_environment_variables:
+      - name: CLICKHOUSE_ENDPOINT
+        value: "{{ recorders_clickhouse_env_vars.CLICKHOUSE_ENDPOINT }}"
+      - name: CLICKHOUSE_USERNAME
+        value: "{{ recorders_clickhouse_env_vars.CLICKHOUSE_USERNAME }}"
+      - name: CLICKHOUSE_PASSWORD
+        value: "{{ recorders_clickhouse_env_vars.CLICKHOUSE_PASSWORD }}"
