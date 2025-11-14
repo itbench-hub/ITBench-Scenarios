@@ -5,8 +5,8 @@
     kind: Job
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
     label_selectors:
-      - app.kubernetes.io/name = unified-clickhouse-recorder
-      - app.kubernetes.io/part-of = it-bench
+      - app.kubernetes.io/name=clickhouse-unified-recorder
+      - app.kubernetes.io/part-of=it-bench
     namespace: "{{ recorders_namespace.name }}"
   register: recorders_kubernetes_job_info
   until:
@@ -22,16 +22,23 @@
     state: present
     wait: true
 
-- name: Retrieve the retriever pod name
+- name: Retrieve the retriever pod name (wait until Running/Ready)
   kubernetes.core.k8s_info:
     api_version: v1
     kind: Pod
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
     namespace: "{{ recorders_namespace.name }}"
     label_selectors:
-      - app.kubernetes.io/name = unified-clickhouse-record-retriever
-      - app.kubernetes.io/part-of = it-bench
+      - app.kubernetes.io/name=unified-clickhouse-record-retriever
+      - app.kubernetes.io/part-of=it-bench
   register: recorders_kubernetes_pods_info
+  retries: 20
+  delay: 6
+  until:
+    - recorders_kubernetes_pods_info.resources | length >= 1
+    - (recorders_kubernetes_pods_info.resources[0].status.phase | default('')) == 'Running'
+    - (recorders_kubernetes_pods_info.resources[0].status.containerStatuses | default([])) | length > 0
+    - recorders_kubernetes_pods_info.resources[0].status.containerStatuses[0].ready | default(false)
 
 - name: Copy records directory from pod
   kubernetes.core.k8s_cp:
@@ -42,7 +49,6 @@
     remote_path: /opt/app-root/src/records
     state: from_pod
   when:
-    - recorders_kubernetes_pods_info is defined
     - recorders_kubernetes_pods_info.resources | length == 1
 
 - name: Uninstall the Deployment
@@ -61,8 +67,8 @@
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
     namespace: "{{ recorders_namespace.name }}"
     label_selectors:
-      - app.kubernetes.io/name = unified-clickhouse-recorder
-      - app.kubernetes.io/part-of = it-bench
+      - app.kubernetes.io/name=clickhouse-unified-recorder
+      - app.kubernetes.io/part-of=it-bench
     state: absent
     wait: true
 
@@ -94,25 +100,25 @@
     dest: "{{ recorders_storage.local.directory }}/observability_information/{{ file.path | basename }}"
     mode: "0644"
     src: "{{ file.path }}"
-  loop: "{{ recorders_kubernetes_files.files }}"
+  loop: "{{ recorders_kubernetes_files.files | default([]) }}"
   loop_control:
     label: file/{{ file.path | basename }}
     loop_var: file
   when:
     - recorders_storage.local is defined
-    - recorders_kubernetes_files is defined
+    - (recorders_kubernetes_files.matched | default(0)) > 0
 
 - name: Upload exported data to S3 bucket
   amazon.aws.s3_object:
     endpoint_url: "{{ recorders_storage.s3.endpoint }}"
     bucket: "{{ recorders_storage.s3.bucket }}"
-    object: "/{{ recorders_storage.s3.directory }}/observability_information/{{ file.path | basename }}"
+    object: "{{ recorders_storage.s3.directory }}/observability_information/{{ file.path | basename }}"
     src: "{{ file.path }}"
     mode: put
-  loop: "{{ recorders_kubernetes_files.files }}"
+  loop: "{{ recorders_kubernetes_files.files | default([]) }}"
   loop_control:
     label: file/{{ file.path | basename }}
     loop_var: file
   when:
     - recorders_storage.s3 is defined
-    - recorders_kubernetes_files is defined
+    - (recorders_kubernetes_files.matched | default(0)) > 0
