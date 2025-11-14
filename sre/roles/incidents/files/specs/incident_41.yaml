@@ -1,0 +1,44 @@
+---
+metadata:
+  version: "v1"
+scenario:
+  metadata:
+    complexity: Medium
+    id: 41
+    name: Exhaust Node Resources
+    platform: kubernetes
+  spec:
+    environment:
+      applications:
+        otel_demo:
+          enabled: true
+      tools:
+        category: sre
+        selected:
+          - prometheus
+          - grafana
+          - jaeger
+          - chaos-mesh
+
+    faults:
+      - chaos_mesh:
+          schedule:
+            name: remove-limits-cart
+            spec:
+              schedule: "@once"
+              historyLimit: 1
+              concurrencyPolicy: Forbid
+              type: PodChaos
+              podChaos:
+                action: patch
+                mode: one
+                selector:
+                  namespaces:
+                    - "{{ applications_helm_releases.otel_demo.namespace }}"
+                  labelSelectors:
+                    app.kubernetes.io/name: "cart"
+                patch:
+                  containers:
+                    - name: cart
+                      resources:
+                        limits: {}

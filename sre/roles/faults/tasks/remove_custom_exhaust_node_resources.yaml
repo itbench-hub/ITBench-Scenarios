@@ -1,0 +1,29 @@
+---
+- name: Retrieve Chaos Mesh Schedule objects for target workload
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    api_version: chaos-mesh.org/v1alpha1
+    kind: Schedule
+    namespace: "{{ spec.workload.namespace }}"
+    label_selectors:
+      - app.kubernetes.io/name={{ spec.workload.name }}
+  register: faults_schedule_list
+
+- name: Remove Chaos Mesh Schedule CRs related to this workload
+  kubernetes.core.k8s:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    state: absent
+    api_version: chaos-mesh.org/v1alpha1
+    kind: Schedule
+    name: "{{ item.metadata.name }}"
+    namespace: "{{ spec.workload.namespace }}"
+  loop: "{{ faults_schedule_list.resources }}"
+  when: faults_schedule_list.resources | length > 0
+
+- name: Confirm Chaos Mesh Schedule removal
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    api_version: chaos-mesh.org/v1alpha1
+    kind: Schedule
+    namespace: "{{ spec.workload.namespace }}"
+  register: faults_schedule_post_delete

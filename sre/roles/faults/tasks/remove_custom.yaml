@@ -88,3 +88,12 @@
   when:
     - fault.custom.name == 'unsupported-image'
     - fault.custom.unsupported_image is defined
+
+- name: Import exhaust node resources removal tasks
+  ansible.builtin.import_tasks:
+    file: remove_custom_exhaust_node_resources.yaml
+  vars:
+    spec: "{{ fault.custom.exhaust_node_resources }}"
+  when:
+    - fault.custom.name == 'exhaust-node-resources'
+    - fault.custom.exhaust_node_resources is defined

@@ -1,0 +1,43 @@
+---
+- name: Import variable setting tasks
+  ansible.builtin.import_tasks:
+    file: set_faults_workload_container_index.yaml
+  vars:
+    faults_workload: "{{ spec.workload }}"
+
+- name: Inject resource-limit-removal via Chaos Mesh schedule
+  kubernetes.core.k8s:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: chaos-mesh.org/v1alpha1
+      kind: Schedule
+      metadata:
+        name: remove-limits-{{ spec.workload.name }}
+        namespace: "{{ spec.workload.namespace }}"
+      spec:
+        schedule: "@once"
+        historyLimit: 1
+        concurrencyPolicy: Forbid
+        type: PodChaos
+        podChaos:
+          action: patch
+          mode: one
+          selector:
+            namespaces:
+              - "{{ spec.workload.namespace }}"
+            labelSelectors:
+              app.kubernetes.io/name: "{{ spec.workload.name }}"
+          patch:
+            containers:
+              - name: "{{ spec.workload.container.name }}"
+                resources:
+                  limits: {}
+
+- name: Confirm Chaos Mesh schedule created
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    api_version: chaos-mesh.org/v1alpha1
+    kind: Schedule
+    namespace: "{{ spec.workload.namespace }}"
+    name: "remove-limits-{{ spec.workload.name }}"
+  register: faults_schedule_info
