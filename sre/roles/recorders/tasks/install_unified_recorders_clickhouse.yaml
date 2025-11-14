@@ -67,10 +67,4 @@
     state: present
   vars:
     container_image: "{{ recorders_unified_clickhouse_job.spec.template.spec.containers[0].image }}"
-    container_environment_variables:
-      - name: CLICKHOUSE_ENDPOINT
-        value: "{{ recorders_clickhouse_env_vars.CLICKHOUSE_ENDPOINT }}"
-      - name: CLICKHOUSE_USERNAME
-        value: "{{ recorders_clickhouse_env_vars.CLICKHOUSE_USERNAME }}"
-      - name: CLICKHOUSE_PASSWORD
-        value: "{{ recorders_clickhouse_env_vars.CLICKHOUSE_PASSWORD }}"
+    container_environment_variables: "{{ recorders_clickhouse_env_vars }}"
