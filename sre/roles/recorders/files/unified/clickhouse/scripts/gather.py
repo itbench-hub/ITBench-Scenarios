@@ -845,10 +845,18 @@ class ClickHouseEventStreamer:
 
 def main():
     """Main execution function demonstrating usage of ClickHouseEventStreamer."""
+
+    endpoint = os.environ.get("CLICKHOUSE_ENDPOINT")
+    username = os.environ.get("CLICKHOUSE_USERNAME", "default")
+    password = os.environ.get("CLICKHOUSE_PASSWORD", "")
+
+    if endpoint is None or username is None or password is None:
+        sys.exit("error: CLICKHOUSE_ENDPOINT, USERNAME and PASSWORD environment variables are not set")
+
     streamer = ClickHouseEventStreamer(
-        host="a151519e9833d46aca36f9b34d21e4c9-179515840.us-east-1.elb.amazonaws.com",
-        port=80,
-        proxy_path="clickhouse"
+        host=endpoint,
+        username=username,
+        password=password
     )
     
     try:
