@@ -30,7 +30,7 @@
   ansible.builtin.set_fact:
     recorders_clickhouse_env_vars:
       - name: CLICKHOUSE_ENDPOINT
-        value: "{{ tools_clickhouse_endpoint }}:8123"
+        value: "{{ tools_clickhouse_endpoint }}"
       - name: CLICKHOUSE_USERNAME
         value: "{{ tools_clickhouse_username }}"
       - name: CLICKHOUSE_PASSWORD
