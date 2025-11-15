@@ -31,13 +31,13 @@
         wait: true
       register: tools_clickhouse_installations_info
 
-    - name: List all tables in default and metrics databases
+    - name: List all tables in default and prometheus databases
       kubernetes.core.k8s_exec:
         kubeconfig: "{{ tools_cluster.kubeconfig }}"
         namespace: "{{ item.0.metadata.namespace }}"
         pod: "{{ item.0.status.pods | first }}"
         command: "clickhouse-client --query='SHOW TABLES FROM {{ item.1 }} FORMAT TSV'"
-      loop: "{{ tools_clickhouse_installations_info.resources | product(['default', 'metrics']) | list }}"
+      loop: "{{ tools_clickhouse_installations_info.resources | product(['default', 'prometheus']) | list }}"
       loop_control:
         label: "{{ item.0.metadata.name }}/{{ item.1 }}"
       register: tools_clickhouse_installation_tables_output
