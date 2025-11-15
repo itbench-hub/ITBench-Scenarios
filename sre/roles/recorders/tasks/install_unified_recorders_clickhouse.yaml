@@ -170,7 +170,8 @@
 
 - name: Copy exported data into local directory
   ansible.builtin.copy:
-    dest: "{{ recorders_storage.local.directory }}/observability_information_from_clickhouse/{{ file.path | basename }}"
+    dest: "{{ recorders_storage.local.directory }}/observability_information_from_clickhouse/{{ file.path | regex_replace('^/tmp/observability_information_from_clickhouse/?',
+      '') }}"
     mode: "0644"
     src: "{{ file.path }}"
   loop: "{{ recorders_kubernetes_files.files | default([]) }}"
@@ -185,7 +186,8 @@
   amazon.aws.s3_object:
     endpoint_url: "{{ recorders_storage.s3.endpoint }}"
     bucket: "{{ recorders_storage.s3.bucket }}"
-    object: "{{ recorders_storage.s3.directory }}/observability_information_from_clickhouse/{{ file.path | basename }}"
+    object: "{{ recorders_storage.s3.directory }}/observability_information_from_clickhouse/{{ file.path | regex_replace('^/tmp/observability_information_from_clickhouse/?',
+      '') }}"
     src: "{{ file.path }}"
     mode: put
   loop: "{{ recorders_kubernetes_files.files | default([]) }}"
