@@ -81,8 +81,8 @@
   register: recorders_kubernetes_job_info
   until:
     - recorders_kubernetes_job_info.resources | length == 0
-  retries: 8
-  delay: 15
+  retries: 20
+  delay: 30
 
 - name: Create Deployment to retrieve records
   kubernetes.core.k8s:
