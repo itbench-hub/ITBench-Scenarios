@@ -153,6 +153,7 @@
 - name: Find all exported JSON files
   ansible.builtin.find:
     path: /tmp/observability_information_from_clickhouse
+    recursive: true
     patterns:
       - "*.json"
       - "*.tsv"
