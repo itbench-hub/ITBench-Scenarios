@@ -869,11 +869,11 @@ def main():
         logger.info("\nFetching K8s objects...")
         k8s_objects_df = streamer.get_k8s_objects_df()
 
-        # logger.info("\nFetching logs...")
-        # logs = streamer.get_logs_df()
-        # 
-        # logger.info("\nFetching traces...")
-        # traces_df = streamer.get_traces_df()
+        logger.info("\nFetching logs...")
+        logs = streamer.get_logs_df()
+        
+        logger.info("\nFetching traces...")
+        traces_df = streamer.get_traces_df()
         
         logger.info("\nFetching metrics...")
         k8s_metrics = streamer.get_metrics_df()
