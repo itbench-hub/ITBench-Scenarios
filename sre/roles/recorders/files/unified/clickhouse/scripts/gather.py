@@ -607,8 +607,11 @@ class ClickHouseEventStreamer:
             raise Exception("Could not find prometheus metric tables")
     
         if save_to_file:
-            metrics_dir = os.path.join(self.records_dir, "metrics")
-            os.makedirs(metrics_dir, exist_ok=True)
+            pod_metrics_dir = os.path.join(self.records_dir, "metrics_pod")
+            os.makedirs(pod_metrics_dir, exist_ok=True)
+
+            service_metrics_dir = os.path.join(self.records_dir, "metrics_service")
+            os.makedirs(service_metrics_dir, exist_ok=True)
     
         if metric_names is None:
             metrics_query = f"""
@@ -626,13 +629,13 @@ class ClickHouseEventStreamer:
             table_ids,
             metric_names,
             namespace,
-            metrics_dir,
+            pod_metrics_dir,
             save_to_file
         )
         service_metrics_df = self._get_service_metrics(
             table_ids,
             namespace,
-            metrics_dir,
+            service_metrics_dir,
             save_to_file
         )
         
