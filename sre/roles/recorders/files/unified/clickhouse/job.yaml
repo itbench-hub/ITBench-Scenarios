@@ -13,10 +13,3 @@ spec:
       containers:
         - name: clickhouse-unified-recorder
           image: registry.access.redhat.com/ubi10/python-312-minimal:10.0-1762316151
-          resources:
-            limits:
-              memory: "1024Mi"
-              cpu: "500m"
-            requests:
-              memory: "250Mi"
-              cpu: "100m"
