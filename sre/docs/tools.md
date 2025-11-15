@@ -68,7 +68,7 @@ ITBench deploys additional Kubernetes tools to enable additional features in a K
 | Tool | Repository | Function |
 | --- | --- | --- |
 | Kubernetes Metric Server | https://github.com/kubernetes-sigs/metrics-server | Autoscaling |
-| Kubernetes NGINX Controller | https://github.com/kubernetes/ingress-nginx | Networking |
+| NGINX Fabric Gateway | https://github.com/nginx/nginx-gateway-fabric | Networking |
 
 **Note:** Kubernetes NGINX Controller provides Ingress support which allows a user to externally access an observability tool's UI. This is useful for debugging, but explicitly needed. However, it is still always deployed as part of the tool stack unless deactivated.
 

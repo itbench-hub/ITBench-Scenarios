@@ -6,12 +6,13 @@
       apiVersion: v1
       kind: Namespace
       metadata:
-        name: "{{ helm_release.namespace }}"
+        name: "{{ tools_helm_releases.opencost.namespace }}"
         annotations:
           openshift.io/sa.scc.mcs: s0:c36,c15
           openshift.io/sa.scc.supplemental-groups: 1001/1000
           openshift.io/sa.scc.uid-range: 1000/10000
         labels:
+          it-bench/gateway: "true"
           it-bench/monitoring: "true"
     state: present
 
@@ -25,8 +26,8 @@
     chart_repo_url: https://opencost.github.io/opencost-helm-chart
     chart_version: 2.4.0
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    release_name: "{{ helm_release.name }}"
-    release_namespace: "{{ helm_release.namespace }}"
+    release_name: "{{ tools_helm_releases.opencost.name }}"
+    release_namespace: "{{ tools_helm_releases.opencost.namespace }}"
     release_state: present
     timeout: 10m0s
     values:
@@ -73,6 +74,33 @@
 - name: Create Prometheus rules for OpenCost
   kubernetes.core.k8s:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    namespace: "{{ helm_release.namespace }}"
+    namespace: "{{ tools_helm_releases.opencost.namespace }}"
     state: present
     src: files/rules/opencost.yaml
+
+- name: Append networking information to list
+  ansible.builtin.set_fact:
+    tools_gateway_http_routes: "{{ tools_gateway_http_routes + [http_route] }}"
+  vars:
+    http_route:
+      name: "{{ tools_helm_releases.opencost.name }}"
+      namespace: "{{ tools_helm_releases.opencost.namespace }}"
+      path: /opencost
+      service:
+        name: opencost
+        port: 9090
+      ui_path: /opencost
+
+- name: Create Route for OpenCost UI
+  kubernetes.core.k8s:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    template: templates/networking/openshift/route.j2
+    state: present
+  vars:
+    route:
+      name: "{{ tools_helm_releases.opencost.name }}"
+      namespace: "{{ tools_helm_releases.opencost.namespace }}"
+      service: "{{ tools_helm_releases.opencost.name }}"
+      target_port: http-ui
+  when:
+    - tools_cluster.platform == "openshift"

@@ -116,6 +116,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -153,6 +156,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -190,6 +196,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -227,6 +236,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -241,7 +253,7 @@ jobs:
         run: |
           make -C sre undeploy_recorders
   ingress:
-    name: Ingress Smoke Tests
+    name: NGINX Fabric Gateway Smoke Tests
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5.0.0
@@ -262,6 +274,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -278,6 +293,10 @@ jobs:
   istio:
     name: Istio Smoke Tests
     runs-on: ubuntu-24.04
+    needs:
+      - clickhouse
+      - opentelemetry
+      - jaeger
     steps:
       - uses: actions/checkout@v5.0.0
       - uses: actions/setup-python@v6.0.0
@@ -335,6 +354,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -407,6 +429,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -445,6 +470,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -553,6 +581,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -590,6 +621,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -629,6 +663,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -670,6 +707,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -711,6 +751,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -752,6 +795,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -793,6 +839,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -835,6 +884,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -876,6 +928,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -917,6 +972,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -958,6 +1016,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -999,6 +1060,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1040,6 +1104,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1081,6 +1148,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1122,6 +1192,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1165,6 +1238,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1208,6 +1284,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars

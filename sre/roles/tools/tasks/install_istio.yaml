@@ -20,6 +20,7 @@
     release_name: "{{ tools_helm_releases.istio.components.base }}"
     release_namespace: "{{ tools_helm_releases.istio.namespace }}"
     release_state: present
+    timeout: 10m0s
     values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/istio/base.j2') | from_yaml }}"
     wait: true
 
@@ -32,6 +33,7 @@
     release_name: "{{ tools_helm_releases.istio.components.istiod_control_plane }}"
     release_namespace: "{{ tools_helm_releases.istio.namespace }}"
     release_state: present
+    timeout: 10m0s
     values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/istio/istiod_control_plane.j2') | from_yaml }}"
     wait: true
 
@@ -44,6 +46,7 @@
     release_name: "{{ tools_helm_releases.istio.components.cni_node_agent }}"
     release_namespace: "{{ 'kube-system' if tools_cluster.platform == 'openshift' else tools_helm_releases.istio.namespace }}"
     release_state: present
+    timeout: 10m0s
     values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/istio/cni_node_agent.j2') | from_yaml }}"
     wait: true
 
@@ -56,6 +59,7 @@
     release_name: "{{ tools_helm_releases.istio.components.ztunnel }}"
     release_namespace: "{{ 'kube-system' if tools_cluster.platform == 'openshift' else tools_helm_releases.istio.namespace }}"
     release_state: present
+    timeout: 10m0s
     values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/istio/ztunnel.j2') | from_yaml }}"
     wait: true
 
@@ -65,41 +69,19 @@
     template: templates/istio/telemetry.j2
     state: present
 
-- name: Deploy Prometheus Monitors
+- name: Deploy Prometheus Monitoring Objects
   kubernetes.core.k8s:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    template: templates/istio/monitoring.j2
+    template: "{{ template_file_path }}"
     state: present
+  loop:
+    - templates/istio/podmonitors.j2
+    - templates/istio/servicemonitor.j2
+  loop_control:
+    label: "{{ template_file_path | basename | split('.') | first }}"
+    loop_var: template_file_path
   when:
     - tools_required.prometheus
-
-- name: Create release namespace for Istio Gateway
-  kubernetes.core.k8s:
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    state: present
-    resource_definition:
-      apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: "{{ tools_helm_releases.istio_gateway.namespace }}"
-        labels:
-          it-bench/monitoring: "true"
-  when:
-    - tools_cluster.platform == "kubernetes"
-
-- name: Install Istio Ingress Gateway
-  kubernetes.core.helm:
-    chart_ref: gateway
-    chart_repo_url: https://istio-release.storage.googleapis.com/charts
-    chart_version: 1.28.0
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    release_name: "{{ tools_helm_releases.istio_gateway.name }}"
-    release_namespace: "{{ tools_helm_releases.istio_gateway.namespace }}"
-    release_state: present
-    values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/istio_gateway.j2') | from_yaml }}"
-    wait: true
-  when:
-    - tools_cluster.platform == "kubernetes"
 
 - name: Enable Routing via Host feature
   kubernetes.core.k8s_json_patch:

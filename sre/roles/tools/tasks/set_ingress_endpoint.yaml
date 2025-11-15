@@ -1,0 +1,45 @@
+---
+- name: Retrive tool stack gateway service
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Service
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    name: "{{ tools_instances.kubernetes_gateways.names.tools }}-istio"
+    namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
+    wait: true
+  register: tools_gateway_service_info
+
+- name: Validate service attributes
+  ansible.builtin.assert:
+    that:
+      - tools_gateway_service_info.resources | length == 1
+      - tools_gateway_service_info.resources[0].spec.type == "LoadBalancer"
+    fail_msg: Service not found. Please ensure the gateway has been created.
+    success_msg: Service found.
+
+- name: Wait for ingress to be populated by provider
+  kubernetes.core.k8s_info:
+    api_version: "{{ tools_gateway_service_info.resources[0].apiVersion }}"
+    kind: "{{ tools_gateway_service_info.resources[0].kind }}"
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    name: "{{ tools_gateway_service_info.resources[0].metadata.name }}"
+    namespace: "{{ tools_gateway_service_info.resources[0].metadata.namespace }}"
+    wait: true
+  register: tools_service_ingress_info
+  until:
+    - tools_service_ingress_info.resources[0].status.loadBalancer.ingress is defined
+    - tools_service_ingress_info.resources[0].status.loadBalancer.ingress | length == 1
+  delay: 15
+  retries: 20
+
+- name: Set variable based on Ingress hostname
+  ansible.builtin.set_fact:
+    tools_ingress_endpoint: "http://{{ tools_service_ingress_info.resources[0].status.loadBalancer.ingress[0].hostname }}"
+  when:
+    - tools_service_ingress_info.resources[0].status.loadBalancer.ingress[0].hostname is defined
+
+- name: Set variable based on Ingress IP
+  ansible.builtin.set_fact:
+    tools_ingress_endpoint: "http://{{ tools_service_ingress_info.resources[0].status.loadBalancer.ingress[0].ip }}:80"
+  when:
+    - tools_service_ingress_info.resources[0].status.loadBalancer.ingress[0].ip is defined

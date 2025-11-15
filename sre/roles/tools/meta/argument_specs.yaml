@@ -83,7 +83,7 @@ argument_specs:
           kubeconfig:
             required: true
             type: str
-  set_ingress_hostname:
+  set_ingress_endpoint:
     author:
       - Gerard Vanloo
     options:

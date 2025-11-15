@@ -9,9 +9,6 @@ tools_helm_releases:
   clickhouse_operator:
     name: clickhouse-operator
     namespace: clickhouse-operator
-  ingress:
-    name: ingress-nginx
-    namespace: ingress-nginx
   istio:
     components:
       base: istio-base
@@ -28,6 +25,9 @@ tools_helm_releases:
   kubernetes_topology_monitor:
     name: topology-monitor
     namespace: kube-system
+  nginx_fabric_gateway:
+    name: nginx-fabric-gateway
+    namespace: nginx-gateway
   opencost:
     name: opencost
     namespace: opencost

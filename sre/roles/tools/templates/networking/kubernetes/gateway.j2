@@ -1,0 +1,24 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: {{ tools_instances.kubernetes_gateways.names.tools }}
+  namespace: {{ tools_instances.kubernetes_gateways.namespace }}
+spec:
+{% if tools_cluster.provider == "kind" %}
+  gatewayClassName: cloud-provider-kind
+{% else %}
+{% if tools_required.istio %}
+  gatewayClassName: istio
+{% endif %}
+{% endif %}
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: Selector
+          selector:
+            matchLabels:
+              it-bench/gateway: "true"

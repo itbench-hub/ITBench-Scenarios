@@ -1,0 +1,13 @@
+---
+gateways:
+  - name: {{ tools_instances.kubernetes_gateways.names.tools }}
+    namespace: {{ tools_helm_releases.nginx_fabric_gateway.namespace }}
+    spec:
+      gatewayClassName: nginx
+      listeners:
+        - name: http
+          port: 80
+          protocol: HTTP
+nginx:
+  service:
+    type: {{ "NodePort" if tools_cluster.provider == "kind" else "LoadBalancer" }}

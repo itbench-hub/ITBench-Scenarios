@@ -119,7 +119,7 @@ INCIDENT_NUMBER=1 make start_incident
 Enable access to the Prometheus and Jaeger dashboards:
 
 ```bash
-kubectl port-forward svc/ingress-nginx-controller -n ingress-nginx 8080:80 &
+kubectl -n nginx-gateway port-forward svc/tools-nginx 8080:80 &
 ```
 
 #### 3. Access Dashboards
