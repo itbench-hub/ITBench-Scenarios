@@ -27,10 +27,10 @@ spec:
           resources:
             requests:
               cpu: 100m
-              memory: 250Mi
+              memory: 512Mi
             limits:
               cpu: 500m
-              memory: 2Gi
+              memory: 3Gi
           volumeMounts:
             - name: dependencies
               mountPath: /opt/app-root/src/deps
