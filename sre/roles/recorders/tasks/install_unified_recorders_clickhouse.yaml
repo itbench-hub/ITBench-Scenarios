@@ -99,7 +99,7 @@
     kubeconfig: "{{ recorders_cluster.kubeconfig }}"
     namespace: "{{ recorders_namespace.name }}"
     label_selectors:
-      - app.kubernetes.io/name=unified-clickhouse-record-retriever
+      - app.kubernetes.io/name=clickhouse-unified-recorder
       - app.kubernetes.io/part-of=it-bench
   register: recorders_kubernetes_pods_info
   retries: 20
