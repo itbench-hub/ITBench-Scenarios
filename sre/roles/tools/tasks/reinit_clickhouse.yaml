@@ -50,17 +50,16 @@
       when:
         - tools_clickhouse_installations_info is defined
 
-    - name: Create flattened list of database, table, and instance groupings
+    - name: Create flattened list of table and instance groupings
       ansible.builtin.set_fact:
         tools_clickhouse_instance_table_groups: >-
           {{
             (tools_clickhouse_instance_table_groups | default([])) +
-            (output.stdout_lines | map('regex_replace', '^', output.item.1 ~ '.') |
-             product([output.item.0]) | list)
+            (output.stdout_lines | product([output.installation]) | list)
           }}
       loop: "{{ tools_clickhouse_installation_tables_output.results }}"
       loop_control:
-        label: "{{ output.item.0.metadata.name }}/{{ output.item.1 }}"
+        label: "clickhouseinstallation/{{ output.installation.metadata.name }}"
         loop_var: output
       when:
         - tools_clickhouse_installation_tables_output is defined
@@ -70,9 +69,9 @@
     - name: Truncate ClickHouse tables in both databases
       kubernetes.core.k8s_exec:
         kubeconfig: "{{ tools_cluster.kubeconfig }}"
-        namespace: "{{ item.1.metadata.namespace }}"
-        pod: "{{ item.1.status.pods | first }}"
-        command: "clickhouse-client --query='TRUNCATE TABLE {{ item.0 }};'"
+        namespace: "{{ item[1].metadata.namespace }}"
+        pod: "{{ item[1].status.pods | first }}"
+        command: "clickhouse-client --query='TRUNCATE TABLE {{ item[0] }};'"
       loop: "{{ tools_clickhouse_instance_table_groups | default([]) }}"
       loop_control:
-        label: "table/{{ item.0 }}"
+        label: "table/{{ item[0] }}"
