@@ -40,7 +40,7 @@
           clickhouse-client --query="
             SELECT concat('`', database, '`.`', name, '`') AS full_name
             FROM system.tables
-            WHERE database IN ('default', 'metrics')
+            WHERE database IN ('default', 'prometheus')
             FORMAT TSV"
       loop: "{{ tools_clickhouse_installations_info.resources }}"
       loop_control:
