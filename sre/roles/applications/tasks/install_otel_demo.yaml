@@ -137,11 +137,11 @@
             openshift.io/required-scc: restricted-v2
           resources:
             requests:
-              cpu: 2m
-              memory: 30Mi
-            limits:
               cpu: 10m
               memory: 60Mi
+            limits:
+              cpu: 100m
+              memory: 256Mi
         fraud-detection:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
@@ -267,11 +267,11 @@
           replicas: "{{ configuration.recommendation.replicas }}"
           resources:
             requests:
-              cpu: 15m
-              memory: 40Mi
-            limits:
               cpu: 30m
               memory: 80Mi
+            limits:
+              cpu: 100m
+              memory: 160Mi
         shipping:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
