@@ -1,5 +1,5 @@
 ---
-- identifier: node-deploy-tools
+- identifier: node-deploy-applications
   extra_data:
     incident_id: {{ scenario_id }}
   related:
@@ -9,11 +9,11 @@
       - name: AWS
 {% endif %}
     success_nodes:
-      - identifier: node-deploy-applications
+      - identifier: node-reinit-tools
   unified_job_template:
-    name: Deploy-Tools
+    name: Deploy-Applications
     type: job_template
-- identifier: node-deploy-applications
+- identifier: node-reinit-tools
   extra_data:
     incident_id: {{ scenario_id }}
   related:
@@ -25,7 +25,7 @@
     success_nodes:
       - identifier: node-install-recorders
   unified_job_template:
-    name: Deploy-Applications
+    name: Reinit-Tools
     type: job_template
 - identifier: node-install-recorders
   extra_data:
@@ -105,15 +105,43 @@
 {% endif %}
     success_nodes:
       - identifier: node-handover-to-agent
+    failure_nodes:
+      - identifier: node-install-unified-clickhouse-recorder
   unified_job_template:
     name: Check-for-Alerts
     type: job_template
 - identifier: node-handover-to-agent
 {% if requires_aws_credentials %}
   related:
+    always_nodes:
+      - identifier: node-install-unified-clickhouse-recorder
     credentials:
       - name: AWS
 {% endif %}
   unified_job_template:
     name: Handover-To-Agent
+    type: job_template
+- identifier: node-install-unified-clickhouse-recorder
+  related:
+    always_nodes:
+      - identifier: node-uninstall-recorders
+    credentials:
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
+{% if requires_aws_credentials %}
+      - name: AWS
+{% endif %}
+  unified_job_template:
+    name: Run-Unified-ClickHouse-Recorder
+    type: job_template
+- identifier: node-uninstall-recorders
+  extra_data:
+    incident_id: {{ scenario_id }}
+  related:
+    credentials:
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
+{% if requires_aws_credentials %}
+      - name: AWS
+{% endif %}
+  unified_job_template:
+    name: Uninstall-Data-Recorders
     type: job_template
