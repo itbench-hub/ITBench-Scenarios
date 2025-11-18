@@ -394,15 +394,18 @@ class ClickHouseEventStreamer:
         save_to_file: bool = True
     ) -> pd.DataFrame:
         """Retrieve OpenTelemetry logs from ClickHouse.
-        
+
         Args:
             services: List of service names to filter by.
-            severity_levels: List of severity levels to filter by.
+            severity_levels: List of severity levels to filter by (defaults to warning, error, warn, fatal, critical).
             save_to_file: Whether to save results to TSV file.
             
         Returns:
             DataFrame containing OpenTelemetry logs.
         """
+        if severity_levels is None:
+            severity_levels = ['warning', 'error', 'warn', 'fatal', 'critical']
+
         query = """
         SELECT
             Timestamp as timestamp,
@@ -418,16 +421,22 @@ class ClickHouseEventStreamer:
         FROM otel_demo_logs
         WHERE 1=1
         """
-    
+
         if services:
             query += " AND ServiceName IN ({})".format(
                 ','.join(f"'{s}'" for s in services)
             )
     
         if severity_levels:
-            query += " AND SeverityText IN ({})".format(
-                ','.join(f"'{s}'" for s in severity_levels)
-            )
+            # 1-4: TRACE, 5-8: DEBUG, 9-12: INFO, 13-16: WARN, 17-20: ERROR, 21-24: FATAL
+            if any(level.lower() in ['warning', 'warn', 'error', 'fatal', 'critical'] for level in severity_levels):
+                query += " AND (SeverityText IN ({}) OR SeverityNumber >= 13)".format(
+                    ','.join(f"'{s}'" for s in severity_levels)
+                )
+            else:
+                query += " AND SeverityText IN ({})".format(
+                    ','.join(f"'{s}'" for s in severity_levels)
+                )
     
         query += " ORDER BY Timestamp ASC"
     
@@ -480,13 +489,16 @@ class ClickHouseEventStreamer:
             services: List of service names to filter by.
             trace_ids: List of specific trace IDs to retrieve.
             span_kinds: List of span kinds to filter by.
-            status_codes: List of status codes to filter by.
+            status_codes: List of status codes to filter by (defaults to Error).
             min_duration_ms: Minimum span duration in milliseconds.
             save_to_file: Whether to save results to TSV file.
             
         Returns:
             DataFrame containing OpenTelemetry traces.
         """
+        if status_codes is None:
+            status_codes = ['Error']
+
         query = """
         SELECT 
             Timestamp as timestamp,
@@ -853,7 +865,7 @@ def main():
     username = os.environ.get("CLICKHOUSE_USERNAME", "default")
     password = os.environ.get("CLICKHOUSE_PASSWORD", "")
 
-	# Clean up the endpoint if it has protocol
+    # Clean up the endpoint if it has protocol
     endpoint = endpoint.replace('https://', '').replace('http://', '')
 
     if endpoint is None or username is None or password is None:
