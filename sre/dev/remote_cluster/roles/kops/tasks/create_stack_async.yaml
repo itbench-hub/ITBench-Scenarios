@@ -121,7 +121,7 @@
       - --cloud
       - aws
       - --topology
-      - "{{ 'private' if kops_stack.runners.aws.elastic_ip_allocation_id is defined else 'public' }}"
+      - "{{ 'private' if kops_elastic_ip_available else 'public' }}"
       - --network-id
       - "{{ kops_vpc_info.vpc.id }}"
       - --subnets
