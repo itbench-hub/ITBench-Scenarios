@@ -140,6 +140,8 @@
         jaeger: true
         kubernetes_topology_monitor: true
         clickhouse: false
+      incidents_tools:
+        clickhouse: false
     inventory: ITBench
     job_tags: install_recorders
     job_type: run
@@ -182,6 +184,8 @@
         jaeger: false
         kubernetes_topology_monitor: true
         clickhouse: false
+      incidents_tools:
+        clickhouse: false
     inventory: ITBench
     job_tags: install_recorders
     job_type: run
@@ -205,6 +209,8 @@
         prometheus: false
         jaeger: false
         kubernetes_topology_monitor: false
+        clickhouse: true
+      incidents_tools:
         clickhouse: true
     inventory: ITBench
     job_tags: install_recorders
