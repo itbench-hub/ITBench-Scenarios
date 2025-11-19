@@ -72,11 +72,11 @@
           replicas: "{{ configuration.accounting.replicas }}"
           resources:
             requests:
-              cpu: 15m
-              memory: 80Mi
-            limits:
               cpu: 30m
-              memory: 150Mi
+              memory: 160Mi
+            limits:
+              cpu: 60m
+              memory: 300Mi
         ad:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
