@@ -343,11 +343,12 @@ class ClickHouseEventStreamer:
         FROM kubernetes_objects_snapshot
         WHERE 1=1
         """
-        
-        if namespaces:
-            query += " AND ResourceAttributes['k8s.namespace.name'] IN ({})".format(
-                ','.join(f"'{ns}'" for ns in namespaces)
-            )
+        if namespaces is None:
+            namespaces = ['otel-demo', 'chaos-mesh']
+
+        query += " AND ResourceAttributes['k8s.namespace.name'] IN ({})".format(
+            ','.join(f"'{ns}'" for ns in namespaces)
+        )
         
         if resource_types:
             query += " AND LogAttributes['k8s.resource.name'] IN ({})".format(
