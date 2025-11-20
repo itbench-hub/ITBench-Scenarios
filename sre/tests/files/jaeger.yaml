@@ -1,7 +1,6 @@
 tools:
   chaos_mesh: false
   clickhouse: false
-  ingress: true
   istio: false
   jaeger: true
   kubernetes_topology_monitor: false

@@ -44,12 +44,6 @@
   ansible.builtin.import_tasks:
     file: uninstall_istio.yaml
 
-- name: Import Ingress uninstallation tasks
-  ansible.builtin.import_tasks:
-    file: uninstall_ingress.yaml
-  when:
-    - tools_cluster.platform == "kubernetes"
-
 - name: Import Kubernetes Metrics Server uninstallation tasks
   ansible.builtin.import_tasks:
     file: uninstall_kubernetes_metrics_server.yaml

@@ -34,9 +34,6 @@ argument_specs:
           clickhouse:
             required: true
             type: bool
-          ingress:
-            required: true
-            type: bool
           istio:
             required: true
             type: bool

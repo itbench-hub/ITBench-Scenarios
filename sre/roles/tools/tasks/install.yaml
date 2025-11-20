@@ -58,12 +58,6 @@
   when:
     - tools_required.opencost
 
-- name: Import Ingress installation tasks
-  ansible.builtin.import_tasks:
-    file: install_ingress.yaml
-  when:
-    - tools_required.ingress
-
 - name: Import Istio installation tasks
   ansible.builtin.import_tasks:
     file: install_istio.yaml

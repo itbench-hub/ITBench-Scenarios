@@ -73,34 +73,6 @@
   when:
     - tools_required.prometheus
 
-- name: Create release namespace for Istio Gateway
-  kubernetes.core.k8s:
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    state: present
-    resource_definition:
-      apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: "{{ tools_helm_releases.istio_gateway.namespace }}"
-        labels:
-          it-bench/monitoring: "true"
-  when:
-    - tools_cluster.platform == "kubernetes"
-
-- name: Install Istio Ingress Gateway
-  kubernetes.core.helm:
-    chart_ref: gateway
-    chart_repo_url: https://istio-release.storage.googleapis.com/charts
-    chart_version: 1.28.0
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    release_name: "{{ tools_helm_releases.istio_gateway.name }}"
-    release_namespace: "{{ tools_helm_releases.istio_gateway.namespace }}"
-    release_state: present
-    values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/istio_gateway.j2') | from_yaml }}"
-    wait: true
-  when:
-    - tools_cluster.platform == "kubernetes"
-
 - name: Enable Routing via Host feature
   kubernetes.core.k8s_json_patch:
     api_version: operator.openshift.io/v1

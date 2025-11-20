@@ -45,6 +45,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -91,8 +94,6 @@ jobs:
           make -C sre undeploy_tools
   clickhouse:
     name: Alinity Clickhouse Smoke Tests
-    needs:
-      - ingress
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5.0.1
@@ -113,6 +114,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -123,152 +127,13 @@ jobs:
       - name: Run uninstallation smoke test
         run: |
           make -C sre undeploy_tools
-  data-recorder-jaeger:
-    name: Data Recorder (Jaeger) Smoke Tests
-    needs:
-      - jaeger
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v5.0.1
-      - uses: actions/setup-python@v6.0.0
-        with:
-          python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
-        with:
-          go-version-file: sre/dev/local_cluster/go.mod
-          cache-dependency-path: sre/dev/local_cluster/go.sum
-      - uses: azure/setup-helm@v4.3.1
-        with:
-          version: v3.18.6
-      - name: Install Python and Ansible dependencies
-        run: |
-          pip install -r sre/requirements.txt
-          ansible-galaxy install -r sre/requirements.yaml
-      - name: Create Kind cluster
-        run: |
-          make -C sre/dev/local_cluster create_single_node_cluster
-      - name: Create group vars
-        run: |
-          make -C sre group_vars
-          mv sre/tests/files/jaeger.yaml sre/group_vars/environment/tools.yaml
-      - name: Install tools
-        run: |
-          make -C sre deploy_tools
-      - name: Run installation smoke test
-        run: |
-          make -C sre deploy_recorders
-      - name: Run uninstallation smoke test
-        run: |
-          make -C sre undeploy_recorders
-  data-recorder-kubernetes-topology-monitor:
-    name: Data Recorder (Kubernetes Topology Monitor) Smoke Tests
-    needs:
-      - kubernetes-topology-monitor
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v5.0.1
-      - uses: actions/setup-python@v6.0.0
-        with:
-          python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
-        with:
-          go-version-file: sre/dev/local_cluster/go.mod
-          cache-dependency-path: sre/dev/local_cluster/go.sum
-      - uses: azure/setup-helm@v4.3.1
-        with:
-          version: v3.18.6
-      - name: Install Python and Ansible dependencies
-        run: |
-          pip install -r sre/requirements.txt
-          ansible-galaxy install -r sre/requirements.yaml
-      - name: Create Kind cluster
-        run: |
-          make -C sre/dev/local_cluster create_single_node_cluster
-      - name: Create group vars
-        run: |
-          make -C sre group_vars
-          mv sre/tests/files/kubernetes-topology-monitor.yaml sre/group_vars/environment/tools.yaml
-      - name: Install tools
-        run: |
-          make -C sre deploy_tools
-      - name: Run installation smoke test
-        run: |
-          make -C sre deploy_recorders
-      - name: Run uninstallation smoke test
-        run: |
-          make -C sre undeploy_recorders
-  data-recorder-prometheus:
-    name: Data Recorder (Prometheus) Smoke Tests
-    needs:
-      - prometheus
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v5.0.1
-      - uses: actions/setup-python@v6.0.0
-        with:
-          python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
-        with:
-          go-version-file: sre/dev/local_cluster/go.mod
-          cache-dependency-path: sre/dev/local_cluster/go.sum
-      - uses: azure/setup-helm@v4.3.1
-        with:
-          version: v3.18.6
-      - name: Install Python and Ansible dependencies
-        run: |
-          pip install -r sre/requirements.txt
-          ansible-galaxy install -r sre/requirements.yaml
-      - name: Create Kind cluster
-        run: |
-          make -C sre/dev/local_cluster create_single_node_cluster
-      - name: Create group vars
-        run: |
-          make -C sre group_vars
-          mv sre/tests/files/prometheus.yaml sre/group_vars/environment/tools.yaml
-      - name: Install tools
-        run: |
-          make -C sre deploy_tools
-      - name: Run installation smoke test
-        run: |
-          make -C sre deploy_recorders
-      - name: Run uninstallation smoke test
-        run: |
-          make -C sre undeploy_recorders
-  ingress:
-    name: Ingress Smoke Tests
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v5.0.1
-      - uses: actions/setup-python@v6.0.0
-        with:
-          python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
-        with:
-          go-version-file: sre/dev/local_cluster/go.mod
-          cache-dependency-path: sre/dev/local_cluster/go.sum
-      - uses: azure/setup-helm@v4.3.1
-        with:
-          version: v3.18.6
-      - name: Install Python and Ansible dependencies
-        run: |
-          pip install -r sre/requirements.txt
-          ansible-galaxy install -r sre/requirements.yaml
-      - name: Create Kind cluster
-        run: |
-          make -C sre/dev/local_cluster create_single_node_cluster
-      - name: Create group vars
-        run: |
-          make -C sre group_vars
-          mv sre/tests/files/ingress.yaml sre/group_vars/environment/tools.yaml
-      - name: Run installation smoke test
-        run: |
-          make -C sre deploy_tools
-      - name: Run uninstallation smoke test
-        run: |
-          make -C sre undeploy_tools
   istio:
     name: Istio Smoke Tests
     runs-on: ubuntu-24.04
+    needs:
+      - clickhouse
+      - opentelemetry
+      - jaeger
     steps:
       - uses: actions/checkout@v5.0.1
       - uses: actions/setup-python@v6.0.0
@@ -288,6 +153,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -301,7 +169,6 @@ jobs:
   jaeger:
     name: Jaeger Smoke Tests
     needs:
-      - ingress
       - opensearch
     runs-on: ubuntu-24.04
     steps:
@@ -323,6 +190,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -330,6 +200,12 @@ jobs:
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
+      - name: Run data recorder installation smoke test
+        run: |
+          make -C sre deploy_recorders
+      - name: Run data recorder uninstallation smoke test
+        run: |
+          make -C sre undeploy_recorders
       - name: Run uninstallation smoke test
         run: |
           make -C sre undeploy_tools
@@ -367,8 +243,6 @@ jobs:
           make -C sre undeploy_tools
   kubernetes-topology-monitor:
     name: Kubernetes Topology Monitor Smoke Tests
-    needs:
-      - ingress
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5.0.1
@@ -389,6 +263,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -396,13 +273,18 @@ jobs:
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
+      - name: Run data recorder installation smoke test
+        run: |
+          make -C sre deploy_recorders
+      - name: Run data recorder uninstallation smoke test
+        run: |
+          make -C sre undeploy_recorders
       - name: Run uninstallation smoke test
         run: |
           make -C sre undeploy_tools
   opencost:
     name: OpenCost Smoke Tests
     needs:
-      - ingress
       - prometheus
     runs-on: ubuntu-24.04
     steps:
@@ -424,6 +306,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -490,6 +375,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -526,6 +414,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -541,8 +432,6 @@ jobs:
           make -C sre undeploy_applications
   prometheus:
     name: Prometheus Smoke Tests
-    needs:
-      - ingress
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5.0.1
@@ -563,6 +452,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -570,6 +462,12 @@ jobs:
       - name: Run installation smoke test
         run: |
           make -C sre deploy_tools
+      - name: Run data recorder installation smoke test
+        run: |
+          make -C sre deploy_recorders
+      - name: Run data recorder uninstallation smoke test
+        run: |
+          make -C sre undeploy_recorders
       - name: Run uninstallation smoke test
         run: |
           make -C sre undeploy_tools
@@ -599,6 +497,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -640,6 +541,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -681,6 +585,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -722,6 +629,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -763,6 +673,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -805,6 +718,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -846,6 +762,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -887,6 +806,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -928,6 +850,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -969,6 +894,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1010,6 +938,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1051,6 +982,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1092,6 +1026,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1135,6 +1072,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
@@ -1178,6 +1118,9 @@ jobs:
       - name: Create Kind cluster
         run: |
           make -C sre/dev/local_cluster create_single_node_cluster
+      - name: Run Cloud Provider
+        run: |
+          make -C sre/dev/local_cluster run_gateway_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
