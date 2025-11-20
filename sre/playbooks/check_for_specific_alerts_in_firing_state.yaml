@@ -28,12 +28,12 @@
         name: tools
         tasks_from: set_external_endpoint
       vars:
-        external_network_object:
-          name: prometheus
-          namespace: prometheus
         tools_cluster:
           kubeconfig: "{{ cluster.kubeconfig }}"
           platform: "{{ cluster_platform }}"
+        tools_external_network_object:
+          name: prometheus
+          namespace: prometheus
 
     - name: Attempt to check for firing alerts
       block:
