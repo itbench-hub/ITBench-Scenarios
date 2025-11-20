@@ -7,7 +7,7 @@
     release_namespace: "{{ tools_helm_releases.kubernetes_topology_monitor.namespace }}"
     wait: true
 
-- name: Delete Topology Monitor Persiste Volume Claims
+- name: Delete Topology Monitor Persistent Volume Claims
   kubernetes.core.k8s:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     resource_definition:
@@ -26,5 +26,3 @@
   loop_control:
     label: persistentvolumeclaim/{{ claim.name }}
     loop_var: claim
-  when:
-    - item.resources | length == 1

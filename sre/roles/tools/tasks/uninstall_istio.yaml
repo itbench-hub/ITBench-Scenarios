@@ -109,5 +109,5 @@
     crds: |
       {{
         tools_crds.resources |
-        community.general.json_query("[?ends_with(spec.group, 'istio.io')].metadata.name")
+        community.general.json_query("[?ends_with(spec.group, 'istio.io')]")
       }}

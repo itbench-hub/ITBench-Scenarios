@@ -29,7 +29,7 @@
 
 - name: Delete Clickhouse Installation Templates
   when:
-    - tools_crd_info.resources | selectattr('metadata.name', '==', 'clickhouseinstallationtemplates.clickhouse.altinity.com') | length == 1
+    - tools_crds.resources | selectattr('metadata.name', '==', 'clickhouseinstallationtemplates.clickhouse.altinity.com') | length == 1
   block:
     - name: Fetch all Clickhouse Installation Templates
       kubernetes.core.k8s_info:
