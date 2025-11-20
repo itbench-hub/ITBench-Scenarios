@@ -18,7 +18,7 @@ tools_helm_releases:
     namespace: metrics-server
   kubernetes_topology_monitor:
     name: topology-monitor
-    namespace: kube-system
+    namespace: topology-monitor
   opencost:
     name: opencost
     namespace: opencost

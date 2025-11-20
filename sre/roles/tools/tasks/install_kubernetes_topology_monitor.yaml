@@ -1,4 +1,15 @@
 ---
+- name: Create the release namespace
+  kubernetes.core.k8s:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    resource_definition:
+      api_version: v1
+      kind: Namespace
+      metadata:
+        name: "{{ tools_helm_releases.kubernetes_topology_monitor.namespace }}"
+    state: present
+    wait: true
+
 - name: Install Kubernetes Topology Monitor
   kubernetes.core.helm:
     chart_ref: "{{ playbook_dir }}/../tools/kubernetes-topology-monitor/charts/kubernetes-topology-monitor"
