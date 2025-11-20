@@ -7,20 +7,14 @@
         file: install_kubernetes_gateway.yaml
       vars:
         gateway:
-          name: clickhouse-{{ tools_instances.clickhouse.name }}
+          name: "{{ tools_instances.clickhouse.name }}"
           namespace: "{{ tools_instances.clickhouse.namespace }}"
         http_routes:
-          - name: clickhouse-{{ tools_instances.clickhouse.name }}
+          - name: "{{ tools_instances.clickhouse.name }}"
             namespace: "{{ tools_instances.clickhouse.namespace }}"
             service:
               name: clickhouse-{{ tools_instances.clickhouse.name }}
               port: 8123
-        service_monitor:
-          name: "{{ tools_instances.clickhouse.name }}-gateway"
-          namespace: "{{ tools_instances.clickhouse.namespace }}"
-        test:
-          endpoints:
-            - /play
       when:
         - tools_cluster.platform == "kubernetes"
 
@@ -37,6 +31,16 @@
           target_port: 8123
       when:
         - tools_cluster.platform == "openshift"
+
+    - name: Import external endpoint testing tasks
+      ansible.builtin.import_tasks:
+        file: test_external_endpoint.yaml
+      vars:
+        tools_external_network_object:
+          name: "{{ tools_instances.clickhouse.name }}"
+          namespace: "{{ tools_instances.clickhouse.namespace }}"
+        tools_external_paths:
+          - /play
 
 - name: Create networking objects for external access to Prometheus
   when:
@@ -55,12 +59,17 @@
             service:
               name: "{{ tools_helm_releases.prometheus.name }}-kube-prometheus-prometheus"
               port: 9090
-        test:
-          endpoints:
-            - /query
-            - /alerts
-      when:
-        - tools_cluster.platform == "kubernetes"
+
+    - name: Import external endpoint testing tasks
+      ansible.builtin.import_tasks:
+        file: test_external_endpoint.yaml
+      vars:
+        tools_external_network_object:
+          name: "{{ prometheus-k8s if tools_cluster.platform == 'openshift' else tools_helm_releases.prometheus.name }}"
+          namespace: "{{ openshift-monitoring if tools_cluster.platform == 'openshift' else tools_helm_releases.prometheus.namespace }}"
+        tools_external_paths:
+          - /query
+          - /alerts
 
 - name: Create networking objects for external access to Jaeger
   when:
@@ -79,9 +88,6 @@
             service:
               name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}-collector"
               port: 16686
-        test:
-          endpoints:
-            - /
       when:
         - tools_cluster.platform == "kubernetes"
 
@@ -98,6 +104,16 @@
           target_port: 16686
       when:
         - tools_cluster.platform == "openshift"
+
+    - name: Import external endpoint testing tasks
+      ansible.builtin.import_tasks:
+        file: test_external_endpoint.yaml
+      vars:
+        tools_external_network_object:
+          name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}"
+          namespace: "{{ tools_instances.opentelemetry_collectors.namespace }}"
+        tools_external_paths:
+          - /
 
 - name: Create networking objects for external access to OpenCost
   when:
@@ -116,9 +132,6 @@
             service:
               name: "{{ tools_helm_releases.opencost.name }}"
               port: 9090
-        test:
-          endpoints:
-            - ""
       when:
         - tools_cluster.platform == "kubernetes"
 
@@ -135,6 +148,16 @@
           target_port: http-ui
       when:
         - tools_cluster.platform == "openshift"
+
+    - name: Import external endpoint testing tasks
+      ansible.builtin.import_tasks:
+        file: test_external_endpoint.yaml
+      vars:
+        tools_external_network_object:
+          name: "{{ tools_helm_releases.opencost.name }}"
+          namespace: "{{ tools_helm_releases.opencost.namespace }}"
+        tools_external_paths:
+          - /
 
 - name: Create networking objects for external access to Kubernetes Topology Monitor
   when:
@@ -153,8 +176,6 @@
             service:
               name: topology-monitor-svc
               port: 8080
-        test:
-          endpoints: []
       when:
         - tools_cluster.platform == "kubernetes"
 
