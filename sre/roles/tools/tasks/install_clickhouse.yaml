@@ -48,6 +48,7 @@
           openshift.io/sa.scc.supplemental-groups: 101/100
         labels:
           it-bench/monitoring: "true"
+          it-bench/shared-gateway-access: "true"
     state: present
 
 - name: Create Clickhouse Installation(s)

@@ -46,6 +46,7 @@
               additionalArgs:
                 - name: web.enable-otlp-receiver
                   value: ""
+              routePrefix: /prometheus
           defaultRules:
             rules:
               alertmanager: false

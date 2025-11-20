@@ -119,6 +119,7 @@
         name: "{{ tools_instances.opentelemetry_collectors.namespace }}"
         labels:
           it-bench/monitoring: "true"
+          it-bench/shared-gateway-access: "true"
     state: present
 
 - name: Import variable setting task

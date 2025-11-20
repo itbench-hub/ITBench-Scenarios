@@ -13,6 +13,7 @@
           openshift.io/sa.scc.uid-range: 1000/10000
         labels:
           it-bench/monitoring: "true"
+          it-bench/shared-gateway-access: "true"
     state: present
 
 - name: Import variable setting task

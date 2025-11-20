@@ -3,10 +3,12 @@
   kubernetes.core.k8s:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     resource_definition:
-      api_version: v1
+      apiVersion: v1
       kind: Namespace
       metadata:
         name: "{{ tools_helm_releases.kubernetes_topology_monitor.namespace }}"
+        labels:
+          it-bench/shared-gateway-access: "true"
     state: present
     wait: true
 

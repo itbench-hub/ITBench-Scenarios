@@ -18,9 +18,17 @@
       delay: 15
       retries: 20
 
-    - name: Extract address information
+    - name: Extract ip address information
       ansible.builtin.set_fact:
         tools_external_http_endpoint: http://{{ tools_gateway.resources[0].status.addresses[0].value }}:80
+      when:
+        - tools_gateway.resources[0].status.addresses[0].type == "IPAddress"
+
+    - name: Extract hostname address information
+      ansible.builtin.set_fact:
+        tools_external_http_endpoint: http://{{ tools_gateway.resources[0].status.addresses[0].value }}
+      when:
+        - tools_gateway.resources[0].status.addresses[0].type == "Hostname"
 
 - name: Extract external HTTP address from OpenShift Route
   when:

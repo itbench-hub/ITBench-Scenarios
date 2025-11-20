@@ -86,3 +86,5 @@
 - name: Import external networking installation tasks
   ansible.builtin.import_tasks:
     file: install_external_networking.yaml
+  when:
+    - tools_required.kubernetes_topology_monitor or tools_required.opencost or tools_required.jaeger or tools_required.prometheus or tools_required.clickhouse

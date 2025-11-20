@@ -1,3 +1,46 @@
+- name: Create Kubernetes Gateway
+  when:
+    - tools_cluster.platform == "kubernetes"
+  block:
+    - name: Create the instance namespace
+      kubernetes.core.k8s:
+        kubeconfig: "{{ tools_cluster.kubeconfig }}"
+        resource_definition:
+          apiVersion: v1
+          kind: Namespace
+          metadata:
+            name: "{{ tools_instances.kubernetes_gateways.namespace }}"
+        state: present
+
+    - name: Create Gateway (and Service Monitor)
+      kubernetes.core.k8s:
+        kubeconfig: "{{ tools_cluster.kubeconfig }}"
+        template: templates/networking/kubernetes/gateway.j2
+        state: present
+      loop:
+        - name: "{{ tools_instances.kubernetes_gateways.names.main }}"
+      loop_control:
+        label: gateway/{{ gateway.name }}
+        loop_var: gateway
+
+    - name: Wait for gateway to be programmed
+      kubernetes.core.k8s_info:
+        api_version: gateway.networking.k8s.io/v1
+        kind: Gateway
+        kubeconfig: "{{ tools_cluster.kubeconfig }}"
+        name: "{{ gateway.name }}"
+        namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
+        wait: true
+        wait_condition:
+          reason: Programmed
+          status: "True"
+          type: Programmed
+      loop:
+        - name: "{{ tools_instances.kubernetes_gateways.names.main }}"
+      loop_control:
+        label: gateway/{{ gateway.name }}
+        loop_var: gateway
+
 - name: Create networking objects for external access to Clickhouse
   when:
     - tools_required.clickhouse
@@ -7,14 +50,29 @@
         file: install_kubernetes_gateway.yaml
       vars:
         gateway:
-          name: "{{ tools_instances.clickhouse.name }}"
-          namespace: "{{ tools_instances.clickhouse.namespace }}"
+          name: "{{ tools_instances.kubernetes_gateways.names.main }}"
+          namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
         http_routes:
           - name: "{{ tools_instances.clickhouse.name }}"
             namespace: "{{ tools_instances.clickhouse.namespace }}"
+            path:
+              enable_rewrites: true
+              prefix: /clickhouse
             service:
               name: clickhouse-{{ tools_instances.clickhouse.name }}
               port: 8123
+      when:
+        - tools_cluster.platform == "kubernetes"
+
+    - name: Import external endpoint testing tasks
+      ansible.builtin.import_tasks:
+        file: test_external_endpoint.yaml
+      vars:
+        tools_external_network_object:
+          name: "{{ tools_instances.kubernetes_gateways.names.main }}"
+          namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
+        tools_external_paths:
+          - /clickhouse/play
       when:
         - tools_cluster.platform == "kubernetes"
 
@@ -41,21 +99,27 @@
           namespace: "{{ tools_instances.clickhouse.namespace }}"
         tools_external_paths:
           - /play
+      when:
+        - tools_cluster.platform == "openshift"
 
 - name: Create networking objects for external access to Prometheus
   when:
     - tools_required.prometheus
+    - tools_cluster.platform == "kubernetes"
   block:
     - name: Create Kubernetes Gateway for Prometheus
       ansible.builtin.import_tasks:
-        file: install_kubernetes_gateway.yaml
+        file: install_kubernetes_http_route.yaml
       vars:
         gateway:
-          name: "{{ tools_helm_releases.prometheus.name }}"
-          namespace: "{{ tools_helm_releases.prometheus.namespace }}"
+          name: "{{ tools_instances.kubernetes_gateways.names.main }}"
+          namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
         http_routes:
           - name: "{{ tools_helm_releases.prometheus.name }}"
             namespace: "{{ tools_helm_releases.prometheus.namespace }}"
+            path:
+              enable_rewrites: false
+              prefix: /prometheus
             service:
               name: "{{ tools_helm_releases.prometheus.name }}-kube-prometheus-prometheus"
               port: 9090
@@ -65,11 +129,11 @@
         file: test_external_endpoint.yaml
       vars:
         tools_external_network_object:
-          name: "{{ prometheus-k8s if tools_cluster.platform == 'openshift' else tools_helm_releases.prometheus.name }}"
-          namespace: "{{ openshift-monitoring if tools_cluster.platform == 'openshift' else tools_helm_releases.prometheus.namespace }}"
+          name: "{{ tools_instances.kubernetes_gateways.names.main }}"
+          namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
         tools_external_paths:
-          - /query
-          - /alerts
+          - /prometheus/query
+          - /prometheus/alerts
 
 - name: Create networking objects for external access to Jaeger
   when:
@@ -77,17 +141,32 @@
   block:
     - name: Create Kubernetes Gateway for Jaeger
       ansible.builtin.import_tasks:
-        file: install_kubernetes_gateway.yaml
+        file: install_kubernetes_http_route.yaml
       vars:
         gateway:
-          name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}"
-          namespace: "{{ tools_instances.opentelemetry_collectors.namespace }}"
+          name: "{{ tools_instances.kubernetes_gateways.names.main }}"
+          namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
         http_routes:
           - name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}"
             namespace: "{{ tools_instances.opentelemetry_collectors.namespace }}"
+            path:
+              enable_rewrites: false
+              prefix: /jaeger
             service:
               name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}-collector"
               port: 16686
+      when:
+        - tools_cluster.platform == "kubernetes"
+
+    - name: Import external endpoint testing tasks
+      ansible.builtin.import_tasks:
+        file: test_external_endpoint.yaml
+      vars:
+        tools_external_network_object:
+          name: "{{ tools_instances.kubernetes_gateways.names.main }}"
+          namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
+        tools_external_paths:
+          - /jaeger/
       when:
         - tools_cluster.platform == "kubernetes"
 
@@ -114,6 +193,8 @@
           namespace: "{{ tools_instances.opentelemetry_collectors.namespace }}"
         tools_external_paths:
           - /
+      when:
+        - tools_cluster.platform == "openshift"
 
 - name: Create networking objects for external access to OpenCost
   when:
@@ -121,17 +202,32 @@
   block:
     - name: Create Kubernetes Gateway for OpenCost
       ansible.builtin.import_tasks:
-        file: install_kubernetes_gateway.yaml
+        file: install_kubernetes_http_route.yaml
       vars:
         gateway:
-          name: "{{ tools_helm_releases.opencost.name }}"
-          namespace: "{{ tools_helm_releases.opencost.namespace }}"
+          name: "{{ tools_instances.kubernetes_gateways.names.main }}"
+          namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
         http_routes:
           - name: "{{ tools_helm_releases.opencost.name }}"
             namespace: "{{ tools_helm_releases.opencost.namespace }}"
+            path:
+              enable_rewrites: false
+              prefix: /
             service:
               name: "{{ tools_helm_releases.opencost.name }}"
               port: 9090
+      when:
+        - tools_cluster.platform == "kubernetes"
+
+    - name: Import external endpoint testing tasks
+      ansible.builtin.import_tasks:
+        file: test_external_endpoint.yaml
+      vars:
+        tools_external_network_object:
+          name: "{{ tools_instances.kubernetes_gateways.names.main }}"
+          namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
+        tools_external_paths:
+          - /
       when:
         - tools_cluster.platform == "kubernetes"
 
@@ -158,6 +254,8 @@
           namespace: "{{ tools_helm_releases.opencost.namespace }}"
         tools_external_paths:
           - /
+      when:
+        - tools_cluster.platform == "openshift"
 
 - name: Create networking objects for external access to Kubernetes Topology Monitor
   when:
@@ -168,14 +266,29 @@
         file: install_kubernetes_gateway.yaml
       vars:
         gateway:
-          name: "{{ tools_helm_releases.kubernetes_topology_monitor.name }}"
-          namespace: "{{ tools_helm_releases.kubernetes_topology_monitor.namespace }}"
+          name: "{{ tools_instances.kubernetes_gateways.names.main }}"
+          namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
         http_routes:
           - name: "{{ tools_helm_releases.kubernetes_topology_monitor.name }}"
             namespace: "{{ tools_helm_releases.kubernetes_topology_monitor.namespace }}"
+            path:
+              enable_rewrites: true
+              prefix: /topology
             service:
               name: topology-monitor-svc
               port: 8080
+      when:
+        - tools_cluster.platform == "kubernetes"
+
+    - name: Import external endpoint testing tasks
+      ansible.builtin.import_tasks:
+        file: test_external_endpoint.yaml
+      vars:
+        tools_external_network_object:
+          name: "{{ tools_instances.kubernetes_gateways.names.main }}"
+          namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
+        tools_external_paths:
+          - /topology/healthz
       when:
         - tools_cluster.platform == "kubernetes"
 
@@ -190,5 +303,17 @@
           namespace: "{{ tools_helm_releases.kubernetes_topology_monitor.namespace }}"
           service: topology-monitor-svc
           target_port: 8080
+      when:
+        - tools_cluster.platform == "openshift"
+
+    - name: Import external endpoint testing tasks
+      ansible.builtin.import_tasks:
+        file: test_external_endpoint.yaml
+      vars:
+        tools_external_network_object:
+          name: "{{ tools_helm_releases.kubernetes_topology_monitor.name }}"
+          namespace: "{{ tools_helm_releases.kubernetes_topology_monitor.namespace }}"
+        tools_external_paths:
+          - /healthz
       when:
         - tools_cluster.platform == "openshift"

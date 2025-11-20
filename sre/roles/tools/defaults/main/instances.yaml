@@ -4,6 +4,10 @@ tools_instances:
     names:
       main: clickhouse
     namespace: clickhouse
+  kubernetes_gateways:
+    names:
+      main: main
+    namespace: gateways
   opentelemetry_collectors:
     names:
       istio: istio

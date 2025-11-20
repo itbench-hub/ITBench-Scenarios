@@ -29,7 +29,9 @@ spec:
             - jaeger_storage_exporter
     extensions:
       jaeger_query:
+{% if tools_cluster.platform == "kubernetes" %}
         base_path: /jaeger
+{% endif %}
         storage:
           traces: traces_store
       jaeger_storage:

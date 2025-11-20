@@ -7,8 +7,13 @@ metadata:
 spec:
   parentRefs:
     - name: {{ gateway.name }}
+      namespace: {{ tools_instances.kubernetes_gateways.namespace }}
   rules:
-    - filters:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: {{ route.path.prefix }}
+      filters:
         - type: ResponseHeaderModifier
           responseHeaderModifier:
             add:
@@ -26,6 +31,13 @@ spec:
                 value: DENY
               - name: X-XSS-Protection
                 value: "0"
+{% if route.path.enable_rewrites %}
+        - type: URLRewrite
+          urlRewrite:
+            path:
+              type: ReplacePrefixMatch
+              replacePrefixMatch: ""
+{% endif %}
       backendRefs:
         - name: {{ route.service.name }}
           port: {{ route.service.port }}

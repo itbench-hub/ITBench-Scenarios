@@ -10,3 +10,5 @@
   loop_control:
     label: "{{ endpoint }}"
     loop_var: endpoint
+  delay: 30
+  retries: 6
