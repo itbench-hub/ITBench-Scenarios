@@ -2,7 +2,7 @@
 - name: Uninstall Prometheus Operator and Prometheus on Kubernetes
   when:
     - tools_cluster.platform == "kubernetes"
-  blcok:
+  block:
     - name: Uninstall Prometheus Operator and Prometheus
       kubernetes.core.helm:
         kubeconfig: "{{ tools_cluster.kubeconfig }}"
