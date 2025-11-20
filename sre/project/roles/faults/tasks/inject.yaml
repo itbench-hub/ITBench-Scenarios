@@ -1,0 +1,32 @@
+---
+- name: Import wait tasks
+  ansible.builtin.import_tasks:
+    file: inject_wait_conditions.yaml
+  when:
+    - fault_spec.wait_conditions is defined
+
+- name: Import custom fault injection tasks
+  ansible.builtin.import_tasks:
+    file: inject_custom.yaml
+  when:
+    - fault_spec.fault.custom is defined
+
+- name: Import Chaos Mesh fault injection tasks
+  ansible.builtin.import_tasks:
+    file: inject_chaos_mesh.yaml
+  vars:
+    spec: "{{ fault_spec.fault.chaos_mesh }}"
+  when:
+    - fault_spec.fault.chaos_mesh is defined
+
+- name: Import Otel Demo fault injection tasks
+  ansible.builtin.import_tasks:
+    file: inject_otel_demo.yaml
+  when:
+    - fault_spec.fault.otel_demo is defined
+
+- name: Import Valkey fault injection tasks
+  ansible.builtin.import_tasks:
+    file: inject_valkey.yaml
+  when:
+    - fault_spec.fault.valkey is defined

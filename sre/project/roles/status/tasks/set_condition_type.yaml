@@ -1,0 +1,24 @@
+---
+- name: Set status type (tool installation)
+  ansible.builtin.set_fact:
+    status_condition_type: Deployed
+  tags:
+    - install_tools
+
+- name: Set status type (tool removal)
+  ansible.builtin.set_fact:
+    status_condition_type: Destroyed
+  tags:
+    - uninstall_tools
+
+- name: Set status type (application installation)
+  ansible.builtin.set_fact:
+    status_condition_type: Deployed
+  tags:
+    - install_applications
+
+- name: Set status type (fault injection)
+  ansible.builtin.set_fact:
+    status_condition_type: FaultInjected
+  tags:
+    - install_recorders

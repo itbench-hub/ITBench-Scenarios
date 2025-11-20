@@ -1,0 +1,73 @@
+---
+- name: Manage SRE and FinOps Incident Environment Sample Application Stack
+  hosts:
+    - environment
+  pre_tasks:
+    - name: Import system role
+      ansible.builtin.import_role:
+        name: system
+      tags:
+        - always
+      vars:
+        system_cluster:
+          kubeconfig: "{{ cluster.kubeconfig }}"
+
+    - name: Import variables for incident
+      ansible.builtin.import_role:
+        name: incidents
+      tags:
+        - always
+      vars:
+        incidents_file:
+          id: "{{ incident_id }}"
+      when:
+        - incident_id is defined
+  tasks:
+    - name: Import status role
+      ansible.builtin.import_role:
+        name: status
+      vars:
+        status_state: progressing
+        status_storage: "{{ storage }}"
+      when:
+        - storage.keys() | length > 0
+
+    - name: Attempt to perform tasks in application role
+      block:
+        - name: Import applications role
+          ansible.builtin.import_role:
+            name: applications
+          vars:
+            applications_cluster:
+              kubeconfig: "{{ cluster.kubeconfig }}"
+            applications_required:
+              otel_demo:
+                configuration: "{{ incidents_applications.otel_demo.configuration | default({}) }}"
+                enabled: "{{ incidents_applications.otel_demo.enabled | default(applications.otel_demo) }}"
+
+        - name: Import status role
+          ansible.builtin.import_role:
+            name: status
+          vars:
+            status_state: succeeded
+            status_storage: "{{ storage }}"
+          when:
+            - storage.keys() | length > 0
+      rescue:
+        - name: Import status role
+          ansible.builtin.import_role:
+            name: status
+          vars:
+            status_failed_task:
+              name: "{{ ansible_failed_task.name }}"
+              result: "{{ ansible_failed_result }}"
+            status_state: failed
+            status_storage: "{{ storage }}"
+          when:
+            - storage.keys() | length > 0
+
+        - name: Fail playbook
+          ansible.builtin.fail:
+            msg: Playbook failed to complete successfully. Please check log for more info.
+          tags:
+            - always
