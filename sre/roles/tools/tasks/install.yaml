@@ -9,6 +9,25 @@
   when:
     - tools_cluster.provider == 'kind'
 
+# kubectl is used in place of thekubernetes.core module because
+# the server side configuration the yaml files are still downloaded
+# and rendered on the client side. Depending on the file, sometimes
+# there are rendering issues.
+
+- name: Add Kubernetes Gateway API CRDs
+  ansible.builtin.command:
+    argv:
+      - kubectl
+      - apply
+      - --server-side
+      - -f
+      - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/standard-install.yaml
+      - --kubeconfig={{ tools_cluster.kubeconfig | ansible.builtin.expanduser }}
+  register: tools_kubernetes_gateway_crds_apply
+  changed_when: tools_kubernetes_gateway_crds_apply.rc == 0
+  when:
+    - tools_cluster.platform == "kubernetes"
+
 - name: Import Prometheus installation tasks
   ansible.builtin.import_tasks:
     file: install_prometheus.yaml

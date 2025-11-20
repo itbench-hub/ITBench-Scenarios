@@ -56,6 +56,12 @@
   when:
     - tools_cluster.platform == "kubernetes"
 
+- name: Append Kubernetes Gateway API related CRDs to list
+  ansible.builtin.set_fact:
+    tools_custom_resource_definitions: "{{ tools_custom_resource_definitions + crds }}"
+  vars:
+    crds: "{{ tools_crds.resources | selectattr('spec.group', '==', 'gateway.networking.k8s.io') }}"
+
 - name: Remove installed Custom Resource Definitions
   kubernetes.core.k8s:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
