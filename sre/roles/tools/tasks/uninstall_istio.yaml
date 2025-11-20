@@ -43,22 +43,6 @@
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
   register: tools_crd_info
 
-- name: Undeploy Prometheus Monitors
-  kubernetes.core.k8s:
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    template: templates/istio/monitoring.j2
-    state: present
-  when:
-    - tools_required.prometheus
-
-- name: Remove Istio Telemetry
-  kubernetes.core.k8s:
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    template: templates/istio/telemetry.j2
-    state: absent
-  when:
-    - tools_crd_info.resources | selectattr('metadata.name', '==', 'telemetries.telemetry.istio.io') | length == 1
-
 - name: Uninstall Istio ZTunnel
   kubernetes.core.helm:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
