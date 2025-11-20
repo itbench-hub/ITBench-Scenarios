@@ -102,7 +102,7 @@ spec:
 apiVersion: clickhouse.altinity.com/v1
 kind: ClickHouseInstallation
 metadata:
-  name: {{ tools_instances.clickhouse.name }}
+  name: {{ tools_instances.clickhouse.names.main }}
   namespace: {{ tools_instances.clickhouse.namespace }}
   labels:
     app.kubernetes.io/name: clickhouse
