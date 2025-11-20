@@ -1,0 +1,173 @@
+- name: Create networking objects for external access to Clickhouse
+  when:
+    - tools_required.clickhouse
+  block:
+    - name: Create Kubernetes Gateway for Clickhouse
+      ansible.builtin.import_tasks:
+        file: install_kubernetes_gateway.yaml
+      vars:
+        gateway:
+          name: clickhouse-{{ tools_instances.clickhouse.name }}
+          namespace: "{{ tools_instances.clickhouse.namespace }}"
+        http_routes:
+          - name: clickhouse-{{ tools_instances.clickhouse.name }}
+            namespace: "{{ tools_instances.clickhouse.namespace }}"
+            service:
+              name: clickhouse-{{ tools_instances.clickhouse.name }}
+              port: 8123
+        service_monitor:
+          name: "{{ tools_instances.clickhouse.name }}-gateway"
+          namespace: "{{ tools_instances.clickhouse.namespace }}"
+        test:
+          endpoints:
+            - /play
+      when:
+        - tools_cluster.platform == "kubernetes"
+
+    - name: Create OpenShift Route for Clickhouse
+      kubernetes.core.k8s:
+        kubeconfig: "{{ tools_cluster.kubeconfig }}"
+        template: templates/networking/openshift/route.j2
+        state: present
+      vars:
+        route:
+          name: "{{ tools_instances.clickhouse.name }}"
+          namespace: "{{ tools_instances.clickhouse.namespace }}"
+          service: clickhouse-{{ tools_instances.clickhouse.name }}
+          target_port: 8123
+      when:
+        - tools_cluster.platform == "openshift"
+
+- name: Create networking objects for external access to Prometheus
+  when:
+    - tools_required.prometheus
+  block:
+    - name: Create Kubernetes Gateway for Prometheus
+      ansible.builtin.import_tasks:
+        file: install_kubernetes_gateway.yaml
+      vars:
+        gateway:
+          name: "{{ tools_helm_releases.prometheus.name }}"
+          namespace: "{{ tools_helm_releases.prometheus.namespace }}"
+        http_routes:
+          - name: "{{ tools_helm_releases.prometheus.name }}"
+            namespace: "{{ tools_helm_releases.prometheus.namespace }}"
+            service:
+              name: "{{ tools_helm_releases.prometheus.name }}-kube-prometheus-prometheus"
+              port: 9090
+        test:
+          endpoints:
+            - /query
+            - /alerts
+      when:
+        - tools_cluster.platform == "kubernetes"
+
+- name: Create networking objects for external access to Jaeger
+  when:
+    - tools_required.jaeger
+  block:
+    - name: Create Kubernetes Gateway for Jaeger
+      ansible.builtin.import_tasks:
+        file: install_kubernetes_gateway.yaml
+      vars:
+        gateway:
+          name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}"
+          namespace: "{{ tools_instances.opentelemetry_collectors.namespace }}"
+        http_routes:
+          - name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}"
+            namespace: "{{ tools_instances.opentelemetry_collectors.namespace }}"
+            service:
+              name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}-collector"
+              port: 16686
+        test:
+          endpoints:
+            - /
+      when:
+        - tools_cluster.platform == "kubernetes"
+
+    - name: Create OpenShift Route for Jaeger
+      kubernetes.core.k8s:
+        kubeconfig: "{{ tools_cluster.kubeconfig }}"
+        template: templates/networking/openshift/route.j2
+        state: present
+      vars:
+        route:
+          name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}"
+          namespace: "{{ tools_instances.opentelemetry_collectors.namespace }}"
+          service: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}-collector"
+          target_port: 16686
+      when:
+        - tools_cluster.platform == "openshift"
+
+- name: Create networking objects for external access to OpenCost
+  when:
+    - tools_required.opencost
+  block:
+    - name: Create Kubernetes Gateway for OpenCost
+      ansible.builtin.import_tasks:
+        file: install_kubernetes_gateway.yaml
+      vars:
+        gateway:
+          name: "{{ tools_helm_releases.opencost.name }}"
+          namespace: "{{ tools_helm_releases.opencost.namespace }}"
+        http_routes:
+          - name: "{{ tools_helm_releases.opencost.name }}"
+            namespace: "{{ tools_helm_releases.opencost.namespace }}"
+            service:
+              name: "{{ tools_helm_releases.opencost.name }}"
+              port: 9090
+        test:
+          endpoints:
+            - ""
+      when:
+        - tools_cluster.platform == "kubernetes"
+
+    - name: Create OpenShift Route for OpenCost
+      kubernetes.core.k8s:
+        kubeconfig: "{{ tools_cluster.kubeconfig }}"
+        template: templates/networking/openshift/route.j2
+        state: present
+      vars:
+        route:
+          name: "{{ tools_helm_releases.opencost.name }}"
+          namespace: "{{ tools_helm_releases.opencost.namespace }}"
+          service: "{{ tools_helm_releases.opencost.name }}"
+          target_port: http-ui
+      when:
+        - tools_cluster.platform == "openshift"
+
+- name: Create networking objects for external access to Kubernetes Topology Monitor
+  when:
+    - tools_required.kubernetes_topology_monitor
+  block:
+    - name: Create Kubernetes Gateway for Kubernetes Topology Monitor
+      ansible.builtin.import_tasks:
+        file: install_kubernetes_gateway.yaml
+      vars:
+        gateway:
+          name: "{{ tools_helm_releases.kubernetes_topology_monitor.name }}"
+          namespace: "{{ tools_helm_releases.kubernetes_topology_monitor.namespace }}"
+        http_routes:
+          - name: "{{ tools_helm_releases.kubernetes_topology_monitor.name }}"
+            namespace: "{{ tools_helm_releases.kubernetes_topology_monitor.namespace }}"
+            service:
+              name: topology-monitor-svc
+              port: 8080
+        test:
+          endpoints: []
+      when:
+        - tools_cluster.platform == "kubernetes"
+
+    - name: Create OpenShift Route for Kubernetes Topology Monitor
+      kubernetes.core.k8s:
+        kubeconfig: "{{ tools_cluster.kubeconfig }}"
+        template: templates/networking/openshift/route.j2
+        state: present
+      vars:
+        route:
+          name: "{{ tools_helm_releases.kubernetes_topology_monitor.name }}"
+          namespace: "{{ tools_helm_releases.kubernetes_topology_monitor.namespace }}"
+          service: topology-monitor-svc
+          target_port: 8080
+      when:
+        - tools_cluster.platform == "openshift"

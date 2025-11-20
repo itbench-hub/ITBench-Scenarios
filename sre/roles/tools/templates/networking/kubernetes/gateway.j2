@@ -1,0 +1,36 @@
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: {{ gateway.name }}
+  namespace: {{ gateway.namespace }}
+spec:
+{% if tools_required.istio %}
+  gatewayClassName: istio
+{% elif tools_cluster.provider == "kind" %}
+  gatewayClassName: cloud-provider-kind
+{% endif %}
+  listeners:
+    - name: http
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: Same
+{% if tools_required.prometheus %}
+{% if tools_required.istio %}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ gateway.name }}-gateway
+  namespace: {{ gateway.namespace }}
+spec:
+  selector:
+    matchLabels:
+      gateway.networking.k8s.io/gateway-name: {{ gateway.name }}
+  endpoints:
+    - interval: 30s
+      port: status-port
+{% endif %}
+{% endif %}

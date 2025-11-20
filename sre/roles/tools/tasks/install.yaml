@@ -88,3 +88,7 @@
     file: install_kubernetes_topology_monitor.yaml
   when:
     - tools_required.kubernetes_topology_monitor
+
+- name: Import external networking installation tasks
+  ansible.builtin.import_tasks:
+    file: install_external_networking.yaml
