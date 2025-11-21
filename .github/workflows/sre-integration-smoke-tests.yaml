@@ -27,11 +27,11 @@ jobs:
       - otel-demo
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -61,11 +61,11 @@ jobs:
     name: Chaos Mesh Smoke Tests
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -95,11 +95,11 @@ jobs:
       - ingress
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -129,11 +129,11 @@ jobs:
       - jaeger
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -166,11 +166,11 @@ jobs:
       - kubernetes-topology-monitor
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -203,11 +203,11 @@ jobs:
       - prometheus
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -238,11 +238,11 @@ jobs:
     name: Ingress Smoke Tests
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -270,11 +270,11 @@ jobs:
     name: Istio Smoke Tests
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -305,11 +305,11 @@ jobs:
       - opensearch
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -337,11 +337,11 @@ jobs:
     name: Kubernetes Metrics Server Smoke Tests
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -371,11 +371,11 @@ jobs:
       - ingress
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -406,11 +406,11 @@ jobs:
       - prometheus
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -438,11 +438,11 @@ jobs:
     name: OpenSearch Smoke Tests
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -472,11 +472,11 @@ jobs:
       - clickhouse
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -508,11 +508,11 @@ jobs:
       - prometheus
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -545,11 +545,11 @@ jobs:
       - ingress
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -581,11 +581,11 @@ jobs:
       - otel-demo
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -622,11 +622,11 @@ jobs:
       - otel-demo
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -663,11 +663,11 @@ jobs:
       - otel-demo
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -704,11 +704,11 @@ jobs:
       - otel-demo
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -745,11 +745,11 @@ jobs:
       - otel-demo
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -787,11 +787,11 @@ jobs:
       - otel-demo
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -828,11 +828,11 @@ jobs:
       - otel-demo
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -869,11 +869,11 @@ jobs:
       - otel-demo
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -910,11 +910,11 @@ jobs:
       - otel-demo
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -951,11 +951,11 @@ jobs:
       - otel-demo
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -992,11 +992,11 @@ jobs:
       - otel-demo
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -1033,11 +1033,11 @@ jobs:
       - otel-demo
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -1074,11 +1074,11 @@ jobs:
       - otel-demo
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -1117,11 +1117,11 @@ jobs:
       - otel-demo
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
@@ -1160,11 +1160,11 @@ jobs:
       - otel-demo
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5.0.1
+      - uses: actions/checkout@v6.0.0
       - uses: actions/setup-python@v6.0.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@v6.0.0
+      - uses: actions/setup-go@v6.1.0
         with:
           go-version-file: sre/dev/local_cluster/go.mod
           cache-dependency-path: sre/dev/local_cluster/go.sum
