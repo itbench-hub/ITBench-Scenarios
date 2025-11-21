@@ -1,0 +1,37 @@
+---
+- name: Remove readiness probe flapping fault (restore stable probe)
+  kubernetes.core.k8s_json_patch:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    api_version: apps/v1
+    kind: Deployment
+    name: "{{ spec.workload.name }}"
+    namespace: "{{ spec.workload.namespace }}"
+    patch:
+      - op: replace
+        path: /spec/template/spec/containers/0/readinessProbe
+        value:
+          httpGet:
+            path: "{{ spec.readiness_flap.readiness_path | default('/ready') }}"
+            port: "{{ spec.readiness_flap.readiness_port | default(8080) }}"
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          failureThreshold: 3
+          successThreshold: 1
+          timeoutSeconds: 2
+
+- name: Confirm readiness probe restored
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    kind: Deployment
+    namespace: "{{ spec.workload.namespace }}"
+    name: "{{ spec.workload.name }}"
+  register: faults_readiness_flap_restore
+  retries: 10
+  delay: 3
+  until: faults_readiness_flap_restore.resources | length > 0
+
+- name: Display readiness-flap removal summary
+  ansible.builtin.debug:
+    msg:
+      - "Restored stable readiness probe for Deployment '{{ spec.workload.name }}'."
+      - "Pods should now return to consistent Ready state."

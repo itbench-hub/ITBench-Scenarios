@@ -1,0 +1,37 @@
+---
+- name: Inject readiness probe flapping fault
+  kubernetes.core.k8s_json_patch:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    api_version: apps/v1
+    kind: Deployment
+    name: "{{ spec.workload.name }}"
+    namespace: "{{ spec.workload.namespace }}"
+    patch:
+      - op: replace
+        path: /spec/template/spec/containers/0/readinessProbe
+        value:
+          httpGet:
+            path: "{{ spec.readiness_flap.readiness_path | default('/ready') }}"
+            port: "{{ spec.readiness_flap.readiness_port | default(8080) }}"
+          initialDelaySeconds: 0
+          periodSeconds: "{{ spec.readiness_flap.period_seconds | default(1) }}"
+          failureThreshold: "{{ spec.readiness_flap.failure_threshold | default(1) }}"
+          successThreshold: "{{ spec.readiness_flap.success_threshold | default(1) }}"
+          timeoutSeconds: "{{ spec.readiness_flap.timeout_seconds | default(1) }}"
+
+- name: Wait for Deployment rollout to apply readiness patch
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    kind: Deployment
+    namespace: "{{ spec.workload.namespace }}"
+    name: "{{ spec.workload.name }}"
+  register: faults_readiness_flap_rollout
+  retries: 10
+  delay: 3
+  until: faults_readiness_flap_rollout.resources | length > 0
+
+- name: Display readiness-flap injection summary
+  ansible.builtin.debug:
+    msg:
+      - "Injected readiness probe flapping into Deployment '{{ spec.workload.name }}' in namespace '{{ spec.workload.namespace }}'."
+      - "Pods may now alternate between Ready and NotReady, simulating intermittent readiness probe failures."
