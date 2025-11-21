@@ -1,11 +1,11 @@
 tools:
   chaos_mesh: false
-  clickhouse: false
+  clickhouse: true
   istio: false
   jaeger: true
   kubernetes_topology_monitor: false
   kubernetes_metrics_server: false
   opencost: false
   opensearch: false
-  opentelemetry: false
+  opentelemetry: true
   prometheus: false

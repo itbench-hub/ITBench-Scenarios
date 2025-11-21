@@ -13,6 +13,7 @@
             name: "{{ tools_helm_releases.prometheus.namespace }}"
             labels:
               it-bench/monitoring: "true"
+              it-bench/shared-gateway-access: "true"
         state: present
 
     - name: Install Prometheus Operator and Prometheus
@@ -24,36 +25,7 @@
         release_namespace: "{{ tools_helm_releases.prometheus.namespace }}"
         release_state: present
         timeout: 10m0s
-        values:
-          alertmanager:
-            enabled: false
-          grafana:
-            enabled: false
-          prometheus:
-            prometheusSpec:
-              podMonitorNamespaceSelector:
-                matchLabels:
-                  it-bench/monitoring: "true"
-              podMonitorSelectorNilUsesHelmValues: false
-              ruleNamespaceSelector:
-                matchLabels:
-                  it-bench/monitoring: "true"
-              ruleSelectorNilUsesHelmValues: false
-              serviceMonitorNamespaceSelector:
-                matchLabels:
-                  it-bench/monitoring: "true"
-              serviceMonitorSelectorNilUsesHelmValues: false
-              additionalArgs:
-                - name: web.enable-otlp-receiver
-                  value: ""
-              routePrefix: /prometheus
-          defaultRules:
-            rules:
-              alertmanager: false
-          kubeEtcd:
-            enabled: "{{ tools_cluster.provider == 'kind' }}"
-          kubeProxy:
-            enabled: "{{ tools_cluster.provider == 'kind' }}"
+        values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/prometheus.j2') | from_yaml }}"
         wait: true
 
 - name: Enabled OpenShift User Worklord Monitoring (Prometheus)
@@ -79,3 +51,42 @@
           type: Ready
           status: "True"
         wait_timeout: 300
+
+- name: Enable external access on Kind
+  when:
+    - tools_cluster.platform == "kubernetes"
+    - tools_cluster.provider == "kind"
+    - tools_installation_plan.prometheus.external_access
+  block:
+    - name: Import Kubernetes Gateway creation tasks
+      ansible.builtin.import_tasks:
+        file: install_kubernetes_gateway.yaml
+      vars:
+        gateway:
+          name: "{{ tools_helm_releases.prometheus.name }}"
+          namespace: "{{ tools_helm_releases.prometheus.namespace }}"
+
+    - name: Import Kubernetes HTTP Route creation tasks
+      ansible.builtin.import_tasks:
+        file: install_kubernetes_http_route.yaml
+      vars:
+        gateway:
+          name: "{{ tools_helm_releases.prometheus.name }}"
+          namespace: "{{ tools_helm_releases.prometheus.namespace }}"
+        http_routes:
+          - name: "{{ tools_helm_releases.prometheus.name }}"
+            namespace: "{{ tools_helm_releases.prometheus.namespace }}"
+            service:
+              name: "{{ tools_helm_releases.prometheus.name }}-kube-prometheus-prometheus"
+              port: 9090
+
+    - name: Import connection test to external endpoint
+      ansible.builtin.import_tasks:
+        file: test_external_endpoint.yaml
+      vars:
+        tools_external_network_object:
+          name: "{{ tools_helm_releases.prometheus.name }}"
+          namespace: "{{ tools_helm_releases.prometheus.namespace }}"
+        tools_external_paths:
+          - /query
+          - /alerts

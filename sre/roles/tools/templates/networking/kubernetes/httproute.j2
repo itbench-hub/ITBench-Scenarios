@@ -7,12 +7,12 @@ metadata:
 spec:
   parentRefs:
     - name: {{ gateway.name }}
-      namespace: {{ tools_instances.kubernetes_gateways.namespace }}
+      namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
   rules:
     - matches:
         - path:
             type: PathPrefix
-            value: {{ route.path.prefix }}
+            value: {{ route.path.prefix | default("/") }}
       filters:
         - type: ResponseHeaderModifier
           responseHeaderModifier:
@@ -31,7 +31,7 @@ spec:
                 value: DENY
               - name: X-XSS-Protection
                 value: "0"
-{% if route.path.enable_rewrites %}
+{% if route.path.enable_rewrites | default(false) %}
         - type: URLRewrite
           urlRewrite:
             path:

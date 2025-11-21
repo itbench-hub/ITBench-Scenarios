@@ -31,7 +31,7 @@
       podAnnotations:
         openshift.io/required-scc: restricted-v2
       serviceMonitor:
-        enabled: "{{ tools_required.prometheus }}"
+        enabled: "{{ tools_installation_plan.prometheus.enabled | default(true) }}"
     wait: true
 
 - name: Create the release namespace for Clickhouse
@@ -72,7 +72,7 @@
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     name: "{{ resource.metadata.name }}"
     namespace: "{{ resource.metadata.namespace }}"
-  loop: "{{ tools_clickhouse_installations.resources }}"
+  loop: "{{ tools_clickhouse_installations.resources | default([]) }}"
   loop_control:
     label: clickhouseinstallation/{{ resource.metadata.name }}
     loop_var: resource
@@ -83,3 +83,61 @@
     - tools_chi.resources[0].status.status == 'Completed'
   retries: 10
   delay: 30
+
+- name: Enable external access on Kind
+  when:
+    - tools_cluster.platform == "kubernetes"
+    - tools_cluster.provider == "kind"
+    - tools_installation_plan.clickhouse.external_access
+  block:
+    - name: Import Kubernetes Gateway creation tasks
+      ansible.builtin.import_tasks:
+        file: install_kubernetes_gateway.yaml
+      vars:
+        gateway:
+          name: "{{ tools_instances.clickhouse.names.main }}"
+          namespace: "{{ tools_instances.clickhouse.namespace }}"
+
+    - name: Import Kubernetes HTTP Route creation tasks
+      ansible.builtin.import_tasks:
+        file: install_kubernetes_http_route.yaml
+      vars:
+        gateway:
+          name: "{{ tools_instances.clickhouse.names.main }}"
+          namespace: "{{ tools_instances.clickhouse.namespace }}"
+        http_routes:
+          - name: "{{ tools_instances.clickhouse.names.main }}"
+            namespace: "{{ tools_instances.clickhouse.namespace }}"
+            service:
+              name: clickhouse-{{ tools_instances.clickhouse.names.main }}
+              port: 8123
+
+- name: Enable external access on OpenShift
+  when:
+    - tools_cluster.platform == "openshift"
+    - tools_installation_plan.clickhouse.external_access
+  block:
+    - name: Create OpenShift Route
+      kubernetes.core.k8s:
+        kubeconfig: "{{ tools_cluster.kubeconfig }}"
+        template: templates/networking/openshift/route.j2
+        state: present
+      vars:
+        route:
+          name: "{{ tools_instances.clickhouse.names.main }}"
+          namespace: "{{ tools_instances.clickhouse.namespace }}"
+          service: clickhouse-{{ tools_instances.clickhouse.names.main }}
+          target_port: 8123
+
+- name: Import connection test to external endpoint
+  ansible.builtin.import_tasks:
+    file: test_external_endpoint.yaml
+  vars:
+    tools_external_network_object:
+      name: "{{ tools_instances.clickhouse.names.main }}"
+      namespace: "{{ tools_instances.clickhouse.namespace }}"
+    tools_external_paths:
+      - /play
+  when:
+    - tools_installation_plan.clickhouse.external_access
+    - tools_cluster.platform == "openshift" or (tools_cluster.platform == "kubernetes" and tools_cluster.provider == "kind")

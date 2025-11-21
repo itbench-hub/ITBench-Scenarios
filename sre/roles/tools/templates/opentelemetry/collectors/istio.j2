@@ -9,7 +9,7 @@ spec:
   mode: deployment
   observability:
     metrics:
-      enableMetrics: {{ tools_required.prometheus }}
+      enableMetrics: {{ tools_installation_plan.prometheus.enabled | default(true) }}
   podAnnotations:
     openshift.io/required-scc: restricted-v2
   config:

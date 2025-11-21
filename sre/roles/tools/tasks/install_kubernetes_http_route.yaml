@@ -25,8 +25,8 @@
     - tools_http_route.resources[0].status is defined
     - tools_http_route.resources[0].status.parents is defined
     - tools_http_route.resources[0].status.parents | length == 1
-    - tools_http_route.resources[0].status.parents[0].conditions is defined
-    - tools_http_route.resources[0].status.parents[0].conditions | length > 0
-    - tools_http_route.resources[0].status.parents[0].conditions | selectattr('type', '==', 'Accepted') | length == 1
+    - tools_http_route.resources[0].status.parents[0] |
+      community.general.json_query("conditions[?type=='Accepted' && status=='True']") |
+      length == 1
   retries: 10
   delay: 30

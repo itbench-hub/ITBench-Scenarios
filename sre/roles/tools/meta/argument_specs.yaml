@@ -24,39 +24,109 @@ argument_specs:
               - openshift
             required: true
             type: str
-      tools_required:
-        required: true
+      tools_installation_plan:
+        required: false
         type: dict
         options:
           chaos_mesh:
-            required: true
-            type: bool
+            required: false
+            type: dict
+            options:
+              enabled:
+                default: false
+                required: false
+                type: bool
           clickhouse:
-            required: true
-            type: bool
+            required: false
+            type: dict
+            options:
+              enabled:
+                default: true
+                required: false
+                type: bool
+              external_access:
+                default: true
+                required: false
+                type: bool
           istio:
-            required: true
-            type: bool
+            required: false
+            type: dict
+            options:
+              enabled:
+                default: false
+                required: false
+                type: bool
           jaeger:
-            required: true
-            type: bool
+            required: false
+            type: dict
+            options:
+              enabled:
+                default: true
+                required: false
+                type: bool
+              external_access:
+                default: true
+                required: false
+                type: bool
           kubernetes_metrics_server:
-            required: true
-            type: bool
+            required: false
+            type: dict
+            options:
+              enabled:
+                default: false
+                required: false
+                type: bool
           kubernetes_topology_monitor:
-            required: true
-            type: bool
+            required: false
+            type: dict
+            options:
+              enabled:
+                default: true
+                required: false
+                type: bool
+              external_access:
+                default: true
+                required: false
+                type: bool
           opencost:
-            required: true
-            type: bool
-          opensearch:
-            required: true
-            type: bool
+            required: false
+            type: dict
+            options:
+              enabled:
+                default: false
+                required: false
+                type: bool
+              external_access:
+                default: true
+                required: false
+                type: bool
           opentelemetry:
-            required: true
-            type: bool
+            required: false
+            type: dict
+            options:
+              enabled:
+                default: false
+                required: false
+                type: bool
           prometheus:
-            required: true
+            required: false
+            type: dict
+            options:
+              enabled:
+                default: true
+                required: false
+                type: bool
+              external_access:
+                default: true
+                required: false
+                type: bool
+      tools_uninstallation_plan:
+        required: false
+        type: dict
+        options:
+          remove_crds:
+            default: true
+            required: false
             type: bool
   set_clickhouse_credentials:
     author:

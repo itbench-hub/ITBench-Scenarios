@@ -8,4 +8,4 @@ tools:
   opencost: true
   opensearch: false
   opentelemetry: false
-  prometheus: false
+  prometheus: true

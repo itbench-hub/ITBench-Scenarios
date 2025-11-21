@@ -71,7 +71,107 @@
     template: templates/istio/monitoring.j2
     state: present
   when:
-    - tools_required.prometheus
+    - tools_installation_plan.prometheus.enabled | default(true)
+
+- name: Create Kubernetes Gateway
+  vars:
+    tools_istio_gateway_http_routes: []
+    tools_istio_gateway_test_endpoints: []
+  when:
+    - tools_cluster.platform == "kubernetes"
+    - tools_cluster.provider != "kind"
+  block:
+    - name: Append http routes and test endpoints
+      ansible.builtin.set_fact:
+        tools_istio_gateway_http_routes: "{{ tools_istio_gateway_http_routes + item.routes }}"
+        tools_istio_gateway_test_endpoints: "{{ tools_istio_gateway_test_endpoints + item.endpoints }}"
+      loop:
+        - enabled: "{{ tools_installation_plan.clickhouse.enabled | default(true) }}"
+          endpoints:
+            - /clickhouse/play
+          routes:
+            - name: "{{ tools_instances.clickhouse.names.main }}"
+              namespace: "{{ tools_instances.clickhouse.namespace }}"
+              path:
+                enable_rewrites: true
+                prefix: /clickhouse
+              service:
+                name: clickhouse-{{ tools_instances.clickhouse.names.main }}
+                port: 8123
+        - enabled: "{{ tools_installation_plan.jaeger.enabled | default(true) }}"
+          endpoints:
+            - /jaeger
+          routes:
+            - name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}"
+              namespace: "{{ tools_instances.opentelemetry_collectors.namespace }}"
+              path:
+                enable_rewrites: false
+                prefix: /jaeger
+              service:
+                name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}-collector"
+                port: 16686
+        - enabled: "{{ tools_installation_plan.opencost.enabled | default(true) }}"
+          endpoints:
+            - /
+          routes:
+            - name: "{{ tools_helm_releases.opencost.name }}"
+              namespace: "{{ tools_helm_releases.opencost.namespace }}"
+              service:
+                name: "{{ tools_helm_releases.opencost.name }}"
+                port: 9090
+        - enabled: "{{ tools_installation_plan.prometheus.enabled | default(true) }}"
+          endpoints:
+            - /prometheus/alerts
+            - /prometheus/query
+          routes:
+            - name: "{{ tools_helm_releases.prometheus.name }}"
+              namespace: "{{ tools_helm_releases.prometheus.namespace }}"
+              path:
+                enable_rewrites: false
+                prefix: /prometheus
+              service:
+                name: "{{ tools_helm_releases.prometheus.name }}-kube-prometheus-prometheus"
+                port: 9090
+        - enabled: "{{ tools_installation_plan.kubernetes_topology_monitor.enabled | default(true) }}"
+          endpoints:
+            - /topology/healthz
+          routes:
+            - name: "{{ tools_helm_releases.kubernetes_topology_monitor.name }}"
+              namespace: "{{ tools_helm_releases.kubernetes_topology_monitor.namespace }}"
+              path:
+                enable_rewrites: true
+                prefix: /topology
+              service:
+                name: topology-monitor-svc
+                port: 8080
+      when:
+        - item.enabled
+
+    - name: Import Kubernetes Gateway creation tasks
+      ansible.builtin.import_tasks:
+        file: install_kubernetes_gateway.yaml
+      vars:
+        gateway:
+          name: main
+          namespace: "{{ tools_helm_releases.istio.namespace }}"
+
+    - name: Import Kubernetes HTTP Route creation tasks
+      ansible.builtin.import_tasks:
+        file: install_kubernetes_http_route.yaml
+      vars:
+        gateway:
+          name: main
+          namespace: "{{ tools_helm_releases.istio.namespace }}"
+        http_routes: "{{ tools_istio_gateway_http_routes }}"
+
+    - name: Import connection test to external endpoint
+      ansible.builtin.import_tasks:
+        file: test_external_endpoint.yaml
+      vars:
+        tools_external_network_object:
+          name: main
+          namespace: "{{ tools_helm_releases.istio.namespace }}"
+        tools_external_paths: "{{ tools_istio_gateway_test_endpoints }}"
 
 - name: Enable Routing via Host feature
   kubernetes.core.k8s_json_patch:

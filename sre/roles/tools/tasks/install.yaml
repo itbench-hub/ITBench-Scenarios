@@ -9,82 +9,60 @@
   when:
     - tools_cluster.provider == 'kind'
 
-# kubectl is used in place of thekubernetes.core module because
-# the server side configuration the yaml files are still downloaded
-# and rendered on the client side. Depending on the file, sometimes
-# there are rendering issues.
-
-- name: Add Kubernetes Gateway API CRDs
-  ansible.builtin.command:
-    argv:
-      - kubectl
-      - apply
-      - --server-side
-      - -f
-      - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/standard-install.yaml
-      - --kubeconfig={{ tools_cluster.kubeconfig | ansible.builtin.expanduser }}
-  register: tools_kubernetes_gateway_crds_apply
-  changed_when: tools_kubernetes_gateway_crds_apply.rc == 0
-  when:
-    - tools_cluster.platform == "kubernetes"
+- name: Import Kubernetes Gateway API installation tasks
+  ansible.builtin.import_tasks:
+    file: install_kubernetes_gateway_api.yaml
 
 - name: Import Prometheus installation tasks
   ansible.builtin.import_tasks:
     file: install_prometheus.yaml
   when:
-    - tools_required.prometheus or tools_required.opencost
+    - tools_installation_plan.prometheus.enabled | default(true)
 
 - name: Import Clickhouse installation tasks
   ansible.builtin.import_tasks:
     file: install_clickhouse.yaml
   when:
-    - tools_required.clickhouse or tools_required.opentelemetry or tools_required.istio
+    - tools_installation_plan.clickhouse.enabled | default(true)
 
 - name: Import OpenSearch installation tasks
   ansible.builtin.import_tasks:
     file: install_opensearch.yaml
   when:
-    - tools_required.opensearch or tools_required.jaeger
+    - tools_installation_plan.jaeger.enabled | default(true)
 
 - name: Import OpenTelemetry installation tasks
   ansible.builtin.import_tasks:
     file: install_opentelemetry.yaml
   when:
-    - tools_required.opentelemetry or tools_required.jaeger or tools_required.istio
+    - tools_installation_plan.opentelemetry.enabled | default(true)
 
 - name: Import OpenCost installation tasks
   ansible.builtin.import_tasks:
     file: install_opencost.yaml
   when:
-    - tools_required.opencost
-
-- name: Import Istio installation tasks
-  ansible.builtin.import_tasks:
-    file: install_istio.yaml
-  when:
-    - tools_required.istio
+    - tools_installation_plan.opencost.enabled | default(false)
 
 - name: Import Chaos Mesh installation tasks
   ansible.builtin.import_tasks:
     file: install_chaos_mesh.yaml
   when:
-    - tools_required.chaos_mesh
+    - tools_installation_plan.chaos_mesh.enabled | default(false)
 
 - name: Import Kubernetes Metrics Server installation tasks
   ansible.builtin.import_tasks:
     file: install_kubernetes_metrics_server.yaml
   when:
-    - tools_required.kubernetes_metrics_server
-    - tools_cluster.platform == "kubernetes"
+    - tools_installation_plan.kubernetes_metrics_server.enabled | default(false)
 
 - name: Import Kubernetes Topology Monitor installation tasks
   ansible.builtin.import_tasks:
     file: install_kubernetes_topology_monitor.yaml
   when:
-    - tools_required.kubernetes_topology_monitor
+    - tools_installation_plan.kubernetes_topology_monitor.enabled | default(true)
 
-- name: Import external networking installation tasks
+- name: Import Istio installation tasks
   ansible.builtin.import_tasks:
-    file: install_external_networking.yaml
+    file: install_istio.yaml
   when:
-    - tools_required.kubernetes_topology_monitor or tools_required.opencost or tools_required.jaeger or tools_required.prometheus or tools_required.clickhouse
+    - tools_installation_plan.istio.enabled | default(false)

@@ -9,7 +9,7 @@ spec:
   mode: deployment
   observability:
     metrics:
-      enableMetrics: {{ tools_required.prometheus | default(true) }}
+      enableMetrics: {{ tools_installation_plan.prometheus.enabled | default(true) }}
   podAnnotations:
     openshift.io/required-scc: restricted-v2
   ports:
@@ -29,7 +29,7 @@ spec:
             - jaeger_storage_exporter
     extensions:
       jaeger_query:
-{% if tools_cluster.platform == "kubernetes" %}
+{% if tools_cluster.platform == "kubernetes" and tools_cluster.provider != "kind" %}
         base_path: /jaeger
 {% endif %}
         storage:

@@ -1,9 +1,20 @@
 ---
-- name: Create Gateway (and Service Monitor)
+- name: Create Cloud Provider Kind Kubernetes Gateway
   kubernetes.core.k8s:
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    template: templates/networking/kubernetes/gateway.j2
+    template: templates/networking/kubernetes/gateways/kind.j2
     state: present
+  when:
+    - tools_cluster.provider == "kind"
+
+- name: Create Istio Kubernetes Gateway and Service Monitor
+  kubernetes.core.k8s:
+    kubeconfig: "{{ tools_cluster.kubeconfig }}"
+    template: templates/networking/kubernetes/gateways/istio.j2
+    state: present
+  when:
+    - tools_cluster.provider != "kind"
+    - tools_installation_plan.istio.enabled | default(false)
 
 - name: Wait for gateway to be programmed
   kubernetes.core.k8s_info:
@@ -11,41 +22,9 @@
     kind: Gateway
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     name: "{{ gateway.name }}"
-    namespace: "{{ gateway.namespace }}"
+    namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
     wait: true
     wait_condition:
       reason: Programmed
       status: "True"
       type: Programmed
-
-- name: Create HTTPRoutes for gateway
-  kubernetes.core.k8s:
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    template: templates/networking/kubernetes/httproute.j2
-    state: present
-  loop: "{{ http_routes }}"
-  loop_control:
-    label: httproute/{{ route.name }}
-    loop_var: route
-
-- name: Wait for all HTTP routes to be accepted
-  kubernetes.core.k8s_info:
-    api_version: gateway.networking.k8s.io/v1
-    kind: HTTPRoute
-    kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    name: "{{ route.name }}"
-    namespace: "{{ route.namespace }}"
-  loop: "{{ http_routes }}"
-  loop_control:
-    label: httproute/{{ route.name }}
-    loop_var: route
-  register: tools_http_route
-  until:
-    - tools_http_route.resources[0].status is defined
-    - tools_http_route.resources[0].status.parents is defined
-    - tools_http_route.resources[0].status.parents | length == 1
-    - tools_http_route.resources[0].status.parents[0].conditions is defined
-    - tools_http_route.resources[0].status.parents[0].conditions | length > 0
-    - tools_http_route.resources[0].status.parents[0].conditions | selectattr('type', '==', 'Accepted') | length == 1
-  retries: 10
-  delay: 30

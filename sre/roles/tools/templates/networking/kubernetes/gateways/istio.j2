@@ -3,13 +3,9 @@ apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
   name: {{ gateway.name }}
-  namespace: {{ tools_instances.kubernetes_gateways.namespace }}
+  namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
 spec:
-{% if tools_required.istio %}
   gatewayClassName: istio
-{% elif tools_cluster.provider == "kind" %}
-  gatewayClassName: cloud-provider-kind
-{% endif %}
   listeners:
     - name: http
       port: 80
@@ -20,14 +16,13 @@ spec:
           selector:
             matchLabels:
               it-bench/shared-gateway-access: "true"
-{% if tools_required.prometheus %}
-{% if tools_required.istio %}
+{% if tools_installation_plan.prometheus.enabled %}
 ---
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ gateway.name }}-gateway
-  namespace: {{ tools_instances.kubernetes_gateways.namespace }}
+  namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
 spec:
   selector:
     matchLabels:
@@ -35,5 +30,4 @@ spec:
   endpoints:
     - interval: 30s
       port: status-port
-{% endif %}
 {% endif %}

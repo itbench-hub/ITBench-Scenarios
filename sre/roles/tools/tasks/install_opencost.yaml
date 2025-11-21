@@ -60,13 +60,10 @@
         prometheus:
           bearer_token: "{{ tools_prometheus_bearer_token | default(omit) }}"
           external:
-            enabled: "{{ tools_cluster.platform == 'openshift' }}"
-            url: "{{ tools_prometheus_endpoint | default(omit) }}"
+            enabled: true
+            url: "{{ tools_prometheus_endpoint }}"
           internal:
-            enabled: "{{ tools_cluster.platform == 'kubernetes' }}"
-            serviceName: "{{ tools_helm_releases.prometheus.name }}-kube-prometheus-prometheus"
-            namespaceName: "{{ tools_helm_releases.prometheus.namespace }}"
-            port: 9090
+            enabled: false
       podAnnotations:
         openshift.io/required-scc: "restricted-v2"
     wait: true
@@ -76,3 +73,61 @@
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
     template: templates/opencost/prometheusrules.j2
     state: present
+
+- name: Enable external access on Kind
+  when:
+    - tools_cluster.platform == "kubernetes"
+    - tools_cluster.provider == "kind"
+    - tools_installation_plan.opencost.external_access
+  block:
+    - name: Import Kubernetes Gateway creation tasks
+      ansible.builtin.import_tasks:
+        file: install_kubernetes_gateway.yaml
+      vars:
+        gateway:
+          name: "{{ tools_helm_releases.opencost.name }}"
+          namespace: "{{ tools_helm_releases.opencost.namespace }}"
+
+    - name: Import Kubernetes HTTP Route creation tasks
+      ansible.builtin.import_tasks:
+        file: install_kubernetes_http_route.yaml
+      vars:
+        gateway:
+          name: "{{ tools_helm_releases.opencost.name }}"
+          namespace: "{{ tools_helm_releases.opencost.namespace }}"
+        http_routes:
+          - name: "{{ tools_helm_releases.opencost.name }}"
+            namespace: "{{ tools_helm_releases.opencost.namespace }}"
+            service:
+              name: "{{ tools_helm_releases.opencost.name }}"
+              port: 9090
+
+- name: Enable external access on OpenShift
+  when:
+    - tools_cluster.platform == "openshift"
+    - tools_installation_plan.opencost.external_access
+  block:
+    - name: Create OpenShift Route
+      kubernetes.core.k8s:
+        kubeconfig: "{{ tools_cluster.kubeconfig }}"
+        template: templates/networking/openshift/route.j2
+        state: present
+      vars:
+        route:
+          name: "{{ tools_helm_releases.opencost.name }}"
+          namespace: "{{ tools_helm_releases.opencost.namespace }}"
+          service: "{{ tools_helm_releases.opencost.name }}"
+          target_port: http-ui
+
+- name: Import connection test to external endpoint
+  ansible.builtin.import_tasks:
+    file: test_external_endpoint.yaml
+  vars:
+    tools_external_network_object:
+      name: "{{ tools_helm_releases.opencost.name }}"
+      namespace: "{{ tools_helm_releases.opencost.namespace }}"
+    tools_external_paths:
+      - /
+  when:
+    - tools_installation_plan.clickhouse.external_access
+    - tools_cluster.platform == "openshift" or (tools_cluster.platform == "kubernetes" and tools_cluster.provider == "kind")
