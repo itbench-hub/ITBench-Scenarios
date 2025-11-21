@@ -70,3 +70,5 @@
   loop_control:
     label: customresourcedefinition/{{ crd.metadata.name }}
     loop_var: crd
+  when:
+    - tools_deployment_phase == "full_undeploy"
