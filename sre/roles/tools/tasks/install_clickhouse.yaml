@@ -91,12 +91,12 @@
     - name: Enable external access on Kind
       when:
         - tools_cluster.provider == "kind"
-        - not tools_installation_plan.istio.enabled
+        - not (tools_installation_plan.istio.enabled | default(false))
       block:
         - name: Create Cloud Provider Kind Kubernetes Gateway
           kubernetes.core.k8s:
             kubeconfig: "{{ tools_cluster.kubeconfig }}"
-            template: templates/networking/kubernetes/gateways/kind.j2
+            template: templates/kubernetes_gateways/kind.j2
             state: present
             wait: true
             wait_condition:

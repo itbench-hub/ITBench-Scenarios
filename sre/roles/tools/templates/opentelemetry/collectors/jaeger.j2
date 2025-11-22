@@ -31,7 +31,7 @@ spec:
             - jaeger_storage_exporter
     extensions:
       jaeger_query:
-{% if tools_cluster.platform == "kubernetes" and tools_cluster.provider != "kind" %}
+{% if (tools_installation_plan.istio.enabled | default(false)) %}
         base_path: /jaeger
 {% endif %}
         storage:

@@ -134,7 +134,7 @@
     template: "{{ item.template_path }}"
     state: present
   loop:
-    - enabled: "{{ tools_installation_plan.jaeger.enabled }}"
+    - enabled: "{{ (tools_installation_plan.jaeger.enabled | default(true)) }}"
       template_path: templates/opentelemetry/collectors/jaeger.j2
       container_image: |
         {{
@@ -142,7 +142,7 @@
           from_yaml |
           community.general.json_query('spec.image')
         }}
-    - enabled: "{{ tools_installation_plan.opentelemetry.enabled }}"
+    - enabled: "{{ (tools_installation_plan.opentelemetry.enabled | default(true)) }}"
       template_path: templates/opentelemetry/collectors/kubernetes-objects.j2
       container_image: |
         {{
@@ -150,7 +150,7 @@
           from_yaml |
           community.general.json_query('spec.image')
         }}
-    - enabled: "{{ tools_installation_plan.istio.enabled }}"
+    - enabled: "{{ (tools_installation_plan.istio.enabled | default(false)) }}"
       template_path: templates/opentelemetry/collectors/istio.j2
       container_image: |
         {{
@@ -201,7 +201,7 @@
         - name: Create Cloud Provider Kind Kubernetes Gateway
           kubernetes.core.k8s:
             kubeconfig: "{{ tools_cluster.kubeconfig }}"
-            template: templates/networking/kubernetes/gateways/kind.j2
+            template: templates/kubernetes_gateways/kind.j2
             state: present
             wait: true
             wait_condition:

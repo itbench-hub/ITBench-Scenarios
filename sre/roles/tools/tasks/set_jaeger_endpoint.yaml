@@ -13,7 +13,9 @@
     tools_jaeger_collector_otlp_grpc_endpoint: "{{ tools_jaeger_service_info.resources[0].metadata.name }}.{{
       tools_jaeger_service_info.resources[0].metadata.namespace }}.svc.cluster.local:4317"
     tools_jaeger_querier_endpoint: http://{{ tools_jaeger_service_info.resources[0].metadata.name }}.{{
-      tools_jaeger_service_info.resources[0].metadata.namespace }}.svc.cluster.local:16686/jaeger
+      tools_jaeger_service_info.resources[0].metadata.namespace }}.svc.cluster.local:16686/{{ query_path }}
+  vars:
+    query_path: "{{ '/jaeger' if (tools_installation_plan.istio.enabled | default(false)) else '' }}"
   when:
     - tools_jaeger_service_info is defined
     - tools_jaeger_service_info.resources | length == 1

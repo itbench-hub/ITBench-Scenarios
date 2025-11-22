@@ -20,7 +20,7 @@ prometheus:
     additionalArgs:
       - name: web.enable-otlp-receiver
         value: ""
-{% tools_cluster.platform == "kubernetes" and tools_cluster.provider != "kind" %}
+{% if tools_installation_plan.istio.enabled %}
     routePrefix: /prometheus
 {% endif %}
 defaultRules:
