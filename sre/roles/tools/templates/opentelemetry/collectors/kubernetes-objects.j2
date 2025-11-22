@@ -51,8 +51,10 @@ spec:
     metrics:
       enableMetrics: {{ tools_installation_plan.prometheus.enabled | default(true) }}
   serviceAccount: kubernetes-events-otel-collector
+{% if tools_cluster.platform == "openshift" %}
   podAnnotations:
     openshift.io/required-scc: restricted-v2
+{% endif %}
   config:
     service:
       pipelines:

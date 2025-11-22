@@ -88,13 +88,13 @@
       loop:
         - enabled: "{{ tools_installation_plan.clickhouse.enabled | default(true) }}"
           endpoints:
-            - /clickhouse/play
+            - /clickhouse/{{ tools_instances.clickhouse.names.main }}/play
           routes:
             - name: "{{ tools_instances.clickhouse.names.main }}"
               namespace: "{{ tools_instances.clickhouse.namespace }}"
               path:
                 enable_rewrites: true
-                prefix: /clickhouse
+                prefix: /clickhouse/{{ tools_instances.clickhouse.names.main }}
               service:
                 name: clickhouse-{{ tools_instances.clickhouse.names.main }}
                 port: 8123

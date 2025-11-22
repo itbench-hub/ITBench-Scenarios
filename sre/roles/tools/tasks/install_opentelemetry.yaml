@@ -123,14 +123,10 @@
 - name: Import variable setting task
   ansible.builtin.import_tasks:
     file: set_clickhouse_credentials.yaml
-  when:
-    - tools_installation_plan.opentelemetry.enabled or tools_installation_plan.istio.enabled
 
 - name: Import variable setting task
   ansible.builtin.import_tasks:
     file: set_clickhouse_endpoint.yaml
-  when:
-    - tools_installation_plan.opentelemetry.enabled or tools_installation_plan.istio.enabled
 
 - name: Install OpenTelemetry Collector(s)
   kubernetes.core.k8s:
@@ -192,63 +188,55 @@
     label: deployment/{{ resource.metadata.name }}
     loop_var: resource
 
-- name: Enable external access on Kind
+- name: Enable external access to Jaeger
   when:
-    - tools_cluster.platform == "kubernetes"
-    - tools_cluster.provider == "kind"
     - tools_installation_plan.jaeger.enabled
     - tools_installation_plan.jaeger.external_access
   block:
-    - name: Import Kubernetes Gateway creation tasks
-      ansible.builtin.import_tasks:
-        file: install_kubernetes_gateway.yaml
-      vars:
-        gateway:
-          name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}"
-          namespace: "{{ tools_instances.opentelemetry_collectors.namespace }}"
+    - name: Enable external access on Kind
+      when:
+        - tools_cluster.platform == "kubernetes"
+        - tools_cluster.provider == "kind"
+      block:
+        - name: Create Cloud Provider Kind Kubernetes Gateway
+          kubernetes.core.k8s:
+            kubeconfig: "{{ tools_cluster.kubeconfig }}"
+            template: templates/networking/kubernetes/gateways/kind.j2
+            state: present
+            wait: true
+            wait_condition:
+              reason: Programmed
+              status: "True"
+              type: Programmed
+          vars:
+            gateway:
+              name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}"
 
-    - name: Import Kubernetes HTTP Route creation tasks
-      ansible.builtin.import_tasks:
-        file: install_kubernetes_http_route.yaml
-      vars:
-        gateway:
-          name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}"
-          namespace: "{{ tools_instances.opentelemetry_collectors.namespace }}"
-        http_routes:
-          - name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}"
-            namespace: "{{ tools_instances.opentelemetry_collectors.namespace }}"
-            service:
-              name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}-collector"
-              port: 16686
+        - name: Create HTTP Route
+          kubernetes.core.k8s:
+            kubeconfig: "{{ tools_cluster.kubeconfig }}"
+            template: templates/opentelemetry/http_routes/jaeger.j2
+            state: present
+          vars:
+            gateway:
+              name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}"
 
-- name: Enable external access on OpenShift
-  when:
-    - tools_cluster.platform == "openshift"
-    - tools_installation_plan.jaeger.enabled
-    - tools_installation_plan.jaeger.external_access
-  block:
     - name: Create OpenShift Route
       kubernetes.core.k8s:
         kubeconfig: "{{ tools_cluster.kubeconfig }}"
-        template: templates/networking/openshift/route.j2
+        template: templates/opentelemetry/routes/jaeger.j2
         state: present
+      when:
+        - tools_cluster.platform == "openshift"
+
+    - name: Import connection test to external endpoint
+      ansible.builtin.import_tasks:
+        file: test_external_endpoint.yaml
       vars:
-        route:
+        tools_external_network_object:
           name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}"
           namespace: "{{ tools_instances.opentelemetry_collectors.namespace }}"
-          service: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}-collector"
-          target_port: 16686
-
-- name: Import connection test to external endpoint
-  ansible.builtin.import_tasks:
-    file: test_external_endpoint.yaml
-  vars:
-    tools_external_network_object:
-      name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}"
-      namespace: "{{ tools_instances.opentelemetry_collectors.namespace }}"
-    tools_external_paths:
-      - /
-  when:
-    - tools_installation_plan.jaeger.enabled
-    - tools_installation_plan.jaeger.external_access
-    - tools_cluster.platform == "openshift" or (tools_cluster.platform == "kubernetes" and tools_cluster.provider == "kind")
+        tools_external_paths:
+          - /
+      when:
+        - tools_cluster.platform == "openshift" or (tools_cluster.platform == "kubernetes" and tools_cluster.provider == "kind")

@@ -30,42 +30,7 @@
     release_namespace: "{{ tools_helm_releases.opencost.namespace }}"
     release_state: present
     timeout: 10m0s
-    values:
-      opencost:
-        customPricing:
-          enabled: true
-          createConfigmap: true
-          provider: custom
-          costModel:
-            description: Modified pricing configuration.
-            CPU: 10.00
-            spotCPU: 7.50
-            RAM: 5.00
-            spotRAM: 2.50
-            GPU: 50.00
-            storage: 2.50
-            zoneNetworkEgress: 1.00
-            regionNetworkEgress: 1.00
-            internetNetworkEgress: 1.00
-        exporter:
-          extraEnv:
-            INSECURE_SKIP_VERIFY: "{{ tools_cluster.platform == 'openshift' }}"
-            USE_CUSTOM_PROVIDER: true
-        metrics:
-          serviceMonitor:
-            enabled: true
-        platforms:
-          openshift:
-            enabled: "{{ tools_cluster.platform == 'openshift' }}"
-        prometheus:
-          bearer_token: "{{ tools_prometheus_bearer_token | default(omit) }}"
-          external:
-            enabled: true
-            url: "{{ tools_prometheus_endpoint }}"
-          internal:
-            enabled: false
-      podAnnotations:
-        openshift.io/required-scc: "restricted-v2"
+    values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/opencost.j2') | from_yaml }}"
     wait: true
 
 - name: Create PrometheusRules
@@ -74,60 +39,54 @@
     template: templates/opencost/prometheusrules.j2
     state: present
 
-- name: Enable external access on Kind
+- name: Enable external access to OpenCost
   when:
-    - tools_cluster.platform == "kubernetes"
-    - tools_cluster.provider == "kind"
     - tools_installation_plan.opencost.external_access
   block:
-    - name: Import Kubernetes Gateway creation tasks
-      ansible.builtin.import_tasks:
-        file: install_kubernetes_gateway.yaml
-      vars:
-        gateway:
-          name: "{{ tools_helm_releases.opencost.name }}"
-          namespace: "{{ tools_helm_releases.opencost.namespace }}"
-
-    - name: Import Kubernetes HTTP Route creation tasks
-      ansible.builtin.import_tasks:
-        file: install_kubernetes_http_route.yaml
-      vars:
-        gateway:
-          name: "{{ tools_helm_releases.opencost.name }}"
-          namespace: "{{ tools_helm_releases.opencost.namespace }}"
-        http_routes:
-          - name: "{{ tools_helm_releases.opencost.name }}"
-            namespace: "{{ tools_helm_releases.opencost.namespace }}"
-            service:
+    - name: Enable external access on Kind
+      when:
+        - tools_cluster.platform == "kubernetes"
+        - tools_cluster.provider == "kind"
+      block:
+        - name: Create Cloud Provider Kind Kubernetes Gateway
+          kubernetes.core.k8s:
+            kubeconfig: "{{ tools_cluster.kubeconfig }}"
+            template: templates/networking/kubernetes/gateways/kind.j2
+            state: present
+            wait: true
+            wait_condition:
+              reason: Programmed
+              status: "True"
+              type: Programmed
+          vars:
+            gateway:
               name: "{{ tools_helm_releases.opencost.name }}"
-              port: 9090
 
-- name: Enable external access on OpenShift
-  when:
-    - tools_cluster.platform == "openshift"
-    - tools_installation_plan.opencost.external_access
-  block:
+        - name: Create HTTP Route
+          kubernetes.core.k8s:
+            kubeconfig: "{{ tools_cluster.kubeconfig }}"
+            template: templates/opencost/http_route.j2
+            state: present
+          vars:
+            gateway:
+              name: "{{ tools_helm_releases.opencost.name }}"
+
     - name: Create OpenShift Route
       kubernetes.core.k8s:
         kubeconfig: "{{ tools_cluster.kubeconfig }}"
-        template: templates/networking/openshift/route.j2
+        template: templates/opencost/route.j2
         state: present
+      when:
+        - tools_cluster.platform == "openshift"
+
+    - name: Import connection test to external endpoint
+      ansible.builtin.import_tasks:
+        file: test_external_endpoint.yaml
       vars:
-        route:
+        tools_external_network_object:
           name: "{{ tools_helm_releases.opencost.name }}"
           namespace: "{{ tools_helm_releases.opencost.namespace }}"
-          service: "{{ tools_helm_releases.opencost.name }}"
-          target_port: http-ui
-
-- name: Import connection test to external endpoint
-  ansible.builtin.import_tasks:
-    file: test_external_endpoint.yaml
-  vars:
-    tools_external_network_object:
-      name: "{{ tools_helm_releases.opencost.name }}"
-      namespace: "{{ tools_helm_releases.opencost.namespace }}"
-    tools_external_paths:
-      - /
-  when:
-    - tools_installation_plan.clickhouse.external_access
-    - tools_cluster.platform == "openshift" or (tools_cluster.platform == "kubernetes" and tools_cluster.provider == "kind")
+        tools_external_paths:
+          - /
+      when:
+        - tools_cluster.platform == "openshift" or (tools_cluster.platform == "kubernetes" and tools_cluster.provider == "kind")

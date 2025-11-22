@@ -17,13 +17,16 @@
   ansible.builtin.import_tasks:
     file: install_prometheus.yaml
   when:
-    - tools_installation_plan.prometheus.enabled | default(true)
+    - (tools_installation_plan.prometheus.enabled | default(true)) or
+      (tools_installation_plan.opencost.enabled | default(false))
 
 - name: Import Clickhouse installation tasks
   ansible.builtin.import_tasks:
     file: install_clickhouse.yaml
   when:
-    - tools_installation_plan.clickhouse.enabled | default(true)
+    - (tools_installation_plan.clickhouse.enabled | default(true)) or
+      (tools_installation_plan.istio.enabled | default(false)) or
+      (tools_installation_plan.opentelemetry.enaled | default(true))
 
 - name: Import OpenSearch installation tasks
   ansible.builtin.import_tasks:
@@ -35,7 +38,9 @@
   ansible.builtin.import_tasks:
     file: install_opentelemetry.yaml
   when:
-    - tools_installation_plan.opentelemetry.enabled | default(true)
+    - (tools_installation_plan.jaeger.enabled | default(true)) or
+      (tools_installation_plan.opentelemetry.enaled | default(true))
+      (tools_installation_plan.istio.enabled | default(false))
 
 - name: Import OpenCost installation tasks
   ansible.builtin.import_tasks:

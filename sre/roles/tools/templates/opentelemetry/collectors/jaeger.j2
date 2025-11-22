@@ -10,8 +10,10 @@ spec:
   observability:
     metrics:
       enableMetrics: {{ tools_installation_plan.prometheus.enabled | default(true) }}
+{% if tools_cluster.platform == "openshift" %}
   podAnnotations:
     openshift.io/required-scc: restricted-v2
+{% endif %}
   ports:
     - name: jaeger
       port: 16686
