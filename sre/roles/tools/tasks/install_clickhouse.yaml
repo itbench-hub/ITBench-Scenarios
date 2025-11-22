@@ -84,15 +84,14 @@
   retries: 10
   delay: 30
 
-
 - name: Enable external access to Clickhouse
   when:
     - tools_installation_plan.clickhouse.external_access
   block:
     - name: Enable external access on Kind
       when:
-        - tools_cluster.platform == "kubernetes"
         - tools_cluster.provider == "kind"
+        - not tools_installation_plan.istio.enabled
       block:
         - name: Create Cloud Provider Kind Kubernetes Gateway
           kubernetes.core.k8s:
@@ -131,7 +130,7 @@
       vars:
         tools_external_network_object:
           name: "{{ tools_instances.clickhouse.names.main }}"
-          namespace: "{{ tools_instances.clickhouse.namespace }}"
+          namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
         tools_external_paths:
           - /play
       when:

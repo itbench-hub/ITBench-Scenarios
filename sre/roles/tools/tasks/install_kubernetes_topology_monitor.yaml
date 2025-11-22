@@ -28,8 +28,8 @@
   block:
     - name: Enable external access on Kind
       when:
-        - tools_cluster.platform == "kubernetes"
         - tools_cluster.provider == "kind"
+        - not tools_installation_plan.istio.enabled
       block:
         - name: Create Cloud Provider Kind Kubernetes Gateway
           kubernetes.core.k8s:

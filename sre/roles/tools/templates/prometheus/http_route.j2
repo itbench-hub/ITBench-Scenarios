@@ -12,7 +12,7 @@ spec:
     - backendRefs:
         - name: {{ tools_helm_releases.prometheus.name }}-kube-prometheus-prometheus
           port: 9090
-{% if path.match_prefix | default(false) %}
+{% if route.path.match_prefix | default(false) %}
       matches:
         - path:
             type: PathPrefix

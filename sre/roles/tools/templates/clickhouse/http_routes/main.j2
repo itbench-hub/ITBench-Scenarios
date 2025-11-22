@@ -12,7 +12,7 @@ spec:
     - backendRefs:
         - name: clickhouse-{{ tools_instances.clickhouse.names.main }}
           port: 8123
-{% if path.match_prefix | default(false) %}
+{% if route.path.match_prefix | default(false) %}
       matches:
         - path:
             type: PathPrefix
@@ -22,7 +22,7 @@ spec:
         - type: ResponseHeaderModifier
           responseHeaderModifier:
             add: {{ tools_http_route_response_headers }}
-{% if path.enable_rewrites | default(false) %}
+{% if route.path.rewrite_url | default(false) %}
         - type: URLRewrite
           urlRewrite:
             path:

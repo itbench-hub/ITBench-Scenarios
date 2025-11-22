@@ -12,7 +12,7 @@ spec:
     - backendRefs:
         - name: {{ tools_instances.opentelemetry_collectors.names.jaeger }}-collector
           port: 16686
-{% if path.match_prefix | default(false) %}
+{% if route.path.match_prefix | default(false) %}
       matches:
         - path:
             type: PathPrefix

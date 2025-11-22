@@ -6,6 +6,5 @@ tools:
   kubernetes_topology_monitor: false
   kubernetes_metrics_server: true
   opencost: false
-  opensearch: false
   opentelemetry: false
   prometheus: false
