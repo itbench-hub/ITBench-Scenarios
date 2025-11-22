@@ -1,0 +1,49 @@
+---
+metadata:
+  version: "v1"
+fault:
+  - entity:
+      name: remove-limits-cart
+      group_id: cart
+      kind: Schedule
+    name: exhaust-node-resources
+    condition: Node resource exhaustion via removed CPU/memory limits
+    category: Chaos
+    fault_mechanism: chaos
+
+alerts:
+  - id: RequestLatency
+    group_id: cart
+    metadata:
+      description: Latency of cart deployment increases due to CPU resource contention
+
+groups:
+  - id: remove-limits-cart
+    kind: Schedule
+    filter:
+      - remove-limits-{{ fault.entity.name }}
+    namespace: chaos-mesh
+    root_cause: true
+  - id: cart
+    kind: Deployment
+    filter:
+      - cart.*
+    namespace: otel-demo
+    root_cause: true
+
+aliases:
+  - - cart
+
+propagations:
+  - source: remove-limits-cart
+    target: cart
+    condition: Chaos Mesh Schedule removes CPU/memory limits from cart deployment
+    effect: Pods can consume more resources, potentially causing node exhaustion and higher latency
+
+recommended_actions:
+  - solution:
+      id: tune_resources
+      actions:
+        - Increase CPU/memory requests for cart deployment
+        - Use autoscaling or reduce workload concurrency
+        - Reapply CPU/memory limits as needed
