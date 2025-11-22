@@ -69,12 +69,12 @@
         msg: |
           {{
             {
-              "prometheus_url": tools_external_http_endpoint,
+              "prometheus_url": tools_external_http_endpoint + '/prometheus',
               "kubeconfig": lookup("ansible.builtin.file", "/tmp/kubeconfig")
             }
           }}
       vars:
         restricted_kubeconfig_exists: "{{ '/tmp/kubeconfig' is exists }}"
       when:
-        - tools_ingress_hostname is defined
+        - tools_external_http_endpoint is defined
         - restricted_kubeconfig_exists
