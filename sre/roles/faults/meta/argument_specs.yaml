@@ -50,6 +50,7 @@ argument_specs:
                   - misconfigured-resource-quota
                   - misconfigured-service-port
                   - modify-environment-variables
+                  - readiness-flap
                   - unsupported-image
                 required: true
                 type: str
@@ -284,6 +285,72 @@ argument_specs:
                               value:
                                 required: true
                                 type: str
+                  restart_policy:
+                    choices:
+                      - force
+                      - safe
+                    default: force
+                    required: false
+                    type: str
+              readiness_flap:
+                required: false
+                type: dict
+                options:
+                  workload:
+                    required: true
+                    type: dict
+                    options:
+                      kind:
+                        choices:
+                          - Deployment
+                          - StatefulSet
+                        required: true
+                        type: str
+                      name:
+                        required: true
+                        type: str
+                      namespace:
+                        required: true
+                        type: str
+                      container:
+                        required: false
+                        type: dict
+                        options:
+                          name:
+                            required: false
+                            type: str
+                  probe_config:
+                    required: false
+                    type: dict
+                    options:
+                      flap_interval_seconds:
+                        required: false
+                        default: 4
+                        type: int
+                      failure_threshold:
+                        required: false
+                        default: 1
+                        type: int
+                      success_threshold:
+                        required: false
+                        default: 1
+                        type: int
+                      period_seconds:
+                        required: false
+                        default: 1
+                        type: int
+                  chaos_mesh:
+                    required: false
+                    type: dict
+                    options:
+                      latency_ms:
+                        required: false
+                        default: 1000
+                        type: int
+                      drop_probability:
+                        required: false
+                        default: 0.7
+                        type: float
                   restart_policy:
                     choices:
                       - force

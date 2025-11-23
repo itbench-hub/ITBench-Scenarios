@@ -1,0 +1,63 @@
+---
+metadata:
+  version: "v1"
+fault:
+  - entity:
+      name: frontend
+      group_id: frontend
+      kind: Deployment
+    condition: Readiness probe misbehaves intermittently, causing pod flapping
+    category: Misconfiguration
+    fault_mechanism: readiness-probe-flap
+alerts:
+  - id: FailedPodsDetected
+    group_id: frontend
+    metadata:
+      description: Multiple frontend pods repeatedly transition between Ready and NotReady.
+  - id: RequestErrorRate
+    group_id: frontend
+    metadata:
+      description: User-facing 5xx error rate increases during readiness probe failures.
+  - id: RequestLatency
+    group_id: frontend
+    metadata:
+      description: Latency spikes observed in frontend service due to pod churn.
+  - id: RequestLatency
+    group_id: cart-service-1
+    metadata:
+      description: Increased latency in cart-service due to upstream frontend-service timeouts.
+
+groups:
+  - id: frontend
+    kind: Deployment
+    namespace: default
+    root_cause: true
+  - id: frontend-service
+    kind: Service
+    namespace: default
+    root_cause: false
+  - id: cart-service-1
+    kind: Deployment
+    namespace: default
+    root_cause: false
+aliases:
+  - - frontend
+    - frontend-service
+  - - cart-service-1
+propagations:
+  - source: frontend
+    target: frontend-service
+    condition: Readiness probe failing
+    effect: Service temporarily loses endpoints
+  - source: frontend-service
+    target: cart-service-1
+    condition: Upstream request timeouts
+    effect: Cascading latency and retry storms
+recommended_actions:
+  - solution:
+      id: S1
+      actions:
+        - Inspect readiness probe configuration (`periodSeconds`, `failureThreshold`, `timeoutSeconds`)
+        - Adjust probe frequency and grace period to avoid transient failures
+        - Increase service endpoint stabilization timeout to prevent load balancer churn
+        - Validate container startup and dependency readiness
