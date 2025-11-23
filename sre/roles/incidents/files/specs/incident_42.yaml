@@ -27,7 +27,7 @@ scenario:
       - custom:
           name: expired-tls-certificates
           expired_tls_certificates:
-            istio_namespace: istio-control
+            istio_namespace: istio-system
             cert_ttl: 30s
             max_cert_ttl: 1m
             grace_period: 10s

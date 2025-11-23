@@ -5,8 +5,18 @@
     kind: Deployment
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
     name: istiod
-    namespace: "{{ spec.istio_namespace | default('istio-control') }}"
+    namespace: "{{ spec.istio_namespace | default('istio-system') }}"
   register: faults_istiod_deployment_info
+
+- name: Ensure istiod deployment exists
+  ansible.builtin.assert:
+    that:
+      - faults_istiod_deployment_info.resources | length > 0
+    fail_msg: >
+      istiod deployment not found in namespace '{{ spec.istio_namespace | default('istio-system') }}'.
+      This fault requires Istio to be installed. Please ensure Istio is properly deployed
+      or select an incident that includes Istio in the tools configuration.
+    success_msg: istiod deployment found
 
 - name: Set original environment variables fact
   ansible.builtin.set_fact:
@@ -40,7 +50,7 @@
     kind: Deployment
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
     name: istiod
-    namespace: "{{ spec.istio_namespace | default('istio-control') }}"
+    namespace: "{{ spec.istio_namespace | default('istio-system') }}"
     patch:
       - op: replace
         path: /spec/template/spec/containers/0/env
@@ -51,15 +61,15 @@
     api_version: v1
     kind: Pod
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    namespace: "{{ spec.istio_namespace | default('istio-control') }}"
+    namespace: "{{ spec.istio_namespace | default('istio-system') }}"
     label_selectors:
-      - app=istiod
       - istio=pilot
-    wait: true
-    wait_condition:
-      type: Ready
-      status: "True"
-    wait_timeout: 300
+  register: faults_istiod_pods_info
+  until: >
+    faults_istiod_pods_info.resources | length > 0 and
+    (faults_istiod_pods_info.resources | selectattr('status.phase', 'equalto', 'Running') | list | length == faults_istiod_pods_info.resources | length)
+  retries: 30
+  delay: 10
 
 - name: Display fault injection confirmation
   ansible.builtin.debug:
