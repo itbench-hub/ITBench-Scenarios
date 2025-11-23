@@ -136,12 +136,11 @@
 
     - name: Import connection test to external endpoint
       ansible.builtin.import_tasks:
-        file: test_external_endpoint.yaml
+        file: test_gateway_endpoint.yaml
       vars:
-        tools_external_network_object:
-          name: istio-main
-          namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
         tools_external_paths: "{{ tools_istio_gateway_test_endpoints }}"
+        tools_kubernetes_gateway:
+          name: istio-main
 
 - name: Enable Routing via Host feature
   kubernetes.core.k8s_json_patch:

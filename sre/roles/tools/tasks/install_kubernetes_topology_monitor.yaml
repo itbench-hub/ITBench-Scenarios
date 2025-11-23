@@ -54,23 +54,32 @@
             gateway:
               name: "{{ tools_helm_releases.kubernetes_topology_monitor.name }}"
 
-    - name: Create OpenShift Route
-      kubernetes.core.k8s:
-        kubeconfig: "{{ tools_cluster.kubeconfig }}"
-        template: templates/kubernetes_topology_monitor/route.j2
-        state: present
+        - name: Import connection test to external endpoint
+          ansible.builtin.import_tasks:
+            file: test_gateway_endpoint.yaml
+          vars:
+            tools_external_paths:
+              - /healthz
+            tools_kubernetes_gateway:
+              name: "{{ tools_helm_releases.kubernetes_topology_monitor.name }}"
+
+    - name: Enable external access on OpenShift
       when:
         - tools_cluster.platform == "openshift"
+      block:
+        - name: Create OpenShift Route
+          kubernetes.core.k8s:
+            kubeconfig: "{{ tools_cluster.kubeconfig }}"
+            template: templates/kubernetes_topology_monitor/route.j2
+            state: present
+          register: tools_kubernetes_topology_monitor_openshift_route
 
-    - name: Import connection test to external endpoint
-      ansible.builtin.import_tasks:
-        file: test_external_endpoint.yaml
-      vars:
-        tools_external_network_object:
-          name: "{{ tools_helm_releases.kubernetes_topology_monitor.name }}"
-          namespace: "{{ tools_helm_releases.kubernetes_topology_monitor.namespace }}"
-        tools_external_paths:
-          - /healthz
-      when:
-        - tools_installation_plan.kubernetes_topology_monitor.external_access
-        - tools_cluster.platform == "openshift" or (tools_cluster.platform == "kubernetes" and tools_cluster.provider == "kind")
+        - name: Import connection test to external endpoint
+          ansible.builtin.import_tasks:
+            file: test_route_endpoint.yaml
+          vars:
+            tools_external_paths:
+              - /healthz
+            tools_route:
+              name: "{{ tools_kubernetes_topology_monitor_openshift_route.result.metadata.name }}"
+              namespace: "{{ tools_kubernetes_topology_monitor_openshift_route.result.metadata.namespace }}"

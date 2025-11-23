@@ -20,7 +20,7 @@ prometheus:
     additionalArgs:
       - name: web.enable-otlp-receiver
         value: ""
-{% if tools_installation_plan.istio.enabled %}
+{% if tools_installation_plan.istio.enabled | default(false) %}
     routePrefix: /prometheus
 {% endif %}
 defaultRules:

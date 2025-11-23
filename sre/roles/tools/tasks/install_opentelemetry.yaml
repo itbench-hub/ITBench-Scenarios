@@ -221,22 +221,32 @@
             gateway:
               name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}"
 
-    - name: Create OpenShift Route
-      kubernetes.core.k8s:
-        kubeconfig: "{{ tools_cluster.kubeconfig }}"
-        template: templates/opentelemetry/routes/jaeger.j2
-        state: present
+        - name: Import connection test to external endpoint
+          ansible.builtin.import_tasks:
+            file: test_gateway_endpoint.yaml
+          vars:
+            tools_external_paths:
+              - /
+            tools_kubernetes_gateway:
+              name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}"
+
+    - name: Enable external access on OpenShift
       when:
         - tools_cluster.platform == "openshift"
+      block:
+        - name: Create OpenShift Route
+          kubernetes.core.k8s:
+            kubeconfig: "{{ tools_cluster.kubeconfig }}"
+            template: templates/opentelemetry/routes/jaeger.j2
+            state: present
+          register: tools_jaeger_openshift_route
 
-    - name: Import connection test to external endpoint
-      ansible.builtin.import_tasks:
-        file: test_external_endpoint.yaml
-      vars:
-        tools_external_network_object:
-          name: "{{ tools_instances.opentelemetry_collectors.names.jaeger }}"
-          namespace: "{{ tools_instances.kubernetes_gateways.namespace }}"
-        tools_external_paths:
-          - /
-      when:
-        - tools_cluster.platform == "openshift" or (tools_cluster.platform == "kubernetes" and tools_cluster.provider == "kind")
+        - name: Import connection test to external endpoint
+          ansible.builtin.import_tasks:
+            file: test_route_endpoint.yaml
+          vars:
+            tools_external_paths:
+              - /
+            tools_route:
+              name: "{{ tools_jaeger_openshift_route.result.metadata.name }}"
+              namespace: "{{ tools_jaeger_openshift_route.result.metadata.namespace }}"
