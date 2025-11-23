@@ -42,6 +42,12 @@
   when:
     - applications_temporary_directory is defined
 
+- name: Create Prometheus monitoring objects
+  kubernetes.core.k8s:
+    kubeconfig: "{{ applications_cluster.kubeconfig }}"
+    template: templates/bookinfo/monitoring.j2
+    state: present
+
 - name: Delete the temporary directory
   ansible.builtin.file:
     path: "{{ applications_temporary_directory.path }}"
