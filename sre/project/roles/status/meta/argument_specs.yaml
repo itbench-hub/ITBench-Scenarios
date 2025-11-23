@@ -1,0 +1,59 @@
+---
+argument_specs:
+  main:
+    short_description: Main entry point for status role
+    description:
+      - This is the main entry point for the status role.
+      - This role is responsible for updating the status tracker.
+    author:
+      - Gerard Vanloo
+    options:
+      status_fault:
+        required: false
+        type: dict
+        options:
+          group_id:
+            required: true
+            type: int
+      status_failed_task:
+        required: false
+        type: dict
+        options:
+          name:
+            required: true
+            type: str
+          result:
+            required: true
+            type: dict
+      status_state:
+        choices:
+          - failed
+          - initializing
+          - progressing
+          - succeeded
+        required: true
+        type: str
+      status_storage:
+        required: true
+        type: dict
+        options:
+          local:
+            required: false
+            type: dict
+            options:
+              directory:
+                required: true
+                type: str
+          s3:
+            required: false
+            type: dict
+            options:
+              bucket:
+                required: true
+                type: str
+              directory:
+                required: true
+                type: str
+              endpoint:
+                required: true
+                type: str
