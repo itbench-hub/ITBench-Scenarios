@@ -1,0 +1,42 @@
+---
+- name: Get all pods in namespace
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Pod
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    namespace: "{{ spec.workload.namespace }}"
+    label_selectors:
+      - "app.kubernetes.io/name={{ spec.workload.name }}"
+  register: faults_pods_info
+
+- name: Extract node name if pod exists
+  ansible.builtin.set_fact:
+    faults_target_node: "{{ faults_pods_info.resources[0].spec.nodeName }}"
+  when:
+    - faults_pods_info.resources | length > 0
+    - faults_pods_info.resources[0].spec.nodeName is defined
+
+- name: Uncordon the target node
+  kubernetes.core.k8s_json_patch:
+    api_version: v1
+    kind: Node
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: "{{ faults_target_node }}"
+    patch:
+      - op: replace
+        path: /spec/unschedulable
+        value: false
+  when: faults_target_node is defined
+
+- name: Delete PodDisruptionBudget
+  kubernetes.core.k8s:
+    api_version: policy/v1
+    kind: PodDisruptionBudget
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: "{{ spec.workload.name }}-pdb"
+    namespace: "{{ spec.workload.namespace }}"
+    state: absent
+
+- name: Display fault removal instructions
+  ansible.builtin.debug:
+    msg: To remove this fault, please uninstall and reinstall the application it was injected into.

@@ -52,6 +52,7 @@ argument_specs:
                   - modify-environment-variables
                   - unsupported-image
                   - dns-misconfiguration
+                  - pdb-blocking-drain
                 required: true
                 type: str
               invalid_command:
@@ -350,6 +351,49 @@ argument_specs:
                     required: false
                     type: int
                     default: 10
+              pdb_blocking_drain:
+                required: false
+                type: dict
+                options:
+                  workload:
+                    required: true
+                    type: dict
+                    options:
+                      kind:
+                        choices:
+                          - Deployment
+                          - StatefulSet
+                        required: true
+                        type: str
+                      name:
+                        required: true
+                        type: str
+                      namespace:
+                        required: true
+                        type: str
+                  pdb:
+                    required: true
+                    type: dict
+                    options:
+                      min_available:
+                        required: true
+                        type: int
+                  node_stress:
+                    required: false
+                    type: dict
+                    options:
+                      enabled:
+                        required: false
+                        type: bool
+                        default: true
+                      cpu_percent:
+                        required: false
+                        type: int
+                        default: 80
+                      duration_seconds:
+                        required: false
+                        type: int
+                        default: 300
           otel_demo:
             required: false
             type: dict
