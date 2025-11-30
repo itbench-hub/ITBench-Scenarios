@@ -92,8 +92,8 @@ jobs:
       - name: Create group vars
         run: |
           make -C sre group_vars
-          mv sre/tests/files/istio.yaml sre/group_vars/environment/tools.yaml
-          mv sre/tests/files/bookinfo.yaml sre/group_vars/environment/applications.yaml
+          mv sre/tests/files/istio.yaml sre/inventory/group_vars/environment/tools.yaml
+          mv sre/tests/files/bookinfo.yaml sre/inventory/group_vars/environment/applications.yaml
       - name: Install tools
         run: |
           make -C sre deploy_tools
