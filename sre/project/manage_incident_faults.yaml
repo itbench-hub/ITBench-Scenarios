@@ -1,0 +1,120 @@
+---
+- name: Manage SRE and FinOps Incident Faults
+  hosts:
+    - environment
+  pre_tasks:
+    - name: Ensure incident id is defined
+      ansible.builtin.assert:
+        that: incident_id is defined
+        fail_msg: incident_id is not defined. Please run playbook with variable defined via CLI arguments.
+        success_msg: incident_id is defined.
+      tags:
+        - always
+
+    - name: Ensure injection index is defined
+      ansible.builtin.assert:
+        that: injection_index is defined
+        fail_msg: injection_index is not defined. Please run playbook with variable defined via CLI arguments.
+        success_msg: injection_index is defined.
+      tags:
+        - always
+
+    - name: Import system role
+      ansible.builtin.import_role:
+        name: system
+      tags:
+        - always
+      vars:
+        system_cluster:
+          kubeconfig: "{{ cluster.kubeconfig }}"
+
+    - name: Import cluster role
+      ansible.builtin.import_role:
+        name: cluster
+      tags:
+        - always
+      vars:
+        cluster_files:
+          kubeconfig: "{{ cluster.kubeconfig }}"
+        cluster_tools_enabled:
+          oc: "{{ system_oc_exists }}"
+
+    - name: Import variables for incident
+      ansible.builtin.import_role:
+        name: incidents
+      tags:
+        - always
+      vars:
+        incidents_file:
+          id: "{{ incident_id }}"
+
+    - name: Ensure injection index is valid
+      ansible.builtin.assert:
+        that:
+          - (injection_index | int) >= 0
+          - (injection_index | int) < (incidents_spec.spec.disruption.injections | length)
+        fail_msg: injection_index is not a valid index for the fault array.
+        success_msg: injection_index is a valid index.
+      tags:
+        - always
+  tasks:
+    - name: Import status role
+      ansible.builtin.import_role:
+        name: status
+      vars:
+        status_fault:
+          group_id: "{{ injection_index + 1 }}"
+        status_state: initializing
+        status_storage: "{{ storage }}"
+      when:
+        - storage.keys() | length > 0
+
+    - name: Import status role
+      ansible.builtin.import_role:
+        name: status
+      vars:
+        status_fault:
+          group_id: "{{ injection_index + 1 }}"
+        status_state: progressing
+        status_storage: "{{ storage }}"
+      when:
+        - storage.keys() | length > 0
+
+    - name: Attempt to perform faults role tasks
+      block:
+        - name: Import faults role
+          ansible.builtin.import_role:
+            name: faults
+          vars:
+            faults_cluster:
+              kubeconfig: "{{ cluster.kubeconfig }}"
+            faults_specs: "{{ incidents_spec.spec.disruption.injections[(injection_index | int)] }}"
+
+        - name: Import status role
+          ansible.builtin.import_role:
+            name: status
+          vars:
+            status_fault:
+              group_id: "{{ injection_index + 1 }}"
+            status_state: succeeded
+            status_storage: "{{ storage }}"
+          when:
+            - storage.keys() | length > 0
+      rescue:
+        - name: Import status role
+          ansible.builtin.import_role:
+            name: status
+          vars:
+            status_failed_task:
+              name: "{{ ansible_failed_task.name }}"
+              result: "{{ ansible_failed_result }}"
+            status_state: failed
+            status_storage: "{{ storage }}"
+          when:
+            - storage.keys() | length > 0
+
+        - name: Fail playbook
+          ansible.builtin.fail:
+            msg: Playbook failed to complete successfully. Please check log for more info.
+          tags:
+            - always
