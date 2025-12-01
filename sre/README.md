@@ -1,6 +1,6 @@
 # ITBench for Site Reliability Engineering (SRE) and Financial Operations (FinOps)
 
-**[Paper](https://github.com/IBM/ITBench/blob/main/it_bench_arxiv.pdf) | [Incident Scenarios](./docs/incidents.md) | [Tools](./docs/tools.md)**
+**[Paper](https://github.com/IBM/ITBench/blob/main/it_bench_arxiv.pdf) | [Incident Scenarios](./docs/incidents.md) | [Faults](./docs/faults.md) | [Tools](./docs/tools.md)**
 
 ## Overview
 ITBench uses open source technologies to create completely repeatable and reproducible scenarios on a Kubernetes platform. A SRE scenario involves deploying a set of observability tools, a sample application, and triggering an incident (referred to as task) in the environment.
@@ -41,15 +41,17 @@ The playbook run is configured using variables defined in `group_vars`.
 1. Install [Homebrew](https://brew.sh/)
 2. Install required software
 ```bash
-brew install helm
+brew install helm@3
 brew install kubectl
 brew install python@3.13
 brew install openshift-cli
 ```
 
+**Note (11/19/2025):** When installing from Brew, it symlinks to most recent version automatically. In the case of Helm, please follow the instructions provided to ensure that the right version responds to the `helm` command. Helm 4 is [currently not supported by the `kubernetes.core` Ansible module](https://github.com/ansible-collections/kubernetes.core/issues/1038) and thus cannot be used by ITBench until a newer version with compatability with it is provided.
+
 ### Installing Required Software (for Red Hat Enterprise Linux -- RHEL)
 
-1. Install Helm by following the instructions [here](https://helm.sh/docs/intro/install/#from-script)
+1. Install Helm 3 by following the instructions [here](https://helm.sh/docs/v3/intro/install#from-script)
 2. Set up kubectl by following the instructions [here](https://kubernetes.io/docs/tasks/tools/install-kubectl-linux/#install-using-native-package-management)
 3. Set up Python by running:
 ```bash
@@ -166,6 +168,26 @@ _Note_: For a full list of `make` commands, run the following command:
 ```bash
 make help
 ```
+
+## Exploring the Fault Library
+
+The [fault library](./roles/documentation/files/library/faults/index.json) contains information on all supported faults within ITBench. The [documentation](./docs/faults.md) provides a better reading experience for understanding how they operate. However, the libary can also be searched by any JSON parser, such as jq.
+
+### Examples
+
+#### List all names and ids of faults:
+
+```shell
+jq '.[] | {name: .name, id: .id}' roles/documentation/files/library/faults/index.json
+```
+
+#### See information on a single fault:
+
+```shell
+jq '.[] | select(.id == "invalid-valkey-password") | del(.arguments)' roles/documentation/files/library/faults/index.json
+```
+
+###
 
 ## Frequently Asked Questions (FAQ)
 

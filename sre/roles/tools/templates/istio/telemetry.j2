@@ -8,14 +8,9 @@ spec:
   accessLogging:
     - providers:
         - name: opentelemetry
-{% if tools_required.jaeger %}
+{% if tools_installation_plan.jaeger.enabled | default(true) %}
   tracing:
     - providers:
         - name: jaeger
       randomSamplingPercentage: 0
-{% endif %}
-{% if tools_required.prometheus %}
-  metrics:
-    - providers:
-        - name: prometheus
 {% endif %}
