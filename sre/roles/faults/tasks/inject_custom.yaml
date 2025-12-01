@@ -106,4 +106,3 @@
   when:
     - fault.custom.name == 'pdb-blocking-drain'
     - fault.custom.pdb_blocking_drain is defined
-    
