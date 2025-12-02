@@ -7,16 +7,16 @@ ITBench contains several scenarios for benchmarking real world based scenarios f
 The following scenarios are being open-sourced at this time and their implementation can be found [here](../roles/faults):
 
 | ID | Category | Complexity | Platforms | Tags |
-| --- | --- | --- |
-| [3](#3) | sre | medium | Kubernetes | Deployment, Performance |
-| [20](#20) | sre | low | Kubernetes | Deployment, Performance |
+| --- | --- | --- | --- | --- |
+| [3](#Scenario-3) | sre | medium | Kubernetes | Deployment, Performance |
+| [20](#Scenario-20) | sre | low | Kubernetes | Deployment, Performance |
 
 ## Detailed Summary of Scenarios
 
-### 3
+### Scenario 3
 
 **Faults Injected:**
-- [OpenTelemetry Demo Feature Flag]((./faults.md#OpenTelemetry-Demo-Feature-Flag))
+- [OpenTelemetry Demo Feature Flag](./faults.md#OpenTelemetry-Demo-Feature-Flag)
 
 **Solution:**
 - Disable the feature flag (adHighCpu) by manually editing the contents of the ConfigMap
@@ -32,20 +32,20 @@ OR
 `kubectl -n otel-demo rollout restart deployment`
 ```
 
-### 20
+### Scenario 20
 
 **Faults Injected:**
-- [Nonexistent Kubernetes Workload Container Image]((./faults.md#Nonexistent-Kubernetes-Workload-Container-Image))
+- [Nonexistent Kubernetes Workload Container Image](./faults.md#Nonexistent-Kubernetes-Workload-Container-Image)
 
 **Solution:**
 - Revert the last change done to the manifest.
 
 ```shell
-`kubectl -n otel-demo rollout undo Deployment/product-catalog`
+`kubectl -n otel-demo rollout undo deployment/product-catalog`
 ```
 
 - Manually edit the manifest and replace the invalid image with the correct value.
 
 ```shell
-`kubectl -n otel-demo edit Deployment product-catalog`
+`kubectl -n otel-demo edit deployment product-catalog`
 ```

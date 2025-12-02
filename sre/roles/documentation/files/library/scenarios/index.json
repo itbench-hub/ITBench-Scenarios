@@ -78,13 +78,13 @@
         "solutions": [
             [
                 {
-                    "command": "`kubectl -n otel-demo rollout undo Deployment/product-catalog`",
+                    "command": "`kubectl -n otel-demo rollout undo deployment/product-catalog`",
                     "text": "Revert the last change done to the manifest."
                 }
             ],
             [
                 {
-                    "command": "`kubectl -n otel-demo edit Deployment product-catalog`",
+                    "command": "`kubectl -n otel-demo edit deployment product-catalog`",
                     "text": "Manually edit the manifest and replace the invalid image with the correct value."
                 }
             ]
