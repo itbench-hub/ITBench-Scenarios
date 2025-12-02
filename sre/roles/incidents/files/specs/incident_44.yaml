@@ -20,9 +20,7 @@ scenario:
       - custom:
           name: pod-anti-affinity-rescheduling
           pod_anti_affinity_rescheduling:
-            target_workload:
+            workload:
               kind: Deployment
               name: payment
               namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
-            replicas: 3
-            nodes_to_cordon: 1

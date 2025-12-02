@@ -330,7 +330,7 @@ argument_specs:
                 required: false
                 type: dict
                 options:
-                  target_workload:
+                  workload:
                     required: true
                     type: dict
                     options:
@@ -346,12 +346,6 @@ argument_specs:
                       namespace:
                         required: true
                         type: str
-                  replicas:
-                    required: true
-                    type: int
-                  nodes_to_cordon:
-                    required: true
-                    type: int
           otel_demo:
             required: false
             type: dict

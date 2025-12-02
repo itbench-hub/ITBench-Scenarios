@@ -1,23 +1,71 @@
 ---
-- name: Get payment deployment
+- name: Retrieve worker nodes on the cluster
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    api_version: v1
+    kind: Node
+    label_selectors:
+      - node-role.kubernetes.io/node =
+  register: faults_nodes
+
+- name: Create a deployment on all worker nodes
+  kubernetes.core.k8s:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        labels:
+          "app.kubernetes.io/name": "{{ node_index }}-{{ node.metadata.name }}"
+          "app.kubernetes.io/managed-by": ITBench
+        name: "{{ node_index }}-{{ node.metadata.name }}"
+        namespace: "{{ spec.workload.namespace }}"
+      spec:
+        selector:
+          matchLabels:
+            "app.kubernetes.io/name": "{{ node_index }}-{{ node.metadata.name }}"
+            "app.kubernetes.io/managed-by": ITBench
+        template:
+          metadata:
+            labels:
+              "app.kubernetes.io/name": "{{ node_index }}-{{ node.metadata.name }}"
+              "app.kubernetes.io/managed-by": ITBench
+          spec:
+            containers:
+              - name: worker
+                image: registry.access.redhat.com/ubi10/python-312-minimal:10.1-1763382423
+                command:
+                  - /bin/sh
+                args:
+                  - -c
+                  - "sleep infinity"
+            nodeSelector:
+              kubernetes.io/hostname: "{{ node.metadata.name }}"
+    state: present
+  loop: "{{ faults_nodes.resources }}"
+  loop_control:
+    index_var: node_index
+    label: node/{{ node.metadata.name }}
+    loop_var: node
+
+- name: Retrieve information on workload
   kubernetes.core.k8s_info:
     api_version: apps/v1
-    kind: "{{ spec.target_workload.kind }}"
+    kind: "{{ spec.workload.kind }}"
+    name: "{{ spec.workload.name }}"
+    namespace: "{{ spec.workload.namespace }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ spec.target_workload.name }}"
-    namespace: "{{ spec.target_workload.namespace }}"
-  register: faults_deployment_info
+  register: faults_workload_info
 
 - name: Patch deployment with strict pod anti-affinity and increased replicas
   kubernetes.core.k8s:
     api_version: apps/v1
-    kind: "{{ spec.target_workload.kind }}"
+    kind: "{{ spec.workload.kind }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ spec.target_workload.name }}"
-    namespace: "{{ spec.target_workload.namespace }}"
+    name: "{{ spec.workload.name }}"
+    namespace: "{{ spec.workload.namespace }}"
     definition:
       spec:
-        replicas: "{{ spec.replicas }}"
         template:
           spec:
             affinity:
@@ -25,31 +73,9 @@
                 requiredDuringSchedulingIgnoredDuringExecution:
                   - labelSelector:
                       matchExpressions:
-                        - key: app.kubernetes.io/name
+                        - key: app.kubernetes.io/managed-by
                           operator: In
                           values:
-                            - "{{ spec.target_workload.name }}"
+                            - ITBench
                     topologyKey: kubernetes.io/hostname
     state: present
-
-- name: Get available worker nodes
-  kubernetes.core.k8s_info:
-    api_version: v1
-    kind: Node
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    label_selectors:
-      - node-role.kubernetes.io/node =
-  register: faults_nodes_info
-
-- name: Cordon nodes to reduce available pool
-  kubernetes.core.k8s_json_patch:
-    api_version: v1
-    kind: Node
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ item.metadata.name }}"
-    patch:
-      - op: replace
-        path: /spec/unschedulable
-        value: true
-  loop: "{{ faults_nodes_info.resources[: spec.nodes_to_cordon] }}"
-  when: faults_nodes_info.resources | length > 0

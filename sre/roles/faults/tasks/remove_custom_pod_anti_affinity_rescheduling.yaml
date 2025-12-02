@@ -1,25 +1,27 @@
 ---
-- name: Get all worker nodes
+- name: Retrieve all ITBench managed deployments
   kubernetes.core.k8s_info:
-    api_version: v1
-    kind: Node
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    api_version: apps/v1
+    kind: Deployment
     label_selectors:
-      - node-role.kubernetes.io/node =
-  register: faults_nodes_info
+      - app.kubernetes.io/managed-by = ITBench
+  register: faults_deployments
 
-- name: Uncordon all nodes
-  kubernetes.core.k8s_json_patch:
-    api_version: v1
-    kind: Node
+- name: Delete deployments
+  kubernetes.core.k8s:
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ item.metadata.name }}"
-    patch:
-      - op: replace
-        path: /spec/unschedulable
-        value: false
-  loop: "{{ faults_nodes_info.resources }}"
-  when: faults_nodes_info.resources | length > 0
+    resource_definition:
+      apiVersion: "{{ deployment.apiVersion }}"
+      kind: "{{ deployment.kind }}"
+      metadata:
+        name: "{{ deployment.metadata.name }}"
+        namespace: "{{ deployment.metadata.namespace }}"
+    state: absent
+  loop: "{{ faults_deployments.resources }}"
+  loop_control:
+    label: deployment/{{ deployment.metadata.namespace }}
+    loop_var: deployment
 
 - name: Display fault removal instructions
   ansible.builtin.debug:
