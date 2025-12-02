@@ -1,0 +1,65 @@
+- category: sre
+  complexity: medium
+  disruptions:
+    - injections:
+      - args:
+          flag:
+            name: adHighCpu
+            state: "on"
+          kubernetesObject:
+            apiVersion: v1
+            kind: ConfigMap
+            metadata:
+              name: flagd-config
+              namespace: {{ applications_helm_releases.otel_demo.namespace }}
+        id: opentelemetry-demo-feature-flag
+  id: 3
+  platforms:
+    {{
+        [
+          documentation_faults["opentelemetry-demo-feature-flag"].platform
+        ] |
+        unique
+    }}
+  solutionTemplates:
+    - refId: opentelemetry-demo-feature-flag
+  tags:
+    {{
+      [
+        documentation_faults["opentelemetry-demo-feature-flag"].tags
+      ] |
+      flatten |
+      unique
+    }}
+- category: sre
+  complexity: low
+  disruptions:
+    - injections:
+      - args:
+          container:
+            name: product-catalog
+          kubernetesObject:
+            apiVersion: apps/v1
+            kind: Deployment
+            metadata:
+              name: product-catalog
+              namespace: {{ applications_helm_releases.otel_demo.namespace }}
+        id: nonexistent-kubernetes-workload-container-image
+  id: 20
+  platforms:
+    {{
+        [
+          documentation_faults["nonexistent-kubernetes-workload-container-image"].platform
+        ] |
+        unique
+    }}
+  solutionTemplates:
+    - refId: nonexistent-kubernetes-workload-container-image
+  tags:
+    {{
+      [
+        documentation_faults["nonexistent-kubernetes-workload-container-image"].tags
+      ] |
+      flatten |
+      unique
+    }}

@@ -1,0 +1,115 @@
+{
+    "items": {
+        "properties": {
+            "category": {
+                "enum": [
+                    "finops",
+                    "sre"
+                ],
+                "type": "string"
+            },
+            "complexity": {
+                "enum": [
+                    "high",
+                    "low",
+                    "medium"
+                ],
+                "type": "string"
+            },
+            "disruptions": {
+                "items": {
+                    "properties": {
+                        "injections": {
+                            "items": {
+                                "properties": {
+                                    "args": {
+                                        "type": "object"
+                                    },
+                                    "id": {
+                                        "enum": [
+                                            "ingress-port-blocking-network-policy",
+                                            "insufficent-kubernetes-resource-quota",
+                                            "invalid-kubernetes-workload-container-command",
+                                            "invalid-valkey-password",
+                                            "misconfigured-kubernetes-horizontal-pod-autoscaler",
+                                            "modified-kubernetes-workload-container-environment-variable",
+                                            "modified-target-port-kubernetes-service",
+                                            "nonexistent-kubernetes-workload-container-image",
+                                            "nonexistent-kubernetes-workload-node",
+                                            "opentelemetry-demo-feature-flag",
+                                            "scheduled-chaos-mesh-experiment",
+                                            "unsupported-architecture-kubernetes-workload-container-image"
+                                        ],
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "args",
+                                    "id"
+                                ],
+                                "type": "object"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "type": "object"
+                },
+                "type": "array"
+            },
+            "id": {
+                "type": "integer"
+            },
+            "platforms": {
+                "items": {
+                    "enum": [
+                        "Kubernetes"
+                    ],
+                    "type": "string"
+                },
+                "type": "array"
+            },
+            "solutions": {
+                "items": {
+                    "items": {
+                        "properties": {
+                            "command": {
+                                "type": "string"
+                            },
+                            "text": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "text"
+                        ],
+                        "type": "object"
+                    },
+                    "type": "array"
+                },
+                "type": "array"
+            },
+            "tags": {
+                "items": {
+                    "enum": [
+                        "Authentication",
+                        "Deployment",
+                        "Networking",
+                        "Performance"
+                    ],
+                    "type": "string"
+                },
+                "type": "array"
+            }
+        },
+        "required": [
+            "category",
+            "complexity",
+            "disruptions",
+            "id",
+            "platforms",
+            "tags"
+        ],
+        "type": "object"
+    },
+    "type": "array"
+}
