@@ -51,6 +51,7 @@ argument_specs:
                   - misconfigured-service-port
                   - modify-environment-variables
                   - unsupported-image
+                  - pod-priority-eviction
                 required: true
                 type: str
               invalid_command:
@@ -325,6 +326,49 @@ argument_specs:
                     default: force
                     required: false
                     type: str
+              pod_priority_eviction:
+                required: false
+                type: dict
+                options:
+                  target_workload:
+                    required: true
+                    type: dict
+                    options:
+                      kind:
+                        choices:
+                          - Deployment
+                          - StatefulSet
+                        required: true
+                        type: str
+                      name:
+                        required: true
+                        type: str
+                      namespace:
+                        required: true
+                        type: str
+                  priority_class:
+                    required: true
+                    type: dict
+                    options:
+                      name:
+                        required: true
+                        type: str
+                      value:
+                        required: true
+                        type: int
+                  eviction_pods:
+                    required: true
+                    type: dict
+                    options:
+                      replicas:
+                        required: true
+                        type: int
+                      cpu_request:
+                        required: true
+                        type: str
+                      memory_request:
+                        required: true
+                        type: str
           otel_demo:
             required: false
             type: dict
