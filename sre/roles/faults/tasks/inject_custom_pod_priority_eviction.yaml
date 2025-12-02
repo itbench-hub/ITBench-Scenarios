@@ -1,0 +1,43 @@
+---
+- name: Create high-priority PriorityClass
+  kubernetes.core.k8s:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: scheduling.k8s.io/v1
+      kind: PriorityClass
+      metadata:
+        name: "{{ spec.priority_class.name }}"
+      value: "{{ spec.priority_class.value }}"
+      globalDefault: false
+      description: High priority class for eviction testing
+    state: present
+
+- name: Deploy high-priority resource-consuming pods
+  kubernetes.core.k8s:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: eviction-pods
+        namespace: "{{ spec.target_workload.namespace }}"
+      spec:
+        replicas: "{{ spec.eviction_pods.replicas }}"
+        selector:
+          matchLabels:
+            app: eviction-pod
+        template:
+          metadata:
+            labels:
+              app: eviction-pod
+          spec:
+            priorityClassName: "{{ spec.priority_class.name }}"
+            containers:
+              - name: resource-consumer
+                image: busybox
+                command: ["sh", "-c", "while true; do echo consuming resources; sleep 10; done"]
+                resources:
+                  requests:
+                    cpu: "{{ spec.eviction_pods.cpu_request }}"
+                    memory: "{{ spec.eviction_pods.memory_request }}"
+    state: patched
