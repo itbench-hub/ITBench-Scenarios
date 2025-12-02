@@ -1,0 +1,15 @@
+---
+- name: Remove DNS misconfiguration fault
+  kubernetes.core.k8s_json_patch:
+    api_version: apps/v1
+    kind: "{{ spec.workload.kind }}"
+    name: "{{ spec.workload.name }}"
+    namespace: "{{ spec.workload.namespace }}"
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    patch:
+      - op: remove
+        path: /spec/template/spec/dnsConfig
+
+- name: Display fault removal instructions
+  ansible.builtin.debug:
+    msg: To remove this fault, please uninstall and reinstall the application it was injected into.
