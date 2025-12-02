@@ -1,0 +1,97 @@
+---
+# ITN-2025-00160: Konflux API Server High Error Rate stone-prod-p02
+# Based on Slack channel C09528B6JAD.json
+metadata:
+  version: "v1"
+scenario:
+  metadata:
+    complexity: Medium
+    id: 160
+    name: API Server Error Rate Spike - Rate Limiting and Alert Misconfiguration
+    platform: kubernetes
+  spec:
+    environment:
+      applications:
+        # Standard Kubernetes cluster with API Server
+        # No special applications required
+        workload_generator:
+          enabled: true
+          configuration:
+            namespace: api-load-test
+      tools:
+        category: sre
+        selected:
+          - kubernetes-topology-monitor
+          - prometheus
+          - grafana
+    
+    # Fault injection sequence
+    faults:
+      # Scenario A: Generate excessive API requests to trigger 429 rate limiting
+      # Note: This requires NEW fault type - see inject_custom_api_request_surge.yaml
+      - custom:
+          name: api-request-surge
+          api_request_surge:
+            target:
+              api_server: kube-apiserver
+              cluster: stone-prod-p02
+            load_profile:
+              requests_per_second: 1000
+              duration: 600  # 10 minutes
+              operations:
+                - verb: LIST
+                  resource: pods
+                  all_namespaces: true
+                  percentage: 40
+                - verb: LIST
+                  resource: services
+                  all_namespaces: true
+                  percentage: 30
+                - verb: GET
+                  resource: deployments
+                  all_namespaces: true
+                  percentage: 30
+            parallelism: 20  # Number of concurrent client pods
+      
+      # Scenario B: Inject etcd latency to cause API Server 5XX errors
+      # Note: Uses existing chaos_mesh fault type
+      - chaos_mesh:
+          schedule:
+            name: etcd-io-latency
+            spec:
+              schedule: "@every 15m"
+              type: IOChaos
+              ioChaos:
+                action: latency
+                mode: all
+                selector:
+                  namespaces:
+                    - kube-system
+                  labelSelectors:
+                    component: etcd
+                delay: "200ms"
+                percent: 50
+                volumePath: /var/lib/etcd
+                duration: "5m"
+      
+      # Scenario C: API Server memory pressure causing 503 errors
+      # Note: Uses existing chaos_mesh fault type
+      - chaos_mesh:
+          schedule:
+            name: api-server-memory-stress
+            spec:
+              schedule: "@every 30m"
+              type: StressChaos
+              stressChaos:
+                mode: one
+                selector:
+                  namespaces:
+                    - kube-system
+                  labelSelectors:
+                    component: kube-apiserver
+                stressors:
+                  memory:
+                    workers: 4
+                    size: "6GB"
+                duration: "5m"
+

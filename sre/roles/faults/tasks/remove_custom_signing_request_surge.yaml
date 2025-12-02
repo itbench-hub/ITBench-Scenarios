@@ -1,0 +1,33 @@
+---
+# Remove fault: signing-request-surge
+# Stops the signing request load generator
+
+- name: Delete signing request surge Job
+  kubernetes.core.k8s:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    api_version: batch/v1
+    kind: Job
+    name: "{{ faults_signing_surge_job_name }}"
+    namespace: "{{ faults_signing_surge_namespace }}"
+    state: absent
+    wait: true
+  when:
+    - faults_signing_surge_job_name is defined
+    - faults_signing_surge_namespace is defined
+
+- name: Delete ConfigMap with load generation script
+  kubernetes.core.k8s:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    api_version: v1
+    kind: ConfigMap
+    name: signing-surge-script
+    namespace: "{{ spec.target_service.namespace }}-load-test"
+    state: absent
+  when:
+    - spec is defined
+    - spec.target_service is defined
+
+- name: Display fault removal message
+  ansible.builtin.debug:
+    msg: "Signing request surge load generator stopped. Normal request traffic should resume."
+
