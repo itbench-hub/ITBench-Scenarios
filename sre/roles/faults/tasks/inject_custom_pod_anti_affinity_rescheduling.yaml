@@ -1,0 +1,55 @@
+---
+- name: Get payment deployment
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: "{{ spec.target_workload.kind }}"
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: "{{ spec.target_workload.name }}"
+    namespace: "{{ spec.target_workload.namespace }}"
+  register: faults_deployment_info
+
+- name: Patch deployment with strict pod anti-affinity and increased replicas
+  kubernetes.core.k8s:
+    api_version: apps/v1
+    kind: "{{ spec.target_workload.kind }}"
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: "{{ spec.target_workload.name }}"
+    namespace: "{{ spec.target_workload.namespace }}"
+    definition:
+      spec:
+        replicas: "{{ spec.replicas }}"
+        template:
+          spec:
+            affinity:
+              podAntiAffinity:
+                requiredDuringSchedulingIgnoredDuringExecution:
+                  - labelSelector:
+                      matchExpressions:
+                        - key: app.kubernetes.io/name
+                          operator: In
+                          values:
+                            - "{{ spec.target_workload.name }}"
+                    topologyKey: kubernetes.io/hostname
+    state: present
+
+- name: Get available worker nodes
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Node
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    label_selectors:
+      - node-role.kubernetes.io/node =
+  register: faults_nodes_info
+
+- name: Cordon nodes to reduce available pool
+  kubernetes.core.k8s_json_patch:
+    api_version: v1
+    kind: Node
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: "{{ item.metadata.name }}"
+    patch:
+      - op: replace
+        path: /spec/unschedulable
+        value: true
+  loop: "{{ faults_nodes_info.resources[: spec.nodes_to_cordon] }}"
+  when: faults_nodes_info.resources | length > 0
