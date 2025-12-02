@@ -1,14 +1,15 @@
 ---
-- name: Retrieve all ITBench managed deployments
+- name: Retrieve all fault related deployments
   kubernetes.core.k8s_info:
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
     api_version: apps/v1
     kind: Deployment
     label_selectors:
+      - app.kubernetes.io/component = pod-anti-affinity-fault
       - app.kubernetes.io/managed-by = ITBench
   register: faults_deployments
 
-- name: Delete deployments
+- name: Delete all fault related deployments
   kubernetes.core.k8s:
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
     resource_definition:
@@ -20,7 +21,7 @@
     state: absent
   loop: "{{ faults_deployments.resources }}"
   loop_control:
-    label: deployment/{{ deployment.metadata.namespace }}
+    label: deployment/{{ deployment.metadata.name }}
     loop_var: deployment
 
 - name: Display fault removal instructions

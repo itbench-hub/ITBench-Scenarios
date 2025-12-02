@@ -11,42 +11,17 @@
 - name: Create a deployment on all worker nodes
   kubernetes.core.k8s:
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: apps/v1
-      kind: Deployment
-      metadata:
-        labels:
-          "app.kubernetes.io/name": "{{ node_index }}-{{ node.metadata.name }}"
-          "app.kubernetes.io/managed-by": ITBench
-        name: "{{ node_index }}-{{ node.metadata.name }}"
-        namespace: "{{ spec.workload.namespace }}"
-      spec:
-        selector:
-          matchLabels:
-            "app.kubernetes.io/name": "{{ node_index }}-{{ node.metadata.name }}"
-            "app.kubernetes.io/managed-by": ITBench
-        template:
-          metadata:
-            labels:
-              "app.kubernetes.io/name": "{{ node_index }}-{{ node.metadata.name }}"
-              "app.kubernetes.io/managed-by": ITBench
-          spec:
-            containers:
-              - name: worker
-                image: registry.access.redhat.com/ubi10/python-312-minimal:10.1-1763382423
-                command:
-                  - /bin/sh
-                args:
-                  - -c
-                  - "sleep infinity"
-            nodeSelector:
-              kubernetes.io/hostname: "{{ node.metadata.name }}"
+    template: templates/deployments/pod_anti_affinity.j2
     state: present
-  loop: "{{ faults_nodes.resources }}"
-  loop_control:
-    index_var: node_index
-    label: node/{{ node.metadata.name }}
-    loop_var: node
+  vars:
+    fault_args: "{{ spec }}"
+    container_image: |-
+        {{
+          lookup('ansible.builtin.file', 'files/deployments/pod_anti_affinity.yaml') |
+          from_yaml |
+          community.general.json_query('spec.template.spec.containers[0].image')
+        }}
+    worker_nodes: "{{ faults_nodes.resources }}"
 
 - name: Retrieve information on workload
   kubernetes.core.k8s_info:
@@ -55,16 +30,17 @@
     name: "{{ spec.workload.name }}"
     namespace: "{{ spec.workload.namespace }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-  register: faults_workload_info
+  register: faults_workload
 
-- name: Patch deployment with strict pod anti-affinity and increased replicas
+- name: Patch deployment with faulty pod anti-affinity rules
   kubernetes.core.k8s:
-    api_version: apps/v1
-    kind: "{{ spec.workload.kind }}"
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ spec.workload.name }}"
-    namespace: "{{ spec.workload.namespace }}"
-    definition:
+    resource_definition:
+      apiVersion: "{{ faults_workload.resources[0].apiVersion }}"
+      kind: "{{ faults_workload.resources[0].kind }}"
+      metadata:
+        name: "{{ faults_workload.resources[0].metadata.name }}"
+        namespace: "{{ faults_workload.resources[0].metadata.namespace }}"
       spec:
         template:
           spec:
@@ -73,9 +49,9 @@
                 requiredDuringSchedulingIgnoredDuringExecution:
                   - labelSelector:
                       matchExpressions:
-                        - key: app.kubernetes.io/managed-by
+                        - key: app.kubernetes.io/component
                           operator: In
                           values:
-                            - ITBench
+                            - pod-anti-affinity-fault
                     topologyKey: kubernetes.io/hostname
-    state: present
+    state: patched
