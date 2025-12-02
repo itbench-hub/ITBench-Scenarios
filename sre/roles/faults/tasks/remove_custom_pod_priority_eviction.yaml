@@ -1,0 +1,21 @@
+---
+- name: Delete high-priority eviction pods
+  kubernetes.core.k8s:
+    api_version: apps/v1
+    kind: Deployment
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: eviction-pods
+    namespace: "{{ spec.target_workload.namespace }}"
+    state: absent
+
+- name: Delete PriorityClass
+  kubernetes.core.k8s:
+    api_version: scheduling.k8s.io/v1
+    kind: PriorityClass
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: "{{ spec.priority_class.name }}"
+    state: absent
+
+- name: Display fault removal instructions
+  ansible.builtin.debug:
+    msg: To remove this fault, please uninstall and reinstall the application it was injected into.
