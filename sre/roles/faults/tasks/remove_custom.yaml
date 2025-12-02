@@ -88,3 +88,12 @@
   when:
     - fault.custom.name == 'unsupported-image'
     - fault.custom.unsupported_image is defined
+
+- name: Import expired TLS certificates removal tasks
+  ansible.builtin.import_tasks:
+    file: remove_custom_expired_tls_certificates.yaml
+  vars:
+    spec: "{{ fault.custom.expired_tls_certificates }}"
+  when:
+    - fault.custom.name == 'expired-tls-certificates'
+    - fault.custom.expired_tls_certificates is defined

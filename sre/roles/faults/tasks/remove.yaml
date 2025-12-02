@@ -24,3 +24,21 @@
     file: remove_valkey.yaml
   when:
     - fault.valkey is defined
+
+# - name: Import misconfigured service mesh fault removal tasks (sidecar injection off)
+#   ansible.builtin.include_tasks:
+#     file: remove_custom_sidecar_injection_off.yaml
+#   vars:
+#     spec: "{{ fault.misconfigured_service_mesh.sidecar_injection_off }}"
+#   when:
+#     - fault.type == 'misconfigured_service_mesh'
+#     - fault.misconfigured_service_mesh.misconfiguration_type == 'sidecar_injection_off'
+
+# - name: Import misconfigured service mesh fault removal tasks (authorization policy deny)
+#   ansible.builtin.include_tasks:
+#     file: remove_custom_authorization_policy_deny.yaml
+#   vars:
+#     spec: "{{ fault.misconfigured_service_mesh.authorization_policy_deny }}"
+#   when:
+#     - fault.type == 'misconfigured_service_mesh'
+#     - fault.misconfigured_service_mesh.misconfiguration_type == 'authorization_policy_deny'

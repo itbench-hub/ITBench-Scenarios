@@ -1,0 +1,33 @@
+---
+metadata:
+  version: v1
+scenario:
+  metadata:
+    complexity: High
+    id: 42
+    name: Istio Service Mesh TLS Certificate Expiration
+    platform: kubernetes
+  spec:
+    environment:
+      applications:
+        otel_demo:
+          enabled: true
+          configuration:
+            load_generator:
+              spawn_rate: 5
+              users: 100
+      tools:
+        category: sre
+        selected:
+          - istio
+          - prometheus
+          - jaeger
+          - kubernetes-topology-monitor
+    faults:
+      - custom:
+          name: expired-tls-certificates
+          expired_tls_certificates:
+            istio_namespace: istio-system
+            cert_ttl: 30s
+            max_cert_ttl: 1m
+            grace_period: 10s

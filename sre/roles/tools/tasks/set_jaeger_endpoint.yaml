@@ -21,13 +21,13 @@
     api_version: v1
     kind: Namespace
     kubeconfig: "{{ tools_cluster.kubeconfig }}"
-    namespace: "{{ tools_helm_releases.istio.namespace }}"
+    name: "{{ tools_helm_releases.istio.namespace }}"
   register: tools_istio_namespace
 
 - name: Construct Jaeger in-cluster endpoints
   ansible.builtin.set_fact:
     tools_jaeger_collector_otlp_grpc_endpoint: "{{ service.name }}.{{ service.namespace }}.svc.cluster.local:4317"
-    tools_jaeger_querier_endpoint: http://{{ service.name }}.{{ service.namespace }}.svc.cluster.local:16686/{{ query_path }}
+    tools_jaeger_querier_endpoint: http://{{ service.name }}.{{ service.namespace }}.svc.cluster.local:16686{{ query_path }}
   vars:
     service:
       name: "{{ tools_jaeger_service.resources[0].metadata.name }}"
