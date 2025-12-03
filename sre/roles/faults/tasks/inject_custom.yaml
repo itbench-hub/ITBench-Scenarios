@@ -1,13 +1,4 @@
 ---
-- name: Low Resource Limits
-  ansible.builtin.import_tasks:
-    file: inject_low_resource_limits.yaml
-  vars:
-    spec: "{{ fault.custom.misconfigured_service_port }}"
-  when:
-    - fault.custom.name == 'low-resource-limits'
-    - fault.custom.inject_low_resource_limits is defined
-
 - name: Import invalid command injection tasks
   ansible.builtin.import_tasks:
     file: inject_custom_invalid_command.yaml
@@ -115,3 +106,12 @@
   when:
     - fault.custom.name == 'hang-init-container'
     - fault.custom.hang_init_container is defined
+
+- name: Import misconfigured resource limits injection tasks
+  ansible.builtin.import_tasks:
+    file: inject_custom_misconfigured_limits.yaml
+  vars:
+    spec: "{{ fault.custom.misconfigured_resource_limits }}"
+  when:
+    - fault.custom.name == 'misconfigured-resource-limits'
+    - fault.custom.misconfigured_resource_limits is defined
