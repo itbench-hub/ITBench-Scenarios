@@ -1,0 +1,35 @@
+---
+metadata:
+  version: "v1"
+fault:
+  - entity:
+      name: httpbin-service
+      group_id: httpbin-service
+      kind: Service
+    condition: "Authorization policy 'deny-method-get' is applied to httpbin service in foo namespace, denying GET requests"
+    category: Change
+    fault_mechanism: misconfigured_service_mesh
+alerts:
+  - id: RequestErrorRate
+    group_id: httpbin-service
+    metadata:
+      description: "Increased error rate for httpbin service due to denied GET requests"
+groups:
+  - id: httpbin-service
+    kind: Service
+    filter:
+      - httpbin
+    namespace: foo
+    root_cause: true
+aliases:
+  - []
+propagations:
+  - source: httpbin-service
+    target: httpbin-service
+    condition: "Authorization policy 'deny-method-get' is applied to httpbin service in foo namespace"
+    effect: "GET requests to httpbin service are denied, leading to an increased error rate."
+recommended_actions:
+  - solution:
+      id: remove_deny_authorization_policy
+      actions:
+        - "Remove the 'deny-method-get' AuthorizationPolicy from the 'foo' namespace."

@@ -1,0 +1,36 @@
+---
+- name: Retrieve services from cluster
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Service
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: "{{ spec.service.name }}"
+    namespace: "{{ spec.service.namespace }}"
+  register: faults_service
+
+- name: Validate that service exists
+  ansible.builtin.assert:
+    that:
+      - faults_service is defined
+      - faults_service.resources | length == 1
+    fail_msg: Unable to find service. Please verify that the service exists.
+    success_msg: Found service.
+
+- name: Inject fault (Authorization Policy Deny)
+  kubernetes.core.k8s:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: security.istio.io/v1
+      kind: AuthorizationPolicy
+      metadata:
+        name: "{{ faults_service.resources[0].metadata.name }}-deny"
+        namespace: "{{ faults_service.resources[0].metadata.namespace }}"
+      spec:
+        selector:
+          matchLabels: "{{ faults_service.resources[0].metadata.labels }}"
+        action: DENY
+        rules:
+          - to:
+              - operation:
+                  methods: "{{ spec.methods }}"
+    state: present
