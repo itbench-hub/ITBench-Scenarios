@@ -5,7 +5,7 @@
   vars:
     faults_container_workload: "{{ spec.workload }}"
 
-- name: Inject fault (invalid command)
+- name: Inject fault (misconfigured resource limits)
   kubernetes.core.k8s_json_patch:
     api_version: apps/v1
     kind: "{{ spec.workload.kind }}"
@@ -15,13 +15,13 @@
     patch:
       - op: replace
         path: /spec/template/spec/containers/{{ faults_workload_container_index }}/resources/requests/cpu
-        value: 1m
+        value: 5m
       - op: replace
         path: /spec/template/spec/containers/{{ faults_workload_container_index }}/resources/limits/cpu
-        value: 1m
+        value: 5m
       - op: replace
         path: /spec/template/spec/containers/{{ faults_workload_container_index }}/resources/requests/memory
-        value: 1Mi
+        value: 5Mi
       - op: replace
         path: /spec/template/spec/containers/{{ faults_workload_container_index }}/resources/limits/memory
-        value: 1Mi
+        value: 5Mi
