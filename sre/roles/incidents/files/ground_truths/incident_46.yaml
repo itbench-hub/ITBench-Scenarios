@@ -1,24 +1,34 @@
 ---
 metadata:
   version: "v1"
-fault: []
+fault:
+  - entity:
+      name: postgresql-pod-1
+      group_id: postgresql-pod-1
+      kind: Pod
+    condition: Postgresql pods cannot stablize because they have insufficient resources to run.
+    category: Configuration
+    fault_mechanism: insufficient-resources
 alerts:
-  - id: CPUSpend
-    group_id: otel-demo-namespace-1
+  - id: CrashLoopBackOffPodsDetected
+    group_id: postgresql-pod-1
     metadata:
-      description: CPU spend increased by 20 percent
-  - id: MemorySpend
-    group_id: otel-demo-namespace-1
-    metadata:
-      description: Memory spend has increased by 20 percent
+      description: Postgresql pods are stuck in CrashLoopBackOff state due to insufficient resources.
 groups:
-  - id: otel-demo-namespace-1
-    kind: Namespace
-    name: otel-demo
+  - id: postgresql-service-1
+    kind: Service
+    filter:
+      - postgresql\b
+    namespace: otel-demo
+  - id: postgresql-pod-1
+    kind: Pod
+    filter:
+      - postgresql-.*
     namespace: otel-demo
     root_cause: true
 aliases:
-  - - otel-demo-namespace-1
+  - - postgresql-service-1
+    - postgresql-pod-1
 propagations: []
 recommended_actions:
   - solution:

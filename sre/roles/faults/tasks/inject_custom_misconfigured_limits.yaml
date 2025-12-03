@@ -15,13 +15,13 @@
     patch:
       - op: replace
         path: /spec/template/spec/containers/{{ faults_workload_container_index }}/resources/requests/cpu
-        value: 5m
+        value: 1m
       - op: replace
         path: /spec/template/spec/containers/{{ faults_workload_container_index }}/resources/limits/cpu
-        value: 5m
+        value: 1m
       - op: replace
         path: /spec/template/spec/containers/{{ faults_workload_container_index }}/resources/requests/memory
-        value: 5Mi
+        value: 1Mi
       - op: replace
         path: /spec/template/spec/containers/{{ faults_workload_container_index }}/resources/limits/memory
-        value: 5Mi
+        value: 1Mi
