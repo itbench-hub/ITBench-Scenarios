@@ -1,0 +1,180 @@
+---
+# Ground Truth for ITN-2025-00221: Signing Service Overload
+# Evidence from Slack channel C09DG4PJNG6.json
+metadata:
+  version: "v1"
+
+fault:
+  - entity:
+      name: signing-service-deployment
+      group_id: signing-service-pods
+      kind: Deployment
+    condition: "Pod count capped at 20 due to namespace resource quota, insufficient for request volume"
+    category: Resource Exhaustion
+    fault_mechanism: custom-misconfigured-resource-quota
+
+  - entity:
+      name: message-queue-consumer
+      group_id: message-queue-consumer-pods
+      kind: Deployment
+    condition: "Consumer processing rate artificially reduced, unable to acknowledge messages fast enough"
+    category: Configuration Error
+    fault_mechanism: custom-modify-environment-variables
+
+  - entity:
+      name: signing-request-generator
+      group_id: load-generator-pods
+      kind: Job
+    condition: "Excessive signing requests simulating OCP payload release surge (10x normal rate)"
+    category: Load Surge
+    fault_mechanism: custom-signing-request-surge
+    note: "OCP released two streams simultaneously with parallel pipelines, creating exceptional load"
+
+alerts:
+  - id: SigningTaskTimeout
+    group_id: ci-pipeline-service
+    metadata:
+      description: "Signing tasks timing out after 25 minutes waiting for RADAS response"
+      severity: critical
+      source: "Tekton pipeline metrics"
+
+  - id: MessageQueueBacklog
+    group_id: message-queue-broker
+    metadata:
+      description: "UMB queue depth exceeds 100,000 unacknowledged messages"
+      severity: warning
+      source: "UMB monitoring dashboard"
+
+  - id: MessageDeliveryLatency
+    group_id: message-queue-broker
+    metadata:
+      description: "Message P99 latency exceeds 10,000 seconds (normal < 0.2s)"
+      severity: critical
+      source: "UMB status dashboard"
+
+  - id: SigningServiceHighCPU
+    group_id: signing-service-pods
+    metadata:
+      description: "RADAS pods at 100% CPU utilization, unable to scale"
+      severity: warning
+      source: "Kubernetes metrics"
+
+groups:
+  - id: signing-service-pods
+    kind: Pod
+    namespace: signing-service
+    filter:
+      - signing-service-.*
+    root_cause: true
+    reason: "Insufficient pod count (20) for request volume, prevented from scaling by resource quota"
+
+  - id: signing-service-deployment
+    kind: Deployment
+    namespace: signing-service
+    filter:
+      - signing-service\b
+
+  - id: message-queue-broker
+    kind: Service
+    namespace: messaging-infrastructure
+    filter:
+      - message-queue-broker\b
+
+  - id: message-queue-consumer-pods
+    kind: Pod
+    namespace: messaging-infrastructure
+    filter:
+      - message-queue-consumer-.*
+
+  - id: ci-pipeline-service
+    kind: Service
+    namespace: ci-pipelines
+    filter:
+      - pipeline-.*
+
+  - id: signing-task-pods
+    kind: Pod
+    namespace: ci-pipelines
+    filter:
+      - .*-sign-.*
+
+  - id: load-generator-pods
+    kind: Pod
+    namespace: ci-pipelines
+    filter:
+      - signing-request-generator-.*
+
+aliases:
+  - - signing-service-deployment
+    - signing-service-pods
+  - - message-queue-broker
+    - message-queue-consumer-pods
+  - - ci-pipeline-service
+    - signing-task-pods
+
+propagations:
+  # Load surge creates message queue backlog
+  - source: load-generator-pods
+    target: message-queue-broker
+    condition: "10x surge in signing requests overwhelms queue consumer capacity"
+    effect: "Message queue depth increases to 200,000+ unacknowledged messages"
+    note: "Surge caused by OCP releasing two streams simultaneously"
+
+  # Message queue backlog prevents RADAS from receiving new requests
+  - source: message-queue-broker
+    target: signing-service-pods
+    condition: "Consumer cannot process queue fast enough (prefetch=1, 5s delay per message)"
+    effect: "RADAS receives no new signing requests, appears idle while queue builds"
+
+  # Resource quota prevents RADAS from scaling to meet demand
+  - source: signing-service-pods
+    target: signing-service-pods
+    condition: "Namespace resource quota caps memory at 2Gi (20 pods @ 100Mi each)"
+    effect: "Horizontal Pod Autoscaler cannot create additional pods despite high CPU"
+
+  # Signing service unable to process causes pipeline timeouts
+  - source: signing-service-pods
+    target: signing-task-pods
+    condition: "RADAS not processing signing requests due to queue backlog"
+    effect: "Tekton signing tasks wait 25 minutes then timeout"
+
+  # Pipeline timeouts cascade to complete release failure
+  - source: signing-task-pods
+    target: ci-pipeline-service
+    condition: "All signing tasks timeout after 25 minutes"
+    effect: "100% failure rate for all release pipelines requiring signing"
+
+recommended_actions:
+  - solution:
+      id: immediate_scale_signing_service
+      actions:
+        - "Increase namespace resource quota (CPU: 40→100 cores, Memory: 80Gi→200Gi)"
+        - "Scale RADAS deployment: 20→50 pods"
+        - "Monitor UMB queue depth until backlog clears"
+      timing: "Within 1 hour of detection"
+
+  - solution:
+      id: communicate_with_users
+      actions:
+        - "Add banner to Konflux UI warning of signing service degradation"
+        - "Notify users when queue stabilizes and safe to retry"
+      timing: "Immediately upon Sev-1 declaration"
+
+  - solution:
+      id: permanent_capacity_increase
+      actions:
+        - "Implement RADAS auto-scaling (HPA with appropriate thresholds)"
+        - "Set baseline to 30-40 pods (not 20)"
+        - "Add proactive alerting on UMB queue depth trending"
+      timing: "Post-incident prevention"
+      jira: "CLOUDWF-11243"
+
+  - solution:
+      id: improve_observability
+      actions:
+        - "Enable Splunk logging for signing tasks (long-term retention)"
+        - "Add alerting on message queue growth rate (not just absolute depth)"
+        - "Dashboard for RADAS processing rate vs incoming request rate"
+      timing: "Post-incident improvement"
+      jira: "KFLUXINFRA-1966"
+
