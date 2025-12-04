@@ -4,11 +4,6 @@
     api_version: security.istio.io/v1
     kind: AuthorizationPolicy
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ spec.authorization_policy_deny.policy_name | default('deny-method-get') }}"
-    namespace: "{{ spec.authorization_policy_deny.namespace }}"
+    name: "{{ spec.gateway.name }}-deny"
+    namespace: "{{ spec.gateway.namespace }}"
     state: absent
-
-- name: Display fault removal confirmation
-  ansible.builtin.debug:
-    msg: >-
-      Authorization Policy Deny fault removed successfully!
