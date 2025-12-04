@@ -20,7 +20,7 @@ scenario:
           - istio
     faults:
       - custom:
-          name: authorization-policy-deny
+          name: disable-ambient-mode
           disable_ambient_mode:
             namespace:
               name: "{{ applications_instances.bookinfo.namespace }}"
