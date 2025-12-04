@@ -101,3 +101,12 @@
         from_yaml |
         community.general.json_query('spec.template.spec.containers[0].image')
       }}
+
+- name: Create Prometheus Rules
+  kubernetes.core.k8s:
+    kubeconfig: "{{ applications_cluster.kubeconfig }}"
+    template:
+      path: templates/bookinfo/prometheusrules.j2
+      variable_end_string: "]]"
+      variable_start_string: "[["
+    state: present
