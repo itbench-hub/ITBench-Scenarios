@@ -11,7 +11,7 @@ fault:
     fault_mechanism: misconfigured_service_mesh
 alerts:
   - id: RequestErrorRate
-    group_id:  bookinfo-gateway
+    group_id: bookinfo-gateway
     metadata:
       description: Increased error rate for bookinfo gateway service due to denied GET requests
 groups:
