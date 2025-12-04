@@ -1,6 +1,6 @@
 ---
 apiVersion: monitoring.coreos.com/v1
-kind: ServiceMonitor
+kind: PodMonitor
 metadata:
   name: bookinfo-gateway
   namespace: "{{ applications_instances.bookinfo.namespace }}"
@@ -8,6 +8,6 @@ spec:
   selector:
     matchLabels:
       gateway.networking.k8s.io/gateway-name: bookinfo-gateway
-  endpoints:
+  podMetricsEndpoints:
     - interval: 30s
-      port: status-port
+      port: metrics
