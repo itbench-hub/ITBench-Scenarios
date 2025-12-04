@@ -1,20 +1,20 @@
 ---
-- name: Retrieve services from cluster
+- name: Retrieve gateway from cluster
   kubernetes.core.k8s_info:
-    api_version: v1
-    kind: Service
+    api_version:  gateway.networking.k8s.io
+    kind: Gateway
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    name: "{{ spec.service.name }}"
-    namespace: "{{ spec.service.namespace }}"
-  register: faults_service
+    name: "{{ spec.gateway.name }}"
+    namespace: "{{ spec.gateway.namespace }}"
+  register: faults_gateway
 
-- name: Validate that service exists
+- name: Validate that gateway exists
   ansible.builtin.assert:
     that:
-      - faults_service is defined
-      - faults_service.resources | length == 1
-    fail_msg: Unable to find service. Please verify that the service exists.
-    success_msg: Found service.
+      - faults_gateway is defined
+      - faults_gateway.resources | length == 1
+    fail_msg: Unable to find gateway. Please verify that the gateway exists.
+    success_msg: Found gateway.
 
 - name: Inject fault (Authorization Policy Deny)
   kubernetes.core.k8s:
@@ -23,14 +23,21 @@
       apiVersion: security.istio.io/v1
       kind: AuthorizationPolicy
       metadata:
-        name: "{{ faults_service.resources[0].metadata.name }}-deny"
-        namespace: "{{ faults_service.resources[0].metadata.namespace }}"
+        name: "{{ faults_gateway.resources[0].metadata.name }}-deny"
+        namespace: "{{ faults_gateway.resources[0].metadata.namespace }}"
       spec:
-        selector:
-          matchLabels: "{{ faults_service.resources[0].metadata.labels }}"
         action: DENY
+        targetRef:
+          group: gateway.networking.k8s.io
+          kind: Gateway
+          name: "{{ faults_gateway.resources[0].metadata.name }}"
         rules:
           - to:
               - operation:
                   methods: "{{ spec.methods }}"
     state: present
+    wait: true
+    wait_condition:
+      reason: Accepted
+      status: "True"
+      type: WaypointAccepted

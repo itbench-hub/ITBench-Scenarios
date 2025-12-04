@@ -20,10 +20,10 @@ scenario:
           - istio
     faults:
       - custom:
-          name: misconfigured_service_mesh
+          name: authorization-policy-deny
           authorization_policy_deny:
-            service:
-              name: productpage
-              namespace: "{{ applications.instances.bookinfo.namespace }}"
+            gateway:
+              name: bookinfo-gateway
+              namespace: "{{ applications_instances.bookinfo.namespace }}"
             methods:
               - GET

@@ -61,7 +61,7 @@ argument_specs:
                 required: false
                 type: dict
                 options:
-                  service:
+                  gateway:
                     required: false
                     type: dict
                     options:
@@ -71,9 +71,6 @@ argument_specs:
                       namespace:
                         required: true
                         type: str
-                      target_port:
-                        required: true
-                        type: int
                   methods:
                     required: true
                     elements: str
