@@ -15,9 +15,6 @@
     fail_msg: Unable to find namespace. Please verify that the namespace exists.
     success_msg: Found namespace.
 
-- debug:
-    var: faults_namespace
-
 - name: Inject fault (disable ambient mode)
   kubernetes.core.k8s:
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
