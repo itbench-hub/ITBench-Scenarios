@@ -1154,7 +1154,7 @@ jobs:
           make -C sre/dev/local_cluster create_single_node_cluster
       - name: Run Cloud Provider
         run: |
-          make -C sre/dev/local_cluster run_gateway_provider &
+          make -C sre/dev/local_cluster run_service_provider &
       - name: Create group vars
         run: |
           make -C sre group_vars
