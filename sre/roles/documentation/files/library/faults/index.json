@@ -69,7 +69,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.name }} edit namespace {{ args.kubernetesObject.metadata.name }}-deny`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.name }} edit namespace {{ args.kubernetesObject.metadata.name }}-deny",
                             "text": "Manually edit the manifest and replace the invalid label with the correct value."
                         }
                     ]
@@ -146,7 +146,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind }}/{{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind | lower }}/{{ args.kubernetesObject.metadata.name }}",
                             "text": "Revert the last change done to the manifest."
                         }
                     ]
@@ -154,7 +154,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind }} {{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}",
                             "text": "Manually edit the manifest and replace the command of the hanging init container to one which will complete."
                         }
                     ]
@@ -162,7 +162,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind }} {{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}",
                             "text": "Manually edit the manifest and remove the faulty init container."
                         }
                     ]
@@ -240,11 +240,11 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} get networkpolicy`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} get networkpolicy",
                             "text": "Retrieve and review the configuration of the network policy(s) in the affected namespace."
                         },
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit networkpolicy << name of policy >>`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit networkpolicy {{ args.kubernetesObject.metadata.name }}-deny",
                             "text": "Manually edit the manifest(s) and allow access to workload's ports of the network policy(s)."
                         }
                     ]
@@ -252,11 +252,11 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} get networkpolicy`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} get networkpolicy",
                             "text": "Retrieve and review the configuration of the network policy(s) in the affected namespace."
                         },
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit networkpolicy << name of policy >>`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit networkpolicy {{ args.kubernetesObject.metadata.name }}-deny",
                             "text": "Delete the offending network policy(s) if it is no longer required."
                         }
                     ]
@@ -335,11 +335,11 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} get resourcequota`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} get resourcequota",
                             "text": "Retrieve and review the configuration of the resource quota(s) in the affected namespace."
                         },
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit resourcequota << name of quota >>`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit resourcequota {{ args.kubernetesObject.metadata.namespace }}",
                             "text": "Manually edit the manifest(s) and increase the values of the resource quota(s)."
                         }
                     ]
@@ -347,11 +347,11 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} get resourcequota`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} get resourcequota`",
                             "text": "Retrieve and review the configuration of the resource quota(s) in the affected namespace."
                         },
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} delete resourcequota << name of quota >>`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} delete resourcequota {{ args.kubernetesObject.metadata.namespace }}",
                             "text": "Delete the offending resource quota(s) if it is no longer required."
                         }
                     ]
@@ -440,7 +440,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind }}/{{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind | lower }}/{{ args.kubernetesObject.metadata.name }}",
                             "text": "Revert the last change done to the manifest."
                         }
                     ]
@@ -448,7 +448,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind }} {{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}",
                             "text": "Manually edit the manifest and replace the invalid container's resource configuration with the correct value(s)."
                         }
                     ]
@@ -537,7 +537,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind | lower }}/{{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind | lower }}/{{ args.kubernetesObject.metadata.name }}",
                             "text": "Revert the last change done to the manifest."
                         }
                     ]
@@ -545,7 +545,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}",
                             "text": "Manually edit the manifest and replace the invalid command with the correct value."
                         }
                     ]
@@ -619,7 +619,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} exec {{ args.kubernetesObject.kind | lower }}/{{ args.kubernetesObject.metadata.name }} -- valkey-cli CONFIG SET requirepass << password >>`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} exec {{ args.kubernetesObject.kind | lower }}/{{ args.kubernetesObject.metadata.name }} -- valkey-cli CONFIG SET requirepass ''",
                             "text": "Change the password back to the original by access the pod directly."
                         }
                     ]
@@ -696,7 +696,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit horizontalpodautoscaler {{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit horizontalpodautoscaler {{ args.kubernetesObject.metadata.name }}",
                             "text": "Manually edit the manifest and replace the utilization values with the correct values."
                         }
                     ]
@@ -773,7 +773,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind }}/{{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind | lower }}/{{ args.kubernetesObject.metadata.name }}",
                             "text": "Revert the last change done to the manifest."
                         }
                     ]
@@ -781,7 +781,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind }} {{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}",
                             "text": "Manually edit the manifest and remove the faulty readiness probe in the container rule."
                         }
                     ]
@@ -885,7 +885,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind | lower }}/{{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind | lower }}/{{ args.kubernetesObject.metadata.name }}",
                             "text": "Revert the last change done to the manifest."
                         }
                     ]
@@ -893,7 +893,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}",
                             "text": "Manually edit the manifest and replace the environment variable ({{ args.container.env.name }}) value with the correct value."
                         }
                     ]
@@ -973,7 +973,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}",
                             "text": "Manually edit the manifest and replace the target port ({{ args.targetPort }}) with the correct value."
                         }
                     ]
@@ -1062,7 +1062,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind | lower }}/{{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind | lower }}/{{ args.kubernetesObject.metadata.name }}",
                             "text": "Revert the last change done to the manifest."
                         }
                     ]
@@ -1070,7 +1070,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}",
                             "text": "Manually edit the manifest and replace the invalid image with the correct value."
                         }
                     ]
@@ -1148,7 +1148,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind | lower }}/{{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind | lower }}/{{ args.kubernetesObject.metadata.name }}",
                             "text": "Revert the last change done to the manifest."
                         }
                     ]
@@ -1156,7 +1156,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}",
                             "text": "Manually edit the manifest and replace the node selector with the correct value."
                         }
                     ]
@@ -1250,11 +1250,11 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit configmap {{ args.kubernetesObject.metadata.name }}",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit configmap {{ args.kubernetesObject.metadata.name }}",
                             "text": "Disable the feature flag ({{ args.flag.name }}) by manually editing the contents of the ConfigMap"
                         },
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout restart deployment`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout restart deployment",
                             "text": "Restart all of the Deployment workloads."
                         }
                     ]
@@ -1270,24 +1270,50 @@
         "arguments": {
             "jsonSchema": {
                 "properties": {
-                    "schedule": {
+                    "kubernetesObject": {
                         "properties": {
-                            "name": {
+                            "apiVersion": {
+                                "enum": [
+                                    "chaos-mesh.org/v1alpha1"
+                                ],
                                 "type": "string"
                             },
-                            "spec": {
+                            "kind": {
+                                "enum": [
+                                    "Schedule"
+                                ],
+                                "type": "string"
+                            },
+                            "metadata": {
+                                "properties": {
+                                    "name": {
+                                        "type": "string"
+                                    },
+                                    "namespace": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "name",
+                                    "namespace"
+                                ],
                                 "type": "object"
                             }
                         },
                         "required": [
-                            "name",
-                            "spec"
+                            "apiVersion",
+                            "kind",
+                            "metadata"
                         ],
+                        "type": "object"
+                    },
+                    "scheduleSpec": {
                         "type": "object"
                     }
                 },
                 "required": [
-                    "schedule"
+                    "kubernetesObject",
+                    "scheduleSpec"
                 ],
                 "type": "object"
             }
@@ -1302,7 +1328,27 @@
             "https://chaos-mesh.org/docs/developer-guide-overview/"
         ],
         "solutions": {
-            "templates": []
+            "templates": [
+                {
+                    "steps": [
+                        {
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} annotate schedule {{ args.kubernetesObject.metadata.name }} experiment.chaos-mesh.org/pause='true'",
+                            "text": "Annotate the schedule to pause the active experiment."
+                        },
+                        {
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} get {{ args.scheduleSpec.type | lower }} --selector='experiment.chaos-mesh.org/pause=true'",
+                            "text": "Retrieve the associated experiment managed by the schedule."
+                        },
+                        {
+                            "text": "Delete the retrieved experiement after it has entered the `Paused` state."
+                        },
+                        {
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} delete schedule {{ args.kubernetesObject.metadata.name }} experiment.chaos-mesh.org/pause='true'",
+                            "text": "Delete the schedule."
+                        }
+                    ]
+                }
+            ]
         },
         "tags": [
             "Deployment",
@@ -1385,7 +1431,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit authorizationpolicy {{ args.kubernetesObject.metadata.name }}-deny`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit authorizationpolicy {{ args.kubernetesObject.metadata.name }}-deny",
                             "text": "Manually edit the manifest and replace the invalid rule with the correct value."
                         }
                     ]
@@ -1393,7 +1439,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} delete authorizationpolicy {{ args.kubernetesObject.metadata.name }}-deny`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} delete authorizationpolicy {{ args.kubernetesObject.metadata.name }}-deny",
                             "text": "Delete the faulty authorization policy."
                         }
                     ]
@@ -1470,7 +1516,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind }}/{{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind | lower }}/{{ args.kubernetesObject.metadata.name }}",
                             "text": "Revert the last change done to the manifest."
                         }
                     ]
@@ -1478,7 +1524,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind }} {{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}",
                             "text": "Manually edit the manifest and replace the invalid container's resource configuration with the correct value(s)."
                         }
                     ]
@@ -1555,7 +1601,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind }}/{{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind | lower }}/{{ args.kubernetesObject.metadata.name }}",
                             "text": "Revert the last change done to the manifest."
                         }
                     ]
@@ -1563,7 +1609,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind }} {{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}",
                             "text": "Manually edit the manifest and remove the faulty pod anti-affinity rule with the correct value."
                         }
                     ]
@@ -1652,7 +1698,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind | lower }}/{{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} rollout undo {{ args.kubernetesObject.kind | lower }}/{{ args.kubernetesObject.metadata.name }}",
                             "text": "Revert the last change done to the manifest."
                         }
                     ]
@@ -1660,7 +1706,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}",
                             "text": "Manually edit the manifest and replace the invalid image with the correct value."
                         }
                     ]
@@ -1668,7 +1714,7 @@
                 {
                     "steps": [
                         {
-                            "command": "`kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}`",
+                            "command": "kubectl -n {{ args.kubernetesObject.metadata.namespace }} edit {{ args.kubernetesObject.kind | lower }} {{ args.kubernetesObject.metadata.name }}",
                             "text": "Manually edit the manifest and replace the node selector to allow Kubernetes to schedule the workload on a supported node (if exists)."
                         }
                     ]

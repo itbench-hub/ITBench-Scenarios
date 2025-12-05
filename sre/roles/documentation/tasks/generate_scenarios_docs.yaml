@@ -13,9 +13,13 @@
     label: fault/{{ fault.name }}
     loop_var: fault
 
-- name: Include Helm Release variables from applications role
+- name: Include applications role variables for templating
   ansible.builtin.include_vars:
     file: ../applications/defaults/main/helm_releases.yaml
+
+- name: Include tools role variables for templating
+  ansible.builtin.include_vars:
+    file: ../tools/defaults/main/helm_releases.yaml
 
 - name: Generate variables for scenario library index templating
   ansible.builtin.set_fact:
@@ -73,7 +77,6 @@
     content: |-
       {{
         documentation_faults[group[1]].solutions.templates |
-        community.general.json_query("[*].steps") |
         to_nice_yaml |
         replace("args.", "documentation_scenario_injections[group[0]][group[1]].")
       }}
@@ -107,7 +110,7 @@
                 {
                   "solutions": (
                     documentation_scenarios[group[0]].solutions +
-                    (
+                    [
                       lookup(
                         "ansible.builtin.file",
                         (
@@ -122,7 +125,7 @@
                         )
                       ) |
                       from_yaml
-                    )
+                    ]
                   )
                 }
               )

@@ -33,12 +33,16 @@
         "solutions": [
             [
                 {
-                    "command": "`kubectl -n otel-demo edit configmap flagd-config",
-                    "text": "Disable the feature flag (adHighCpu) by manually editing the contents of the ConfigMap"
-                },
-                {
-                    "command": "`kubectl -n otel-demo rollout restart deployment`",
-                    "text": "Restart all of the Deployment workloads."
+                    "steps": [
+                        {
+                            "command": "kubectl -n otel-demo edit configmap flagd-config",
+                            "text": "Disable the feature flag (adHighCpu) by manually editing the contents of the ConfigMap"
+                        },
+                        {
+                            "command": "kubectl -n otel-demo rollout restart deployment",
+                            "text": "Restart all of the Deployment workloads."
+                        }
+                    ]
                 }
             ]
         ],
@@ -80,14 +84,20 @@
         "solutions": [
             [
                 {
-                    "command": "`kubectl -n otel-demo rollout undo deployment/product-catalog`",
-                    "text": "Revert the last change done to the manifest."
-                }
-            ],
-            [
+                    "steps": [
+                        {
+                            "command": "kubectl -n otel-demo rollout undo deployment/product-catalog",
+                            "text": "Revert the last change done to the manifest."
+                        }
+                    ]
+                },
                 {
-                    "command": "`kubectl -n otel-demo edit deployment product-catalog`",
-                    "text": "Manually edit the manifest and replace the invalid image with the correct value."
+                    "steps": [
+                        {
+                            "command": "kubectl -n otel-demo edit deployment product-catalog",
+                            "text": "Manually edit the manifest and replace the invalid image with the correct value."
+                        }
+                    ]
                 }
             ]
         ],
@@ -125,32 +135,37 @@
                 "injections": [
                     {
                         "args": {
-                            "schedule": {
-                                "name": "cart-stress-chaos-memory",
-                                "spec": {
-                                    "concurrencyPolicy": "Forbid",
-                                    "historyLimit": 1,
-                                    "schedule": "* * * * *",
-                                    "stressChaos": {
-                                        "duration": "55s",
-                                        "mode": "all",
-                                        "selector": {
-                                            "labelSelectors": {
-                                                "app.kubernetes.io/component": "cart"
-                                            },
-                                            "namespaces": [
-                                                "otel-demo"
-                                            ]
-                                        },
-                                        "stressors": {
-                                            "memory": {
-                                                "size": "85%",
-                                                "workers": 10
-                                            }
-                                        }
-                                    },
-                                    "type": "StressChaos"
+                            "kubernetesObject": {
+                                "apiVersion": "chaos-mesh.org/v1alpha1",
+                                "kind": "Schedule",
+                                "metadata": {
+                                    "name": "cart-stress-chaos-memory",
+                                    "namespace": "chaos-mesh"
                                 }
+                            },
+                            "scheduleSpec": {
+                                "concurrencyPolicy": "Forbid",
+                                "historyLimit": 1,
+                                "schedule": "* * * * *",
+                                "stressChaos": {
+                                    "duration": "55s",
+                                    "mode": "all",
+                                    "selector": {
+                                        "labelSelectors": {
+                                            "app.kubernetes.io/component": "cart"
+                                        },
+                                        "namespaces": [
+                                            "otel-demo"
+                                        ]
+                                    },
+                                    "stressors": {
+                                        "memory": {
+                                            "size": "85%",
+                                            "workers": 10
+                                        }
+                                    }
+                                },
+                                "type": "StressChaos"
                             }
                         },
                         "id": "scheduled-chaos-mesh-experiment"
@@ -165,14 +180,41 @@
         "solutions": [
             [
                 {
-                    "command": "`kubectl -n otel-demo rollout undo Deployment/cart`",
-                    "text": "Revert the last change done to the manifest."
+                    "steps": [
+                        {
+                            "command": "kubectl -n chaos-mesh annotate schedule cart-stress-chaos-memory experiment.chaos-mesh.org/pause='true'",
+                            "text": "Annotate the schedule to pause the active experiment."
+                        },
+                        {
+                            "command": "kubectl -n chaos-mesh get stresschaos --selector='experiment.chaos-mesh.org/pause=true'",
+                            "text": "Retrieve the associated experiment managed by the schedule."
+                        },
+                        {
+                            "text": "Delete the retrieved experiement after it has entered the `Paused` state."
+                        },
+                        {
+                            "command": "kubectl -n chaos-mesh delete schedule cart-stress-chaos-memory experiment.chaos-mesh.org/pause='true'",
+                            "text": "Delete the schedule."
+                        }
+                    ]
                 }
             ],
             [
                 {
-                    "command": "`kubectl -n otel-demo edit Deployment cart`",
-                    "text": "Manually edit the manifest and replace the invalid container's resource configuration with the correct value(s)."
+                    "steps": [
+                        {
+                            "command": "kubectl -n otel-demo rollout undo deployment/cart",
+                            "text": "Revert the last change done to the manifest."
+                        }
+                    ]
+                },
+                {
+                    "steps": [
+                        {
+                            "command": "kubectl -n otel-demo edit deployment cart",
+                            "text": "Manually edit the manifest and replace the invalid container's resource configuration with the correct value(s)."
+                        }
+                    ]
                 }
             ]
         ],
