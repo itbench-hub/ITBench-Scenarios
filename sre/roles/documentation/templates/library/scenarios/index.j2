@@ -1,5 +1,6 @@
 - category: sre
   complexity: medium
+  description: This scenario simulates the OpenTelemetry Demo's `ad` service experiencing high CPU usage.
   disruptions:
     - injections:
       - args:
@@ -33,6 +34,7 @@
     }}
 - category: sre
   complexity: low
+  description: This scenario simulates the OpenTelemetry Demo's `product-catalog` service using the wrong image.
   disruptions:
     - injections:
       - args:
@@ -59,6 +61,64 @@
     {{
       [
         documentation_faults["nonexistent-kubernetes-workload-container-image"].tags
+      ] |
+      flatten |
+      unique
+    }}
+- category: sre
+  complexity: low
+  description: This scenario simulates the OpenTelemetry Demo's `cart` service consuming most of the node's available memory.
+  disruptions:
+    - injections:
+      - args:
+          container:
+            name: cart
+          kubernetesObject:
+            apiVersion: apps/v1
+            kind: Deployment
+            metadata:
+              name: cart
+              namespace: {{ applications_helm_releases.otel_demo.namespace }}
+        id: unassigned-kubernetes-workload-container-resource-limits
+    - injections:
+      - args:
+          schedule:
+            name: cart-stress-chaos-memory
+            spec:
+              schedule: "* * * * *"
+              historyLimit: 1
+              concurrencyPolicy: Forbid
+              type: StressChaos
+              stressChaos:
+                mode: all
+                selector:
+                  namespaces:
+                    - {{ applications_helm_releases.otel_demo.namespace }}
+                  labelSelectors:
+                    "app.kubernetes.io/component": cart
+                stressors:
+                  memory:
+                    size: 85%
+                    workers: 10
+                duration: 55s
+        id: scheduled-chaos-mesh-experiment
+  id: 41
+  platforms:
+    {{
+        [
+          documentation_faults["unassigned-kubernetes-workload-container-resource-limits"].platform,
+          documentation_faults["scheduled-chaos-mesh-experiment"].platform
+        ] |
+        unique
+    }}
+  solutionTemplates:
+    - refId: scheduled-chaos-mesh-experiment
+    - refId: unassigned-kubernetes-workload-container-resource-limits
+  tags:
+    {{
+      [
+        documentation_faults["unassigned-kubernetes-workload-container-resource-limits"].tags,
+        documentation_faults["scheduled-chaos-mesh-experiment"].tags
       ] |
       flatten |
       unique

@@ -10,10 +10,13 @@ The following scenarios are being open-sourced at this time and their implementa
 | --- | --- | --- | --- | --- |
 | [3](#Scenario-3) | sre | medium | Kubernetes | Deployment, Performance |
 | [20](#Scenario-20) | sre | low | Kubernetes | Deployment, Performance |
+| [41](#Scenario-41) | sre | low | Kubernetes | Deployment, Performance |
 
 ## Detailed Summary of Scenarios
 
 ### Scenario 3
+
+**Description:** This scenario simulates the OpenTelemetry Demo's `ad` service experiencing high CPU usage.
 
 **Faults Injected:**
 - [OpenTelemetry Demo Feature Flag](./faults.md#OpenTelemetry-Demo-Feature-Flag)
@@ -34,6 +37,8 @@ OR
 
 ### Scenario 20
 
+**Description:** This scenario simulates the OpenTelemetry Demo's `product-catalog` service using the wrong image.
+
 **Faults Injected:**
 - [Nonexistent Kubernetes Workload Container Image](./faults.md#Nonexistent-Kubernetes-Workload-Container-Image)
 
@@ -48,4 +53,25 @@ OR
 
 ```shell
 `kubectl -n otel-demo edit deployment product-catalog`
+```
+
+### Scenario 41
+
+**Description:** This scenario simulates the OpenTelemetry Demo's `cart` service consuming most of the node's available memory.
+
+**Faults Injected:**
+- [Unassigned Kubernetes Workload Container Resource Limits](./faults.md#Unassigned-Kubernetes-Workload-Container-Resource-Limits)
+- [Scheduled Chaos Mesh Experiment](./faults.md#Scheduled-Chaos-Mesh-Experiment)
+
+**Solution:**
+- Revert the last change done to the manifest.
+
+```shell
+`kubectl -n otel-demo rollout undo Deployment/cart`
+```
+
+- Manually edit the manifest and replace the invalid container's resource configuration with the correct value(s).
+
+```shell
+`kubectl -n otel-demo edit Deployment cart`
 ```
