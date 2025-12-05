@@ -17,6 +17,8 @@ The following scenarios are being open-sourced at this time and their implementa
 {% for content in documentation_contents %}
 ### Scenario {{ content.id }}
 
+**Description:** {{ content.description }}
+
 **Faults Injected:**
 {% for disruption in content.disruptions %}
 {% for injection in disruption.injections %}

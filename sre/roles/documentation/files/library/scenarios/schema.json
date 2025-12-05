@@ -27,17 +27,24 @@
                                     },
                                     "id": {
                                         "enum": [
+                                            "disabled-istio-ambient-mode-kubernetes-namespace",
+                                            "hanging-kubernetes-workload-init-container",
                                             "ingress-port-blocking-network-policy",
                                             "insufficent-kubernetes-resource-quota",
+                                            "insufficent-kubernetes-workload-container-resources",
                                             "invalid-kubernetes-workload-container-command",
                                             "invalid-valkey-password",
                                             "misconfigured-kubernetes-horizontal-pod-autoscaler",
+                                            "misconfigured-kuberntes-workload-container-readiness-probe",
                                             "modified-kubernetes-workload-container-environment-variable",
                                             "modified-target-port-kubernetes-service",
                                             "nonexistent-kubernetes-workload-container-image",
                                             "nonexistent-kubernetes-workload-node",
                                             "opentelemetry-demo-feature-flag",
                                             "scheduled-chaos-mesh-experiment",
+                                            "traffic-denying-istio-gateway-authorization-policy",
+                                            "unassigned-kubernetes-workload-container-resource-limits",
+                                            "unschedueable-kuberntes-workload-pod-anti-affinity-rule",
                                             "unsupported-architecture-kubernetes-workload-container-image"
                                         ],
                                         "type": "string"
