@@ -13,9 +13,13 @@
     label: fault/{{ fault.name }}
     loop_var: fault
 
-- name: Include Helm Release variables from applications role
+- name: Include applications role variables for templating
   ansible.builtin.include_vars:
     file: ../applications/defaults/main/helm_releases.yaml
+
+- name: Include tools role variables for templating
+  ansible.builtin.include_vars:
+    file: ../tools/defaults/main/helm_releases.yaml
 
 - name: Generate variables for scenario library index templating
   ansible.builtin.set_fact:

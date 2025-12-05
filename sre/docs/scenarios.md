@@ -25,14 +25,14 @@ The following scenarios are being open-sourced at this time and their implementa
 - Disable the feature flag (adHighCpu) by manually editing the contents of the ConfigMap
 
 ```shell
-`kubectl -n otel-demo edit configmap flagd-config
+kubectl -n otel-demo edit configmap flagd-config
 ```
 
 OR
 - Restart all of the Deployment workloads.
 
 ```shell
-`kubectl -n otel-demo rollout restart deployment`
+kubectl -n otel-demo rollout restart deployment
 ```
 
 ### Scenario 20
@@ -46,13 +46,13 @@ OR
 - Revert the last change done to the manifest.
 
 ```shell
-`kubectl -n otel-demo rollout undo deployment/product-catalog`
+kubectl -n otel-demo rollout undo deployment/product-catalog
 ```
 
 - Manually edit the manifest and replace the invalid image with the correct value.
 
 ```shell
-`kubectl -n otel-demo edit deployment product-catalog`
+kubectl -n otel-demo edit deployment product-catalog
 ```
 
 ### Scenario 41
@@ -64,14 +64,38 @@ OR
 - [Scheduled Chaos Mesh Experiment](./faults.md#Scheduled-Chaos-Mesh-Experiment)
 
 **Solution:**
+- Annotate the schedule to pause the active experiment.
+
+```shell
+kubectl -n chaos-mesh annotate schedule cart-stress-chaos-memory experiment.chaos-mesh.org/pause='true'
+```
+
+OR
+- Retrieve the associated experiment managed by the schedule.
+
+```shell
+kubectl -n chaos-mesh get stresschaos --selector='experiment.chaos-mesh.org/pause=true'
+```
+
+OR
+- Delete the retrieved experiement after it has entered the `Paused` state.
+
+
+OR
+- Delete the schedule.
+
+```shell
+kubectl -n chaos-mesh delete schedule cart-stress-chaos-memory experiment.chaos-mesh.org/pause='true'
+```
+
 - Revert the last change done to the manifest.
 
 ```shell
-`kubectl -n otel-demo rollout undo Deployment/cart`
+kubectl -n otel-demo rollout undo deployment/cart
 ```
 
 - Manually edit the manifest and replace the invalid container's resource configuration with the correct value(s).
 
 ```shell
-`kubectl -n otel-demo edit Deployment cart`
+kubectl -n otel-demo edit deployment cart
 ```

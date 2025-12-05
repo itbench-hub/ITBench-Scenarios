@@ -82,25 +82,29 @@
         id: unassigned-kubernetes-workload-container-resource-limits
     - injections:
       - args:
-          schedule:
-            name: cart-stress-chaos-memory
-            spec:
-              schedule: "* * * * *"
-              historyLimit: 1
-              concurrencyPolicy: Forbid
-              type: StressChaos
-              stressChaos:
-                mode: all
-                selector:
-                  namespaces:
-                    - {{ applications_helm_releases.otel_demo.namespace }}
-                  labelSelectors:
-                    "app.kubernetes.io/component": cart
-                stressors:
-                  memory:
-                    size: 85%
-                    workers: 10
-                duration: 55s
+          kubernetesObject:
+            apiVersion: chaos-mesh.org/v1alpha1
+            kind: Schedule
+            metadata:
+              name: cart-stress-chaos-memory
+              namespace: {{ tools_helm_releases.chaos_mesh.namespace }}
+          scheduleSpec:
+            schedule: "* * * * *"
+            historyLimit: 1
+            concurrencyPolicy: Forbid
+            type: StressChaos
+            stressChaos:
+              mode: all
+              selector:
+                namespaces:
+                  - {{ applications_helm_releases.otel_demo.namespace }}
+                labelSelectors:
+                  "app.kubernetes.io/component": cart
+              stressors:
+                memory:
+                  size: 85%
+                  workers: 10
+              duration: 55s
         id: scheduled-chaos-mesh-experiment
   id: 41
   platforms:
