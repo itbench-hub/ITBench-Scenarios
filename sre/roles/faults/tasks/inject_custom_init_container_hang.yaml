@@ -39,7 +39,7 @@
   vars:
     init_containers: |-
       {{
-        lookup('ansible.builtin.file', 'files/deployment/hanging_init_container.yaml') |
+        lookup('ansible.builtin.file', 'files/hanging_init_container/deployment.yaml') |
         from_yaml |
         community.general.json_query('spec.template.spec.initContainers')
       }}
