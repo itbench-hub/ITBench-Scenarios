@@ -1,0 +1,206 @@
+[
+    {
+        "category": "sre",
+        "complexity": "medium",
+        "description": "This scenario simulates the OpenTelemetry Demo's `ad` service experiencing high CPU usage.",
+        "disruptions": [
+            {
+                "injections": [
+                    {
+                        "args": {
+                            "flag": {
+                                "name": "adHighCpu",
+                                "state": "on"
+                            },
+                            "kubernetesObject": {
+                                "apiVersion": "v1",
+                                "kind": "ConfigMap",
+                                "metadata": {
+                                    "name": "flagd-config",
+                                    "namespace": "otel-demo"
+                                }
+                            }
+                        },
+                        "id": "opentelemetry-demo-feature-flag"
+                    }
+                ]
+            }
+        ],
+        "id": 3,
+        "platforms": [
+            "Kubernetes"
+        ],
+        "solutions": [
+            [
+                {
+                    "command": "kubectl -n otel-demo edit configmap flagd-config",
+                    "text": "Disable the feature flag (adHighCpu) by manually editing the contents of the ConfigMap"
+                },
+                {
+                    "command": "kubectl -n otel-demo rollout restart deployment",
+                    "text": "Restart all of the Deployment workloads."
+                }
+            ]
+        ],
+        "tags": [
+            "Deployment",
+            "Performance"
+        ]
+    },
+    {
+        "category": "sre",
+        "complexity": "low",
+        "description": "This scenario simulates the OpenTelemetry Demo's `product-catalog` service using the wrong image.",
+        "disruptions": [
+            {
+                "injections": [
+                    {
+                        "args": {
+                            "container": {
+                                "name": "product-catalog"
+                            },
+                            "kubernetesObject": {
+                                "apiVersion": "apps/v1",
+                                "kind": "Deployment",
+                                "metadata": {
+                                    "name": "product-catalog",
+                                    "namespace": "otel-demo"
+                                }
+                            }
+                        },
+                        "id": "nonexistent-kubernetes-workload-container-image"
+                    }
+                ]
+            }
+        ],
+        "id": 20,
+        "platforms": [
+            "Kubernetes"
+        ],
+        "solutions": [
+            [
+                {
+                    "command": "kubectl -n otel-demo rollout undo deployment/product-catalog",
+                    "text": "Revert the last change done to the manifest."
+                }
+            ],
+            [
+                {
+                    "command": "kubectl -n otel-demo edit deployment product-catalog",
+                    "text": "Manually edit the manifest and replace the invalid image with the correct value."
+                }
+            ]
+        ],
+        "tags": [
+            "Deployment",
+            "Performance"
+        ]
+    },
+    {
+        "category": "sre",
+        "complexity": "low",
+        "description": "This scenario simulates the OpenTelemetry Demo's `cart` service consuming most of the node's available memory.",
+        "disruptions": [
+            {
+                "injections": [
+                    {
+                        "args": {
+                            "container": {
+                                "name": "cart"
+                            },
+                            "kubernetesObject": {
+                                "apiVersion": "apps/v1",
+                                "kind": "Deployment",
+                                "metadata": {
+                                    "name": "cart",
+                                    "namespace": "otel-demo"
+                                }
+                            }
+                        },
+                        "id": "unassigned-kubernetes-workload-container-resource-limits"
+                    }
+                ]
+            },
+            {
+                "injections": [
+                    {
+                        "args": {
+                            "kubernetesObject": {
+                                "apiVersion": "chaos-mesh.org/v1alpha1",
+                                "kind": "Schedule",
+                                "metadata": {
+                                    "name": "cart-stress-chaos-memory",
+                                    "namespace": "chaos-mesh"
+                                }
+                            },
+                            "scheduleSpec": {
+                                "concurrencyPolicy": "Forbid",
+                                "historyLimit": 1,
+                                "schedule": "* * * * *",
+                                "stressChaos": {
+                                    "duration": "55s",
+                                    "mode": "all",
+                                    "selector": {
+                                        "labelSelectors": {
+                                            "app.kubernetes.io/component": "cart"
+                                        },
+                                        "namespaces": [
+                                            "otel-demo"
+                                        ]
+                                    },
+                                    "stressors": {
+                                        "memory": {
+                                            "size": "85%",
+                                            "workers": 10
+                                        }
+                                    }
+                                },
+                                "type": "StressChaos"
+                            }
+                        },
+                        "id": "scheduled-chaos-mesh-experiment"
+                    }
+                ]
+            }
+        ],
+        "id": 41,
+        "platforms": [
+            "Kubernetes"
+        ],
+        "solutions": [
+            [
+                {
+                    "command": "kubectl -n chaos-mesh annotate schedule cart-stress-chaos-memory experiment.chaos-mesh.org/pause='true'",
+                    "text": "Annotate the schedule to pause the active experiment."
+                },
+                {
+                    "command": "kubectl -n chaos-mesh get stresschaos --selector='experiment.chaos-mesh.org/pause=true'",
+                    "text": "Retrieve the associated experiment managed by the schedule."
+                },
+                {
+                    "text": "Delete the retrieved experiement after it has entered the `Paused` state."
+                },
+                {
+                    "command": "kubectl -n chaos-mesh delete schedule cart-stress-chaos-memory experiment.chaos-mesh.org/pause='true'",
+                    "text": "Delete the schedule."
+                }
+            ],
+            [
+                {
+                    "command": "kubectl -n otel-demo rollout undo deployment/cart",
+                    "text": "Revert the last change done to the manifest."
+                }
+            ],
+            [
+                {
+                    "command": "kubectl -n otel-demo edit deployment cart",
+                    "text": "Manually edit the manifest and replace the invalid container's resource configuration with the correct value(s)."
+                }
+            ]
+        ],
+        "tags": [
+            "Deployment",
+            "Performance"
+        ]
+    }
+]

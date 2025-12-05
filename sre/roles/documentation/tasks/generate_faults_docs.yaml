@@ -26,7 +26,7 @@
 
 - name: Generate Faults README
   ansible.builtin.copy:
-    content: "{{ lookup('ansible.builtin.template', 'templates/faults-readme.j2') }}"
+    content: "{{ lookup('ansible.builtin.template', 'templates/readmes/faults.j2') }}"
     dest: "{{ playbook_dir }}/../docs/faults.md"
     mode: "0644"
   vars:

@@ -98,7 +98,7 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 **Description:** This fault injects an init container which will hang into a workload.
 
-**Expectation:** The faulted pod will enter the `Pending` state. All containers will be in the `Waiting` state`. The hanging init container will be in the `Running` state.
+**Expectation:** The faulted pod will enter the `Pending` state. All containers will be in the `Waiting` state. The hanging init container will be in the `Running` state.
 
 **Resources:**
 - https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
@@ -985,24 +985,50 @@ A fault is a solvable issue injected into an environment to create an incident.
 ```json
 {
     "properties": {
-        "schedule": {
+        "kubernetesObject": {
             "properties": {
-                "name": {
+                "apiVersion": {
+                    "enum": [
+                        "chaos-mesh.org/v1alpha1"
+                    ],
                     "type": "string"
                 },
-                "spec": {
+                "kind": {
+                    "enum": [
+                        "Schedule"
+                    ],
+                    "type": "string"
+                },
+                "metadata": {
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "namespace"
+                    ],
                     "type": "object"
                 }
             },
             "required": [
-                "name",
-                "spec"
+                "apiVersion",
+                "kind",
+                "metadata"
             ],
+            "type": "object"
+        },
+        "scheduleSpec": {
             "type": "object"
         }
     },
     "required": [
-        "schedule"
+        "kubernetesObject",
+        "scheduleSpec"
     ],
     "type": "object"
 }
