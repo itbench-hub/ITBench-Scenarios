@@ -57,11 +57,56 @@
                                 "type": "object"
                             },
                             "type": "array"
+                        },
+                        "waitConditions": {
+                            "items": {
+                                "properties": {
+                                    "args": {
+                                        "type": "object"
+                                    },
+                                    "id": {
+                                        "type": "string"
+                                    }
+                                },
+                                "required": [
+                                    "args",
+                                    "id"
+                                ],
+                                "type": "object"
+                            },
+                            "type": "array"
                         }
                     },
                     "type": "object"
                 },
                 "type": "array"
+            },
+            "environment": {
+                "properties": {
+                    "applications": {
+                        "items": {
+                            "properties": {
+                                "id": {
+                                    "enum": [
+                                        "bookinfo",
+                                        "opentelemetry-demo"
+                                    ],
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "id"
+                            ],
+                            "type": "object"
+                        },
+                        "minItems": 1,
+                        "type": "array"
+                    }
+                },
+                "required": [
+                    "applications"
+                ],
+                "type": "object"
             },
             "id": {
                 "type": "integer"
@@ -79,15 +124,26 @@
                 "items": {
                     "items": {
                         "properties": {
-                            "command": {
-                                "type": "string"
-                            },
-                            "text": {
-                                "type": "string"
+                            "steps": {
+                                "items": {
+                                    "properties": {
+                                        "command": {
+                                            "type": "string"
+                                        },
+                                        "text": {
+                                            "type": "string"
+                                        }
+                                    },
+                                    "required": [
+                                        "text"
+                                    ],
+                                    "type": "object"
+                                },
+                                "type": "array"
                             }
                         },
                         "required": [
-                            "text"
+                            "steps"
                         ],
                         "type": "object"
                     },
@@ -112,6 +168,7 @@
             "category",
             "complexity",
             "disruptions",
+            "environment",
             "id",
             "platforms",
             "tags"

@@ -5,6 +5,7 @@ items:
     - category
     - complexity
     - disruptions
+    - environment
     - id
     - platforms
     - tags
@@ -38,6 +39,36 @@ items:
                   enum: {{ documentation_faults.keys() }}
                 args:
                   type: object
+          waitConditions:
+            type: array
+            items:
+              type: object
+              required:
+                - args
+                - id
+              properties:
+                id:
+                  type: string
+                args:
+                  type: object
+    environment:
+      type: object
+      required:
+        - applications
+      properties:
+        applications:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            required:
+              - id
+            properties:
+              id:
+                type: string
+                enum:
+                  - bookinfo
+                  - opentelemetry-demo
     id:
       type: integer
     platforms:
@@ -53,12 +84,19 @@ items:
         items:
           type: object
           required:
-            - text
+            - steps
           properties:
-            command:
-              type: string
-            text:
-              type: string
+            steps:
+              type: array
+              items:
+                type: object
+                required:
+                  - text
+                properties:
+                  command:
+                    type: string
+                  text:
+                    type: string
     tags:
       type: array
       items:

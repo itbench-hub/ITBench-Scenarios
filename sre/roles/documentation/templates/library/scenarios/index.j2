@@ -14,6 +14,9 @@
               name: flagd-config
               namespace: {{ applications_helm_releases.otel_demo.namespace }}
         id: opentelemetry-demo-feature-flag
+  environment:
+    applications:
+      - id: opentelemetry-demo
   id: 3
   platforms:
     {{
@@ -47,6 +50,9 @@
               name: product-catalog
               namespace: {{ applications_helm_releases.otel_demo.namespace }}
         id: nonexistent-kubernetes-workload-container-image
+  environment:
+    applications:
+      - id: opentelemetry-demo
   id: 20
   platforms:
     {{
@@ -106,6 +112,9 @@
                   workers: 10
               duration: 55s
         id: scheduled-chaos-mesh-experiment
+  environment:
+    applications:
+      - id: opentelemetry-demo
   id: 41
   platforms:
     {{

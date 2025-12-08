@@ -19,7 +19,18 @@ The following scenarios are being open-sourced at this time and their implementa
 
 **Description:** {{ content.description }}
 
+**Active Applications:**
+
+{% for application in content.environment.applications %}
+{% if application.id == "bookinfo" %}
+- [BookInfo](./applications.md#istio-bookinfo)
+{% elif application.id == "opentelemetry-demo" %}
+- [OpenTelemetry Demo (Astronomy Shop)](./applications.md#opentelemetry-demo-astronomy-shop)
+{% endif %}
+{% endfor %}
+
 **Faults Injected:**
+
 {% for disruption in content.disruptions %}
 {% for injection in disruption.injections %}
 - [{{ documentation_faults[injection.id].name }}](./faults.md#{{ documentation_faults[injection.id].name | split | join('-') }})

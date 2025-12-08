@@ -26,6 +26,13 @@
                 ]
             }
         ],
+        "environment": {
+            "applications": [
+                {
+                    "id": "opentelemetry-demo"
+                }
+            ]
+        },
         "id": 3,
         "platforms": [
             "Kubernetes"
@@ -77,6 +84,13 @@
                 ]
             }
         ],
+        "environment": {
+            "applications": [
+                {
+                    "id": "opentelemetry-demo"
+                }
+            ]
+        },
         "id": 20,
         "platforms": [
             "Kubernetes"
@@ -173,6 +187,13 @@
                 ]
             }
         ],
+        "environment": {
+            "applications": [
+                {
+                    "id": "opentelemetry-demo"
+                }
+            ]
+        },
         "id": 41,
         "platforms": [
             "Kubernetes"

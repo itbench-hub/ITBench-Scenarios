@@ -18,7 +18,12 @@ The following scenarios are being open-sourced at this time and their implementa
 
 **Description:** This scenario simulates the OpenTelemetry Demo's `ad` service experiencing high CPU usage.
 
+**Active Applications:**
+
+- [OpenTelemetry Demo (Astronomy Shop)](./applications.md#opentelemetry-demo-astronomy-shop)
+
 **Faults Injected:**
+
 - [OpenTelemetry Demo Feature Flag](./faults.md#OpenTelemetry-Demo-Feature-Flag)
 
 **Solution:**
@@ -39,7 +44,12 @@ kubectl -n otel-demo rollout restart deployment
 
 **Description:** This scenario simulates the OpenTelemetry Demo's `product-catalog` service using the wrong image.
 
+**Active Applications:**
+
+- [OpenTelemetry Demo (Astronomy Shop)](./applications.md#opentelemetry-demo-astronomy-shop)
+
 **Faults Injected:**
+
 - [Nonexistent Kubernetes Workload Container Image](./faults.md#Nonexistent-Kubernetes-Workload-Container-Image)
 
 **Solution:**
@@ -62,7 +72,12 @@ kubectl -n otel-demo edit deployment product-catalog
 
 **Description:** This scenario simulates the OpenTelemetry Demo's `cart` service consuming most of the node's available memory.
 
+**Active Applications:**
+
+- [OpenTelemetry Demo (Astronomy Shop)](./applications.md#opentelemetry-demo-astronomy-shop)
+
 **Faults Injected:**
+
 - [Unassigned Kubernetes Workload Container Resource Limits](./faults.md#Unassigned-Kubernetes-Workload-Container-Resource-Limits)
 - [Scheduled Chaos Mesh Experiment](./faults.md#Scheduled-Chaos-Mesh-Experiment)
 
