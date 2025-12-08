@@ -1,5 +1,11 @@
 [
     {
+        "alerts": [
+            {
+                "kind": "GoldenSignal",
+                "name": "NoRequestsReceived"
+            }
+        ],
         "arguments": {
             "jsonSchema": {
                 "properties": {
@@ -82,6 +88,12 @@
         ]
     },
     {
+        "alerts": [
+            {
+                "kind": "Application",
+                "name": "KubeContainerWaiting"
+            }
+        ],
         "arguments": {
             "jsonSchema": {
                 "properties": {
@@ -175,6 +187,16 @@
         ]
     },
     {
+        "alerts": [
+            {
+                "kind": "GoldenSignal",
+                "name": "HighRequestErrorRate"
+            },
+            {
+                "kind": "GoldenSignal",
+                "name": "NoRequestsReceived"
+            }
+        ],
         "arguments": {
             "jsonSchema": {
                 "properties": {
@@ -269,6 +291,12 @@
         ]
     },
     {
+        "alerts": [
+            {
+                "kind": "Application",
+                "name": "KubePodNotReady"
+            }
+        ],
         "arguments": {
             "jsonSchema": {
                 "properties": {
@@ -364,6 +392,12 @@
         ]
     },
     {
+        "alerts": [
+            {
+                "kind": "Application",
+                "name": "KubePodCrashLooping"
+            }
+        ],
         "arguments": {
             "jsonSchema": {
                 "properties": {
@@ -461,6 +495,12 @@
         ]
     },
     {
+        "alerts": [
+            {
+                "kind": "Application",
+                "name": "KubePodCrashLooping"
+            }
+        ],
         "arguments": {
             "jsonSchema": {
                 "properties": {
@@ -558,6 +598,12 @@
         ]
     },
     {
+        "alerts": [
+            {
+                "kind": "GoldenSignal",
+                "name": "HighRequestLatency"
+            }
+        ],
         "arguments": {
             "jsonSchema": {
                 "properties": {
@@ -632,6 +678,12 @@
         ]
     },
     {
+        "alerts": [
+            {
+                "kind": "Application",
+                "name": "KubeHpaMaxedOut"
+            }
+        ],
         "arguments": {
             "jsonSchema": {
                 "properties": {
@@ -709,6 +761,12 @@
         ]
     },
     {
+        "alerts": [
+            {
+                "kind": "Application",
+                "name": "KubePodNotReady"
+            }
+        ],
         "arguments": {
             "jsonSchema": {
                 "properties": {
@@ -794,6 +852,7 @@
         ]
     },
     {
+        "alerts": [],
         "arguments": {
             "jsonSchema": {
                 "properties": {
@@ -906,6 +965,12 @@
         ]
     },
     {
+        "alerts": [
+            {
+                "kind": "GoldenSignal",
+                "name": "HighRequestErrorRate"
+            }
+        ],
         "arguments": {
             "jsonSchema": {
                 "properties": {
@@ -986,6 +1051,12 @@
         ]
     },
     {
+        "alerts": [
+            {
+                "kind": "Application",
+                "name": "KubePodNotReady"
+            }
+        ],
         "arguments": {
             "jsonSchema": {
                 "properties": {
@@ -1083,6 +1154,12 @@
         ]
     },
     {
+        "alerts": [
+            {
+                "kind": "Application",
+                "name": "KubePodNotReady"
+            }
+        ],
         "arguments": {
             "jsonSchema": {
                 "properties": {
@@ -1169,6 +1246,7 @@
         ]
     },
     {
+        "alerts": [],
         "arguments": {
             "jsonSchema": {
                 "properties": {
@@ -1267,6 +1345,7 @@
         ]
     },
     {
+        "alerts": [],
         "arguments": {
             "jsonSchema": {
                 "properties": {
@@ -1356,6 +1435,12 @@
         ]
     },
     {
+        "alerts": [
+            {
+                "kind": "GoldenSignal",
+                "name": "NoRequestsReceived"
+            }
+        ],
         "arguments": {
             "jsonSchema": {
                 "properties": {
@@ -1452,6 +1537,7 @@
         ]
     },
     {
+        "alerts": [],
         "arguments": {
             "jsonSchema": {
                 "properties": {
@@ -1537,6 +1623,12 @@
         ]
     },
     {
+        "alerts": [
+            {
+                "kind": "Application",
+                "name": "KubePodNotReady"
+            }
+        ],
         "arguments": {
             "jsonSchema": {
                 "properties": {
@@ -1622,6 +1714,12 @@
         ]
     },
     {
+        "alerts": [
+            {
+                "kind": "Application",
+                "name": "KubePodNotReady"
+            }
+        ],
         "arguments": {
             "jsonSchema": {
                 "properties": {

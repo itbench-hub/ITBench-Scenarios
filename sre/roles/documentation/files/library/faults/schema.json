@@ -3,6 +3,7 @@
     "items": {
         "type": "object",
         "required": [
+            "alerts",
             "arguments",
             "description",
             "expectation",
@@ -13,6 +14,37 @@
             "tags"
         ],
         "properties": {
+            "alerts": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "required": [
+                        "kind",
+                        "name"
+                    ],
+                    "properties": {
+                        "kind": {
+                            "type": "string",
+                            "enum": [
+                                "Application",
+                                "GoldenSignal"
+                            ]
+                        },
+                        "name": {
+                            "type": "string",
+                            "enum": [
+                                "HighRequestErrorRate",
+                                "HighRequestLatency",
+                                "KubeContainerWaiting",
+                                "KubeHpaMaxedOut",
+                                "KubePodCrashLooping",
+                                "KubePodNotReady",
+                                "NoRequestsReceived"
+                            ]
+                        }
+                    }
+                }
+            },
             "arguments": {
                 "type": "object",
                 "required": [
