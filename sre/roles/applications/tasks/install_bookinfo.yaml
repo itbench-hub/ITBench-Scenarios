@@ -65,7 +65,7 @@
     namespace: "{{ applications_instances.bookinfo.namespace }}"
   register: applications_bookinfo_deployments
 
-- name: Annotate all pods managed by deployments with Istio Ambient Plane label
+- name: Label all pods managed by deployments with Istio Ambient Plane label
   kubernetes.core.k8s:
     kubeconfig: "{{ applications_cluster.kubeconfig }}"
     resource_definition:
@@ -78,7 +78,7 @@
         template:
           metadata:
             labels: "{{ deployment.spec.template.metadata.labels | combine({'istio.io/dataplane-mode': 'ambient'}) }}"
-    state: present
+    state: patched
   loop: "{{ applications_bookinfo_deployments.resources }}"
   loop_control:
     label: deployment/{{ deployment.metadata.name }}
