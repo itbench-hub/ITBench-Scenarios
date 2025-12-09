@@ -1,4 +1,16 @@
 ---
+- name: Include applications role variables for templating
+  ansible.builtin.include_vars:
+    file: ../applications/defaults/main/helm_releases.yaml
+
+- name: Include applications role variables for templating
+  ansible.builtin.include_vars:
+    file: ../applications/defaults/main/instances.yaml
+
+- name: Include tools role variables for templating
+  ansible.builtin.include_vars:
+    file: ../tools/defaults/main/helm_releases.yaml
+
 - name: Create temporary directory for scenario templates
   ansible.builtin.tempfile:
     prefix: scenarios
@@ -12,14 +24,6 @@
   loop_control:
     label: fault/{{ fault.name }}
     loop_var: fault
-
-- name: Include applications role variables for templating
-  ansible.builtin.include_vars:
-    file: ../applications/defaults/main/helm_releases.yaml
-
-- name: Include tools role variables for templating
-  ansible.builtin.include_vars:
-    file: ../tools/defaults/main/helm_releases.yaml
 
 - name: Generate variables for scenario library index templating
   ansible.builtin.set_fact:

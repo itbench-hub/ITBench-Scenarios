@@ -13,6 +13,26 @@ The following scenarios are being open-sourced at this time and their implementa
 | [{{ content.id }}](#Scenario-{{ content.id }}) | {{ content.category }} | {{ content.complexity }} | {{ content.platforms | sort | join(', ') }} | {{ content.tags | sort | join(', ') }} |
 {% endfor %}
 
+## Scenario Statistics
+
+### Application Distribution
+
+| BookInfo | OpenTelemetry Demo |
+| --- | --- |
+| {{ documentation_contents | community.general.json_query("[*].environment.applications[?id=='bookinfo']") | select() | length }} | {{ documentation_contents | community.general.json_query("[*].environment.applications[?id=='opentelemetry-demo']") | select() | length }} |
+
+### Category Distribution
+
+| FinOps | SRE |
+| --- | --- |
+| {{ documentation_contents | community.general.json_query("[?category=='finops']") | length }} | {{ documentation_contents | community.general.json_query("[?category=='sre']") | length }} |
+
+### Complexity Distribution
+
+| Low | Medium | High |
+| --- | --- | --- |
+| {{ documentation_contents | community.general.json_query("[?complexity=='low']") | length }} | {{ documentation_contents | community.general.json_query("[?complexity=='medium']") | length }} | {{ documentation_contents | community.general.json_query("[?complexity=='high']") | length }} |
+
 ## Detailed Summary of Scenarios
 
 {% for content in documentation_contents %}
@@ -42,16 +62,18 @@ The following scenarios are being open-sourced at this time and their implementa
 
 {% for i in range(0, content.solutions | length) %}
 {% for j in range(0, content.solutions[i] | length) %}
+Step {{ j + 1 }}
+
 {% for k in range(0, content.solutions[i][j].steps | length) %}
 - {{ content.solutions[i][j].steps[k].text }}
-
 {% if content.solutions[i][j].steps[k].command is defined %}
+
 ```shell
 {{ content.solutions[i][j].steps[k].command }}
 ```
 {% endif %}
-
 {% if j + 1 < (content.solutions[i] | length) %}
+
 OR
 
 {% endif %}

@@ -28,6 +28,7 @@
                                     "id": {
                                         "enum": [
                                             "disabled-istio-ambient-mode-kubernetes-namespace",
+                                            "failing-name-resolution-kubernetes-workload-dns-policy",
                                             "hanging-kubernetes-workload-init-container",
                                             "ingress-port-blocking-network-policy",
                                             "insufficent-kubernetes-resource-quota",
@@ -42,10 +43,12 @@
                                             "nonexistent-kubernetes-workload-node",
                                             "opentelemetry-demo-feature-flag",
                                             "scheduled-chaos-mesh-experiment",
+                                            "strict-mutual-tls-istio-service-mesh-enforcement",
                                             "traffic-denying-istio-gateway-authorization-policy",
                                             "unassigned-kubernetes-workload-container-resource-limits",
                                             "unschedueable-kuberntes-workload-pod-anti-affinity-rule",
-                                            "unsupported-architecture-kubernetes-workload-container-image"
+                                            "unsupported-architecture-kubernetes-workload-container-image",
+                                            "valkey-workload-out-of-memory"
                                         ],
                                         "type": "string"
                                     }

@@ -8,6 +8,7 @@ A fault is a solvable issue injected into an environment to create an incident.
 | Name | Platform | Tags |
 | --- | --- | --- |
 | [Disabled Istio Ambient Mode Kubernetes Namespace](#Disabled-Istio-Ambient-Mode-Kubernetes-Namespace) | Kubernetes | Deployment, Networking |
+| [Failing Name Resolution Kubernetes Workload DNS Policy](#Failing-Name-Resolution-Kubernetes-Workload-DNS-Policy) | Kubernetes | Deployment, Networking |
 | [Hanging Kubernetes Workload Init Container](#Hanging-Kubernetes-Workload-Init-Container) | Kubernetes | Deployment, Performance |
 | [Ingress Port Blocking Network Policy](#Ingress-Port-Blocking-Network-Policy) | Kubernetes | Deployment, Networking |
 | [Insufficent Kubernetes Resource Quota](#Insufficent-Kubernetes-Resource-Quota) | Kubernetes | Deployment, Performance |
@@ -22,10 +23,12 @@ A fault is a solvable issue injected into an environment to create an incident.
 | [Nonexistent Kubernetes Workload Node](#Nonexistent-Kubernetes-Workload-Node) | Kubernetes | Deployment, Performance |
 | [OpenTelemetry Demo Feature Flag](#OpenTelemetry-Demo-Feature-Flag) | Kubernetes | Deployment, Performance |
 | [Scheduled Chaos Mesh Experiment](#Scheduled-Chaos-Mesh-Experiment) | Kubernetes | Deployment, Performance |
-| [Traffic Denying Istio Gateway Authorization Policy](#Traffic-Denying-Istio-Gateway-Authorization-Policy) | Kubernetes | Deployment, Performance |
+| [Strict Mutual TLS Istio Service Mesh Enforcement](#Strict-Mutual-TLS-Istio-Service-Mesh-Enforcement) | Kubernetes | Deployment, Networking |
+| [Traffic Denying Istio Gateway Authorization Policy](#Traffic-Denying-Istio-Gateway-Authorization-Policy) | Kubernetes | Deployment, Networking |
 | [Unassigned Kubernetes Workload Container Resource Limits](#Unassigned-Kubernetes-Workload-Container-Resource-Limits) | Kubernetes | Deployment, Performance |
 | [Unschedueable Kuberntes Workload Pod Anti Affinity Rule](#Unschedueable-Kuberntes-Workload-Pod-Anti-Affinity-Rule) | Kubernetes | Deployment, Performance |
-| [Unsupported Architecture Kubernetes Workload Container Image](#Unsupported-Architecture-Kubernetes-Workload-Container-Image) | Kubernetes | Deployment, Networking |
+| [Unsupported Architecture Kubernetes Workload Container Image](#Unsupported-Architecture-Kubernetes-Workload-Container-Image) | Kubernetes | Deployment, Performance |
+| [Valkey Workload Out of Memory](#Valkey-Workload-Out-of-Memory) | Kubernetes | Code, Deployment |
 
 ## Detailed Summary of Faults
 
@@ -35,7 +38,8 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 **Expectation:** No traffic will be routed through the service mesh. This would all the requests to not be processed with the various policies configured in Istio.
 
-**Firing Alerts:** NoRequestsReceived
+**Firing Alerts**
+
 
 **Resources:**
 - https://istio.io/latest/docs/ambient/overview/
@@ -97,13 +101,78 @@ A fault is a solvable issue injected into an environment to create an incident.
     "type": "object"
 }
 ```
+### Failing Name Resolution Kubernetes Workload DNS Policy
+
+**Description:** This fault injects an DNS policy which results in the workload being unable to resolve the name of outgoing services.
+
+**Expectation:** All outgoing requests made by the workload will failed due to being unable to resolve the DNS name.
+
+**Firing Alerts**
+
+**Golden Signal Alerts:** HighRequestErrorRate
+
+**Resources:**
+- https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/
+- https://kubernetes.io/docs/concepts/workloads/
+- https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/
+
+**Arguments Schema:**
+```json
+{
+    "properties": {
+        "kubernetesObject": {
+            "properties": {
+                "apiVersion": {
+                    "enum": [
+                        "apps/v1"
+                    ],
+                    "type": "string"
+                },
+                "kind": {
+                    "enum": [
+                        "Deployment",
+                        "StatefulSet"
+                    ],
+                    "type": "string"
+                },
+                "metadata": {
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "namespace"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "apiVersion",
+                "kind",
+                "metadata"
+            ],
+            "type": "object"
+        }
+    },
+    "required": [
+        "kubernetesObject"
+    ],
+    "type": "object"
+}
+```
 ### Hanging Kubernetes Workload Init Container
 
 **Description:** This fault injects an init container which will hang into a workload.
 
 **Expectation:** The faulted pod will enter the `Pending` state. All containers will be in the `Waiting` state. The hanging init container will be in the `Running` state.
 
-**Firing Alerts:** KubeContainerWaiting
+**Firing Alerts**
+
 
 **Resources:**
 - https://kubernetes.io/docs/concepts/workloads/pods/init-containers/
@@ -166,7 +235,9 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 **Expectation:** Other workloads will be unable to communicate with the faulted pod(s) on the correct port. This usually results in increased latency and errors in applications.
 
-**Firing Alerts:** HighRequestErrorRate, NoRequestsReceived
+**Firing Alerts**
+
+**Golden Signal Alerts:** HighRequestErrorRate
 
 **Resources:**
 - https://kubernetes.io/docs/concepts/workloads/
@@ -230,7 +301,8 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 **Expectation:** The new pod(s) for the workload in the faulted namespace will enter the `Pending` state.
 
-**Firing Alerts:** KubePodNotReady
+**Firing Alerts**
+
 
 **Resources:**
 - https://kubernetes.io/docs/concepts/workloads/
@@ -295,7 +367,8 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 **Expectation:** The faulted pod(s) will enter the `CrashLoopBackOff` state and container will enter the `Terminated` state. The workload will become unable to function for long periods.
 
-**Firing Alerts:** KubePodCrashLooping
+**Firing Alerts**
+
 
 **Resources:**
 - https://kubernetes.io/docs/concepts/containers/images/
@@ -370,7 +443,8 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 **Expectation:** The faulted pod(s) will enter the `CrashLoopBackOff` state and container will enter the `Terminated` state. The workload will become unable to function.
 
-**Firing Alerts:** KubePodCrashLooping
+**Firing Alerts**
+
 
 **Resources:**
 - https://kubernetes.io/docs/concepts/containers/images/
@@ -445,7 +519,9 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 **Expectation:** Other workloads will be unable to authorize themselves with the Valkey workload. This usually causes increased latency and errors in applications.
 
-**Firing Alerts:** HighRequestLatency
+**Firing Alerts**
+
+**Golden Signal Alerts:** HighRequestLatency
 
 **Resources:**
 - https://valkey.io/
@@ -505,7 +581,8 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 **Expectation:** The faulted autoscaler will take scale up or down actions more aggressively (often more than required).
 
-**Firing Alerts:** KubeHpaMaxedOut
+**Firing Alerts**
+
 
 **Resources:**
 - https://kubernetes.io/docs/concepts/workloads/autoscaling/
@@ -568,7 +645,8 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 **Expectation:** The faulted pod(s) will enter the `Pending` state due to a `ContainersNotReady` reason for the `Ready` condition.
 
-**Firing Alerts:** KubePodNotReady
+**Firing Alerts**
+
 
 **Resources:**
 - https://kubernetes.io/docs/concepts/configuration/liveness-readiness-startup-probes/
@@ -631,7 +709,7 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 **Expectation:** Varies based on the effect/purpose of the environment variable.
 
-**Firing Alerts:** See scenario spec or ground/silver truth
+See the scenario ground truth file where this fault is invoked.
 
 **Resources:**
 - https://kubernetes.io/docs/concepts/workloads/
@@ -645,19 +723,22 @@ A fault is a solvable issue injected into an environment to create an incident.
         "container": {
             "properties": {
                 "env": {
-                    "properties": {
-                        "name": {
-                            "type": "string"
+                    "items": {
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "value": {
+                                "type": "string"
+                            }
                         },
-                        "value": {
-                            "type": "string"
-                        }
+                        "required": [
+                            "name",
+                            "value"
+                        ],
+                        "type": "object"
                     },
-                    "required": [
-                        "name",
-                        "value"
-                    ],
-                    "type": "object"
+                    "type": "array"
                 },
                 "name": {
                     "type": "string"
@@ -721,7 +802,9 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 **Expectation:** Other workloads will be unable to communicate with the faulted pod(s) on the correct port. This usually results in increased latency and errors in applications.
 
-**Firing Alerts:** HighRequestErrorRate
+**Firing Alerts**
+
+**Golden Signal Alerts:** HighRequestErrorRate
 
 **Resources:**
 - https://kubernetes.io/docs/concepts/workloads/
@@ -787,7 +870,8 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 **Expectation:** The faulted pod(s) will enter the `Pending` state due to an `ImagePullBackOff` error. The workload will become unable to function.
 
-**Firing Alerts:** KubePodNotReady
+**Firing Alerts**
+
 
 **Resources:**
 - https://kubernetes.io/docs/concepts/containers/images/
@@ -862,7 +946,8 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 **Expectation:** The faulted pod(s) will enter the `Pending` state. The workload will become unable to function.
 
-**Firing Alerts:** KubePodNotReady
+**Firing Alerts**
+
 
 **Resources:**
 - https://kubernetes.io/docs/concepts/architecture/nodes/
@@ -926,7 +1011,7 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 **Expectation:** The effects of the faults are listed [here](https://opentelemetry.io/docs/demo/feature-flags/#implemented-feature-flags).
 
-**Firing Alerts:** See scenario spec or ground/silver truth
+See the scenario ground truth file where this fault is invoked.
 
 **Resources:**
 - https://opentelemetry.io/docs/demo/
@@ -1006,7 +1091,7 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 **Expectation:** Varies based on the Chaos Mesh experiment used.
 
-**Firing Alerts:** See scenario spec or ground/silver truth
+See the scenario ground truth file where this fault is invoked.
 
 **Resources:**
 - https://chaos-mesh.org/docs/run-a-chaos-experiment/
@@ -1054,6 +1139,14 @@ A fault is a solvable issue injected into an environment to create an incident.
             "type": "object"
         },
         "scheduleSpec": {
+            "properties": {
+                "type": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ],
             "type": "object"
         }
     },
@@ -1064,13 +1157,80 @@ A fault is a solvable issue injected into an environment to create an incident.
     "type": "object"
 }
 ```
+### Strict Mutual TLS Istio Service Mesh Enforcement
+
+**Description:** This fault injects a policy which causes the affected workload to be unable to communicate with other pods in the service mesh.
+
+**Expectation:** The faulted pod will be unable to succesfully make requests to other pods, causing the error rate to increase.
+
+**Firing Alerts**
+
+**Golden Signal Alerts:** HighRequestErrorRate
+
+**Resources:**
+- https://istio.io/latest/docs/ambient/usage/add-workloads/
+- https://istio.io/latest/docs/tasks/security/authentication/mtls-migration/
+- https://istio.io/latest/docs/ambient/usage/verify-mtls-enabled/
+- https://kubernetes.io/docs/concepts/workloads/
+- https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/
+
+**Arguments Schema:**
+```json
+{
+    "properties": {
+        "kubernetesObject": {
+            "properties": {
+                "apiVersion": {
+                    "enum": [
+                        "apps/v1"
+                    ],
+                    "type": "string"
+                },
+                "kind": {
+                    "enum": [
+                        "Deployment",
+                        "StatefulSet"
+                    ],
+                    "type": "string"
+                },
+                "metadata": {
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "namespace"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "apiVersion",
+                "kind",
+                "metadata"
+            ],
+            "type": "object"
+        }
+    },
+    "required": [
+        "kubernetesObject"
+    ],
+    "type": "object"
+}
+```
 ### Traffic Denying Istio Gateway Authorization Policy
 
 **Description:** This fault injects an authorization policy which denies all HTTP requests to a Kubernetes Gateway.
 
 **Expectation:** All HTTP requests of the specified methods will be blocked, resulting in a 403 status code in the response.
 
-**Firing Alerts:** NoRequestsReceived
+**Firing Alerts**
+
 
 **Resources:**
 - https://kubernetes.io/docs/concepts/services-networking/gateway/
@@ -1144,7 +1304,7 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 **Expectation:** The new pod will run normally. However, without resource limits, the pod will consume resources endless. This state can be combined with other faults to produce resource usage scenarios.
 
-**Firing Alerts:** See scenario spec or ground/silver truth
+See the scenario ground truth file where this fault is invoked.
 
 **Resources:**
 - https://kubernetes.io/docs/concepts/containers/images/
@@ -1207,7 +1367,8 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 **Expectation:** The faulted pod(s) will enter the `Pending` state due to an `FailedScheduling` warning. Thus, the new pod will start running.
 
-**Firing Alerts:** KubePodNotReady
+**Firing Alerts**
+
 
 **Resources:**
 - https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/
@@ -1270,10 +1431,87 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 **Expectation:** The faulted pod(s) will enter the `Pending` state due to an `ImagePullBackOff` error. The workload will become unable to function.
 
-**Firing Alerts:** KubePodNotReady
+**Firing Alerts**
+
 
 **Resources:**
 - https://kubernetes.io/docs/concepts/containers/images/
+- https://kubernetes.io/docs/concepts/workloads/
+- https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+- https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/
+
+**Arguments Schema:**
+```json
+{
+    "properties": {
+        "container": {
+            "properties": {
+                "name": {
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "type": "object"
+        },
+        "kubernetesObject": {
+            "properties": {
+                "apiVersion": {
+                    "enum": [
+                        "apps/v1"
+                    ],
+                    "type": "string"
+                },
+                "kind": {
+                    "enum": [
+                        "Deployment",
+                        "StatefulSet"
+                    ],
+                    "type": "string"
+                },
+                "metadata": {
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "namespace"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "apiVersion",
+                "kind",
+                "metadata"
+            ],
+            "type": "object"
+        }
+    },
+    "required": [
+        "kubernetesObject",
+        "container"
+    ],
+    "type": "object"
+}
+```
+### Valkey Workload Out of Memory
+
+**Description:** This fault adds a code change to a Valkey workload. This modifies the container to also contain a process which will consume memory.
+
+**Expectation:** The faulted pod(s) will enter the `CrashLoopBackOff` state and container will enter the `Terminated` state. The workload will become unable to function.
+
+**Firing Alerts**
+
+
+**Resources:**
+- https://valkey.io/
 - https://kubernetes.io/docs/concepts/workloads/
 - https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
 - https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/
