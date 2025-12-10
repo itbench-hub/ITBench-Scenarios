@@ -60,7 +60,7 @@
       - apply
       - --server-side
       - -f
-      - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.0/standard-install.yaml
+      - https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/standard-install.yaml
       - --kubeconfig={{ tools_cluster.kubeconfig | ansible.builtin.expanduser }}
   register: tools_kubernetes_gateway_crds_apply
   changed_when: tools_kubernetes_gateway_crds_apply.rc == 0
