@@ -160,7 +160,7 @@
   when:
     - fault.custom.name == 'strict-mutual-tls'
     - fault.custom.strict_mutual_tls is defined
-    
+
 - name: Import DNS misconfiguration removal tasks
   ansible.builtin.import_tasks:
     file: remove_custom_dns_misconfiguration.yaml

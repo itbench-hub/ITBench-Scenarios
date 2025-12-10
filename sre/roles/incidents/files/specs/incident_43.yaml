@@ -24,4 +24,3 @@ scenario:
               kind: Deployment
               name: frontend
               namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
-            ndots_value: 25

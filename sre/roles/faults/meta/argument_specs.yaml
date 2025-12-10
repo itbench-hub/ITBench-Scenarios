@@ -533,10 +533,6 @@ argument_specs:
                       namespace:
                         required: true
                         type: str
-                  ndots_value:
-                    required: false
-                    type: int
-                    default: 10
           otel_demo:
             required: false
             type: dict
