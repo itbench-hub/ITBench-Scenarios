@@ -53,4 +53,4 @@ delete_cluster: ## DEPRECATED: Deletes a Kind cluster
 	@echo "This command will be removed in a future version."
 	@echo "Executing 'make destory_cluster'..."
 	@echo ""
-	$(MAKE) destory_cluster
+	$(MAKE) destroy_cluster
