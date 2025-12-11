@@ -1,0 +1,49 @@
+---
+apiVersion: itbench.io/v1
+kind: ScenarioSpec
+metadata:
+  labels:
+    itbench.io/scenario-variant: none
+  name: {{ ["scenario", scenario.id] | join("-") }}
+spec:
+  applications:
+{% for application in scenario.environment.applications %}
+{% if application.id == "book-info" %}
+    - bookInfo:
+        enabled: true
+        options: {}
+{% elif application.id == "opentelemetry-demo" %}
+    - otelDemo:
+        enabled: true
+        options:
+          autoscaling: false
+{% endif %}
+{% endfor %}
+  faults: {{ scenario.disruptions }}
+  tools:
+{% if scenario.disruptions | community.general.json_query("[*].injections[?id=='scheduled-chaos-mesh-experiment']") | flatten | select() | length > 0 %}
+    chaosEngineering:
+      chaosMesh:
+        enabled: true
+{% endif %}
+{% if scenario.category == "finops" %}
+    costMonitoring:
+      opencost:
+        enabled: true
+{% endif %}
+{% if scenario.environment.applications | community.general.json_query("[?id=='book-info']") | length > 0 %}
+    networking:
+      istio:
+        enabled: true
+{% endif %}
+    observability:
+      events:
+        enabled: true
+      logs:
+        enabled: true
+      metrics:
+        enabled: true
+      topology:
+        enabled: true
+      traces:
+        enabled: true
