@@ -1,9 +1,9 @@
 ---
 - name: Retrieve all fault related deployments
   kubernetes.core.k8s_info:
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
     api_version: apps/v1
     kind: Deployment
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
     label_selectors:
       - app.kubernetes.io/component = pod-anti-affinity-fault
       - app.kubernetes.io/managed-by = ITBench
