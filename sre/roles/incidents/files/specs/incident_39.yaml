@@ -24,9 +24,3 @@ scenario:
               kind: Deployment
               name: payment
               namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
-            pdb:
-              min_available: 2
-            node_stress:
-              enabled: true
-              cpu_percent: 80
-              duration_seconds: 300

@@ -181,7 +181,7 @@
 
 - name: Import PDB blocking drain removal tasks
   ansible.builtin.import_tasks:
-    file: removal_custom_pdb_blocking_drain.yaml
+    file: remove_custom_pdb_blocking_drain.yaml
   vars:
     spec: "{{ fault.custom.pdb_blocking_drain }}"
   when:

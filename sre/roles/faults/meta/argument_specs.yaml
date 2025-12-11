@@ -575,29 +575,6 @@ argument_specs:
                       namespace:
                         required: true
                         type: str
-                  pdb:
-                    required: true
-                    type: dict
-                    options:
-                      min_available:
-                        required: true
-                        type: int
-                  node_stress:
-                    required: false
-                    type: dict
-                    options:
-                      enabled:
-                        required: false
-                        type: bool
-                        default: true
-                      cpu_percent:
-                        required: false
-                        type: int
-                        default: 80
-                      duration_seconds:
-                        required: false
-                        type: int
-                        default: 300
           otel_demo:
             required: false
             type: dict
