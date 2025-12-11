@@ -7,6 +7,7 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 | Name | Platform | Tags |
 | --- | --- | --- |
+| [Cordoned Kubernetes Worker Node](#Cordoned-Kubernetes-Worker-Node) | Kubernetes | Deployment, Performance |
 | [Disabled Istio Ambient Mode Kubernetes Namespace](#Disabled-Istio-Ambient-Mode-Kubernetes-Namespace) | Kubernetes | Deployment, Networking |
 | [Failing Name Resolution Kubernetes Workload DNS Policy](#Failing-Name-Resolution-Kubernetes-Workload-DNS-Policy) | Kubernetes | Deployment, Networking |
 | [Hanging Kubernetes Workload Init Container](#Hanging-Kubernetes-Workload-Init-Container) | Kubernetes | Deployment, Performance |
@@ -33,6 +34,70 @@ A fault is a solvable issue injected into an environment to create an incident.
 
 ## Detailed Summary of Faults
 
+### Cordoned Kubernetes Worker Node
+
+**Description:** This fault places a workload on a node and prevents it from scaling by blocking all new scheduling attempts.
+
+**Expectation:** The faulted pod(s) will enter the `Pending` state due to an `FailedScheduling` warning. Thus, the new pod will not start running.
+
+**Firing Alerts**
+
+
+**Resources:**
+- https://kubernetes.io/docs/concepts/architecture/nodes/
+- https://kubernetes.io/docs/concepts/workloads/
+- https://kubernetes.io/docs/tasks/administer-cluster/safely-drain-node/
+- https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/
+
+**Arguments Schema:**
+```json
+{
+    "properties": {
+        "kubernetesObject": {
+            "properties": {
+                "apiVersion": {
+                    "enum": [
+                        "apps/v1"
+                    ],
+                    "type": "string"
+                },
+                "kind": {
+                    "enum": [
+                        "Deployment",
+                        "StatefulSet"
+                    ],
+                    "type": "string"
+                },
+                "metadata": {
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "namespace"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "apiVersion",
+                "kind",
+                "metadata"
+            ],
+            "type": "object"
+        }
+    },
+    "required": [
+        "kubernetesObject"
+    ],
+    "type": "object"
+}
+```
 ### Disabled Istio Ambient Mode Kubernetes Namespace
 
 **Description:** This fault modifies a namespace, disabling it from being included in Istio's Ambient Mode service mesh.

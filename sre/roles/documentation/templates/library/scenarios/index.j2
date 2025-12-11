@@ -348,6 +348,27 @@
   tags: {{ documentation_faults["misconfigured-kubernetes-horizontal-pod-autoscaler"].tags }}
 - category: sre
   complexity: low
+  description: This scenario simulates OpenTelemetry Demo's `payment` service being unable to schedule a new pod.
+  disruptions:
+    - injections:
+      - args:
+          kubernetesObject:
+            apiVersion: apps/v1
+            kind: Deployment
+            metadata:
+              name: payment
+              namespace: {{ applications_helm_releases.otel_demo.namespace }}
+        id: cordoned-kubernetes-worker-node
+  environment:
+    applications:
+      - id: opentelemetry-demo
+  id: 39
+  platforms: {{ [documentation_faults["cordoned-kubernetes-worker-node"].platform] }}
+  solutionTemplates:
+    - refId: cordoned-kubernetes-worker-node
+  tags: {{ documentation_faults["cordoned-kubernetes-worker-node"].tags }}
+- category: sre
+  complexity: low
   description: This scenario simulates OpenTelemetry Demo's `valkey-cart` service experiencing an Out of Memory (OOM) error.
   disruptions:
     - injections:

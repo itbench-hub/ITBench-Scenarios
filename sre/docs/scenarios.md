@@ -22,6 +22,7 @@ The following scenarios are being open-sourced at this time and their implementa
 | [34](#Scenario-34) | sre | low | Kubernetes | Authentication, Deployment |
 | [37](#Scenario-37) | finops | low | Kubernetes | Deployment, Performance |
 | [38](#Scenario-38) | finops | low | Kubernetes | Deployment, Performance |
+| [39](#Scenario-39) | sre | low | Kubernetes | Deployment, Performance |
 | [40](#Scenario-40) | sre | low | Kubernetes | Code, Deployment |
 | [41](#Scenario-41) | sre | low | Kubernetes | Deployment, Performance |
 | [42](#Scenario-42) | sre | medium | Kubernetes | Deployment, Performance |
@@ -42,19 +43,19 @@ The following scenarios are being open-sourced at this time and their implementa
 
 | BookInfo | OpenTelemetry Demo |
 | --- | --- |
-| 0 | 23 |
+| 0 | 24 |
 
 ### Category Distribution
 
 | FinOps | SRE |
 | --- | --- |
-| 2 | 24 |
+| 2 | 25 |
 
 ### Complexity Distribution
 
 | Low | Medium | High |
 | --- | --- | --- |
-| 9 | 17 | 0 |
+| 10 | 17 | 0 |
 
 ## Detailed Summary of Scenarios
 
@@ -431,6 +432,48 @@ Step 1
 ```shell
 kubectl -n otel-demo edit horizontalpodautoscaler image-provider
 ```
+### Scenario 39
+
+**Description:** This scenario simulates OpenTelemetry Demo's `payment` service being unable to schedule a new pod.
+
+**Active Applications:**
+
+- [OpenTelemetry Demo (Astronomy Shop)](./applications.md#opentelemetry-demo-astronomy-shop)
+
+**Faults Injected:**
+
+- [Cordoned Kubernetes Worker Node](./faults.md#Cordoned-Kubernetes-Worker-Node)
+
+**Solution:**
+
+Step 1
+
+- Revert the last change done to the manifest.
+
+```shell
+kubectl -n otel-demo rollout undo deployment/payment
+```
+
+OR
+
+Step 2
+
+- Manually edit the manifest and replace the node selector with the correct value.
+
+```shell
+kubectl -n otel-demo edit deployment payment
+```
+
+OR
+
+Step 3
+
+- Retrieve all worker node nodes
+
+```shell
+kubectl get nodes --selector='node-role.kubernetes.io/node='
+```
+- Uncordon all worker nodes which are cordoned.
 ### Scenario 40
 
 **Description:** This scenario simulates OpenTelemetry Demo's `valkey-cart` service experiencing an Out of Memory (OOM) error.
