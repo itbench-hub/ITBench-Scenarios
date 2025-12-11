@@ -62,43 +62,18 @@
   delay: 15
   retries: 20
 
-- name: Create Pod Disruption Budget
-  kubernetes.core.k8s:
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    template: templates/drain_blocking_pod_disruption_budget/poddisruptionbudget.j2
-    state: present
-  vars:
-    fault_args: "{{ spec }}"
-    workload: "{{ faults_workload.resources | first }}"
-
-- name: Drain node
+- name: Cordon workload's node
   kubernetes.core.k8s_drain:
-    delete_options:
-      delete_emptydir_data: true
-      ignore_daemonsets: true
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
     name: "{{ faults_nodes.resources[0].metadata.name }}"
+    state: cordon
 
-# - name: Cordon the target node
-#   kubernetes.core.k8s_json_patch:
-#     api_version: v1
-#     kind: Node
-#     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-#     name: "{{ faults_target_node }}"
-#     patch:
-#       - op: replace
-#         path: /spec/unschedulable
-#         value: true
-
-# - name: Attempt drain operation (will hang due to PDB)
-#   ansible.builtin.command:
-#     cmd: >
-#       kubectl drain {{ faults_target_node }}
-#       --kubeconfig={{ faults_cluster.kubeconfig }}
-#       --ignore-daemonsets
-#       --delete-emptydir-data
-#       --timeout=60s
-#       --force
-#   register: faults_drain_result
-#   failed_when: false
-#   changed_when: faults_drain_result.rc == 0
+- name: Scale workload
+  kubernetes.core.k8s_scale:
+    api_version: "{{ faults_workload.resources[0].apiVersion }}"
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    kind: "{{ faults_workload.resources[0].kind }}"
+    name: "{{ faults_workload.resources[0].metadata.name }}"
+    namespace: "{{ faults_workload.resources[0].metadata.namespace }}"
+    replicas: "{{ faults_workload.resources[0].spec.replicas + 1 }}"
+    wait: false

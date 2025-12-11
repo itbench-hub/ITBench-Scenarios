@@ -21,32 +21,6 @@
     - node.spec.unschedulable is defined
     - node.spec.unschedulable
 
-- name: Retrieve all fault related pod disruption budgets
-  kubernetes.core.k8s_info:
-    api_version: policy/v1
-    kind: PodDisruptionBudget
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    label_selectors:
-      - app.kubernetes.io/component = drain-blocking-pdb-fault
-      - app.kubernetes.io/managed-by = ITBench
-  register: faults_pod_disruption_budgets
-
-- name: Delete all fault related pod disruption budgets
-  kubernetes.core.k8s:
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: "{{ poddisruptionbudget.apiVersion }}"
-      kind: "{{ poddisruptionbudget.kind }}"
-      metadata:
-        name: "{{ poddisruptionbudget.metadata.name }}"
-        namespace: "{{ poddisruptionbudget.metadata.namespace }}"
-    state: absent
-    wait: true
-  loop: "{{ faults_pod_disruption_budgets.resources }}"
-  loop_control:
-    label: poddisruptionbudget/{{ poddisruptionbudget.metadata.name }}
-    loop_var: poddisruptionbudget
-
 - name: Display fault removal instructions
   ansible.builtin.debug:
     msg: To remove this fault, please uninstall and reinstall the application it was injected into.
