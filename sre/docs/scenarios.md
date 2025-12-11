@@ -42,7 +42,7 @@ The following scenarios are being open-sourced at this time and their implementa
 
 | BookInfo | OpenTelemetry Demo |
 | --- | --- |
-| 3 | 23 |
+| 0 | 23 |
 
 ### Category Distribution
 

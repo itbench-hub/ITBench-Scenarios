@@ -1376,7 +1376,7 @@
         "environment": {
             "applications": [
                 {
-                    "id": "bookinfo"
+                    "id": "book-info"
                 }
             ]
         },
@@ -1434,7 +1434,7 @@
         "environment": {
             "applications": [
                 {
-                    "id": "bookinfo"
+                    "id": "book-info"
                 }
             ]
         },
@@ -1547,7 +1547,7 @@
         "environment": {
             "applications": [
                 {
-                    "id": "bookinfo"
+                    "id": "book-info"
                 }
             ]
         },
