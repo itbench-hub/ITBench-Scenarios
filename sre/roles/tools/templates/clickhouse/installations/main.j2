@@ -118,12 +118,16 @@ spec:
     - name: clickhouse-pod
     - name: clickhouse-service
   configuration:
+    profiles:
+      max-result-profile:
+        max_result_bytes: 52428800
     users:
       default/networks/ip: 0.0.0.0/0
       default/access_management: 1
       default/named_collection_control: 1
       default/show_named_collections: 1
       default/show_named_collections_secrets: 1
+      default/profile: max-result-profile
       default/password:
         valueFrom:
           secretKeyRef:
