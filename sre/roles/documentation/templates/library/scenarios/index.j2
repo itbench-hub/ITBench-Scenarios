@@ -435,6 +435,27 @@
     }}
 - category: sre
   complexity: medium
+  description: This scenario simulates the OpenTelemetry Demo's `kafka` service being evicted from the node.
+  disruptions:
+    - injections:
+      - args:
+          kubernetesObject:
+            apiVersion: apps/v1
+            kind: Deployment
+            metadata:
+              name: kafka
+              namespace: {{ applications_helm_releases.otel_demo.namespace }}
+        id: priority-kubernetes-workload-priority-preemption
+  environment:
+    applications:
+      - id: opentelemetry-demo
+  id: 42
+  platforms: {{ [documentation_faults["priority-kubernetes-workload-priority-preemption"].platform] }}
+  solutionTemplates:
+    - refId: priority-kubernetes-workload-priority-preemption
+  tags: {{ documentation_faults["priority-kubernetes-workload-priority-preemption"].tags }}
+- category: sre
+  complexity: medium
   description: This scenario simulates the OpenTelemetry Demo's `frontend` service being reach other services.
   disruptions:
     - injections:

@@ -22,6 +22,7 @@ A fault is a solvable issue injected into an environment to create an incident.
 | [Nonexistent Kubernetes Workload Container Image](#Nonexistent-Kubernetes-Workload-Container-Image) | Kubernetes | Deployment, Performance |
 | [Nonexistent Kubernetes Workload Node](#Nonexistent-Kubernetes-Workload-Node) | Kubernetes | Deployment, Performance |
 | [OpenTelemetry Demo Feature Flag](#OpenTelemetry-Demo-Feature-Flag) | Kubernetes | Deployment, Performance |
+| [Priority Kubernetes Workload Priority Preemption](#Priority-Kubernetes-Workload-Priority-Preemption) | Kubernetes | Deployment, Performance |
 | [Scheduled Chaos Mesh Experiment](#Scheduled-Chaos-Mesh-Experiment) | Kubernetes | Deployment, Performance |
 | [Strict Mutual TLS Istio Service Mesh Enforcement](#Strict-Mutual-TLS-Istio-Service-Mesh-Enforcement) | Kubernetes | Deployment, Networking |
 | [Traffic Denying Istio Gateway Authorization Policy](#Traffic-Denying-Istio-Gateway-Authorization-Policy) | Kubernetes | Deployment, Networking |
@@ -1085,6 +1086,71 @@ See the scenario ground truth file where this fault is invoked.
     "type": "object"
 }
 ```
+### Priority Kubernetes Workload Priority Preemption
+
+**Description:** This fault causes a workload to be a lower priority than another. This causes the pod to be evicted when the higher priority workload needs more resources.
+
+**Expectation:** The faulted pod(s) will enter the `Pending` state due to an `FailedScheduling` warning. Thus, the new pod will not start running.
+
+**Firing Alerts**
+
+
+**Resources:**
+- https://kubernetes.io/docs/concepts/scheduling-eviction/pod-priority-preemption/
+- https://kubernetes.io/docs/concepts/scheduling-eviction/node-pressure-eviction/
+- https://kubernetes.io/docs/concepts/workloads/
+- https://kubernetes.io/docs/concepts/workloads/pods/pod-lifecycle/
+- https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/
+
+**Arguments Schema:**
+```json
+{
+    "properties": {
+        "kubernetesObject": {
+            "properties": {
+                "apiVersion": {
+                    "enum": [
+                        "apps/v1"
+                    ],
+                    "type": "string"
+                },
+                "kind": {
+                    "enum": [
+                        "Deployment",
+                        "StatefulSet"
+                    ],
+                    "type": "string"
+                },
+                "metadata": {
+                    "properties": {
+                        "name": {
+                            "type": "string"
+                        },
+                        "namespace": {
+                            "type": "string"
+                        }
+                    },
+                    "required": [
+                        "name",
+                        "namespace"
+                    ],
+                    "type": "object"
+                }
+            },
+            "required": [
+                "apiVersion",
+                "kind",
+                "metadata"
+            ],
+            "type": "object"
+        }
+    },
+    "required": [
+        "kubernetesObject"
+    ],
+    "type": "object"
+}
+```
 ### Scheduled Chaos Mesh Experiment
 
 **Description:** This fault injects a Chaos Mesh experiment into the environment. The experiment is [scheduled](https://chaos-mesh.org/docs/define-scheduling-rules/) to repeated fire so that the behavior persists.
@@ -1365,7 +1431,7 @@ See the scenario ground truth file where this fault is invoked.
 
 **Description:** This fault injects an Inter-Pod Anti-Affinity which causes Kubernetes to be unable to schedule the pod.
 
-**Expectation:** The faulted pod(s) will enter the `Pending` state due to an `FailedScheduling` warning. Thus, the new pod will start running.
+**Expectation:** The faulted pod(s) will enter the `Pending` state due to an `FailedScheduling` warning. Thus, the new pod will not start running.
 
 **Firing Alerts**
 

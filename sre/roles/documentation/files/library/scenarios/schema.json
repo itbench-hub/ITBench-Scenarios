@@ -42,6 +42,7 @@
                                             "nonexistent-kubernetes-workload-container-image",
                                             "nonexistent-kubernetes-workload-node",
                                             "opentelemetry-demo-feature-flag",
+                                            "priority-kubernetes-workload-priority-preemption",
                                             "scheduled-chaos-mesh-experiment",
                                             "strict-mutual-tls-istio-service-mesh-enforcement",
                                             "traffic-denying-istio-gateway-authorization-policy",

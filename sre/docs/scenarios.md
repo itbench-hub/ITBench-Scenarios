@@ -24,6 +24,7 @@ The following scenarios are being open-sourced at this time and their implementa
 | [38](#Scenario-38) | finops | low | Kubernetes | Deployment, Performance |
 | [40](#Scenario-40) | sre | low | Kubernetes | Code, Deployment |
 | [41](#Scenario-41) | sre | low | Kubernetes | Deployment, Performance |
+| [42](#Scenario-42) | sre | medium | Kubernetes | Deployment, Performance |
 | [43](#Scenario-43) | sre | medium | Kubernetes | Deployment, Networking |
 | [44](#Scenario-44) | sre | medium | Kubernetes | Deployment, Performance |
 | [45](#Scenario-45) | sre | medium | Kubernetes | Deployment, Performance |
@@ -41,19 +42,19 @@ The following scenarios are being open-sourced at this time and their implementa
 
 | BookInfo | OpenTelemetry Demo |
 | --- | --- |
-| 3 | 22 |
+| 3 | 23 |
 
 ### Category Distribution
 
 | FinOps | SRE |
 | --- | --- |
-| 2 | 23 |
+| 2 | 24 |
 
 ### Complexity Distribution
 
 | Low | Medium | High |
 | --- | --- | --- |
-| 9 | 16 | 0 |
+| 9 | 17 | 0 |
 
 ## Detailed Summary of Scenarios
 
@@ -528,6 +529,48 @@ Step 2
 
 ```shell
 kubectl -n otel-demo edit deployment cart
+```
+### Scenario 42
+
+**Description:** This scenario simulates the OpenTelemetry Demo's `kafka` service being evicted from the node.
+
+**Active Applications:**
+
+- [OpenTelemetry Demo (Astronomy Shop)](./applications.md#opentelemetry-demo-astronomy-shop)
+
+**Faults Injected:**
+
+- [Priority Kubernetes Workload Priority Preemption](./faults.md#Priority-Kubernetes-Workload-Priority-Preemption)
+
+**Solution:**
+
+Step 1
+
+- Revert the last change done to the manifest.
+
+```shell
+kubectl -n otel-demo rollout undo deployment/kafka
+```
+
+OR
+
+Step 2
+
+- Manually edit the manifest and remove the node selector value with the correct value(s).
+
+```shell
+kubectl -n otel-demo edit deployment kafka
+```
+
+OR
+
+Step 3
+
+- Create a new priority class with a higher value than the workload which caused its preemption.
+- Manually edit the manifest and change the priority of the workload to the new priority.
+
+```shell
+kubectl -n otel-demo edit deployment kafka
 ```
 ### Scenario 43
 
