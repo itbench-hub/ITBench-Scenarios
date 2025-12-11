@@ -1,0 +1,39 @@
+apiVersion: itbench.io/v1
+kind: ScenarioSpec
+metadata:
+  labels:
+    itbench.io/scenario-variant: none
+  name: scenario-16
+spec:
+  applications:
+  - otelDemo:
+      enabled: true
+      options:
+        autoscaling: false
+  faults:
+  - injections:
+    - args:
+        container:
+          env:
+          - name: QUOTE_ADDR
+            value: quote:0000
+          name: shipping
+        kubernetesObject:
+          apiVersion: apps/v1
+          kind: Deployment
+          metadata:
+            name: shipping
+            namespace: otel-demo
+      id: modified-kubernetes-workload-container-environment-variable
+  tools:
+    observability:
+      events:
+        enabled: true
+      logs:
+        enabled: true
+      metrics:
+        enabled: true
+      topology:
+        enabled: true
+      traces:
+        enabled: true

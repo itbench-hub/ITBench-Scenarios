@@ -1,0 +1,35 @@
+apiVersion: itbench.io/v1
+kind: ScenarioSpec
+metadata:
+  labels:
+    itbench.io/scenario-variant: none
+  name: scenario-30
+spec:
+  applications:
+  - otelDemo:
+      enabled: true
+      options:
+        autoscaling: false
+  faults:
+  - injections:
+    - args:
+        kubernetesObject:
+          apiVersion: v1
+          kind: Service
+          metadata:
+            name: ad
+            namespace: otel-demo
+        targetPort: 8080
+      id: modified-target-port-kubernetes-service
+  tools:
+    observability:
+      events:
+        enabled: true
+      logs:
+        enabled: true
+      metrics:
+        enabled: true
+      topology:
+        enabled: true
+      traces:
+        enabled: true
