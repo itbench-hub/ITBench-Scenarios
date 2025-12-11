@@ -1,0 +1,22 @@
+---
+- name: Manage SRE and FinOps Scenario Files
+  hosts:
+    - environment
+  tasks:
+    - name: Load scenarios library index
+      ansible.builtin.set_fact:
+        scenarios_library_index: "{{ lookup('ansible.builtin.file', index_file_path) | from_json }}"
+      vars:
+        index_file_path: "{{ playbook_dir }}/../roles/documentation/files/library/scenarios/index.json"
+
+    - name: Generate scenario specs
+      ansible.builtin.copy:
+        content: "{{ lookup('ansible.builtin.template', template_file_path) | from_yaml | to_nice_yaml(indent=2) }}"
+        dest: "{{ playbook_dir }}/../roles/scenarios/files/specs/scenario_{{ scenario.id }}.yaml"
+        mode: "0644"
+      loop: "{{ scenarios_library_index }}"
+      loop_control:
+        label: scenario-{{ scenario.id }}
+        loop_var: scenario
+      vars:
+        template_file_path: "{{ playbook_dir }}/../roles/scenarios/templates/spec.j2"

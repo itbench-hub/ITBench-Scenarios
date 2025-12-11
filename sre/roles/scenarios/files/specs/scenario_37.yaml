@@ -1,0 +1,28 @@
+apiVersion: itbench.io/v1
+kind: ScenarioSpec
+metadata:
+  labels:
+    itbench.io/scenario-variant: none
+  name: scenario-37
+spec:
+  applications:
+  - otelDemo:
+      enabled: true
+      options:
+        autoscaling: false
+  faults: []
+  tools:
+    costMonitoring:
+      opencost:
+        enabled: true
+    observability:
+      events:
+        enabled: true
+      logs:
+        enabled: true
+      metrics:
+        enabled: true
+      topology:
+        enabled: true
+      traces:
+        enabled: true

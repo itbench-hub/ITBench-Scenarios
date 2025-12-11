@@ -1,0 +1,37 @@
+apiVersion: itbench.io/v1
+kind: ScenarioSpec
+metadata:
+  labels:
+    itbench.io/scenario-variant: none
+  name: scenario-3
+spec:
+  applications:
+  - otelDemo:
+      enabled: true
+      options:
+        autoscaling: false
+  faults:
+  - injections:
+    - args:
+        flag:
+          name: adHighCpu
+          state: 'on'
+        kubernetesObject:
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: flagd-config
+            namespace: otel-demo
+      id: opentelemetry-demo-feature-flag
+  tools:
+    observability:
+      events:
+        enabled: true
+      logs:
+        enabled: true
+      metrics:
+        enabled: true
+      topology:
+        enabled: true
+      traces:
+        enabled: true
