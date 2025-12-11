@@ -17,15 +17,10 @@
 - name: Create ConfigMap with script
   kubernetes.core.k8s:
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: valkey-storage-script
-        namespace: "{{ spec.workload.namespace }}"
-      data:
-        script: "{{ lookup('ansible.builtin.file', 'files/scripts/valkey/fill-storage.sh') }}"
+    template: templates/valkey_fill_storage/configmap.j2
     state: present
+  vars:
+    bash_script_contents: "{{ lookup('ansible.builtin.file', 'files/valkey_fill_storage/fill-storage.sh') }}"
 
 - name: Add volume information to container
   ansible.builtin.set_fact:

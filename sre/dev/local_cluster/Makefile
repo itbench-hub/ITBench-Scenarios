@@ -33,7 +33,7 @@ run_gateway_provider: ## Runs Cloud Provider Kind for Kubernetes Gateway
 
 .PHONY: run_service_provider
 run_service_provider: ## Runs Cloud Provider Kind for Load Balancer services
-	$(GO) tool cloud-provider-kind --enable-lb-port-mapping
+	$(GO) tool cloud-provider-kind --enable-lb-port-mapping --gateway-channel disabled
 
 .PHONY: destroy_cluster
 destroy_cluster: ## Deletes a Kind cluster
