@@ -1,0 +1,106 @@
+---
+- name: Wait for checkout service deployment to be ready
+  kubernetes.core.k8s_info:
+    api_version: apps/v1
+    kind: "{{ spec.workload.kind }}"
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: "{{ spec.workload.name }}"
+    namespace: "{{ spec.workload.namespace }}"
+  register: faults_workload_info
+  until:
+    - faults_workload_info.resources | length > 0
+  retries: 30
+  delay: 10
+
+- name: Get pod labels from deployment
+  ansible.builtin.set_fact:
+    faults_pod_labels: "{{ faults_workload_info.resources[0].spec.selector.matchLabels }}"
+
+- name: Create restrictive PodDisruptionBudget
+  kubernetes.core.k8s:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: policy/v1
+      kind: PodDisruptionBudget
+      metadata:
+        name: "{{ spec.workload.name }}-pdb"
+        namespace: "{{ spec.workload.namespace }}"
+      spec:
+        minAvailable: "{{ spec.pdb.min_available }}"
+        selector:
+          matchLabels: "{{ faults_pod_labels }}"
+    state: present
+
+- name: Get payment pods with assigned nodes
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: Pod
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    namespace: "{{ spec.workload.namespace }}"
+    label_selectors:
+      - "app.kubernetes.io/name={{ spec.workload.name }}"
+  register: faults_checkout_pods
+  until:
+    - faults_checkout_pods.resources | length > 0
+    - faults_checkout_pods.resources[0].spec.nodeName is defined
+    - faults_checkout_pods.resources[0].spec.nodeName != ""
+  retries: 30
+  delay: 10
+
+- name: Extract node name from first pod
+  ansible.builtin.set_fact:
+    faults_target_node: "{{ faults_checkout_pods.resources[0].spec.nodeName }}"
+
+- name: Cordon the target node
+  kubernetes.core.k8s_json_patch:
+    api_version: v1
+    kind: Node
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    name: "{{ faults_target_node }}"
+    patch:
+      - op: replace
+        path: /spec/unschedulable
+        value: true
+
+- name: Apply CPU stress to target node
+  kubernetes.core.k8s:
+    kubeconfig: "{{ faults_cluster.kubeconfig }}"
+    resource_definition:
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: "node-stress-{{ faults_target_node }}"
+        namespace: "{{ spec.workload.namespace }}"
+      spec:
+        nodeName: "{{ faults_target_node }}"
+        containers:
+          - name: stress
+            image: polinux/stress
+            command: ["stress"]
+            args:
+              - "--cpu"
+              - "{{ (spec.node_stress.cpu_percent / 100 * 4) | int | string }}"
+              - "--timeout"
+              - "{{ spec.node_stress.duration_seconds | string }}s"
+            resources:
+              requests:
+                cpu: "100m"
+              limits:
+                cpu: "4000m"
+        restartPolicy: Never
+    state: present
+  when:
+    - spec.node_stress.enabled | default(false)
+
+- name: Attempt drain operation (will hang due to PDB)
+  ansible.builtin.command:
+    cmd: >
+      kubectl drain {{ faults_target_node }}
+      --kubeconfig={{ faults_cluster.kubeconfig }}
+      --ignore-daemonsets
+      --delete-emptydir-data
+      --timeout=60s
+      --force
+  register: faults_drain_result
+  failed_when: false
+  changed_when: faults_drain_result.rc == 0
