@@ -25,6 +25,15 @@
     label: fault/{{ fault.name }}
     loop_var: fault
 
+- name: Validate unique ids for all scenarios
+  ansible.builtin.assert:
+    that:
+      - (scenarios | unique(attribute="id") | length) == (scenarios | length)
+    fail_msg: Duplicate scenario id discovered in library index. Please ensure all scenarios have a unique id.
+    success_msg: All scenarios in library index have unique ids.
+  vars:
+    scenarios: "{{ lookup('ansible.builtin.template', 'templates/library/scenarios/index.j2') | from_yaml }}"
+
 - name: Generate variables for scenario library index templating
   ansible.builtin.set_fact:
     documentation_scenarios: |-
