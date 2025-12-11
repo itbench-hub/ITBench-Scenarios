@@ -20,14 +20,7 @@ scenario:
       - custom:
           name: pod-priority-eviction
           pod_priority_eviction:
-            target_workload:
+            workload:
               kind: Deployment
-              name: payment
+              name: kafka
               namespace: "{{ applications_helm_releases.otel_demo.namespace }}"
-            priority_class:
-              name: high-priority-eviction
-              value: 1000000
-            eviction_pods:
-              replicas: 6
-              cpu_request: "750m"
-              memory_request: "700Mi"
