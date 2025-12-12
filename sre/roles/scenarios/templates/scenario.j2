@@ -1,0 +1,20 @@
+---
+apiVersion: itbench.io/v1
+kind: Scenario
+metadata:
+  name: {{ ["scenario", scenario.id] | join("-") }}
+spec:
+  applications:
+{% for application in scenario.environment.applications %}
+{% if application.id == "book-info" %}
+    - bookInfo:
+        enabled: true
+        options: {}
+{% elif application.id == "opentelemetry-demo" %}
+    - otelDemo:
+        enabled: true
+        options:
+          autoscaling: false
+{% endif %}
+{% endfor %}
+  faults: {{ scenario.disruptions }}
