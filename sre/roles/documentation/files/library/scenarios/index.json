@@ -1804,7 +1804,7 @@
                 {
                     "steps": [
                         {
-                            "command": "kubectl -n otel-demo get resourcequota`",
+                            "command": "kubectl -n otel-demo get resourcequota",
                             "text": "Retrieve and review the configuration of the resource quota(s) in the affected namespace."
                         },
                         {

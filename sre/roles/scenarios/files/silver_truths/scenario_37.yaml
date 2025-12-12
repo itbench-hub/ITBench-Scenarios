@@ -1,0 +1,8 @@
+apiVersion: itbench.io/v1
+kind: SilverTruth
+metadata:
+  name: scenario-37
+spec:
+  alerts: []
+  entities: []
+  solutions: []
