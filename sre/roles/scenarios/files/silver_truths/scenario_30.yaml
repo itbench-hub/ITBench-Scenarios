@@ -1,0 +1,18 @@
+apiVersion: itbench.io/v1
+kind: SilverTruth
+metadata:
+  name: scenario-30
+spec:
+  alerts:
+  - HighRequestErrorRate
+  entities:
+  - apiVersion: v1
+    kind: Service
+    metadata:
+      name: ad
+      namespace: otel-demo
+  solutions:
+  - - steps:
+      - command: kubectl -n otel-demo edit service ad
+        text: Manually edit the manifest and replace the target port (8080) with the
+          correct value.

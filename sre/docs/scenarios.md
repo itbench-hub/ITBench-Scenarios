@@ -885,7 +885,7 @@ OR
 - Retrieve and review the configuration of the resource quota(s) in the affected namespace.
 
 ```shell
-kubectl -n otel-demo get resourcequota`
+kubectl -n otel-demo get resourcequota
 ```
 - Delete the offending resource quota(s) if it is no longer required.
 
