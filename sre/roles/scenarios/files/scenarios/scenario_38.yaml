@@ -35,18 +35,3 @@ spec:
                 name: image-provider
                 namespace: otel-demo
           id: misconfigured-kubernetes-horizontal-pod-autoscaler
-  tools:
-    costMonitoring:
-      opencost:
-        enabled: true
-    observability:
-      events:
-        enabled: true
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
-      topology:
-        enabled: true
-      traces:
-        enabled: true

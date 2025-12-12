@@ -18,32 +18,3 @@ spec:
 {% endif %}
 {% endfor %}
   faults: {{ scenario.disruptions }}
-  tools:
-{% if scenario.disruptions | community.general.json_query("[*].injections[?id=='scheduled-chaos-mesh-experiment']") | flatten | select() | length > 0 %}
-    chaosEngineering:
-      chaosMesh:
-        enabled: true
-{% endif %}
-{% if scenario.category == "finops" %}
-    costMonitoring:
-      opencost:
-        enabled: true
-{% endif %}
-{% if scenario.environment.applications | community.general.json_query("[?id=='book-info']") | length > 0 %}
-    networking:
-      istio:
-        enabled: true
-{% endif %}
-    observability:
-{% if "Kubernetes" in scenario.platforms %}
-      events:
-        enabled: true
-{% endif %}
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
-      topology:
-        enabled: true
-      traces:
-        enabled: true

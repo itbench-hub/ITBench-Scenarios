@@ -37,18 +37,3 @@ spec:
               schedule: "* * * * *"
               type: HTTPChaos
           id: scheduled-chaos-mesh-experiment
-  tools:
-    chaosEngineering:
-      chaosMesh:
-        enabled: true
-    observability:
-      events:
-        enabled: true
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
-      topology:
-        enabled: true
-      traces:
-        enabled: true

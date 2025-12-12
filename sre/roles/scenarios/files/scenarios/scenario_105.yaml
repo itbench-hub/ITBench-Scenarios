@@ -21,15 +21,3 @@ spec:
                 name: product-catalog
                 namespace: otel-demo
           id: invalid-kubernetes-workload-container-command
-  tools:
-    observability:
-      events:
-        enabled: true
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
-      topology:
-        enabled: true
-      traces:
-        enabled: true

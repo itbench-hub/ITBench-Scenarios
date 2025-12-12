@@ -17,18 +17,3 @@ spec:
               metadata:
                 name: bookinfo
           id: disabled-istio-ambient-mode-kubernetes-namespace
-  tools:
-    networking:
-      istio:
-        enabled: true
-    observability:
-      events:
-        enabled: true
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
-      topology:
-        enabled: true
-      traces:
-        enabled: true

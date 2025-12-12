@@ -20,15 +20,3 @@ spec:
                 namespace: otel-demo
             targetPort: 8080
           id: modified-target-port-kubernetes-service
-  tools:
-    observability:
-      events:
-        enabled: true
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
-      topology:
-        enabled: true
-      traces:
-        enabled: true

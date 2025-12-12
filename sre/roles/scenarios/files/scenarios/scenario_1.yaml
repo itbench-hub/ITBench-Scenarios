@@ -22,15 +22,3 @@ spec:
                 name: flagd-config
                 namespace: otel-demo
           id: opentelemetry-demo-feature-flag
-  tools:
-    observability:
-      events:
-        enabled: true
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
-      topology:
-        enabled: true
-      traces:
-        enabled: true

@@ -46,18 +46,3 @@ spec:
                     workers: 10
               type: StressChaos
           id: scheduled-chaos-mesh-experiment
-  tools:
-    chaosEngineering:
-      chaosMesh:
-        enabled: true
-    observability:
-      events:
-        enabled: true
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
-      topology:
-        enabled: true
-      traces:
-        enabled: true

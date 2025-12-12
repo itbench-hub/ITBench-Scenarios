@@ -21,15 +21,3 @@ spec:
                 name: checkout
                 namespace: otel-demo
           id: unsupported-architecture-kubernetes-workload-container-image
-  tools:
-    observability:
-      events:
-        enabled: true
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
-      topology:
-        enabled: true
-      traces:
-        enabled: true

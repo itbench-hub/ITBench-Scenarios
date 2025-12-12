@@ -21,15 +21,3 @@ spec:
                 name: frontend
                 namespace: otel-demo
           id: misconfigured-kuberntes-workload-container-readiness-probe
-  tools:
-    observability:
-      events:
-        enabled: true
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
-      topology:
-        enabled: true
-      traces:
-        enabled: true

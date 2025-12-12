@@ -19,15 +19,3 @@ spec:
                 name: kafka
                 namespace: otel-demo
           id: priority-kubernetes-workload-priority-preemption
-  tools:
-    observability:
-      events:
-        enabled: true
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
-      topology:
-        enabled: true
-      traces:
-        enabled: true

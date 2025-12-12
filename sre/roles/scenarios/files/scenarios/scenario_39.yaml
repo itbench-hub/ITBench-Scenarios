@@ -19,15 +19,3 @@ spec:
                 name: payment
                 namespace: otel-demo
           id: cordoned-kubernetes-worker-node
-  tools:
-    observability:
-      events:
-        enabled: true
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
-      topology:
-        enabled: true
-      traces:
-        enabled: true
