@@ -2,6 +2,7 @@ type: array
 items:
   type: object
   required:
+    - alerts
     - category
     - complexity
     - disruptions
@@ -10,6 +11,10 @@ items:
     - platforms
     - tags
   properties:
+    alerts:
+      type: array
+      items:
+        type: string
     category:
       type: string
       enum:
@@ -67,7 +72,7 @@ items:
               id:
                 type: string
                 enum:
-                  - bookinfo
+                  - book-info
                   - opentelemetry-demo
     id:
       type: integer
@@ -75,8 +80,6 @@ items:
       type: array
       items:
         type: string
-        enum:
-          - Kubernetes
     solutions:
       type: array
       items:
@@ -101,8 +104,3 @@ items:
       type: array
       items:
         type: string
-        enum:
-          - Authentication
-          - Deployment
-          - Networking
-          - Performance
