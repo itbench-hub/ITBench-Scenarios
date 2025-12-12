@@ -12,11 +12,23 @@
     - name: Generate scenario specs
       ansible.builtin.copy:
         content: "{{ lookup('ansible.builtin.template', template_file_path) | from_yaml | to_nice_yaml(indent=2) }}"
-        dest: "{{ playbook_dir }}/../roles/scenarios/files/specs/scenario_{{ scenario.id }}.yaml"
+        dest: "{{ playbook_dir }}/../roles/scenarios/files/scenarios/scenario_{{ scenario.id }}.yaml"
         mode: "0644"
       loop: "{{ scenarios_library_index }}"
       loop_control:
         label: scenario-{{ scenario.id }}
         loop_var: scenario
       vars:
-        template_file_path: "{{ playbook_dir }}/../roles/scenarios/templates/spec.j2"
+        template_file_path: "{{ playbook_dir }}/../roles/scenarios/templates/scenario.j2"
+
+    - name: Generate scenario silver truths
+      ansible.builtin.copy:
+        content: "{{ lookup('ansible.builtin.template', template_file_path) | from_yaml | to_nice_yaml(indent=2) }}"
+        dest: "{{ playbook_dir }}/../roles/scenarios/files/silver_truths/scenario_{{ scenario.id }}.yaml"
+        mode: "0644"
+      loop: "{{ scenarios_library_index }}"
+      loop_control:
+        label: scenario-{{ scenario.id }}
+        loop_var: scenario
+      vars:
+        template_file_path: "{{ playbook_dir }}/../roles/scenarios/templates/silvertruth.j2"
