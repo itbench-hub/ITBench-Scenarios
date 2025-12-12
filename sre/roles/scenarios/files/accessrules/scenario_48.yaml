@@ -1,0 +1,16 @@
+---
+apiVersion: itbench.io/v1
+kind: AccessRule
+metadata:
+  name: scenario-48-agent
+spec:
+  endpoints:
+    logs:
+      enabled: true
+    metrics:
+      enabled: true
+    topology:
+      enabled: true
+    traces:
+      enabled: true
+  namespaces:

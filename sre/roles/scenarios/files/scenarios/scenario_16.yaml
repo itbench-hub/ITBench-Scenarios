@@ -2,8 +2,6 @@
 apiVersion: itbench.io/v1
 kind: Scenario
 metadata:
-  labels:
-    itbench.io/scenario-variant: none
   name: scenario-16
 spec:
   applications:
