@@ -1,18 +1,18 @@
+---
 apiVersion: itbench.io/v1
 kind: SilverTruth
 metadata:
   name: scenario-34
 spec:
   alerts:
-  - HighRequestLatency
+    - HighRequestLatency
   entities:
-  - apiVersion: apps/v1
-    kind: Deployment
-    metadata:
-      name: valkey-cart
-      namespace: otel-demo
+    - apiVersion: apps/v1
+      kind: Deployment
+      metadata:
+        name: valkey-cart
+        namespace: otel-demo
   solutions:
-  - - steps:
-      - command: kubectl -n otel-demo exec deployment/valkey-cart -- valkey-cli CONFIG
-          SET requirepass ''
-        text: Change the password back to the original by access the pod directly.
+    - - steps:
+          - command: kubectl -n otel-demo exec deployment/valkey-cart -- valkey-cli CONFIG SET requirepass ''
+            text: Change the password back to the original by access the pod directly.

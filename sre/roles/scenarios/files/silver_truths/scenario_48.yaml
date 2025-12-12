@@ -1,17 +1,17 @@
+---
 apiVersion: itbench.io/v1
 kind: SilverTruth
 metadata:
   name: scenario-48
 spec:
   alerts:
-  - NoRequestsReceived
+    - NoRequestsReceived
   entities:
-  - apiVersion: v1
-    kind: Namespace
-    metadata:
-      name: bookinfo
+    - apiVersion: v1
+      kind: Namespace
+      metadata:
+        name: bookinfo
   solutions:
-  - - steps:
-      - command: kubectl -n bookinfo edit namespace bookinfo-deny
-        text: Manually edit the manifest and replace the invalid label with the correct
-          value.
+    - - steps:
+          - command: kubectl -n bookinfo edit namespace bookinfo-deny
+            text: Manually edit the manifest and replace the invalid label with the correct value.

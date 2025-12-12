@@ -1,3 +1,4 @@
+---
 apiVersion: itbench.io/v1
 kind: Scenario
 metadata:
@@ -6,28 +7,28 @@ metadata:
   name: scenario-33
 spec:
   applications:
-  - otelDemo:
-      enabled: true
-      options:
-        autoscaling: false
+    - otelDemo:
+        enabled: true
+        options:
+          autoscaling: false
   faults:
-  - injections:
-    - args:
-        kubernetesObject:
-          apiVersion: apps/v1
-          kind: Deployment
-          metadata:
-            name: ad
-            namespace: otel-demo
-      id: nonexistent-kubernetes-workload-node
-    - args:
-        kubernetesObject:
-          apiVersion: apps/v1
-          kind: Deployment
-          metadata:
-            name: cart
-            namespace: otel-demo
-      id: nonexistent-kubernetes-workload-node
+    - injections:
+        - args:
+            kubernetesObject:
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: ad
+                namespace: otel-demo
+          id: nonexistent-kubernetes-workload-node
+        - args:
+            kubernetesObject:
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: cart
+                namespace: otel-demo
+          id: nonexistent-kubernetes-workload-node
   tools:
     observability:
       events:
