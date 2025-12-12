@@ -63,7 +63,7 @@
                             },
                             "type": "array"
                         },
-                        "waitConditions": {
+                        "waitFor": {
                             "items": {
                                 "properties": {
                                     "args": {

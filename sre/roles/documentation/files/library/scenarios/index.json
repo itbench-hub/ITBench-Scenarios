@@ -666,6 +666,24 @@
                 {
                     "steps": [
                         {
+                            "command": "kubectl -n otel-demo rollout undo deployment/ad",
+                            "text": "Revert the last change done to the manifest."
+                        }
+                    ]
+                },
+                {
+                    "steps": [
+                        {
+                            "command": "kubectl -n otel-demo edit deployment ad",
+                            "text": "Manually edit the manifest and replace the node selector with the correct value."
+                        }
+                    ]
+                }
+            ],
+            [
+                {
+                    "steps": [
+                        {
                             "command": "kubectl -n otel-demo rollout undo deployment/cart",
                             "text": "Revert the last change done to the manifest."
                         }
@@ -820,6 +838,26 @@
             "Kubernetes"
         ],
         "solutions": [
+            [
+                {
+                    "steps": [
+                        {
+                            "command": "kubectl -n otel-demo edit horizontalpodautoscaler fraud-detection",
+                            "text": "Manually edit the manifest and replace the utilization values with the correct values."
+                        }
+                    ]
+                }
+            ],
+            [
+                {
+                    "steps": [
+                        {
+                            "command": "kubectl -n otel-demo edit horizontalpodautoscaler frontend",
+                            "text": "Manually edit the manifest and replace the utilization values with the correct values."
+                        }
+                    ]
+                }
+            ],
             [
                 {
                     "steps": [
