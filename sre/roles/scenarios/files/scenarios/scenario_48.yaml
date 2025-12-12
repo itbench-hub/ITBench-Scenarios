@@ -1,3 +1,4 @@
+---
 apiVersion: itbench.io/v1
 kind: Scenario
 metadata:
@@ -6,18 +7,18 @@ metadata:
   name: scenario-48
 spec:
   applications:
-  - bookInfo:
-      enabled: true
-      options: {}
+    - bookInfo:
+        enabled: true
+        options: {}
   faults:
-  - injections:
-    - args:
-        kubernetesObject:
-          apiVersion: v1
-          kind: Namespace
-          metadata:
-            name: bookinfo
-      id: disabled-istio-ambient-mode-kubernetes-namespace
+    - injections:
+        - args:
+            kubernetesObject:
+              apiVersion: v1
+              kind: Namespace
+              metadata:
+                name: bookinfo
+          id: disabled-istio-ambient-mode-kubernetes-namespace
   tools:
     networking:
       istio:

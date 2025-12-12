@@ -1,26 +1,26 @@
+---
 apiVersion: itbench.io/v1
 kind: SilverTruth
 metadata:
   name: scenario-47
 spec:
   alerts:
-  - NoRequestsReceived
+    - NoRequestsReceived
   entities:
-  - apiVersion: gateway.networking.k8s.io
-    kind: Gateway
-    metadata:
-      name: bookinfo-gateway
-      namespace: bookinfo
-  - apiVersion: security.istio.io/v1
-    kind: AuthorizationPolicy
-    metadata:
-      name: bookinfo-gateway-deny
-      namespace: bookinfo
+    - apiVersion: gateway.networking.k8s.io
+      kind: Gateway
+      metadata:
+        name: bookinfo-gateway
+        namespace: bookinfo
+    - apiVersion: security.istio.io/v1
+      kind: AuthorizationPolicy
+      metadata:
+        name: bookinfo-gateway-deny
+        namespace: bookinfo
   solutions:
-  - - steps:
-      - command: kubectl -n bookinfo edit authorizationpolicy bookinfo-gateway-deny
-        text: Manually edit the manifest and replace the invalid rule with the correct
-          value.
-    - steps:
-      - command: kubectl -n bookinfo delete authorizationpolicy bookinfo-gateway-deny
-        text: Delete the faulty authorization policy.
+    - - steps:
+          - command: kubectl -n bookinfo edit authorizationpolicy bookinfo-gateway-deny
+            text: Manually edit the manifest and replace the invalid rule with the correct value.
+      - steps:
+          - command: kubectl -n bookinfo delete authorizationpolicy bookinfo-gateway-deny
+            text: Delete the faulty authorization policy.

@@ -1,3 +1,4 @@
+---
 apiVersion: itbench.io/v1
 kind: Scenario
 metadata:
@@ -6,20 +7,20 @@ metadata:
   name: scenario-39
 spec:
   applications:
-  - otelDemo:
-      enabled: true
-      options:
-        autoscaling: false
+    - otelDemo:
+        enabled: true
+        options:
+          autoscaling: false
   faults:
-  - injections:
-    - args:
-        kubernetesObject:
-          apiVersion: apps/v1
-          kind: Deployment
-          metadata:
-            name: payment
-            namespace: otel-demo
-      id: cordoned-kubernetes-worker-node
+    - injections:
+        - args:
+            kubernetesObject:
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: payment
+                namespace: otel-demo
+          id: cordoned-kubernetes-worker-node
   tools:
     observability:
       events:

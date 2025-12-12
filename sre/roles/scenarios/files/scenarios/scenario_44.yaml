@@ -1,3 +1,4 @@
+---
 apiVersion: itbench.io/v1
 kind: Scenario
 metadata:
@@ -6,20 +7,20 @@ metadata:
   name: scenario-44
 spec:
   applications:
-  - otelDemo:
-      enabled: true
-      options:
-        autoscaling: false
+    - otelDemo:
+        enabled: true
+        options:
+          autoscaling: false
   faults:
-  - injections:
-    - args:
-        kubernetesObject:
-          apiVersion: apps/v1
-          kind: Deployment
-          metadata:
-            name: payment
-            namespace: otel-demo
-      id: unschedueable-kuberntes-workload-pod-anti-affinity-rule
+    - injections:
+        - args:
+            kubernetesObject:
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: payment
+                namespace: otel-demo
+          id: unschedueable-kuberntes-workload-pod-anti-affinity-rule
   tools:
     observability:
       events:
