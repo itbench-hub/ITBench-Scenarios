@@ -1,3 +1,4 @@
+---
 apiVersion: itbench.io/v1
 kind: Scenario
 metadata:
@@ -6,20 +7,20 @@ metadata:
   name: scenario-34
 spec:
   applications:
-  - otelDemo:
-      enabled: true
-      options:
-        autoscaling: false
+    - otelDemo:
+        enabled: true
+        options:
+          autoscaling: false
   faults:
-  - injections:
-    - args:
-        kubernetesObject:
-          apiVersion: apps/v1
-          kind: Deployment
-          metadata:
-            name: valkey-cart
-            namespace: otel-demo
-      id: invalid-valkey-password
+    - injections:
+        - args:
+            kubernetesObject:
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: valkey-cart
+                namespace: otel-demo
+          id: invalid-valkey-password
   tools:
     observability:
       events:

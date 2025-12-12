@@ -1,3 +1,4 @@
+---
 apiVersion: itbench.io/v1
 kind: Scenario
 metadata:
@@ -6,22 +7,22 @@ metadata:
   name: scenario-49
 spec:
   applications:
-  - otelDemo:
-      enabled: true
-      options:
-        autoscaling: false
+    - otelDemo:
+        enabled: true
+        options:
+          autoscaling: false
   faults:
-  - injections:
-    - args:
-        container:
-          name: frontend
-        kubernetesObject:
-          apiVersion: apps/v1
-          kind: Deployment
-          metadata:
-            name: frontend
-            namespace: otel-demo
-      id: misconfigured-kuberntes-workload-container-readiness-probe
+    - injections:
+        - args:
+            container:
+              name: frontend
+            kubernetesObject:
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: frontend
+                namespace: otel-demo
+          id: misconfigured-kuberntes-workload-container-readiness-probe
   tools:
     observability:
       events:

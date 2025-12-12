@@ -1,3 +1,4 @@
+---
 apiVersion: itbench.io/v1
 kind: Scenario
 metadata:
@@ -6,22 +7,22 @@ metadata:
   name: scenario-46
 spec:
   applications:
-  - otelDemo:
-      enabled: true
-      options:
-        autoscaling: false
+    - otelDemo:
+        enabled: true
+        options:
+          autoscaling: false
   faults:
-  - injections:
-    - args:
-        container:
-          name: postgresql
-        kubernetesObject:
-          apiVersion: apps/v1
-          kind: Deployment
-          metadata:
-            name: postgresql
-            namespace: otel-demo
-      id: insufficent-kubernetes-workload-container-resources
+    - injections:
+        - args:
+            container:
+              name: postgresql
+            kubernetesObject:
+              apiVersion: apps/v1
+              kind: Deployment
+              metadata:
+                name: postgresql
+                namespace: otel-demo
+          id: insufficent-kubernetes-workload-container-resources
   tools:
     observability:
       events:
