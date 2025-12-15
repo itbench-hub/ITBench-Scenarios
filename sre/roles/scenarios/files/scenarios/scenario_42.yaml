@@ -20,6 +20,9 @@ spec:
                 namespace: otel-demo
           id: priority-kubernetes-workload-priority-preemption
   tools:
+    networking:
+      istio:
+        enabled: true
     observability:
       events:
         enabled: true

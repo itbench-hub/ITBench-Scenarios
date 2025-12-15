@@ -22,6 +22,9 @@ spec:
                 namespace: otel-demo
           id: valkey-workload-out-of-memory
   tools:
+    networking:
+      istio:
+        enabled: true
     observability:
       events:
         enabled: true

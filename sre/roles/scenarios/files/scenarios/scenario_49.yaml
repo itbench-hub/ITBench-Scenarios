@@ -22,6 +22,9 @@ spec:
                 namespace: otel-demo
           id: misconfigured-kuberntes-workload-container-readiness-probe
   tools:
+    networking:
+      istio:
+        enabled: true
     observability:
       events:
         enabled: true

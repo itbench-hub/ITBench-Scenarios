@@ -19,19 +19,27 @@
         label: scenario-{{ scenario.id }}
         loop_var: scenario
       vars:
+        chaos_mesh_fault_count: |-
+          {{
+            scenario.disruptions |
+            community.general.json_query("[*].injections[?id=='scheduled-chaos-mesh-experiment']") |
+            flatten |
+            select() |
+            length
+          }}
         template_file_path: "{{ playbook_dir }}/../roles/scenarios/templates/scenario.j2"
 
-    - name: Generate scenario silver truths
+    - name: Generate scenario ground truths
       ansible.builtin.copy:
         content: "{{ lookup('ansible.builtin.template', template_file_path) | from_yaml | to_nice_yaml(indent=2) }}"
-        dest: "{{ playbook_dir }}/../roles/scenarios/files/silver_truths/scenario_{{ scenario.id }}.yaml"
+        dest: "{{ playbook_dir }}/../roles/scenarios/files/ground_truths/scenario_{{ scenario.id }}.yaml"
         mode: "0644"
       loop: "{{ scenarios_library_index }}"
       loop_control:
         label: scenario-{{ scenario.id }}
         loop_var: scenario
       vars:
-        template_file_path: "{{ playbook_dir }}/../roles/scenarios/templates/silvertruth.j2"
+        template_file_path: "{{ playbook_dir }}/../roles/scenarios/templates/groundtruth.j2"
 
     - name: Generate scenario access rules
       ansible.builtin.copy:

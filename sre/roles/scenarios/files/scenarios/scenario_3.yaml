@@ -23,6 +23,9 @@ spec:
                 namespace: otel-demo
           id: opentelemetry-demo-feature-flag
   tools:
+    networking:
+      istio:
+        enabled: true
     observability:
       events:
         enabled: true

@@ -22,6 +22,9 @@ spec:
                 namespace: otel-demo
           id: invalid-kubernetes-workload-container-command
   tools:
+    networking:
+      istio:
+        enabled: true
     observability:
       events:
         enabled: true

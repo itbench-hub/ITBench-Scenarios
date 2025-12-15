@@ -25,6 +25,9 @@ spec:
                 namespace: otel-demo
           id: modified-kubernetes-workload-container-environment-variable
   tools:
+    networking:
+      istio:
+        enabled: true
     observability:
       events:
         enabled: true

@@ -20,6 +20,9 @@ spec:
                 namespace: otel-demo
           id: insufficent-kubernetes-resource-quota
   tools:
+    networking:
+      istio:
+        enabled: true
     observability:
       events:
         enabled: true
