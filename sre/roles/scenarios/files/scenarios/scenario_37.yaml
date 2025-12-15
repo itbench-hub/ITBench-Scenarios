@@ -11,19 +11,13 @@ spec:
           autoscaling: false
   faults: []
   tools:
+    chaosEngineering:
+      chaosMesh:
+        enabled: false
     costMonitoring:
       opencost:
         enabled: true
-    networking:
-      istio:
-        enabled: true
     observability:
-      events:
-        enabled: true
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
       topology:
         enabled: true
       traces:

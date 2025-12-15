@@ -19,28 +19,13 @@ spec:
 {% endfor %}
   faults: {{ scenario.disruptions }}
   tools:
-{% if chaos_mesh_fault_count > 0 %}
     chaosEngineering:
       chaosMesh:
-        enabled: true
-{% endif %}
-{% if scenario.category == "finops" %}
+        enabled: {{ chaos_mesh_fault_count > 0 }}
     costMonitoring:
       opencost:
-        enabled: true
-{% endif %}
-    networking:
-      istio:
-        enabled: true
+        enabled: {{ scenario.category == "finops" }}
     observability:
-{% if "Kubernetes" in scenario.platforms %}
-      events:
-        enabled: true
-{% endif %}
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
       topology:
         enabled: true
       traces:

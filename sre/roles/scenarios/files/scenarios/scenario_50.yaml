@@ -19,16 +19,13 @@ spec:
                 namespace: bookinfo
           id: strict-mutual-tls-istio-service-mesh-enforcement
   tools:
-    networking:
-      istio:
-        enabled: true
+    chaosEngineering:
+      chaosMesh:
+        enabled: false
+    costMonitoring:
+      opencost:
+        enabled: false
     observability:
-      events:
-        enabled: true
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
       topology:
         enabled: true
       traces:
