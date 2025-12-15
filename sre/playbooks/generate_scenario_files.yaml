@@ -9,10 +9,20 @@
       vars:
         index_file_path: "{{ playbook_dir }}/../roles/documentation/files/library/scenarios/index.json"
 
+    - name: Generate scenario directories
+      ansible.builtin.file:
+        mode: "0755"
+        path: "{{ playbook_dir }}/../roles/scenarios/files/scenario_{{ scenario.id }}"
+        state: directory
+      loop: "{{ scenarios_library_index }}"
+      loop_control:
+        label: scenario-{{ scenario.id }}
+        loop_var: scenario
+
     - name: Generate scenario specs
       ansible.builtin.copy:
         content: "{{ lookup('ansible.builtin.template', template_file_path) | from_yaml | to_nice_yaml(indent=2) }}"
-        dest: "{{ playbook_dir }}/../roles/scenarios/files/scenarios/scenario_{{ scenario.id }}.yaml"
+        dest: "{{ playbook_dir }}/../roles/scenarios/files/scenario_{{ scenario.id }}/scenario.yaml"
         mode: "0644"
       loop: "{{ scenarios_library_index }}"
       loop_control:
@@ -32,7 +42,7 @@
     - name: Generate scenario ground truths
       ansible.builtin.copy:
         content: "{{ lookup('ansible.builtin.template', template_file_path) | from_yaml | to_nice_yaml(indent=2) }}"
-        dest: "{{ playbook_dir }}/../roles/scenarios/files/ground_truths/scenario_{{ scenario.id }}.yaml"
+        dest: "{{ playbook_dir }}/../roles/scenarios/files/scenario_{{ scenario.id }}/groundtruth.yaml"
         mode: "0644"
       loop: "{{ scenarios_library_index }}"
       loop_control:
@@ -44,7 +54,7 @@
     - name: Generate scenario access rules
       ansible.builtin.copy:
         content: "{{ lookup('ansible.builtin.template', template_file_path) | from_yaml | to_nice_yaml(indent=2) }}"
-        dest: "{{ playbook_dir }}/../roles/scenarios/files/accessrules/scenario_{{ scenario.id }}.yaml"
+        dest: "{{ playbook_dir }}/../roles/scenarios/files/scenario_{{ scenario.id }}/accessrule.yaml"
         mode: "0644"
       loop: "{{ scenarios_library_index }}"
       loop_control:
