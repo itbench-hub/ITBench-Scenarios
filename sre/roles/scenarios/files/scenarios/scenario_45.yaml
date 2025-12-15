@@ -20,16 +20,13 @@ spec:
                 namespace: otel-demo
           id: hanging-kubernetes-workload-init-container
   tools:
-    networking:
-      istio:
-        enabled: true
+    chaosEngineering:
+      chaosMesh:
+        enabled: false
+    costMonitoring:
+      opencost:
+        enabled: false
     observability:
-      events:
-        enabled: true
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
       topology:
         enabled: true
       traces:

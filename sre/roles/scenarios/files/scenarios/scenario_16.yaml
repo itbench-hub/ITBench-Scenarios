@@ -25,16 +25,13 @@ spec:
                 namespace: otel-demo
           id: modified-kubernetes-workload-container-environment-variable
   tools:
-    networking:
-      istio:
-        enabled: true
+    chaosEngineering:
+      chaosMesh:
+        enabled: false
+    costMonitoring:
+      opencost:
+        enabled: false
     observability:
-      events:
-        enabled: true
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
       topology:
         enabled: true
       traces:

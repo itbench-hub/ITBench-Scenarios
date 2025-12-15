@@ -41,16 +41,10 @@ spec:
     chaosEngineering:
       chaosMesh:
         enabled: true
-    networking:
-      istio:
-        enabled: true
+    costMonitoring:
+      opencost:
+        enabled: false
     observability:
-      events:
-        enabled: true
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
       topology:
         enabled: true
       traces:

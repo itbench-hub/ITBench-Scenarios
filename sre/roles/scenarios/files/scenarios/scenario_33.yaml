@@ -28,16 +28,13 @@ spec:
                 namespace: otel-demo
           id: nonexistent-kubernetes-workload-node
   tools:
-    networking:
-      istio:
-        enabled: true
+    chaosEngineering:
+      chaosMesh:
+        enabled: false
+    costMonitoring:
+      opencost:
+        enabled: false
     observability:
-      events:
-        enabled: true
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
       topology:
         enabled: true
       traces:

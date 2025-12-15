@@ -21,16 +21,13 @@ spec:
             targetPort: 8080
           id: modified-target-port-kubernetes-service
   tools:
-    networking:
-      istio:
-        enabled: true
+    chaosEngineering:
+      chaosMesh:
+        enabled: false
+    costMonitoring:
+      opencost:
+        enabled: false
     observability:
-      events:
-        enabled: true
-      logs:
-        enabled: true
-      metrics:
-        enabled: true
       topology:
         enabled: true
       traces:
