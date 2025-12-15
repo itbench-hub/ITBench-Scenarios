@@ -20,6 +20,9 @@ spec:
                 namespace: otel-demo
           id: unschedueable-kuberntes-workload-pod-anti-affinity-rule
   tools:
+    networking:
+      istio:
+        enabled: true
     observability:
       events:
         enabled: true

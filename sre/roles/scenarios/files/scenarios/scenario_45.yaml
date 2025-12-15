@@ -20,6 +20,9 @@ spec:
                 namespace: otel-demo
           id: hanging-kubernetes-workload-init-container
   tools:
+    networking:
+      istio:
+        enabled: true
     observability:
       events:
         enabled: true

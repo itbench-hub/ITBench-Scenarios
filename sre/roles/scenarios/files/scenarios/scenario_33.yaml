@@ -28,6 +28,9 @@ spec:
                 namespace: otel-demo
           id: nonexistent-kubernetes-workload-node
   tools:
+    networking:
+      istio:
+        enabled: true
     observability:
       events:
         enabled: true

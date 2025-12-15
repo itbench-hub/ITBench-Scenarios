@@ -20,6 +20,9 @@ spec:
                 namespace: otel-demo
           id: cordoned-kubernetes-worker-node
   tools:
+    networking:
+      istio:
+        enabled: true
     observability:
       events:
         enabled: true

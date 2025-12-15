@@ -19,7 +19,7 @@ spec:
 {% endfor %}
   faults: {{ scenario.disruptions }}
   tools:
-{% if scenario.disruptions | community.general.json_query("[*].injections[?id=='scheduled-chaos-mesh-experiment']") | flatten | select() | length > 0 %}
+{% if chaos_mesh_fault_count > 0 %}
     chaosEngineering:
       chaosMesh:
         enabled: true
@@ -29,11 +29,9 @@ spec:
       opencost:
         enabled: true
 {% endif %}
-{% if scenario.environment.applications | community.general.json_query("[?id=='book-info']") | length > 0 %}
     networking:
       istio:
         enabled: true
-{% endif %}
     observability:
 {% if "Kubernetes" in scenario.platforms %}
       events:

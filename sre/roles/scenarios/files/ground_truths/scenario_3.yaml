@@ -1,6 +1,6 @@
 ---
 apiVersion: itbench.io/v1
-kind: SilverTruth
+kind: GroundTruth
 metadata:
   name: scenario-3
 spec:

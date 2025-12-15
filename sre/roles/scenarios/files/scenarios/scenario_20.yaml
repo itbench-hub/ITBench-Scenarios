@@ -22,6 +22,9 @@ spec:
                 namespace: otel-demo
           id: nonexistent-kubernetes-workload-container-image
   tools:
+    networking:
+      istio:
+        enabled: true
     observability:
       events:
         enabled: true

@@ -21,6 +21,9 @@ spec:
             targetPort: 8080
           id: modified-target-port-kubernetes-service
   tools:
+    networking:
+      istio:
+        enabled: true
     observability:
       events:
         enabled: true

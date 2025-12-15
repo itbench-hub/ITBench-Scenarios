@@ -20,6 +20,9 @@ spec:
                 namespace: otel-demo
           id: failing-name-resolution-kubernetes-workload-dns-policy
   tools:
+    networking:
+      istio:
+        enabled: true
     observability:
       events:
         enabled: true

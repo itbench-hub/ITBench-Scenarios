@@ -39,6 +39,9 @@ spec:
     costMonitoring:
       opencost:
         enabled: true
+    networking:
+      istio:
+        enabled: true
     observability:
       events:
         enabled: true
