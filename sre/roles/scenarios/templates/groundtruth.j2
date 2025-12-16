@@ -4,7 +4,15 @@ kind: GroundTruth
 metadata:
   name: {{ ["scenario", scenario.id] | join("-") }}
 spec:
-  alerts: {{ scenario.alerts }}
+{% if scenario.alerts | length == 0 %}
+  alerts: []
+{% else %}
+  alerts:
+{% for alert in scenario.alerts %}
+    - name: {{ alert }}
+      labels: {}
+{% endfor %}
+{% endif %}
 {% if scenario.disruptions | length == 0 %}
   entities: []
 {% else %}

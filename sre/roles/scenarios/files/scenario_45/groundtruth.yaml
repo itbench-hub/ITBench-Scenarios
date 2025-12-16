@@ -5,7 +5,8 @@ metadata:
   name: scenario-45
 spec:
   alerts:
-    - KubeContainerWaiting
+    - labels: {}
+      name: KubeContainerWaiting
   entities:
     - apiVersion: apps/v1
       kind: Deployment

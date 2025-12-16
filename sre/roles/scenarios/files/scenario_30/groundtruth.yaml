@@ -5,7 +5,8 @@ metadata:
   name: scenario-30
 spec:
   alerts:
-    - HighRequestErrorRate
+    - labels: {}
+      name: HighRequestErrorRate
   entities:
     - apiVersion: v1
       kind: Service

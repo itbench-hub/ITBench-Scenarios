@@ -5,7 +5,8 @@ metadata:
   name: scenario-46
 spec:
   alerts:
-    - KubePodCrashLooping
+    - labels: {}
+      name: KubePodCrashLooping
   entities:
     - apiVersion: apps/v1
       kind: Deployment
