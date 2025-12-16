@@ -5,6 +5,12 @@
   tags:
     - generate_docs
 
+- name: Import waiters docs generation tasks
+  ansible.builtin.import_tasks:
+    file: generate_waiters_docs.yaml
+  tags:
+    - generate_docs
+
 - name: Import scenarios docs generation tasks
   ansible.builtin.import_tasks:
     file: generate_scenarios_docs.yaml
@@ -14,6 +20,12 @@
 - name: Import faults docs validation tasks
   ansible.builtin.import_tasks:
     file: validate_faults_docs.yaml
+  tags:
+    - validate_docs
+
+- name: Import waiters docs generation tasks
+  ansible.builtin.import_tasks:
+    file: validate_waiters_docs.yaml
   tags:
     - validate_docs
 

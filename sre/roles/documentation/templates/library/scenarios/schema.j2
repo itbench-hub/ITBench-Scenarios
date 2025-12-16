@@ -54,6 +54,7 @@ items:
               properties:
                 id:
                   type: string
+                  enum: {{ documentation_waiters.keys() }}
                 args:
                   type: object
     environment:
