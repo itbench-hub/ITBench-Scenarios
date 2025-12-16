@@ -1,5 +1,5 @@
 ---
-apiVersion: itbench.io/v1
+apiVersion: itbench.io/v2
 kind: AccessRule
 metadata:
   name: scenario-102-agent
