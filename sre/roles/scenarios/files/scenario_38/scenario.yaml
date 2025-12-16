@@ -8,7 +8,7 @@ spec:
     - otelDemo:
         enabled: true
         options:
-          autoscaling: false
+          autoscaling: true
   faults:
     - injections:
         - args:

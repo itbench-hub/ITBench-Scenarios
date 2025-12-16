@@ -14,7 +14,7 @@ spec:
     - otelDemo:
         enabled: true
         options:
-          autoscaling: false
+          autoscaling: {{ scenario.category == "finops" }}
 {% endif %}
 {% endfor %}
   faults: {{ scenario.disruptions }}
