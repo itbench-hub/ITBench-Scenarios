@@ -5,7 +5,8 @@
         "required": [
             "arguments",
             "description",
-            "name"
+            "name",
+            "platform"
         ],
         "properties": {
             "arguments": {
@@ -24,6 +25,13 @@
             },
             "name": {
                 "type": "string"
+            },
+            "platform": {
+                "type": "string",
+                "enum": [
+                    "Any",
+                    "Kubernetes"
+                ]
             }
         }
     }

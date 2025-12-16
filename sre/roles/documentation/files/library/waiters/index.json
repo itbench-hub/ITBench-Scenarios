@@ -16,7 +16,8 @@
         },
         "description": "Pauses for the requested number of seconds.",
         "id": "pause-execution",
-        "name": "Pause Execution"
+        "name": "Pause Execution",
+        "platform": "Any"
     },
     {
         "arguments": {
@@ -75,6 +76,7 @@
         },
         "description": "Waits for a Kubernetes workload to scale to the requested number of replicas.",
         "id": "scale-kubernetes-workload",
-        "name": "Scale Kubernetes Workload"
+        "name": "Scale Kubernetes Workload",
+        "platform": "Kubernetes"
     }
 ]

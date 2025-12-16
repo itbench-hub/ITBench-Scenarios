@@ -5,10 +5,10 @@
 
 A waiter is an action that will occur before an injection.
 
-| Name |
-| --- |
+| Name | Platform |
+| --- | --- |
 {% for content in documentation_contents %}
-| [{{ content.name }}](#{{ content.name | split | join('-') }}) |
+| [{{ content.name }}](#{{ content.name | split | join('-') }}) | {{ content.platform }} |
 {% endfor %}
 
 ## Detailed Summary of Waiters

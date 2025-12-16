@@ -5,10 +5,10 @@
 
 A waiter is an action that will occur before an injection.
 
-| Name |
-| --- |
-| [Pause Execution](#Pause-Execution) |
-| [Scale Kubernetes Workload](#Scale-Kubernetes-Workload) |
+| Name | Platform |
+| --- | --- |
+| [Pause Execution](#Pause-Execution) | Any |
+| [Scale Kubernetes Workload](#Scale-Kubernetes-Workload) | Kubernetes |
 
 ## Detailed Summary of Waiters
 
