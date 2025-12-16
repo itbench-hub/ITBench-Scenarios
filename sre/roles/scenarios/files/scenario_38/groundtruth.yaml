@@ -5,7 +5,8 @@ metadata:
   name: scenario-38
 spec:
   alerts:
-    - KubeHpaMaxedOut
+    - labels: {}
+      name: KubeHpaMaxedOut
   entities:
     - apiVersion: apps/v1
       kind: Deployment

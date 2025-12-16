@@ -5,7 +5,8 @@ metadata:
   name: scenario-47
 spec:
   alerts:
-    - NoRequestsReceived
+    - labels: {}
+      name: NoRequestsReceived
   entities:
     - apiVersion: gateway.networking.k8s.io
       kind: Gateway

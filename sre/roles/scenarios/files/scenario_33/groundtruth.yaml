@@ -5,7 +5,8 @@ metadata:
   name: scenario-33
 spec:
   alerts:
-    - KubePodNotReady
+    - labels: {}
+      name: KubePodNotReady
   entities:
     - apiVersion: apps/v1
       kind: Deployment

@@ -5,8 +5,10 @@ metadata:
   name: scenario-31
 spec:
   alerts:
-    - NoRequestsReceived
-    - HighRequestErrorRate
+    - labels: {}
+      name: NoRequestsReceived
+    - labels: {}
+      name: HighRequestErrorRate
   entities:
     - apiVersion: apps/v1
       kind: Deployment

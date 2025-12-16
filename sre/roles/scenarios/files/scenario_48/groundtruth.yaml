@@ -5,7 +5,8 @@ metadata:
   name: scenario-48
 spec:
   alerts:
-    - NoRequestsReceived
+    - labels: {}
+      name: NoRequestsReceived
   entities:
     - apiVersion: v1
       kind: Namespace
