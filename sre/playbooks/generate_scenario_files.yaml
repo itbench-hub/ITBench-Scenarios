@@ -9,20 +9,33 @@
       vars:
         index_file_path: "{{ playbook_dir }}/../roles/documentation/files/library/scenarios/index.json"
 
+    - name: Generate scenario directory paths
+      ansible.builtin.set_fact:
+        scenario_directory_paths: "{{ scenario_directory_paths | default({}) | combine({scenario.id: directory_path}) }}"
+      loop: "{{ scenarios_library_index }}"
+      loop_control:
+        label: scenario-{{ scenario.id }}
+        loop_var: scenario
+      vars:
+        directory_path: "{{ playbook_dir }}/../roles/scenarios/files/scenario_{{ scenario.id }}"
+
     - name: Generate scenario directories
       ansible.builtin.file:
         mode: "0755"
-        path: "{{ playbook_dir }}/../roles/scenarios/files/scenario_{{ scenario.id }}"
+        path: "{{ scenario_directory_paths[scenario.id] }}"
         state: directory
       loop: "{{ scenarios_library_index }}"
       loop_control:
         label: scenario-{{ scenario.id }}
         loop_var: scenario
+      when:
+        - not (scenario_directory_paths[scenario.id] is directory)
 
     - name: Generate scenario specs
       ansible.builtin.copy:
         content: "{{ lookup('ansible.builtin.template', template_file_path) | from_yaml | to_nice_yaml(indent=2) }}"
-        dest: "{{ playbook_dir }}/../roles/scenarios/files/scenario_{{ scenario.id }}/scenario.yaml"
+        dest: "{{ scenario_directory_paths[scenario.id] }}/scenario.yaml"
+        force: false
         mode: "0644"
       loop: "{{ scenarios_library_index }}"
       loop_control:
@@ -42,7 +55,8 @@
     - name: Generate scenario ground truths
       ansible.builtin.copy:
         content: "{{ lookup('ansible.builtin.template', template_file_path) | from_yaml | to_nice_yaml(indent=2) }}"
-        dest: "{{ playbook_dir }}/../roles/scenarios/files/scenario_{{ scenario.id }}/groundtruth.yaml"
+        dest: "{{ scenario_directory_paths[scenario.id] }}/groundtruth.yaml"
+        force: false
         mode: "0644"
       loop: "{{ scenarios_library_index }}"
       loop_control:
@@ -54,7 +68,8 @@
     - name: Generate scenario access rules
       ansible.builtin.copy:
         content: "{{ lookup('ansible.builtin.template', template_file_path) | from_yaml | to_nice_yaml(indent=2) }}"
-        dest: "{{ playbook_dir }}/../roles/scenarios/files/scenario_{{ scenario.id }}/accessrule.yaml"
+        dest: "{{ scenario_directory_paths[scenario.id] }}/accessrule.yaml"
+        force: false
         mode: "0644"
       loop: "{{ scenarios_library_index }}"
       loop_control:
