@@ -25,6 +25,14 @@
     label: fault/{{ fault.name }}
     loop_var: fault
 
+- name: Generate map for waiters based on waiter id
+  ansible.builtin.set_fact:
+    documentation_waiters: "{{ (documentation_waiters | default({})) | combine({waiter.id: waiter}) }}"
+  loop: "{{ lookup('ansible.builtin.file', 'files/library/waiters/index.json') | from_json }}"
+  loop_control:
+    label: waiter/{{ waiter.name }}
+    loop_var: waiter
+
 - name: Validate unique ids for all scenarios
   ansible.builtin.assert:
     that:

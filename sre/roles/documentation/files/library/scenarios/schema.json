@@ -76,6 +76,10 @@
                                         "type": "object"
                                     },
                                     "id": {
+                                        "enum": [
+                                            "pause-execution",
+                                            "scale-kubernetes-workload"
+                                        ],
                                         "type": "string"
                                     }
                                 },
