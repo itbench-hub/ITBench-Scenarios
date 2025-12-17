@@ -444,4 +444,3 @@
 - name: Pausing for 300 seconds to allow for the application to stabalize
   ansible.builtin.pause:
     seconds: 300
-

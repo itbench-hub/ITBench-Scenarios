@@ -35,9 +35,7 @@
     workflow_types:
       - { suffix: "-Partial-Execution-Start", template: "templates/workflow_nodes/scenario_exec_start.j2" }
       - { suffix: "-Partial-Execution-Stop", template: "templates/workflow_nodes/scenario_exec_stop.j2" }
-      - { suffix: "-Init", template: "templates/workflow_nodes/scenario_init.j2" }
       - { suffix: "-Full-Execution", template: "templates/workflow_nodes/scenario_exec_full.j2" }
-      - { suffix: "-Deinit", template: "templates/workflow_nodes/scenario_deinit.j2" }
   async: 600
   poll: 0
   register: workflow_creation

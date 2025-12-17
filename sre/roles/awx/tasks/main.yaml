@@ -11,12 +11,6 @@
   tags:
     - configure_pipeline
 
-- name: Import AWX sync workflow launch tasks
-  ansible.builtin.import_tasks:
-    file: sync_scenarios.yaml
-  tags:
-    - sync_scenarios
-
 - name: Import AWX scenario workflow launch tasks
   ansible.builtin.import_tasks:
     file: launch_scenario_workflows.yaml
