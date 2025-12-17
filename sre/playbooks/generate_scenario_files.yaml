@@ -6,3 +6,7 @@
     - name: Include scenarios role
       ansible.builtin.import_role:
         name: scenarios
+      vars:
+        scenarios_files_generator:
+          options:
+            overwrite: "{{ allow_overwrites | default(false) | bool }}"
