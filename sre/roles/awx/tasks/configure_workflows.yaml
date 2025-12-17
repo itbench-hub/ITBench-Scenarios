@@ -33,8 +33,8 @@
   loop: "{{ awx_workflow_creation.results }}"
   loop_control:
     label: "{{ item.item.0.suffix }}"
-  register: job_result
-  until: job_result.finished
+  register: awx_job_workflow_creation_results
+  until: awx_job_workflow_creation_results.finished
   retries: 60
   delay: 60
   throttle: 5
