@@ -1,0 +1,90 @@
+---
+- name: Import variable setting tasks
+  ansible.builtin.import_tasks:
+    file: set_awx_controller_host.yaml
+
+- name: Import variable setting tasks
+  ansible.builtin.import_tasks:
+    file: set_awx_controller_password.yaml
+
+- name: Create a dummy job template for warming
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}"
+    controller_username: admin
+    name: "warmup-job"
+    organization: ITBench
+    project: GitHub-ITBench
+    playbook: "ITBench-Scenarios/sre/playbooks/warmup_awx.yaml"
+    inventory: ITBench
+
+- name: Launch warmup jobs
+  awx.awx.job_launch:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}"
+    controller_username: admin
+    job_template: "warmup-job"
+    wait: false
+  loop: "{{ range(12) | list }}"
+  async: 600
+  poll: 0
+  register: warmup_jobs
+
+- name: Wait for all project syncs to complete
+  ansible.builtin.async_status:
+    jid: "{{ item.ansible_job_id }}"
+  loop: "{{ warmup_jobs.results }}"
+  register: job_results
+  until: job_results.finished
+  retries: 60
+  delay: 10
+
+- name: Get AWX task pod names
+  kubernetes.core.k8s_info:
+    kubeconfig: "{{ awx_cluster.kubeconfig }}"
+    kind: Pod
+    namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
+    label_selectors:
+      - "app.kubernetes.io/name=awx-deployment-task"
+    field_selectors:
+      - "status.phase=Running"
+  register: awx_task_pods
+
+- name: Run sync script in all task pods
+  kubernetes.core.k8s_exec:
+    kubeconfig: "{{ awx_cluster.kubeconfig }}"
+    namespace: "{{ awx_helm_releases.awx_operator.namespace }}"
+    pod: "{{ item }}"
+    container: awx-deployment-task
+    command: |
+      /bin/bash -c '
+        PROJECT_DIR=$(find /var/lib/awx/projects -maxdepth 1 -type d -name "*__github_itbench" 2>/dev/null | head -1)
+        
+        if [ -z "$PROJECT_DIR" ]; then
+          echo "Project directory not found on this pod"
+          exit 0
+        fi
+        
+        echo "Found project directory: $PROJECT_DIR"
+        cd "$PROJECT_DIR"
+        
+        if [ -f "scripts/copy-scenarios-to-submodule.sh" ]; then
+          chmod +x scripts/copy-scenarios-to-submodule.sh
+          ./scripts/copy-scenarios-to-submodule.sh
+          echo "Scenarios synced successfully"
+        else
+          echo "Copy script not found in $PROJECT_DIR, skipping"
+        fi
+      '
+  loop: "{{ awx_task_pods.resources | map(attribute='metadata.name') | list }}"
+  loop_control:
+    label: "{{ item }}"
+  register: sync_results
+  changed_when: "'Scenarios synced' in (item.stdout | default(''))"
+
+- name: Show sync results
+  ansible.builtin.debug:
+    msg: "{{ item.item }}: {{ item.stdout_lines | default(['no output']) | join('\n') }}"
+  loop: "{{ sync_results.results }}"
+  loop_control:
+    label: "{{ item.item }}"
