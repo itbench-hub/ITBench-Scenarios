@@ -16,14 +16,14 @@ group_vars: ## Generates the group variables
 	cp group_vars/environment/tools.yaml.example group_vars/environment/tools.yaml
 
 .PHONY: docs
-docs: ## Generates libraries and related documentation
+docs: ## Generates library indexes, schemas, and other related documentation
 	ansible-playbook -i inventory.yaml playbooks/manage_documentation.yaml --tags "generate_docs"
 
 .PHONY: validate_docs
 validate_docs: ## Validates library indexes
 	ansible-playbook -i inventory.yaml playbooks/manage_documentation.yaml --tags "validate_docs"
 
-scenarios: ## Generates the files for the scenarios
+scenarios: ## Generates scenario files
 	ansible-playbook -i inventory.yaml playbooks/generate_scenario_files.yaml
 
 .PHONY: deploy_tools
