@@ -15,16 +15,20 @@ group_vars: ## Generates the group variables
 	cp group_vars/environment/cluster.yaml.example group_vars/environment/cluster.yaml
 	cp group_vars/environment/tools.yaml.example group_vars/environment/tools.yaml
 
-.PHONY: docs
-docs: ## Generates library indexes, schemas, and other related documentation
+.PHONY: generate_docs
+generate_docs: ## Generates library indexes, schemas, and other related documentation
 	ansible-playbook -i inventory.yaml playbooks/manage_documentation.yaml --tags "generate_docs"
 
 .PHONY: validate_docs
 validate_docs: ## Validates library indexes
 	ansible-playbook -i inventory.yaml playbooks/manage_documentation.yaml --tags "validate_docs"
 
-scenarios: ## Generates scenario files
-	ansible-playbook -i inventory.yaml playbooks/generate_scenario_files.yaml
+generate_scenarios: ## Generates scenario files from the scenario library index
+	ansible-playbook -i inventory.yaml playbooks/generate_scenario_files.yaml --tags "generate_scenarios"
+
+regenerate_scenarios: ## Overwrites the scenario files with generated scenario files
+	ansible-playbook -i inventory.yaml playbooks/generate_scenario_files.yaml --tags "generate_scenarios" \
+		--extra-vars "allow_overwrites=true"
 
 .PHONY: deploy_tools
 deploy_tools: ## Deploys the observability and fault tools to cluster

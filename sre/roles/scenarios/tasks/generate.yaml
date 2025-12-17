@@ -23,7 +23,7 @@
 
 - name: Generate scenario specs
   ansible.builtin.copy:
-    content: "{{ lookup('ansible.builtin.template', 'templates/scenario.j2') | from_yaml | to_nice_yaml(indent=2) }}"
+    content: "{{ lookup('ansible.builtin.template', 'templates/scenario.j2') | from_yaml | to_nice_yaml(indent=2, width=160) }}"
     dest: "{{ scenarios_directory_paths[scenario.id] }}/scenario.yaml"
     force: "{{ scenarios_files_generator.options.overwrite | default(false) }}"
     mode: "0644"
@@ -43,7 +43,7 @@
 
 - name: Generate scenario ground truths
   ansible.builtin.copy:
-    content: "{{ lookup('ansible.builtin.template', 'templates/groundtruth.j2') | from_yaml | to_nice_yaml(indent=2) }}"
+    content: "{{ lookup('ansible.builtin.template', 'templates/groundtruth.j2') | from_yaml | to_nice_yaml(indent=2, width=160) }}"
     dest: "{{ scenarios_directory_paths[scenario.id] }}/groundtruth.yaml"
     force: "{{ scenarios_files_generator.options.overwrite | default(false) }}"
     mode: "0644"
@@ -54,7 +54,7 @@
 
 - name: Generate scenario access rules
   ansible.builtin.copy:
-    content: "{{ lookup('ansible.builtin.template', 'templates/accessrule.j2') | from_yaml | to_nice_yaml(indent=2) }}"
+    content: "{{ lookup('ansible.builtin.template', 'templates/accessrule.j2') | from_yaml | to_nice_yaml(indent=2, width=160) }}"
     dest: "{{ scenarios_directory_paths[scenario.id] }}/accessrule.yaml"
     force: "{{ scenarios_files_generator.options.overwrite | default(false) }}"
     mode: "0644"

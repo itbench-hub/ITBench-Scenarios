@@ -2,9 +2,13 @@
 - name: Load scenarios library index
   ansible.builtin.set_fact:
     scenarios_library_index: "{{ lookup('ansible.builtin.file', index_file_path) | from_json }}"
+  tags:
+    - always
   vars:
     index_file_path: "{{ playbook_dir }}/../roles/documentation/files/library/scenarios/index.json"
 
 - name: Import scenario file generation tasks
   ansible.builtin.import_tasks:
     file: generate.yaml
+  tags:
+    - generate_scenarios
