@@ -222,13 +222,13 @@
 - name: Generate scenarios libary schema
   ansible.builtin.copy:
     content: "{{ lookup('ansible.builtin.template', 'templates/library/scenarios/schema.j2') | from_yaml | to_nice_json }}"
-    dest: "{{ playbook_dir }}/../roles/documentation/files/library/scenarios/schema.json"
+    dest: "{{ [role_path, 'files', 'library', 'scenarios', 'schema.json'] | path_join }}"
     mode: "0644"
 
 - name: Generate scenarios libary index
   ansible.builtin.copy:
     content: "{{ documentation_scenarios.values() | sort(attribute='id') | to_nice_json }}"
-    dest: "{{ playbook_dir }}/../roles/documentation/files/library/scenarios/index.json"
+    dest: "{{ [role_path, 'files', 'library', 'scenarios', 'index.json'] | path_join }}"
     mode: "0644"
 
 - name: Generate Scenarios README
