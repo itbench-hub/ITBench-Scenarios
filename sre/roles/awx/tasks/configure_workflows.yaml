@@ -24,12 +24,12 @@
       - { suffix: "-Full-Execution", template: "templates/workflow_nodes/scenario_exec_full.j2" }
   async: 600
   poll: 0
-  register: workflow_creation
+  register: awx_workflow_creation
 
 - name: Wait for all workflows to be created
   ansible.builtin.async_status:
     jid: "{{ item.ansible_job_id }}"
-  loop: "{{ workflow_creation.results }}"
+  loop: "{{ awx_workflow_creation.results }}"
   loop_control:
     label: "{{ item.item.0.suffix }}"
   register: job_result

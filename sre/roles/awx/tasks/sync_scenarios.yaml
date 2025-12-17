@@ -15,26 +15,26 @@
     password: "{{ awx_controller_password }}"
     force_basic_auth: true
     validate_certs: false
-  register: project_info
+  register: awx_project_info
 
 - name: Get project playbooks
   ansible.builtin.uri:
-    url: "{{ awx_controller_host }}{{ project_info.json.results[0].related.playbooks }}"
+    url: "{{ awx_controller_host }}{{ awx_project_info.json.results[0].related.playbooks }}"
     method: GET
     user: admin
     password: "{{ awx_controller_password }}"
     force_basic_auth: true
     validate_certs: false
-  register: playbooks_list
+  register: awx_playbooks_list
 
 - name: Determine correct playbook path
   ansible.builtin.set_fact:
-    warmup_playbook_path: >-
+    awx_warmup_playbook_path: >-
       {{
         [
           'ITBench-Scenarios/sre/playbooks/warmup_awx.yaml',
           'sre/playbooks/warmup_awx.yaml'
-        ] | select('in', playbooks_list.json) | first
+        ] | select('in', awx_playbooks_list.json) | first
       }}
 
 - name: Create a dummy job template for warming
@@ -46,7 +46,7 @@
     name: "warmup-job"
     organization: ITBench
     project: GitHub-ITBench
-    playbook: "{{ warmup_playbook_path }}"
+    playbook: "{{ awx_warmup_playbook_path }}"
     inventory: ITBench
 
 - name: Launch warmup jobs
@@ -59,14 +59,14 @@
   loop: "{{ range(12) | list }}"
   async: 600
   poll: 0
-  register: warmup_jobs
+  register: awx_warmup_jobs
 
 - name: Wait for all project syncs to complete
   ansible.builtin.async_status:
     jid: "{{ item.ansible_job_id }}"
-  loop: "{{ warmup_jobs.results }}"
-  register: job_results
-  until: job_results.finished
+  loop: "{{ awx_warmup_jobs.results }}"
+  register: awx_warmup_jobs_results
+  until: awx_warmup_jobs_results.finished
   retries: 60
   delay: 10
 
@@ -90,15 +90,15 @@
     command: |
       /bin/bash -c '
         PROJECT_DIR=$(find /var/lib/awx/projects -maxdepth 1 -type d -name "*__github_itbench" 2>/dev/null | head -1)
-        
+
         if [ -z "$PROJECT_DIR" ]; then
           echo "Project directory not found on this pod"
           exit 0
         fi
-        
+
         echo "Found project directory: $PROJECT_DIR"
         cd "$PROJECT_DIR"
-        
+
         if [ -f "scripts/copy-scenarios-to-submodule.sh" ]; then
           chmod +x scripts/copy-scenarios-to-submodule.sh
           ./scripts/copy-scenarios-to-submodule.sh
@@ -110,12 +110,12 @@
   loop: "{{ awx_task_pods.resources | map(attribute='metadata.name') | list }}"
   loop_control:
     label: "{{ item }}"
-  register: sync_results
+  register: awx_sync_results
   changed_when: "'Scenarios synced' in (item.stdout | default(''))"
 
 - name: Show sync results
   ansible.builtin.debug:
     msg: "{{ item.item }}: {{ item.stdout_lines | default(['no output']) | join('\n') }}"
-  loop: "{{ sync_results.results }}"
+  loop: "{{ awx_sync_results.results }}"
   loop_control:
     label: "{{ item.item }}"
