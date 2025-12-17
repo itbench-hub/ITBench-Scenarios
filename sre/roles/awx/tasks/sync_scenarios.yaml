@@ -7,15 +7,46 @@
   ansible.builtin.import_tasks:
     file: set_awx_controller_password.yaml
 
+- name: Get project info
+  ansible.builtin.uri:
+    url: "{{ awx_controller_host }}/api/v2/projects/?name=GitHub-ITBench"
+    method: GET
+    user: admin
+    password: "{{ awx_controller_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: project_info
+
+- name: Get project playbooks
+  ansible.builtin.uri:
+    url: "{{ awx_controller_host }}{{ project_info.json.results[0].related.playbooks }}"
+    method: GET
+    user: admin
+    password: "{{ awx_controller_password }}"
+    force_basic_auth: true
+    validate_certs: false
+  register: playbooks_list
+
+- name: Determine correct playbook path
+  ansible.builtin.set_fact:
+    warmup_playbook_path: >-
+      {{
+        [
+          'ITBench-Scenarios/sre/playbooks/warmup_awx.yaml',
+          'sre/playbooks/warmup_awx.yaml'
+        ] | select('in', playbooks_list.json) | first
+      }}
+
 - name: Create a dummy job template for warming
   awx.awx.job_template:
+    allow_simultaneous: true
     controller_host: "{{ awx_controller_host }}"
     controller_password: "{{ awx_controller_password }}"
     controller_username: admin
     name: "warmup-job"
     organization: ITBench
     project: GitHub-ITBench
-    playbook: "ITBench-Scenarios/sre/playbooks/warmup_awx.yaml"
+    playbook: "{{ warmup_playbook_path }}"
     inventory: ITBench
 
 - name: Launch warmup jobs
@@ -24,7 +55,7 @@
     controller_password: "{{ awx_controller_password }}"
     controller_username: admin
     job_template: "warmup-job"
-    wait: false
+    wait: true
   loop: "{{ range(12) | list }}"
   async: 600
   poll: 0
