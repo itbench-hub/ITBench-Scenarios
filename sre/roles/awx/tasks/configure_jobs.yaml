@@ -71,6 +71,23 @@
     project: GitHub-ITBench
     state: present
 
+- name: Add job template for clearing Kubernetes events
+  awx.awx.job_template:
+    allow_simultaneous: true
+    ask_credential_on_launch: true
+    ask_variables_on_launch: true
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    execution_environment: ITBench-Custom-EE
+    inventory: ITBench
+    job_type: run
+    name: Clear-Kubernetes-Events
+    organization: ITBench
+    playbook: sre/playbooks/clear_kubernetes_events.yaml
+    project: GitHub-ITBench
+    state: present
+
 - name: Add job template for injecting faults
   awx.awx.job_template:
     allow_simultaneous: true

@@ -9,11 +9,11 @@
       - name: AWS
 {% endif %}
     success_nodes:
-      - identifier: node-reinit-tools
+      - identifier: node-deploy-tools
   unified_job_template:
     name: Deploy-Applications
     type: job_template
-- identifier: node-reinit-tools
+- identifier: node-deploy-tools
   extra_data:
     incident_id: {{ scenario_id }}
   related:
@@ -25,7 +25,7 @@
     success_nodes:
       - identifier: node-install-recorders
   unified_job_template:
-    name: Reinit-Tools
+    name: Deploy-Tools
     type: job_template
 - identifier: node-install-recorders
   extra_data:
@@ -41,6 +41,18 @@
       - identifier: node-pause-at-start
   unified_job_template:
     name: Install-Data-Recorders
+    type: job_template
+- identifier: node-clear-kubernetes-events
+  related:
+    credentials:
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
+{% if requires_aws_credentials %}
+      - name: AWS
+{% endif %}
+    success_nodes:
+      - identifier: node-pause-at-start
+  unified_job_template:
+    name: Clear-Kubernetes-Events
     type: job_template
 - identifier: node-pause-at-start
   related:
