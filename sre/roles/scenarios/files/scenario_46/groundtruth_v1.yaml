@@ -1,38 +1,41 @@
 ---
+apiVersion: itbench.io/v1
+kind: GroundTruth
 metadata:
-  version: "v1"
-fault:
-  - entity:
-      name: postgresql-pod-1
-      group_id: postgresql-pod-1
+  name: scenario-46
+spec:
+  alerts:
+    - group_id: postgresql-pod-1
+      id: CrashLoopBackOffPodsDetected
+      metadata:
+        description: Postgresql pods are stuck in CrashLoopBackOff state due to insufficient resources.
+  aliases:
+    - - postgresql-service-1
+      - postgresql-pod-1
+  fault:
+    - category: Configuration
+      condition: Postgresql pods cannot stablize because they have insufficient resources to run.
+      entity:
+        group_id: postgresql-pod-1
+        kind: Pod
+        name: postgresql-pod-1
+      fault_mechanism: insufficient-resources
+  groups:
+    - filter:
+        - postgresql\b
+      id: postgresql-service-1
+      kind: Service
+      namespace: otel-demo
+    - filter:
+        - postgresql-.*
+      id: postgresql-pod-1
       kind: Pod
-    condition: Postgresql pods cannot stablize because they have insufficient resources to run.
-    category: Configuration
-    fault_mechanism: insufficient-resources
-alerts:
-  - id: CrashLoopBackOffPodsDetected
-    group_id: postgresql-pod-1
-    metadata:
-      description: Postgresql pods are stuck in CrashLoopBackOff state due to insufficient resources.
-groups:
-  - id: postgresql-service-1
-    kind: Service
-    filter:
-      - postgresql\b
-    namespace: otel-demo
-  - id: postgresql-pod-1
-    kind: Pod
-    filter:
-      - postgresql-.*
-    namespace: otel-demo
-    root_cause: true
-aliases:
-  - - postgresql-service-1
-    - postgresql-pod-1
-propagations: []
-recommended_actions:
-  - solution:
-      id: "no_action"
-      actions:
-        - no changes is needed in application
-        - update opencost alert to prevent false alerts
+      namespace: otel-demo
+      root_cause: true
+  propagations: []
+  recommendedActions:
+    - solution:
+        actions:
+          - no changes is needed in application
+          - update opencost alert to prevent false alerts
+        id: no_action
