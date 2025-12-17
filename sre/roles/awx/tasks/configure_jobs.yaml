@@ -122,8 +122,6 @@
         jaeger: true
         kubernetes_topology_monitor: true
         clickhouse: false
-      incidents_tools:
-        clickhouse: false
     inventory: ITBench
     job_tags: install_recorders
     job_type: run
@@ -166,12 +164,30 @@
         jaeger: false
         kubernetes_topology_monitor: true
         clickhouse: false
-      incidents_tools:
-        clickhouse: false
     inventory: ITBench
     job_tags: install_recorders
     job_type: run
     name: Run-Topology-Data-Recorder
+    organization: ITBench
+    playbook: sre/playbooks/manage_recorders.yaml
+    project: GitHub-ITBench
+    state: present
+
+- name: Add job template for uninstalling topology data recorder
+  awx.awx.job_template:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
+    controller_username: admin
+    execution_environment: "ITBench-Custom-EE"
+    extra_vars:
+      tools:
+        prometheus: false
+        jaeger: false
+        kubernetes_topology_monitor: true
+    inventory: ITBench
+    job_tags: uninstall_recorders
+    job_type: run
+    name: "Uninstall-Topology-Data-Recorder"
     organization: ITBench
     playbook: sre/playbooks/manage_recorders.yaml
     project: GitHub-ITBench
@@ -191,8 +207,6 @@
         prometheus: false
         jaeger: false
         kubernetes_topology_monitor: false
-        clickhouse: true
-      incidents_tools:
         clickhouse: true
     inventory: ITBench
     job_tags: install_recorders
