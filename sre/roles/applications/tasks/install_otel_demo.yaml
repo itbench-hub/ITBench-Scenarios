@@ -70,11 +70,11 @@
           replicas: "{{ configuration.accounting.replicas }}"
           resources:
             requests:
-              cpu: 15m
-              memory: 80Mi
+              cpu: 30m
+              memory: 160Mi
             limits:
-              cpu: 50m
-              memory: 150Mi
+              cpu: 100m
+              memory: 320Mi
         ad:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
@@ -103,11 +103,11 @@
           replicas: "{{ configuration.checkout.replicas }}"
           resources:
             requests:
-              cpu: 20m
-              memory: 17Mi
-            limits:
               cpu: 50m
-              memory: 40Mi
+              memory: 128Mi
+            limits:
+              cpu: 100m
+              memory: 256Mi
         currency:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
@@ -115,10 +115,10 @@
           resources:
             requests:
               cpu: 10m
-              memory: 4Mi
+              memory: 8Mi
             limits:
               cpu: 20m
-              memory: 10Mi
+              memory: 16Mi
         email:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
@@ -135,8 +135,8 @@
             openshift.io/required-scc: restricted-v2
           resources:
             requests:
-              cpu: 20m
-              memory: 60Mi
+              cpu: 50m
+              memory: 128Mi
             limits:
               cpu: 100m
               memory: 256Mi
@@ -193,11 +193,11 @@
           replicas: "{{ configuration.kafka.replicas }}"
           resources:
             requests:
-              cpu: 50m
+              cpu: 100m
               memory: 300Mi
             limits:
               cpu: 400m
-              memory: 600Mi
+              memory: 900Mi
         load-generator:
           envOverrides:
             - name: LOCUST_BROWSER_TRAFFIC_ENABLED
@@ -441,6 +441,6 @@
   when:
     - configuration[item].autoscaling | default(false)
 
-- name: Pausing for 300 seconds to allow for the application to stabalize
+- name: Pausing for 300 seconds to allow for the application to stabilize
   ansible.builtin.pause:
     seconds: 300
