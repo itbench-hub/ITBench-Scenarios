@@ -45,6 +45,11 @@ launch_full_workflow: ## Launches the scenario full execution workflow
 	ansible-playbook -i inventory.yaml playbooks/manage_awx.yaml --tags "launch_workflows" \
 		--extra-vars "run_phase=full"
 
+.PHONY: launch_data_collection_workflow
+launch_full_workflow: ## Launches the data collection execution workflow
+	ansible-playbook -i inventory.yaml playbooks/manage_awx.yaml --tags "launch_workflows" \
+		--extra-vars "run_phase=data_collection"
+
 .PHONY: awx_configure_init
 awx_configure_init:
 	@echo "WARNING: 'make awx_configure_init' is deprecated. Please use 'make deploy_awx_stack' instead."

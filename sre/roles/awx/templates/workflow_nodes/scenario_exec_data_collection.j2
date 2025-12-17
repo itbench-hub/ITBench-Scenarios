@@ -146,72 +146,24 @@
     credentials:
       - name: AWS
 {% endif %}
-    failure_nodes:
-      - identifier: node-remove-access-from-agent
-    success_nodes:
-      - identifier: node-run-agent
-  unified_job_template:
-    name: Handover-To-Agent
-    type: job_template
-- identifier: node-run-agent
-  related:
-    always_nodes:
-      - identifier: node-handback-from-agent
-    credentials:
-      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
-{% if requires_aws_credentials %}
-      - name: AWS
-{% endif %}
-  unified_job_template:
-    name: Run-Agent
-    type: job_template
-- identifier: node-handback-from-agent
-  related:
-    always_nodes:
-      - identifier: node-remove-access-from-agent
-{% if requires_aws_credentials %}
-    credentials:
-      - name: AWS
-{% endif %}
-  unified_job_template:
-    name: Handback-From-Agent
-    type: job_template
-- identifier: node-remove-access-from-agent
-  related:
-    always_nodes:
-      - identifier: node-install-run-topology-recorder-post-agent-execution
-    credentials:
-      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
-{% if requires_aws_credentials %}
-      - name: AWS
-{% endif %}
-  unified_job_template:
-    name: Remove-Access-From-Agent
-    type: job_template
-- identifier: node-install-run-topology-recorder-post-agent-execution
-  extra_data:
-    recorders_awx_topology_filename_prefix: end
-  related:
-    always_nodes:
-      - identifier: node-pause-post-agent-execution
-    credentials:
-      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
-{% if requires_aws_credentials %}
-      - name: AWS
-{% endif %}
-  unified_job_template:
-    name: Run-Topology-Data-Recorder
-    type: job_template
-- identifier: node-pause-post-agent-execution
-  extra_data:
-    duration_in_minutes: 10
-  related:
     always_nodes:
       - identifier: node-install-unified-clickhouse-recorder
   unified_job_template:
-    name: Pause
+    name: Handover-To-Agent
     type: job_template
 - identifier: node-install-unified-clickhouse-recorder
+  related:
+    always_nodes:
+      - identifier: node-remove-access-from-agent
+    credentials:
+      - name: Cluster-{{ cluster_index + 1 }}-Kubeconfig
+{% if requires_aws_credentials %}
+      - name: AWS
+{% endif %}
+  unified_job_template:
+    name: Run-Unified-ClickHouse-Recorder
+    type: job_template
+- identifier: node-remove-access-from-agent
   related:
     always_nodes:
       - identifier: node-uninstall-recorders
@@ -221,7 +173,7 @@
       - name: AWS
 {% endif %}
   unified_job_template:
-    name: Run-Unified-ClickHouse-Recorder
+    name: Remove-Access-From-Agent
     type: job_template
 - identifier: node-uninstall-recorders
   extra_data:
