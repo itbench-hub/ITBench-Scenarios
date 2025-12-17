@@ -21,7 +21,7 @@ prometheus:
       - name: web.enable-otlp-receiver
         value: ""
     remoteWrite:
-      - url: "http://default:@{{ tools_instances.clickhouse.name }}-{{ tools_instances.clickhouse.name }}.{{ tools_instances.clickhouse.namespace }}.svc.cluster.local:9363/write"
+      - url: "http://default:@{{ tools_instances.clickhouse.names.main }}-{{ tools_instances.clickhouse.names.main }}.{{ tools_instances.clickhouse.namespace }}.svc.cluster.local:9363/write"
         queueConfig:
           maxSamplesPerSend: 5000
           batchSendDeadline: 10s
