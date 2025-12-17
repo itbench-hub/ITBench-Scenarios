@@ -51,23 +51,3 @@
   loop_control:
     label: scenario-{{ scenario.id }}
     loop_var: scenario
-
-- name: Generate scenario access rules
-  ansible.builtin.copy:
-    content: "{{ lookup('ansible.builtin.template', 'templates/accessrule.j2') | from_yaml | to_nice_yaml(indent=2, width=160) }}"
-    dest: "{{ scenarios_directory_paths[scenario.id] }}/accessrule.yaml"
-    force: "{{ scenarios_files_generator.options.overwrite | default(false) }}"
-    mode: "0644"
-  loop: "{{ scenarios_library_index }}"
-  loop_control:
-    label: scenario-{{ scenario.id }}
-    loop_var: scenario
-  vars:
-    scenario_namespaces: |-
-      {{
-        scenario.disruptions |
-        community.general.json_query("[*].injections[*].args") |
-        flatten |
-        community.general.json_query("[*].kubernetesObject.metadata.namespace") |
-        unique
-      }}
