@@ -17,9 +17,7 @@ prometheus:
       matchLabels:
         it-bench/monitoring: "true"
     serviceMonitorSelectorNilUsesHelmValues: false
-    additionalArgs:
-      - name: web.enable-otlp-receiver
-        value: ""
+    enableOTLPReceiver: true
     remoteWrite:
       - url: "http://default:@{{ tools_instances.clickhouse.names.main }}-{{ tools_instances.clickhouse.names.main }}.{{ tools_instances.clickhouse.namespace }}.svc.cluster.local:9363/write"
         queueConfig:
