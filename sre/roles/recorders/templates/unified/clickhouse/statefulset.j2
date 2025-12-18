@@ -1,12 +1,16 @@
 ---
-apiVersion: batch/v1
-kind: Job
+apiVersion: apps/v1
+kind: StatefulSet
 metadata:
   labels:
     app.kubernetes.io/name: clickhouse-unified-recorder
     app.kubernetes.io/part-of: it-bench
   name: clickhouse-unified-recorder
 spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: clickhouse-unified-recorder
+      app.kubernetes.io/part-of: it-bench
   template:
     metadata:
       annotations:
@@ -27,10 +31,9 @@ spec:
           resources:
             requests:
               cpu: 100m
-              memory: 512Mi
+              memory: 125Mi
             limits:
-              cpu: 500m
-              memory: 3Gi
+              memory: 250Mi
           volumeMounts:
             - name: dependencies
               mountPath: /opt/app-root/src/deps
@@ -38,25 +41,32 @@ spec:
             - name: scripts
               mountPath: /opt/app-root/src/scripts
               readOnly: true
-            - name: records
+            - name: clickhouse-unified-records
               mountPath: /opt/app-root/src/records
-      restartPolicy: Never
       securityContext:
         fsGroup: 1001
       volumes:
         - name: scripts
           configMap:
-            name: clickhouse-unified-recorder-scripts
+            name: unified-recorder-clickhouse-scripts
             items:
               - key: script
                 path: gather.py
         - name: dependencies
           configMap:
-            name: clickhouse-unified-recorder-scripts
+            name: unified-recorder-clickhouse-scripts
             items:
               - key: deps
                 path: requirements.txt
-        - name: records
-          persistentVolumeClaim:
-            claimName: clickhouse-unified-records
-  ttlSecondsAfterFinished: 10
+  replicas: 1
+  volumeClaimTemplates:
+    - metadata:
+        name: clickhouse-unified-records
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi
+  persistentVolumeClaimRetentionPolicy:
+    whenDeleted: Delete
