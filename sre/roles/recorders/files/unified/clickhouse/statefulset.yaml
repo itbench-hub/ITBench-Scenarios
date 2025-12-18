@@ -3,13 +3,13 @@
 # Dependabot to track the image. The full definition is provided in the
 # template version of this object.
 
-apiVersion: batch/v1
-kind: Job
+apiVersion: apps/v1
+kind: StatefulSet
 metadata:
-  name: clickhouse-unified-recorder
+  name: clickhouse-unified-data-recorder
 spec:
   template:
     spec:
       containers:
-        - name: clickhouse-unified-recorder
-          image: registry.access.redhat.com/ubi10/python-312-minimal:10.0-1762316151
+        - name: recorder
+          image: registry.access.redhat.com/ubi10/python-312-minimal:10.1-1764649454

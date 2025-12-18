@@ -157,6 +157,12 @@
     controller_password: "{{ awx_controller_password }}" # pragma: allowlist secret
     controller_username: admin
     execution_environment: ITBench-Custom-EE
+    extra_vars:
+      tools:
+        prometheus: true
+        jaeger: true
+        kubernetes_topology_monitor: true
+        clickhouse: true
     inventory: ITBench
     job_tags: uninstall_recorders
     job_type: run
