@@ -1,5 +1,5 @@
 ---
-- identifier: node-deploy-applications
+- identifier: node-deploy-tools
   extra_data:
     incident_id: {{ scenario_id }}
   related:
@@ -9,11 +9,11 @@
       - name: AWS
 {% endif %}
     success_nodes:
-      - identifier: node-deploy-tools
+      - identifier: node-deploy-applications
   unified_job_template:
-    name: Deploy-Applications
+    name: Deploy-Tools
     type: job_template
-- identifier: node-deploy-tools
+- identifier: node-deploy-applications
   extra_data:
     incident_id: {{ scenario_id }}
   related:
@@ -25,7 +25,7 @@
     success_nodes:
       - identifier: node-install-recorders
   unified_job_template:
-    name: Deploy-Tools
+    name: Deploy-Applications
     type: job_template
 - identifier: node-install-recorders
   extra_data:
