@@ -28,45 +28,6 @@
         values: "{{ lookup('ansible.builtin.template', 'templates/helm_values/prometheus.j2') | from_yaml }}"
         wait: true
 
-    - name: Enable external access on Kind
-      when:
-        - tools_installation_plan.prometheus.external_access
-        - tools_cluster.provider == "kind"
-        - not tools_installation_plan.istio.enabled
-      block:
-        - name: Create Cloud Provider Kind Kubernetes Gateway
-          kubernetes.core.k8s:
-            kubeconfig: "{{ tools_cluster.kubeconfig }}"
-            template: templates/kubernetes_gateways/kind.j2
-            state: present
-            wait: true
-            wait_condition:
-              reason: Programmed
-              status: "True"
-              type: Programmed
-          vars:
-            gateway:
-              name: "{{ tools_helm_releases.prometheus.name }}"
-
-        - name: Create HTTP Route
-          kubernetes.core.k8s:
-            kubeconfig: "{{ tools_cluster.kubeconfig }}"
-            template: templates/prometheus/http_route.j2
-            state: present
-          vars:
-            gateway:
-              name: "{{ tools_helm_releases.prometheus.name }}"
-
-        - name: Import connection test to external endpoint
-          ansible.builtin.import_tasks:
-            file: test_gateway_endpoint.yaml
-          vars:
-            tools_external_paths:
-              - /query
-              - /alerts
-            tools_kubernetes_gateway:
-              name: "{{ tools_helm_releases.prometheus.name }}"
-
 - name: Enabled OpenShift User Worklord Monitoring (Prometheus)
   when:
     - tools_cluster.platform == "openshift"
