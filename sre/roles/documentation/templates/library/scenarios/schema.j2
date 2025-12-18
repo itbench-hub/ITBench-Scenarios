@@ -72,9 +72,7 @@ items:
             properties:
               id:
                 type: string
-                enum:
-                  - book-info
-                  - opentelemetry-demo
+                enum: {{ documentation_applications.keys() }}
     id:
       type: integer
     platforms:

@@ -5,7 +5,8 @@ on:
     branches:
       - main
     paths:
-      - sre/documentation/files/**
+      - sre/roles/documentation/files/library/**
+      - sre/roles/documentation/templates/library/**
 
 jobs:
   validate-docs:
@@ -16,9 +17,13 @@ jobs:
       - uses: actions/setup-python@v6.1.0
         with:
           python-version: '3.13'
-      - name: Install Python dependencies
+      - name: Install Python and Ansible dependencies
         run: |
           pip install -r sre/requirements.txt
+          ansible-galaxy install -r sre/requirements.yaml
+      - name: Create group vars
+        run: |
+          make -C sre group_vars
       - name: Run validation playbook
         run: |
           make -C sre validate_docs
