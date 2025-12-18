@@ -46,7 +46,7 @@ launch_full_workflow: ## Launches the scenario full execution workflow
 		--extra-vars "run_phase=full"
 
 .PHONY: launch_data_collection_workflow
-launch_full_workflow: ## Launches the data collection execution workflow
+launch_data_collection_workflow: ## Launches the data collection execution workflow
 	ansible-playbook -i inventory.yaml playbooks/manage_awx.yaml --tags "launch_workflows" \
 		--extra-vars "run_phase=data_collection"
 
