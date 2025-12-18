@@ -165,6 +165,26 @@ spec:
           secretKeyRef:
             name: user-default-credentials
             key: password
+    profiles:
+      default/allow_experimental_time_series_table: 1
+      default/http_connection_timeout: 30
+    files:
+      prometheus.xml: |
+        <clickhouse>
+          <prometheus>
+            <port>9363</port>
+            <handlers>
+              <remote_write_rule>
+                <url>/write</url>
+                <handler>
+                  <type>remote_write</type>
+                  <database>prometheus</database>
+                  <table>metrics</table>
+                </handler>
+              </remote_write_rule>
+            </handlers>
+          </prometheus>
+        </clickhouse>
     clusters:
       - name: main
         layout:
