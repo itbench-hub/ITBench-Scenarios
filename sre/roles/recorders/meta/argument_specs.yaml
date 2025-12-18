@@ -56,7 +56,7 @@ argument_specs:
             type: dict
             options:
               clickhouse:
-                default: false
+                default: true
                 required: false
                 type: bool
       recorders_storage:
