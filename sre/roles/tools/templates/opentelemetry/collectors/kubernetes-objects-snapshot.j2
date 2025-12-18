@@ -94,16 +94,16 @@ metadata:
   name: {{ tools_instances.opentelemetry_collectors.names.kubernetes_objects_snapshot | default('kubernetes-objects-snapshot') }}
   namespace: {{ tools_instances.opentelemetry_collectors.namespace }}
 spec:
-  image: {{ item.container_image }}
+  image: {{ item.container_image | trim }}
   mode: deployment
   observability:
     metrics:
       enableMetrics: {{ tools_installation_plan.prometheus.enabled | default(true) }}
   serviceAccount: kubernetes-objects-snapshot-otel-collector
-  {% if tools_cluster.platform == "openshift" %}
+{% if tools_cluster.platform == "openshift" %}
   podAnnotations:
     openshift.io/required-scc: restricted-v2
-  {% endif %}
+{% endif %}
   config:
     service:
       pipelines:
