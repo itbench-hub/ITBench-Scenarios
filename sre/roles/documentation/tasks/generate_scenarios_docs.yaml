@@ -17,6 +17,14 @@
     state: directory
   register: documentation_temporary_directory
 
+- name: Generate map for applications based on application id
+  ansible.builtin.set_fact:
+    documentation_applications: "{{ (documentation_applications | default({})) | combine({application.id: application}) }}"
+  loop: "{{ lookup('ansible.builtin.file', 'files/library/applications/index.json') | from_json }}"
+  loop_control:
+    label: application/{{ application.name }}
+    loop_var: application
+
 - name: Generate map for faults based on fault id
   ansible.builtin.set_fact:
     documentation_faults: "{{ (documentation_faults | default({})) | combine({fault.id: fault}) }}"
