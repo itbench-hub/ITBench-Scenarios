@@ -69,7 +69,7 @@
       loop:
         - enabled: "{{ tools_installation_plan.clickhouse.enabled | default(true) }}"
           endpoints:
-            - /clickhouse
+            - /clickhouse/{{ tools_instances.clickhouse.names.main }}/play
           routes:
             - template_path: templates/clickhouse/http_routes/main.j2
               path:
