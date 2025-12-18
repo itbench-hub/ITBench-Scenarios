@@ -48,13 +48,13 @@ spec:
       volumes:
         - name: scripts
           configMap:
-            name: unified-recorder-clickhouse-scripts
+            name: clickhouse-unified-recorder-scripts
             items:
               - key: script
                 path: gather.py
         - name: dependencies
           configMap:
-            name: unified-recorder-clickhouse-scripts
+            name: clickhouse-unified-recorder-scripts
             items:
               - key: deps
                 path: requirements.txt
