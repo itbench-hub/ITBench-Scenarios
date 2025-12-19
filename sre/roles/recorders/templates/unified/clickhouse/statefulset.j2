@@ -26,7 +26,7 @@ spec:
             - /bin/sh
           args:
             - -c
-            - "python3.12 -m pip install -r ~/deps/requirements.txt && python3.12 ~/scripts/gather.py"
+            - "python3.12 -m pip install -r ~/deps/requirements.txt && python3.12 ~/scripts/gather.py && echo 'Script completed, waiting for data extraction...' && sleep infinity"
           env: {{ container_environment_variables }}
           resources:
             requests:
