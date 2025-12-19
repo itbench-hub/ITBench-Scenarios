@@ -85,31 +85,43 @@ class ClickHouseEventStreamer:
             Dictionary mapping table types ('data', 'tags', 'metrics') to table names.
         """
         if self._metric_table_ids is None:
-            df = self.prometheus_client.query_df(
-                """
-                SELECT name
-                FROM system.tables
-                WHERE database = 'prometheus'
-                AND name LIKE '.inner_id%'
-            """
-            )
-
             self._metric_table_ids = {"data": None, "tags": None, "metrics": None}
 
-            for table_name in df["name"]:
-                if ".inner_id.data." in table_name:
-                    self._metric_table_ids["data"] = table_name
-                elif ".inner_id.tags." in table_name:
-                    self._metric_table_ids["tags"] = table_name
-                elif ".inner_id.metrics." in table_name:
-                    self._metric_table_ids["metrics"] = table_name
+            try:
+                df = self.prometheus_client.query_df(
+                    """
+                    SELECT name
+                    FROM system.tables
+                    WHERE database = 'prometheus'
+                    AND name LIKE '.inner_id%'
+                """
+                )
 
-            logger.info(f"Found metric tables: {self._metric_table_ids}")
+                if df.empty or "name" not in df.columns:
+                    logger.warning("No prometheus metric tables found")
+                    return self._metric_table_ids
+
+                for table_name in df["name"]:
+                    if ".inner_id.data." in table_name:
+                        self._metric_table_ids["data"] = table_name
+                    elif ".inner_id.tags." in table_name:
+                        self._metric_table_ids["tags"] = table_name
+                    elif ".inner_id.metrics." in table_name:
+                        self._metric_table_ids["metrics"] = table_name
+
+                logger.info(f"Found metric tables: {self._metric_table_ids}")
+
+            except Exception as e:
+                logger.warning(f"Could not discover prometheus metric tables: {e}")
 
         return self._metric_table_ids
 
     def _save_to_records(
-        self, data: pd.DataFrame, prefix: str, subdir: Optional[str] = None
+        self,
+        data: pd.DataFrame,
+        prefix: str,
+        subdir: Optional[str] = None,
+        raw: bool = False,
     ) -> str:
         """Save DataFrame to TSV file in records directory.
 
@@ -117,17 +129,21 @@ class ClickHouseEventStreamer:
             data: DataFrame to save.
             prefix: Filename prefix for the saved file.
             subdir: Optional subdirectory within records_dir.
+            raw: If True, save under 'raw/' base directory; otherwise under 'lite/'.
 
         Returns:
             Path to the saved file.
         """
+        # Determine base directory
+        base_dir = "raw" if raw else "lite"
 
         if subdir:
-            save_dir = os.path.join(self.records_dir, subdir)
-            os.makedirs(save_dir, exist_ok=True)
-            file_path = os.path.join(save_dir, f"{prefix}.tsv")
+            save_dir = os.path.join(self.records_dir, base_dir, subdir)
         else:
-            file_path = os.path.join(self.records_dir, f"{prefix}.tsv")
+            save_dir = os.path.join(self.records_dir, base_dir)
+
+        os.makedirs(save_dir, exist_ok=True)
+        file_path = os.path.join(save_dir, f"{prefix}.tsv")
 
         data.to_csv(file_path, sep="\t", index=False)
         logger.info(f"Saved {len(data)} records to: {file_path}")
@@ -324,7 +340,7 @@ class ClickHouseEventStreamer:
             )
             if not transform:
                 prefix += "_raw"
-            self._save_to_records(df, prefix)
+            self._save_to_records(df, prefix, raw=not transform)
 
         return df
 
@@ -401,7 +417,7 @@ class ClickHouseEventStreamer:
             prefix = "_".join(prefix_parts)
             if not transform:
                 prefix += "_raw"
-            self._save_to_records(df, prefix)
+            self._save_to_records(df, prefix, raw=not transform)
 
         return df
 
@@ -500,7 +516,7 @@ class ClickHouseEventStreamer:
                 prefix += f"_{'_'.join(severity_levels)}"
             if not transform:
                 prefix += "_raw"
-            self._save_to_records(df, prefix)
+            self._save_to_records(df, prefix, raw=not transform)
 
         return df
 
@@ -593,7 +609,7 @@ class ClickHouseEventStreamer:
                 prefix += f"_{'_'.join(services)}"
             if not transform:
                 prefix += "_raw"
-            self._save_to_records(df, prefix)
+            self._save_to_records(df, prefix, raw=not transform)
 
         return df
 
@@ -622,7 +638,7 @@ class ClickHouseEventStreamer:
                 prefix = f"trace_{trace_id[:8]}"
                 if not transform:
                     prefix += "_raw"
-                self._save_to_records(df, prefix)
+                self._save_to_records(df, prefix, raw=not transform)
 
         return df
 
@@ -657,7 +673,7 @@ class ClickHouseEventStreamer:
             namespace: Kubernetes namespace to filter by.
             save_to_file: Whether to save results to TSV files.
             transform: If True, apply transformations (drop tags column for service metrics).
-                    If False (default), export all columns as-is.
+                      If False (default), export all columns as-is.
 
         Returns:
             Tuple of (pod_metrics_df, service_metrics_df).
@@ -665,7 +681,10 @@ class ClickHouseEventStreamer:
         table_ids = self._get_metric_table_ids()
 
         if not table_ids["data"] or not table_ids["tags"]:
-            raise Exception("Could not find prometheus metric tables")
+            logger.warning(
+                "Prometheus metric tables not available, skipping metrics export"
+            )
+            return pd.DataFrame(), pd.DataFrame()
 
         if metric_names is None:
             if transform:
@@ -674,8 +693,8 @@ class ClickHouseEventStreamer:
                 SELECT DISTINCT metric_name
                 FROM `{table_ids['tags']}`
                 WHERE metric_name LIKE '%cpu%'
-                OR metric_name LIKE '%memory%'
-                OR metric_name LIKE '%mem%'
+                   OR metric_name LIKE '%memory%'
+                   OR metric_name LIKE '%mem%'
                 """
                 available_metrics_df = self.prometheus_client.query_df(metrics_query)
                 metric_names = available_metrics_df["metric_name"].tolist()
@@ -765,14 +784,16 @@ class ClickHouseEventStreamer:
             if save_to_file and len(df) > 0:
                 unique_pods = df["pod_name"].unique()
                 for pod in unique_pods:
-                    pod_df = df[df["pod_name"] == pod]
+                    pod_df = df[df["pod_name"] == pod].copy()
                     if transform:
                         pod_df = pod_df.drop(columns=["tags"], errors="ignore")
                     safe_pod_name = pod.replace("/", "_").replace(" ", "_")
                     prefix = f"pod_{safe_pod_name}"
                     if not transform:
                         prefix += "_raw"
-                    self._save_to_records(pod_df, prefix, subdir="metrics_pod")
+                    self._save_to_records(
+                        pod_df, prefix, subdir="metrics_pod", raw=not transform
+                    )
                     logger.debug(f"  Saved {len(pod_df)} metrics for pod: {pod}")
 
             return df
@@ -862,13 +883,15 @@ class ClickHouseEventStreamer:
             if save_to_file and len(service_df) > 0:
                 unique_services = service_df["service_name"].unique()
                 for service in unique_services:
-                    svc_df = service_df[service_df["service_name"] == service]
+                    svc_df = service_df[service_df["service_name"] == service].copy()
                     if transform:
                         svc_df = svc_df.drop(columns=["tags"], errors="ignore")
                     prefix = f"service_{service}"
                     if not transform:
                         prefix += "_raw"
-                    self._save_to_records(svc_df, prefix, subdir="metrics_service")
+                    self._save_to_records(
+                        svc_df, prefix, subdir="metrics_service", raw=not transform
+                    )
                     logger.debug(
                         f"  Saved {len(svc_df)} metrics for service: {service}"
                     )
@@ -960,33 +983,24 @@ def main():
         namespaces = ["chaos-mesh", "otel-demo"]
 
         logger.info(f"Fetching events (namespaces: {namespaces})...")
-        events_lite_df = streamer.get_events_df(
-            namespaces=namespaces,
-            transform=True
-        )
+        events_lite_df = streamer.get_events_df(namespaces=namespaces, transform=True)
 
         logger.info(f"\nFetching K8s objects (namespaces: {namespaces})...")
         k8s_objects_lite_df = streamer.get_k8s_objects_df(
-            namespaces=namespaces,
-            transform=True
+            namespaces=namespaces, transform=True
         )
 
         logger.info("\nFetching logs (severity: WARN, ERROR, FATAL)...")
         logs_lite_df = streamer.get_logs_df(
-            severity_levels=["WARN", "ERROR", "FATAL"],
-            transform=True
+            severity_levels=["WARN", "ERROR", "FATAL"], transform=True
         )
 
         logger.info("\nFetching traces (status: Error)...")
-        traces_lite_df = streamer.get_traces_df(
-            status_codes=["Error"],
-            transform=True
-        )
+        traces_lite_df = streamer.get_traces_df(status_codes=["Error"], transform=True)
 
         logger.info("\nFetching metrics (namespace: otel-demo)...")
         pod_metrics_lite_df, service_metrics_lite_df = streamer.get_metrics_df(
-            namespace="otel-demo",
-            transform=True
+            namespace="otel-demo", transform=True
         )
 
     except Exception as e:
