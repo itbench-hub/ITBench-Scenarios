@@ -232,6 +232,8 @@
       - "{{ kops_state_store }}"
       - --set
       - spec.networking.cilium.cniExclusive=false
+      - --set
+      - spec.networking.cilium.socketLB.hostNamespaceOnly=true
   async: 600
   loop: "{{ stack_cluster_names }}"
   poll: 0
