@@ -653,11 +653,11 @@ class ClickHouseEventStreamer:
 
         Args:
             metric_names: List of metric names to retrieve. If None, fetches
-                CPU and memory related metrics.
+                all metrics (raw) or CPU/memory related metrics (transformed).
             namespace: Kubernetes namespace to filter by.
             save_to_file: Whether to save results to TSV files.
             transform: If True, apply transformations (drop tags column for service metrics).
-                      If False (default), export all columns as-is.
+                    If False (default), export all columns as-is.
 
         Returns:
             Tuple of (pod_metrics_df, service_metrics_df).
@@ -667,24 +667,28 @@ class ClickHouseEventStreamer:
         if not table_ids["data"] or not table_ids["tags"]:
             raise Exception("Could not find prometheus metric tables")
 
-        if save_to_file:
-            pod_metrics_dir = os.path.join(self.records_dir, "metrics_pod")
-            os.makedirs(pod_metrics_dir, exist_ok=True)
-
-            service_metrics_dir = os.path.join(self.records_dir, "metrics_service")
-            os.makedirs(service_metrics_dir, exist_ok=True)
-
         if metric_names is None:
-            metrics_query = f"""
-            SELECT DISTINCT metric_name
-            FROM `{table_ids['tags']}`
-            WHERE metric_name LIKE '%cpu%'
-               OR metric_name LIKE '%memory%'
-               OR metric_name LIKE '%mem%'
-            """
-            available_metrics_df = self.prometheus_client.query_df(metrics_query)
-            metric_names = available_metrics_df["metric_name"].tolist()
-            logger.info(f"Found {len(metric_names)} CPU/memory related metrics")
+            if transform:
+                # Lite export: only CPU/memory metrics
+                metrics_query = f"""
+                SELECT DISTINCT metric_name
+                FROM `{table_ids['tags']}`
+                WHERE metric_name LIKE '%cpu%'
+                OR metric_name LIKE '%memory%'
+                OR metric_name LIKE '%mem%'
+                """
+                available_metrics_df = self.prometheus_client.query_df(metrics_query)
+                metric_names = available_metrics_df["metric_name"].tolist()
+                logger.info(f"Found {len(metric_names)} CPU/memory related metrics")
+            else:
+                # Raw export: all metrics
+                metrics_query = f"""
+                SELECT DISTINCT metric_name
+                FROM `{table_ids['tags']}`
+                """
+                available_metrics_df = self.prometheus_client.query_df(metrics_query)
+                metric_names = available_metrics_df["metric_name"].tolist()
+                logger.info(f"Found {len(metric_names)} total metrics for raw export")
 
         pod_metrics_df = self._get_pod_metrics(
             table_ids, metric_names, namespace, save_to_file, transform
@@ -768,7 +772,7 @@ class ClickHouseEventStreamer:
                     prefix = f"pod_{safe_pod_name}"
                     if not transform:
                         prefix += "_raw"
-                    self._save_to_records(pod_df, prefix, subdir="metrics")
+                    self._save_to_records(pod_df, prefix, subdir="metrics_pod")
                     logger.debug(f"  Saved {len(pod_df)} metrics for pod: {pod}")
 
             return df
@@ -864,7 +868,7 @@ class ClickHouseEventStreamer:
                     prefix = f"service_{service}"
                     if not transform:
                         prefix += "_raw"
-                    self._save_to_records(svc_df, prefix, subdir="metrics")
+                    self._save_to_records(svc_df, prefix, subdir="metrics_service")
                     logger.debug(
                         f"  Saved {len(svc_df)} metrics for service: {service}"
                     )
