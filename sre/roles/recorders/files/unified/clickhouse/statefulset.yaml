@@ -6,7 +6,7 @@
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  name: clickhouse-unified-data-recorder
+  name: clickhouse-unified-recorder
 spec:
   template:
     spec:
