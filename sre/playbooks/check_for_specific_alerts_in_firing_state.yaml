@@ -57,14 +57,17 @@
              selectattr('state', '==', 'firing') |
              selectattr('labels.alertname', 'in', [
                'FailedPodsDetected',
-               'PendingPodsDetected',
-               'RequestLatency',
-               'RequestErrorRate',
+               'HighRequestLatency',
+               'HighRequestErrorRate',
                'KafkaConnectionClosureRate',
                'CPUSpend',
                'MemorySpend',
                'CPUEfficiency',
-               'MemoryEfficiency'
+               'MemoryEfficiency',
+               'KubeContainerWaiting',
+               'KubeHpaMaxedOut',
+               'KubePodCrashLooping',
+               'KubePodNotReady'
              ]) |
              list | length > 0)
 
