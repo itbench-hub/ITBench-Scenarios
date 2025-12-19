@@ -7,6 +7,15 @@
   ansible.builtin.import_tasks:
     file: set_awx_controller_password.yaml
 
+- name: Sync the project and wait for completion
+  awx.awx.project_update:
+    controller_host: "{{ awx_controller_host }}"
+    controller_password: "{{ awx_controller_password }}"
+    controller_username: admin
+    project: "GitHub-ITBench"
+    wait: true
+    timeout: 300
+
 - name: Get project info
   ansible.builtin.uri:
     url: "{{ awx_controller_host }}/api/v2/projects/?name=GitHub-ITBench"
