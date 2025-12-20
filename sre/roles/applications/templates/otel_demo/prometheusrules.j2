@@ -121,11 +121,11 @@ spec:
                   service_name!~"flagd|load-generator",
                   status_code=~"STATUS_CODE_UNSET|STATUS_CODE_OK",
                   namespace="[[ applications_helm_releases.otel_demo.namespace ]]"
-                }[2m]
+                }[10m]
               )
             ) by (service_name, namespace)
             == 0
-          for: 5m
+          for: 10m
           labels:
             severity: critical
           annotations:
