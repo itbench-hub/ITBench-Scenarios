@@ -53,13 +53,13 @@
               platform: "{{ cluster_platform }}"
             recorders_required:
               alerts:
-                prometheus: "{{ incidents_tools.prometheus | default(tools.prometheus) }}"
+                prometheus: "{{ tools.prometheus | default(incidents_tools.prometheus) }}"
               topology:
-                kubernetes: "{{ incidents_tools.kubernetes_topology_monitor | default(tools.kubernetes_topology_monitor) }}"
+                kubernetes: "{{ tools.kubernetes_topology_monitor | default(incidents_tools.kubernetes_topology_monitor) }}"
               traces:
-                jaeger: "{{ incidents_tools.jaeger | default(tools.jaeger) }}"
+                jaeger: "{{ tools.jaeger | default(incidents_tools.jaeger) }}"
               unified:
-                clickhouse: "{{ incidents_tools.clickhouse | default(tools.clickhouse) }}"
+                clickhouse: "{{ tools.clickhouse | default(incidents_tools.clickhouse) }}"
             recorders_storage: "{{ storage }}"
 
         - name: Import leaderboard role

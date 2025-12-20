@@ -207,6 +207,7 @@
         prometheus: false
         jaeger: false
         kubernetes_topology_monitor: true
+        clickhouse: false
     inventory: ITBench
     job_tags: uninstall_recorders
     job_type: run
