@@ -70,10 +70,10 @@
           replicas: "{{ configuration.accounting.replicas }}"
           resources:
             requests:
-              cpu: 30m
+              cpu: 50m
               memory: 160Mi
             limits:
-              cpu: 100m
+              cpu: 250m
               memory: 320Mi
         ad:
           podAnnotations:
@@ -81,10 +81,10 @@
           replicas: "{{ configuration.ad.replicas }}"
           resources:
             requests:
-              cpu: 10m
+              cpu: 50m
               memory: 225Mi
             limits:
-              cpu: 50m
+              cpu: 400m
               memory: 450Mi
         cart:
           podAnnotations:
@@ -92,10 +92,10 @@
           replicas: "{{ configuration.cart.replicas }}"
           resources:
             requests:
-              cpu: 20m
+              cpu: 40m
               memory: 55Mi
             limits:
-              cpu: 50m
+              cpu: 200m
               memory: 110Mi
         checkout:
           podAnnotations:
@@ -125,10 +125,10 @@
           replicas: "{{ configuration.email.replicas }}"
           resources:
             requests:
-              cpu: 10m
+              cpu: 20m
               memory: 50Mi
             limits:
-              cpu: 30m
+              cpu: 100m
               memory: 100Mi
         flagd:
           podAnnotations:
@@ -146,10 +146,10 @@
           replicas: "{{ configuration.fraud_detection.replicas }}"
           resources:
             requests:
-              cpu: 20m
+              cpu: 75m
               memory: 200Mi
             limits:
-              cpu: 75m
+              cpu: 300m
               memory: 400Mi
         frontend:
           podAnnotations:
@@ -157,10 +157,10 @@
           replicas: "{{ configuration.frontend.replicas }}"
           resources:
             requests:
-              cpu: 50m
+              cpu: 100m
               memory: 100Mi
             limits:
-              cpu: 100m
+              cpu: 500m
               memory: 200Mi
         frontend-proxy:
           podAnnotations:
@@ -168,10 +168,10 @@
           replicas: "{{ configuration.frontend_proxy.replicas }}"
           resources:
             requests:
-              cpu: 15m
+              cpu: 25m
               memory: 25Mi
             limits:
-              cpu: 30m
+              cpu: 100m
               memory: 50Mi
         image-provider:
           podAnnotations:
@@ -193,10 +193,10 @@
           replicas: "{{ configuration.kafka.replicas }}"
           resources:
             requests:
-              cpu: 100m
+              cpu: 200m
               memory: 300Mi
             limits:
-              cpu: 400m
+              cpu: 700m
               memory: 900Mi
         load-generator:
           envOverrides:
@@ -221,10 +221,10 @@
           replicas: "{{ configuration.payment.replicas }}"
           resources:
             requests:
-              cpu: 10m
+              cpu: 20m
               memory: 80Mi
             limits:
-              cpu: 20m
+              cpu: 80m
               memory: 160Mi
         postgresql:
           podAnnotations:
@@ -232,10 +232,10 @@
           replicas: "{{ configuration.postgres.replicas }}"
           resources:
             requests:
-              cpu: 10m
+              cpu: 30m
               memory: 50Mi
             limits:
-              cpu: 50m
+              cpu: 150m
               memory: 100Mi
         product-catalog:
           podAnnotations:
@@ -254,10 +254,10 @@
           replicas: "{{ configuration.quote.replicas }}"
           resources:
             requests:
-              cpu: 2m
+              cpu: 5m
               memory: 20Mi
             limits:
-              cpu: 5m
+              cpu: 15m
               memory: 40Mi
         recommendation:
           podAnnotations:
@@ -346,8 +346,6 @@
                 level: detailed
                 readers:
                   - pull:
-                      # interval: 10000
-                      # timeout: 5000
                       exporter:
                         prometheus:
                           host: 0.0.0.0
