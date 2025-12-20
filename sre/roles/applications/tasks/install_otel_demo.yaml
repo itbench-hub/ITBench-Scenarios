@@ -114,11 +114,11 @@
           replicas: "{{ configuration.currency.replicas }}"
           resources:
             requests:
-              cpu: 10m
-              memory: 8Mi
+              cpu: 25m
+              memory: 64Mi
             limits:
-              cpu: 20m
-              memory: 16Mi
+              cpu: 50m
+              memory: 128Mi
         email:
           podAnnotations:
             openshift.io/required-scc: restricted-v2
