@@ -1,6 +1,6 @@
 ---
 metadata:
-  version: v1
+  version: "v1"
 alerts:
 - group_id: frontend-proxy-service-1
   id: RequestErrorRate

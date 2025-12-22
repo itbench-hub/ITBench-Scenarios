@@ -1,28 +1,28 @@
 ---
 metadata:
-  version: v1
-alerts:
-- group_id: otel-demo-namespace-1
-  id: CPUSpend
-  metadata:
-    description: CPU spend increased by 20 percent
-- group_id: otel-demo-namespace-1
-  id: MemorySpend
-  metadata:
-    description: Memory spend has increased by 20 percent
-aliases:
-- - otel-demo-namespace-1
+  version: "v1"
 fault: []
+alerts:
+  - id: CPUSpend
+    group_id: otel-demo-namespace-1
+    metadata:
+      description: CPU spend increased by 20 percent
+  - id: MemorySpend
+    group_id: otel-demo-namespace-1
+    metadata:
+      description: Memory spend has increased by 20 percent
 groups:
-- id: otel-demo-namespace-1
-  kind: Namespace
-  name: otel-demo
-  namespace: otel-demo
-  root_cause: true
+  - id: otel-demo-namespace-1
+    kind: Namespace
+    name: otel-demo
+    namespace: otel-demo
+    root_cause: true
+aliases:
+  - - otel-demo-namespace-1
 propagations: []
 recommended_actions:
-- solution:
-    actions:
-    - no changes is needed in application
-    - update opencost alert to prevent false alerts
-    id: no_action
+  - solution:
+      id: "no_action"
+      actions:
+        - no changes is needed in application
+        - update opencost alert to prevent false alerts

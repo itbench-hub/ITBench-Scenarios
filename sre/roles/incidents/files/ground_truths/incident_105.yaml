@@ -1,6 +1,6 @@
 ---
 metadata:
-  version: v1
+  version: "v1"
 alerts:
 - group_id: product-catalog-pod-1
   id: PodCrashLoopBackOff
