@@ -1,5 +1,12 @@
+---
+metadata:
+  version: v1
 alerts:
 - group_id: frontend-proxy-service-1
+  id: RequestErrorRate
+  metadata:
+    description: Frontend proxy cannot reach frontend service due to network policy
+      blocking ingress
 aliases:
 - - frontend-service-1
   - frontend-pod-1
@@ -16,22 +23,27 @@ fault:
 groups:
 - filter:
   - frontend-block-all-ports
+  id: frontend-block-all-ports
   kind: NetworkPolicy
   namespace: otel-demo
   root_cause: true
 - filter:
   - frontend-.*
+  id: frontend-pod-1
   kind: Pod
   namespace: otel-demo
 - filter:
   - frontend\b
+  id: frontend-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - frontend-proxy-.*
+  id: frontend-proxy-pod-1
   kind: Pod
 - filter:
   - frontend-proxy\b
+  id: frontend-proxy-service-1
   kind: Service
   namespace: otel-demo
 propagations:
@@ -51,3 +63,4 @@ recommended_actions:
 - solution:
     actions:
     - Identify and remove the NetworkPolicy blocking ingress to frontend pods
+    id: remove_blocking_network_policy

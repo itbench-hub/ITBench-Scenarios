@@ -1,48 +1,50 @@
 ---
 metadata:
-  version: "v1"
-fault:
-  - entity:
-      name: shipping-deployment-1
-      group_id: shipping-deployment-1
-      kind: Deployment
-    condition: QUOTE_ADDR environment variable set to incorrect port 0000
-    category: Change
-    fault_mechanism: custom
+  version: v1
 alerts:
-  - id: RequestLatency
-    group_id: shipping-service-1
-    metadata:
-      description: Latency in service shipping in namespace otel-demo is above 1500ms
-groups:
-  - id: shipping-deployment-1
-    kind: Deployment
-    filter:
-      - shipping\b
-    namespace: otel-demo
-    root_cause: true
-  - id: shipping-service-1
-    kind: Service
-    filter:
-      - shipping\b
-    namespace: otel-demo
-  - id: shipping-pod-1
-    kind: Pod
-    filter:
-      - shipping-.*
-    namespace: otel-demo
+- group_id: shipping-service-1
+  id: RequestLatency
+  metadata:
+    description: Latency in service shipping in namespace otel-demo is above 1500ms
 aliases:
-  - - shipping-service-1
-    - shipping-pod-1
-    - shipping-deployment-1
+- - shipping-service-1
+  - shipping-pod-1
+  - shipping-deployment-1
+fault:
+- category: Change
+  condition: QUOTE_ADDR environment variable set to incorrect port 0000
+  entity:
+    group_id: shipping-deployment-1
+    kind: Deployment
+    name: shipping-deployment-1
+  fault_mechanism: custom
+groups:
+- filter:
+  - shipping\b
+  id: shipping-deployment-1
+  kind: Deployment
+  namespace: otel-demo
+  root_cause: true
+- filter:
+  - shipping\b
+  id: shipping-service-1
+  kind: Service
+  namespace: otel-demo
+- filter:
+  - shipping-.*
+  id: shipping-pod-1
+  kind: Pod
+  namespace: otel-demo
 propagations:
-  - source: shipping-deployment-1
-    target: shipping-service-1
-    condition: Shipping service cannot connect to quote service due to incorrect QUOTE_ADDR port configuration
-    effect: Shipping service experiences high latency while attempting to connect to invalid port
+- condition: Shipping service cannot connect to quote service due to incorrect QUOTE_ADDR
+    port configuration
+  effect: Shipping service experiences high latency while attempting to connect to
+    invalid port
+  source: shipping-deployment-1
+  target: shipping-service-1
 recommended_actions:
-  - solution:
-      id: fix_quote_port_configuration
-      actions:
-        - Identify correct port for quote service
-        - Update QUOTE_ADDR environment variable in shipping deployment
+- solution:
+    actions:
+    - Identify correct port for quote service
+    - Update QUOTE_ADDR environment variable in shipping deployment
+    id: fix_quote_port_configuration

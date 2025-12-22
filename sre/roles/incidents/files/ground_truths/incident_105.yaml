@@ -1,12 +1,40 @@
+---
+metadata:
+  version: v1
 alerts:
 - group_id: product-catalog-pod-1
+  id: PodCrashLoopBackOff
+  metadata:
+    description: Product catalog pod is in CrashLoopBackOff state
 - group_id: checkout-service-1
+  id: RequestErrorRate
+  metadata:
+    description: Checkout service experiencing connection failures to product-catalog
 - group_id: payment-service-1
+  id: NoRequestsDetected
+  metadata:
+    description: Payment service receiving no requests - checkout flow blocked
 - group_id: shipping-service-1
+  id: NoRequestsDetected
+  metadata:
+    description: Shipping service receiving no requests - checkout flow blocked
 - group_id: email-service-1
+  id: NoRequestsDetected
+  metadata:
+    description: Email service receiving no requests - checkout flow blocked
 - group_id: currency-service-1
+  id: NoRequestsDetected
+  metadata:
+    description: Currency service receiving no requests - checkout flow blocked
 - group_id: accounting-service-1
+  id: NoRequestsDetected
+  metadata:
+    description: Accounting service receiving no requests - order processing blocked
 - group_id: fraud-detection-service-1
+  id: NoRequestsDetected
+  metadata:
+    description: Fraud detection service receiving no requests - order processing
+      blocked
 aliases:
 - - product-catalog-service-1
   - product-catalog-pod-1
@@ -37,79 +65,98 @@ fault:
 groups:
 - filter:
   - product-catalog-.*
+  id: product-catalog-deployment
   kind: Deployment
   namespace: otel-demo
   root_cause: true
 - filter:
   - product-catalog-.*
+  id: product-catalog-pod-1
   kind: Pod
   namespace: otel-demo
 - filter:
   - product-catalog\b
+  id: product-catalog-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - checkout\b
+  id: checkout-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - checkout-.*
+  id: checkout-pod-1
   kind: Pod
   namespace: otel-demo
 - filter:
   - payment\b
+  id: payment-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - payment-.*
+  id: payment-pod-1
   kind: Pod
   namespace: otel-demo
 - filter:
   - shipping\b
+  id: shipping-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - shipping-.*
+  id: shipping-pod-1
   kind: Pod
   namespace: otel-demo
 - filter:
   - email\b
+  id: email-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - email-.*
+  id: email-pod-1
   kind: Pod
   namespace: otel-demo
 - filter:
   - currency\b
+  id: currency-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - currency-.*
+  id: currency-pod-1
   kind: Pod
   namespace: otel-demo
 - filter:
   - accounting\b
+  id: accounting-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - accounting-.*
+  id: accounting-pod-1
   kind: Pod
   namespace: otel-demo
 - filter:
   - fraud-detection\b
+  id: fraud-detection-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - fraud-detection-.*
+  id: fraud-detection-pod-1
   kind: Pod
   namespace: otel-demo
 - filter:
   - quote\b
+  id: quote-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - quote-.*
+  id: quote-pod-1
   kind: Pod
   namespace: otel-demo
 propagations:
@@ -159,3 +206,4 @@ recommended_actions:
 - solution:
     actions:
     - Identify and correct the invalid command in product-catalog deployment
+    id: fix_container_command

@@ -1,8 +1,23 @@
+---
+metadata:
+  version: v1
 alerts:
 - group_id: frontend-proxy-service-1
+  id: RequestErrorRate
+  metadata:
+    description: Error rate is above threshold for frontend-proxy service
 - group_id: frontend-service-1
+  id: RequestErrorRate
+  metadata:
+    description: Error rate is above threshold for frontend service
 - group_id: checkout-service-1
+  id: RequestErrorRate
+  metadata:
+    description: Error rate is above threshold for checkout service
 - group_id: shipping-service-1
+  id: RequestErrorRate
+  metadata:
+    description: Error rate is above threshold for shipping service
 aliases:
 - - quote-service-1
   - quote-pod-1
@@ -25,47 +40,58 @@ fault:
 groups:
 - filter:
   - otel-demo-quote-http-chaos-abort
+  id: otel-demo-quote-http-chaos-abort
   kind: Schedule
   namespace: chaos-mesh
   root_cause: true
 - filter:
   - quote\b
+  id: quote-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - quote-.*
+  id: quote-pod-1
   kind: Pod
   namespace: otel-demo
 - filter:
   - checkout\b
+  id: checkout-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - checkout-.*
+  id: checkout-pod-1
   kind: Pod
   namespace: otel-demo
 - filter:
   - shipping\b
+  id: shipping-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - shipping-.*
+  id: shipping-pod-1
   kind: Pod
   namespace: otel-demo
 - filter:
   - frontend\b
+  id: frontend-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - frontend-.*
+  id: frontend-pod-1
   kind: Pod
   namespace: otel-demo
 - filter:
   - frontend-proxy\b
+  id: frontend-proxy-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - frontend-proxy-.*
+  id: frontend-proxy-pod-1
   kind: Pod
   namespace: otel-demo
 propagations:
@@ -95,3 +121,4 @@ recommended_actions:
 - solution:
     actions:
     - Delete the HTTP Chaos resource targeting quote service
+    id: remove_chaos_experiment

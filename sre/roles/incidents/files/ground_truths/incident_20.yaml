@@ -1,6 +1,15 @@
+---
+metadata:
+  version: v1
 alerts:
 - group_id: frontend-service-1
+  id: RequestErrorRate
+  metadata:
+    description: Error Rate is Above Threshold
 - group_id: recommendation-service-1
+  id: RequestErrorRate
+  metadata:
+    description: Error Rate is Above Threshold
 aliases:
 - - productcatalog-service-1
   - productcatalog-pod-1
@@ -23,39 +32,48 @@ fault:
 groups:
 - filter:
   - product-catalog-.*
+  id: productcatalog-deployment-1
   kind: Deployment
   namespace: otel-demo
   root_cause: true
 - filter:
   - product-catalog-.*
+  id: productcatalog-pod-1
   kind: Pod
   namespace: otel-demo
 - filter:
   - checkout\b
+  id: checkout-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - recommendation\b
+  id: recommendation-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - frontend\b
+  id: frontend-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - product-catalog\b
+  id: productcatalog-service-1
   kind: Service
   namespace: otel-demo
 - filter:
   - frontend-.*
+  id: frontend-pod-1
   kind: Pod
   namespace: otel-demo
 - filter:
   - checkout-.*
+  id: checkout-pod-1
   kind: Pod
   namespace: otel-demo
 - filter:
   - recommendation-.*
+  id: recommendation-pod-1
   kind: Pod
   namespace: otel-demo
 propagations:
@@ -89,3 +107,4 @@ recommended_actions:
     actions:
     - change the image field in productcatalogueservice deployment pointing to the
       correct image
+    id: change_the_image_field_in_productcatalogueservice_deployment_pointing_to_the_correct_image
