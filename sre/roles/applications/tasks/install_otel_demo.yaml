@@ -201,7 +201,7 @@
         load-generator:
           envOverrides:
             - name: LOCUST_BROWSER_TRAFFIC_ENABLED
-              value: "false"
+              value: "{{ configuration.load_generator.browser_traffic_enabled | default(false) | string }}"
             - name: LOCUST_SPAWN_RATE
               value: "{{ configuration.load_generator.spawn_rate | string }}"
             - name: LOCUST_USERS
