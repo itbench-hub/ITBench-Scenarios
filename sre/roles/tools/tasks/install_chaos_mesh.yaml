@@ -79,6 +79,7 @@
       chaosDaemon:
         podAnnotations:
           openshift.io/required-scc: it-bench-chaos-daemon-restricted
+        privileged: true
         runtime: "{{ 'containerd' if tools_cluster.platform == 'kubernetes' else 'crio' }}"
         socketPath: "{{ '/run/containerd/containerd.sock' if tools_cluster.platform == 'kubernetes' else '/var/run/crio/crio.sock' }}"
       dashboard:
