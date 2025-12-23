@@ -233,7 +233,7 @@
       - --set
       - spec.networking.cilium.cniExclusive=false
       - --set
-      - spec.networking.cilium.socketLB.hostNamespaceOnly=true
+      - spec.networking.cilium.bpfLBSockHostNSOnly=true
   async: 600
   loop: "{{ stack_cluster_names }}"
   poll: 0

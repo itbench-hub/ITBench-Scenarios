@@ -44,7 +44,7 @@
       - --set
       - spec.networking.cilium.cniExclusive=false
       - --set
-      - spec.networking.cilium.socketLB.hostNamespaceOnly=true
+      - spec.networking.cilium.bpfLBSockHostNSOnly=true
   register: kops_edit_output
   changed_when: kops_edit_output.rc == 0
 
