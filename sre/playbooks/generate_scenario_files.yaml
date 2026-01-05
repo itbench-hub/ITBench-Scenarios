@@ -3,9 +3,18 @@
   hosts:
     - environment
   tasks:
+    - name: Import waiters role
+      ansible.builtin.import_role:
+        name: waiters
+        tasks_from: generate_tasks
+      tags:
+        - generate_files
+
     - name: Include scenarios role
       ansible.builtin.import_role:
         name: scenarios
+      tags:
+        - generate_files
       vars:
         scenarios_files_generator:
           options:

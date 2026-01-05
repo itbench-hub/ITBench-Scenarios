@@ -1,4 +1,10 @@
 ---
+- name: Load scenarios library index
+  ansible.builtin.set_fact:
+    scenarios_library_index: "{{ lookup('ansible.builtin.file', index_file_path) | from_json }}"
+  vars:
+    index_file_path: "{{ playbook_dir }}/../roles/documentation/files/library/scenarios/index.json"
+
 - name: Generate scenario directory paths
   ansible.builtin.set_fact:
     scenarios_directory_paths: "{{ scenarios_directory_paths | default({}) | combine({scenario.id: directory_path}) }}"
