@@ -15,12 +15,7 @@
         combine(
           {
             waiter.id: {
-              "taskFile": (
-                [
-                  waiter.id,
-                  "yaml"
-                ] | join(".")
-              )
+              "taskFile": task_file
             }
           }
         )
@@ -29,6 +24,8 @@
   loop_control:
     label: waiter/{{ waiter.id }}
     loop_var: waiter
+  vars:
+    task_file: "{{ waiter.id | replace('-', '_') }}.yaml"
 
 - name: Create waiters library index-task map file
   ansible.builtin.copy:
@@ -51,4 +48,4 @@
     label: waiter/{{ waiter.id }}
     loop_var: waiter
   vars:
-    task_file_name: "{{ [(waiter.id | replace('-', '_')), 'yaml'] | join('.') }}"
+    task_file_name: "{{ waiter.id | replace('-', '_') }}.yaml"

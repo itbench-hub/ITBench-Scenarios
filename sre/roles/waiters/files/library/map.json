@@ -1,8 +1,8 @@
 {
     "pause-execution": {
-        "taskFile": "pause-execution.yaml"
+        "taskFile": "pause_execution.yaml"
     },
     "scale-kubernetes-workload": {
-        "taskFile": "scale-kubernetes-workload.yaml"
+        "taskFile": "scale_kubernetes_workload.yaml"
     }
 }

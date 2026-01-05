@@ -3,6 +3,13 @@
   hosts:
     - environment
   tasks:
+    - name: Import injections role
+      ansible.builtin.import_role:
+        name: injections
+        tasks_from: generate_tasks
+      tags:
+        - generate_files
+
     - name: Import waiters role
       ansible.builtin.import_role:
         name: waiters
