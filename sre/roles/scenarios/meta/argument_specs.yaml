@@ -1,6 +1,6 @@
 ---
 argument_specs:
-  main:
+  generate_files:
     author:
       - Gerard Vanloo
     options:

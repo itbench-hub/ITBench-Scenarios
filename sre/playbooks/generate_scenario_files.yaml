@@ -13,6 +13,7 @@
     - name: Include scenarios role
       ansible.builtin.import_role:
         name: scenarios
+        tasks_from: generate_files
       tags:
         - generate_files
       vars:

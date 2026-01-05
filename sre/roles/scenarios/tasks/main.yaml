@@ -1,4 +1,0 @@
----
-- name: Import scenario file generation tasks
-  ansible.builtin.import_tasks:
-    file: generate.yaml
