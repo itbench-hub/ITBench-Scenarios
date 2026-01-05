@@ -9,4 +9,4 @@
       vars:
         scenarios_files_generator:
           options:
-            overwrite: "{{ allow_overwrites | default(false) | bool }}"
+            overwrite: "{{ overwrite_files | default(false) | bool }}"

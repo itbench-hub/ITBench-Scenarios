@@ -23,12 +23,14 @@ generate_docs: ## Generates library indexes, schemas, and other related document
 validate_docs: ## Validates library indexes
 	ansible-playbook -i inventory.yaml playbooks/manage_documentation.yaml --tags "validate_docs"
 
+.PHONY: generate_scenarios
 generate_scenarios: ## Generates scenario files from the scenario library index
 	ansible-playbook -i inventory.yaml playbooks/generate_scenario_files.yaml --tags "generate_scenarios"
 
+.PHONY: regenerate_scenarios
 regenerate_scenarios: ## Overwrites the scenario files with generated scenario files
 	ansible-playbook -i inventory.yaml playbooks/generate_scenario_files.yaml --tags "generate_scenarios" \
-		--extra-vars "allow_overwrites=true"
+		--extra-vars "overwrite_files=true"
 
 .PHONY: deploy_tools
 deploy_tools: ## Deploys the observability and fault tools to cluster
