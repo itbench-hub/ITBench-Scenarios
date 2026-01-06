@@ -23,21 +23,30 @@ spec:
   groups:
     - filter:
         - checkout-.*
+      id: checkout-deployment-1
+      kind: Deployment
+      namespace: otel-demo
+      root_cause: true
+    - filter:
+        - checkout-.*
       id: checkout-pod-1
       kind: Pod
       namespace: otel-demo
-      root_cause: true
     - filter:
         - checkout\b
       id: checkout-service-1
       kind: Service
       namespace: otel-demo
   propagations:
+    - condition: checkout deployment updated to point to an invalid image - incorrect architecture
+      effect: checkout pod is in ImagePullBackOff error
+      source: checkout-deployment-1
+      target: checkout-pod-1
     - condition: checkout pod is in ImagePullBackOff error
-      effect: ""
+      effect: ''
       source: checkout-pod-1
       target: checkout-service-1
-  recommendedActions:
+  recommended_actions:
     - solution:
         actions:
           - change the image of checkout to correct image for amd64 system

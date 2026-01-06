@@ -42,9 +42,9 @@ spec:
       fault_mechanism: chaos
   groups:
     - filter:
-        - http-abort-otel-demo-quoteservice-1
-      id: http-abort-otel-demo-quoteservice-1
-      kind: HttpChaos
+        - otel-demo-quote-http-chaos-abort
+      id: otel-demo-quote-http-chaos-abort
+      kind: Schedule
       namespace: chaos-mesh
       root_cause: true
     - filter:
@@ -100,7 +100,7 @@ spec:
   propagations:
     - condition: HTTP Chaos aborts all POST requests to quote service /getquote endpoint
       effect: Quote service becomes unavailable for shipping quote requests
-      source: http-abort-otel-demo-quoteservice-1
+      source: otel-demo-quote-http-chaos-abort
       target: quote-service-1
     - condition: Shipping service cannot get quotes due to quote service failures
       effect: Shipping service experiences errors when calling quote service
@@ -118,7 +118,7 @@ spec:
       effect: Frontend-proxy service experiences errors when proxying requests
       source: frontend-service-1
       target: frontend-proxy-service-1
-  recommendedActions:
+  recommended_actions:
     - solution:
         actions:
           - Delete the HTTP Chaos resource targeting quote service

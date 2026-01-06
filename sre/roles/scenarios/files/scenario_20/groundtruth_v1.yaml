@@ -16,6 +16,8 @@ spec:
   aliases:
     - - productcatalog-service-1
       - productcatalog-pod-1
+    - - productcatalog-pod-1
+      - productcatalog-deployment-1
     - - frontend-service-1
       - frontend-pod-1
     - - checkout-service-1
@@ -33,10 +35,15 @@ spec:
   groups:
     - filter:
         - product-catalog-.*
+      id: productcatalog-deployment-1
+      kind: Deployment
+      namespace: otel-demo
+      root_cause: true
+    - filter:
+        - product-catalog-.*
       id: productcatalog-pod-1
       kind: Pod
       namespace: otel-demo
-      root_cause: true
     - filter:
         - checkout\b
       id: checkout-service-1
@@ -73,6 +80,10 @@ spec:
       kind: Pod
       namespace: otel-demo
   propagations:
+    - condition: productcatalogdeployement updated to point to an invalid image - incorrect image path-location
+      effect: productcatalog pod is in ImagePullBackOff error
+      source: productcatalog-deployment-1
+      target: productcatalog-pod-1
     - condition: productcatalog pod is in ImagePullBackOff error
       effect: frontend service Error Rate is Above Threshold
       source: productcatalog-pod-1
@@ -93,7 +104,7 @@ spec:
       effect: frontend service Error Rate is Above Threshold
       source: recommendation-service-1
       target: frontend-service-1
-  recommendedActions:
+  recommended_actions:
     - solution:
         actions:
           - change the image field in productcatalogueservice deployment pointing to the correct image

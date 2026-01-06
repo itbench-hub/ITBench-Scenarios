@@ -67,10 +67,15 @@ spec:
   groups:
     - filter:
         - product-catalog-.*
+      id: product-catalog-deployment
+      kind: Deployment
+      namespace: otel-demo
+      root_cause: true
+    - filter:
+        - product-catalog-.*
       id: product-catalog-pod-1
       kind: Pod
       namespace: otel-demo
-      root_cause: true
     - filter:
         - product-catalog\b
       id: product-catalog-service-1
@@ -157,6 +162,10 @@ spec:
       kind: Pod
       namespace: otel-demo
   propagations:
+    - condition: Invalid command in deployment
+      effect: Pod container fails to start due to invalid command
+      source: product-catalog-deployment
+      target: product-catalog-pod-1
     - condition: Pod container fails to start due to invalid command
       effect: Product catalog service becomes unavailable
       source: product-catalog-pod-1
@@ -193,7 +202,7 @@ spec:
       effect: Quote service receives zero shipping quote requests
       source: shipping-service-1
       target: quote-service-1
-  recommendedActions:
+  recommended_actions:
     - solution:
         actions:
           - Identify and correct the invalid command in product-catalog deployment
