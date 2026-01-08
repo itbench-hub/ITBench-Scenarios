@@ -6,7 +6,7 @@ metadata:
   namespace: [[ applications_helm_releases.otel_demo.namespace ]]
 spec:
   groups:
-    - name: opentelemetrydemo.cluster
+    - name: opentelemetrydemo.workloads
       rules:
         - alert: FailedPodsDetected
           expr: |
@@ -97,7 +97,7 @@ spec:
             severity: critical
           annotations:
             description: "Request error rate in service {{ $labels.service_name }} in namespace {{ $labels.namespace }} is above 1 (current: {{ $value }})"
-        - alert: KafkaConnectionClosureRate
+        - alert: HighKafkaConnectionClosureRate
           expr: |
             sum by (job) (
               rate(
