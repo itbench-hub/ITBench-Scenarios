@@ -1,0 +1,191 @@
+---
+# Ground Truth for ITN-2025-00160: API Server High Error Rate
+# Evidence from Slack channel C09528B6JAD.json
+metadata:
+  version: "v1"
+
+fault:
+  - entity:
+      name: api-request-generator
+      group_id: load-generator-pods
+      kind: Job
+    condition: "Excessive API requests (1000 req/s) triggering rate limiting"
+    category: Client Behavior
+    fault_mechanism: custom-api-request-surge
+
+  - entity:
+      name: kube-apiserver
+      group_id: api-server-pods
+      kind: Pod
+    condition: "Rate limiting clients exceeding request quota (HTTP 429 responses)"
+    category: Expected Behavior
+    fault_mechanism: none
+    note: "This is protective behavior, not a fault - but triggers misconfigured alert"
+
+  - entity:
+      name: etcd
+      group_id: etcd-pods
+      kind: Pod
+    condition: "I/O latency injected causing API Server timeouts"
+    category: Infrastructure Fault
+    fault_mechanism: chaos-mesh-IOChaos
+
+  - entity:
+      name: kube-apiserver-memory
+      group_id: api-server-pods
+      kind: Pod
+    condition: "Memory pressure causing OOM and pod restarts"
+    category: Resource Exhaustion
+    fault_mechanism: chaos-mesh-StressChaos
+
+alerts:
+  - id: KonfluxAPIServerHighErrorRate
+    group_id: api-server-pods
+    metadata:
+      description: "API Server error rate > 5% for 5 minutes (ORIGINAL: includes 5XX and 429)"
+      severity: critical
+      source: "rhtap-observatorium-production"
+      issue: "Alert incorrectly treats 429 rate limiting as critical server failure"
+
+  - id: KonfluxAPIServerHighErrorRateRevised
+    group_id: api-server-pods
+    metadata:
+      description: "API Server error rate > 5% for 5 minutes (REVISED: only 5XX server errors)"
+      severity: critical
+      source: "rhtap-observatorium-production"
+      merge_request: "https://gitlab.cee.redhat.com/konflux/docs/sop/-/merge_requests/371"
+      improvement: "Excludes expected rate limiting behavior from critical alert"
+
+  - id: KonfluxAPIServerRateLimitExceeded
+    group_id: api-server-pods
+    metadata:
+      description: "Sustained high rate of 429 responses indicating excessive client"
+      severity: warning
+      source: "Prometheus"
+      status: "RECOMMENDED - not yet implemented"
+      purpose: "Monitor rate limiting separately without critical alarm"
+
+  - id: EtcdHighLatency
+    group_id: etcd-pods
+    metadata:
+      description: "etcd fsync latency P99 > 100ms"
+      severity: warning
+      source: "Kubernetes metrics"
+
+  - id: APIServerMemoryHigh
+    group_id: api-server-pods
+    metadata:
+      description: "API Server pod memory usage > 90% of limit"
+      severity: warning
+      source: "Kubernetes metrics"
+
+groups:
+  - id: api-server-pods
+    kind: Pod
+    namespace: kube-system
+    filter:
+      - kube-apiserver-.*
+    note: "Control plane component - affects entire cluster"
+
+  - id: etcd-pods
+    kind: Pod
+    namespace: kube-system
+    filter:
+      - etcd-.*
+    note: "Backing store for API Server"
+
+  - id: load-generator-pods
+    kind: Pod
+    namespace: api-load-test
+    filter:
+      - api-request-generator-.*
+    root_cause: true
+    reason: "Generates excessive requests causing rate limiting (Scenario A)"
+
+  - id: monitoring-alert-config
+    kind: ConfigMap
+    namespace: observability
+    filter:
+      - konflux-alerts
+    root_cause: true
+    reason: "Misconfigured alert treats 429 (expected) as critical error"
+
+aliases:
+  - - api-server-pods
+    - etcd-pods
+
+propagations:
+  # Scenario A: Excessive requests → Rate limiting
+  - source: load-generator-pods
+    target: api-server-pods
+    condition: "API request rate exceeds server quota (1000 req/s from single client)"
+    effect: "API Server returns HTTP 429 (Too Many Requests) to protect itself"
+    classification: "Expected behavior, not failure"
+
+  # Scenario B: etcd latency → API Server timeouts
+  - source: etcd-pods
+    target: api-server-pods
+    condition: "etcd I/O latency > 200ms causes API Server storage operations to timeout"
+    effect: "API Server returns HTTP 503 (Service Unavailable) or 504 (Gateway Timeout)"
+    classification: "Genuine server failure"
+
+  # Scenario C: Memory pressure → API Server crashes
+  - source: api-server-pods
+    target: api-server-pods
+    condition: "Memory allocation exceeds pod limit (OOM)"
+    effect: "Kubelet kills API Server pod, brief 503 errors during restart"
+    classification: "Genuine server failure"
+
+  # Misconfigured alert → False positive incident
+  - source: api-server-pods
+    target: monitoring-alert-config
+    condition: "Alert definition includes HTTP 429 in error calculation"
+    effect: "Critical alert fires even when only rate limiting occurs (no actual server failure)"
+    classification: "Observability issue"
+
+recommended_actions:
+  - solution:
+      id: refine_alert_definition
+      actions:
+        - "Separate 5XX (server errors) from 4XX (client errors) in alerting"
+        - "Create separate warning-level alert for sustained 429 rate"
+        - "Update runbooks to investigate 429 sources, not treat as critical"
+      timing: "Immediate"
+      status: "COMPLETED"
+      merge_request: "https://gitlab.cee.redhat.com/konflux/docs/sop/-/merge_requests/371"
+
+  - solution:
+      id: investigate_rate_limit_source
+      actions:
+        - "Query Kubernetes audit logs for top API clients by request count"
+        - "Identify controller, monitoring agent, or user causing 429s"
+        - "Adjust client reconciliation rate or add backoff"
+      timing: "Post-incident investigation"
+      status: "IN PROGRESS"
+      jira: "SPRE-1657"
+
+  - solution:
+      id: scale_api_server_if_genuine_5xx
+      actions:
+        - "If genuine 5XX errors: increase API Server replica count"
+        - "If etcd latency: investigate storage performance"
+        - "If memory pressure: increase API Server pod memory limits"
+      timing: "If scenario B or C confirmed"
+      status: "NOT NEEDED for this incident"
+
+  - solution:
+      id: improve_alert_testing
+      actions:
+        - "Test new alerts with realistic traffic before production"
+        - "Review all SLO alerts for HTTP code semantics"
+        - "Add alert testing to CI/CD pipeline"
+      timing: "Post-incident process improvement"
+
+  - solution:
+      id: implement_client_quotas
+      actions:
+        - "Set explicit rate limits per service account"
+        - "Monitor and alert on per-client request rates"
+        - "Create priority queues for critical vs non-critical clients"
+      timing: "Long-term improvement"
+
