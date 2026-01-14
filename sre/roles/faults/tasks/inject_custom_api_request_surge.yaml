@@ -3,34 +3,10 @@
 # Simulates runaway controller making excessive API requests
 # Based on ITN-2025-00160 incident
 
-- name: Create ServiceAccount for API load generator
+- name: Create API request surge resources
   kubernetes.core.k8s:
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    template: templates/api_request_surge/serviceaccount.j2
-    state: present
-
-- name: Create ClusterRole for API access
-  kubernetes.core.k8s:
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    template: templates/api_request_surge/clusterrole.j2
-    state: present
-
-- name: Create ClusterRoleBinding
-  kubernetes.core.k8s:
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    template: templates/api_request_surge/clusterrolebinding.j2
-    state: present
-
-- name: Create ConfigMap with API load generation script
-  kubernetes.core.k8s:
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    template: templates/api_request_surge/configmap.j2
-    state: present
-
-- name: Create Deployment for API request surge
-  kubernetes.core.k8s:
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    template: templates/api_request_surge/deployment.j2
+    template: templates/api_request_surge/resources.j2
     state: present
 
 - name: Wait for Deployment to be ready
