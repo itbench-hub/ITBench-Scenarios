@@ -6,7 +6,7 @@ metadata:
 scenario:
   metadata:
     complexity: Medium
-    id: 160
+    id: 51
     name: API Server Error Rate Spike - Rate Limiting and Alert Misconfiguration
     platform: kubernetes
   spec:
@@ -14,10 +14,6 @@ scenario:
       applications:
         # Standard Kubernetes cluster with API Server
         # No special applications required
-        workload_generator:
-          enabled: true
-          configuration:
-            namespace: api-load-test
       tools:
         category: sre
         selected:
@@ -32,9 +28,8 @@ scenario:
       - custom:
           name: api-request-surge
           api_request_surge:
-            target:
-              api_server: kube-apiserver
-              cluster: stone-prod-p02
+            namespace:
+              name: default
             load_profile:
               requests_per_second: 1000
               duration: 600  # 10 minutes

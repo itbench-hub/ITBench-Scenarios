@@ -3,182 +3,34 @@
 # Simulates runaway controller making excessive API requests
 # Based on ITN-2025-00160 incident
 
-- name: Create namespace for API load generator
-  kubernetes.core.k8s:
-    kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: v1
-      kind: Namespace
-      metadata:
-        name: api-load-test
-    state: present
-
 - name: Create ServiceAccount for API load generator
   kubernetes.core.k8s:
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: v1
-      kind: ServiceAccount
-      metadata:
-        name: api-load-generator
-        namespace: api-load-test
+    template: templates/api_request_surge/serviceaccount.j2
     state: present
 
 - name: Create ClusterRole for API access
   kubernetes.core.k8s:
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: rbac.authorization.k8s.io/v1
-      kind: ClusterRole
-      metadata:
-        name: api-load-generator
-      rules:
-        - apiGroups: [""]
-          resources: ["pods", "services", "nodes", "namespaces"]
-          verbs: ["get", "list", "watch"]
-        - apiGroups: ["apps"]
-          resources: ["deployments", "replicasets", "statefulsets"]
-          verbs: ["get", "list", "watch"]
-        - apiGroups: ["batch"]
-          resources: ["jobs", "cronjobs"]
-          verbs: ["get", "list", "watch"]
+    template: templates/api_request_surge/clusterrole.j2
     state: present
 
 - name: Create ClusterRoleBinding
   kubernetes.core.k8s:
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: rbac.authorization.k8s.io/v1
-      kind: ClusterRoleBinding
-      metadata:
-        name: api-load-generator
-      roleRef:
-        apiGroup: rbac.authorization.k8s.io
-        kind: ClusterRole
-        name: api-load-generator
-      subjects:
-        - kind: ServiceAccount
-          name: api-load-generator
-          namespace: api-load-test
+    template: templates/api_request_surge/clusterrolebinding.j2
     state: present
-
-- name: Calculate operation distribution
-  ansible.builtin.set_fact:
-    ops_distribution: "{{ spec.load_profile.operations | default([]) }}"
 
 - name: Create ConfigMap with API load generation script
   kubernetes.core.k8s:
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: v1
-      kind: ConfigMap
-      metadata:
-        name: api-surge-script
-        namespace: api-load-test
-      data:
-        generate-api-load.sh: |
-          #!/bin/bash
-          set -e
-          
-          RPS={{ spec.load_profile.requests_per_second }}
-          DURATION={{ spec.load_profile.duration }}
-          
-          echo "=== API Request Surge Load Generator ==="
-          echo "Target: Kubernetes API Server"
-          echo "Requests per second: ${RPS}"
-          echo "Duration: ${DURATION} seconds"
-          echo "Operations: {{ ops_distribution | map(attribute='verb') | join(', ') }}"
-          echo "==========================================="
-          
-          TOTAL_REQUESTS=$((RPS * DURATION))
-          COUNT=0
-          START_TIME=$(date +%s)
-          
-          while [ $COUNT -lt $TOTAL_REQUESTS ]; do
-            ELAPSED=$(($(date +%s) - START_TIME))
-            
-            if [ $ELAPSED -ge $DURATION ]; then
-              break
-            fi
-            
-            # Distribute operations according to percentages
-            RAND=$((RANDOM % 100))
-            
-            {% set cumulative = 0 %}
-            {% for op in spec.load_profile.operations | default([]) %}
-            {% set cumulative = cumulative + op.percentage %}
-            if [ $RAND -lt {{ cumulative }} ]; then
-              {% if op.all_namespaces | default(false) %}
-              kubectl {{ op.verb }} {{ op.resource }} --all-namespaces -o name > /dev/null 2>&1 &
-              {% else %}
-              kubectl {{ op.verb }} {{ op.resource }} -o name > /dev/null 2>&1 &
-              {% endif %}
-            fi
-            {% endfor %}
-            
-            COUNT=$((COUNT + 1))
-            
-            # Progress reporting every 10 seconds
-            if [ $((COUNT % (RPS * 10))) -eq 0 ]; then
-              REMAINING=$((DURATION - ELAPSED))
-              echo "[${ELAPSED}s] Sent ${COUNT} requests. ${REMAINING}s remaining..."
-            fi
-            
-            # Sleep to maintain desired RPS
-            sleep $(awk "BEGIN {print 1/${RPS}}")
-          done
-          
-          echo "Load generation complete!"
-          echo "Total requests sent: ${COUNT}"
-          echo "Actual duration: $(($(date +%s) - START_TIME))s"
+    template: templates/api_request_surge/configmap.j2
     state: present
 
 - name: Create Deployment for API request surge
   kubernetes.core.k8s:
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
-    resource_definition:
-      apiVersion: apps/v1
-      kind: Deployment
-      metadata:
-        name: api-request-surge
-        namespace: api-load-test
-        labels:
-          fault-type: api-request-surge
-      spec:
-        replicas: "{{ spec.parallelism | default(20) }}"
-        selector:
-          matchLabels:
-            app: api-load-generator
-        template:
-          metadata:
-            labels:
-              app: api-load-generator
-              fault-type: api-request-surge
-          spec:
-            serviceAccountName: api-load-generator
-            containers:
-              - name: load-generator
-                image: bitnami/kubectl:latest
-                command: ["/bin/bash"]
-                args:
-                  - -c
-                  - |
-                    bash /scripts/generate-api-load.sh
-                volumeMounts:
-                  - name: script
-                    mountPath: /scripts
-                resources:
-                  requests:
-                    cpu: "50m"
-                    memory: "64Mi"
-                  limits:
-                    cpu: "200m"
-                    memory: "128Mi"
-            volumes:
-              - name: script
-                configMap:
-                  name: api-surge-script
-                  defaultMode: 0755
+    template: templates/api_request_surge/deployment.j2
     state: present
 
 - name: Wait for Deployment to be ready
@@ -187,7 +39,7 @@
     kind: Deployment
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
     name: api-request-surge
-    namespace: api-load-test
+    namespace: "{{ spec.namespace.name }}"
     wait: true
     wait_condition:
       type: Available
@@ -195,8 +47,3 @@
     wait_timeout: 60
   register: deployment_info
   ignore_errors: true
-
-- name: Display load generator status
-  ansible.builtin.debug:
-    msg: "API request surge Deployment started with {{ spec.parallelism | default(20) }} replicas. Generating {{ spec.load_profile.requests_per_second }} req/s for {{ spec.load_profile.duration }} seconds per pod."
-

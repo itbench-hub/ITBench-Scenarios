@@ -31,6 +31,14 @@ fault:
     note: "OCP released two streams simultaneously with parallel pipelines, creating exceptional load"
 
 alerts:
+  # Note: These alerts are based on the actual Konflux production incident.
+  # The alerts (SigningTaskTimeout, MessageQueueBacklog, MessageDeliveryLatency, SigningServiceHighCPU)
+  # are custom alerts defined in the Konflux production monitoring setup:
+  # - SigningTaskTimeout: Defined in Tekton pipeline metrics/alerting configuration
+  # - MessageQueueBacklog/MessageDeliveryLatency: Defined in UMB (Universal Message Bus) monitoring dashboard
+  # - SigningServiceHighCPU: Standard Kubernetes metrics-based alert, likely defined in Prometheus rules
+  # These are not part of the standard kube-prometheus-stack charts but are specific to the Konflux
+  # infrastructure and would be found in the Konflux GitOps repository managing monitoring rules.
   - id: SigningTaskTimeout
     group_id: ci-pipeline-service
     metadata:

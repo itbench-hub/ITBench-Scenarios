@@ -1,0 +1,48 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-request-surge
+  namespace: {{ spec.namespace.name }}
+  labels:
+    fault-type: api-request-surge
+spec:
+  replicas: {{ spec.parallelism | default(20) }}
+  selector:
+    matchLabels:
+      app: api-load-generator
+  template:
+    metadata:
+      labels:
+        app: api-load-generator
+        fault-type: api-request-surge
+    spec:
+      serviceAccountName: api-load-generator
+      containers:
+        - name: load-generator
+          image: bitnami/kubectl:latest
+          command: ["/bin/bash"]
+          args:
+            - -c
+            - |
+              bash /scripts/generate-api-load.sh
+          env:
+            - name: RPS
+              value: "{{ spec.load_profile.requests_per_second }}"
+            - name: DURATION
+              value: "{{ spec.load_profile.duration }}"
+          volumeMounts:
+            - name: script
+              mountPath: /scripts
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "200m"
+              memory: "128Mi"
+      volumes:
+        - name: script
+          configMap:
+            name: api-surge-script
+            defaultMode: 0755

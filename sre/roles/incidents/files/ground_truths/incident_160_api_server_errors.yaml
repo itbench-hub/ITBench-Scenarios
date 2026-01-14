@@ -39,6 +39,13 @@ fault:
     fault_mechanism: chaos-mesh-StressChaos
 
 alerts:
+  # Note: These alerts are based on the actual Konflux production incident.
+  # The original alert (KonfluxAPIServerHighErrorRate) was a custom alert defined in
+  # the Konflux observatorium production Prometheus configuration, not in the standard
+  # kube-prometheus-stack charts. The alert definitions would be found in the Konflux
+  # GitOps repository managing the observatorium Prometheus rules.
+  # The revised alert and recommended alerts are proposed improvements based on the
+  # incident analysis.
   - id: KonfluxAPIServerHighErrorRate
     group_id: api-server-pods
     metadata:
@@ -96,7 +103,7 @@ groups:
 
   - id: load-generator-pods
     kind: Pod
-    namespace: api-load-test
+    namespace: default
     filter:
       - api-request-generator-.*
     root_cause: true
