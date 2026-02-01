@@ -1,188 +1,230 @@
 ---
-# Ground Truth for ITN-2025-00221: Signing Service Overload
-# Evidence from Slack channel C09DG4PJNG6.json
+# Ground Truth for Incident 52: Service Resource Exhaustion Due to Queue Backlog
+# Based on ITN-2025-00221 incident pattern - adapted for ITBench otel-demo application
 metadata:
   version: "v1"
 
 fault:
   - entity:
-      name: signing-service-deployment
-      group_id: signing-service-pods
-      kind: Deployment
-    condition: "Pod count capped at 20 due to namespace resource quota, insufficient for request volume"
+      name: kafka
+      group_id: kafka-pod-1
+      kind: Pod
+    condition: "Kafka queue experiencing backlog due to consumer processing delay"
     category: Resource Exhaustion
-    fault_mechanism: custom-misconfigured-resource-quota
+    fault_mechanism: custom(flagd)
+    note: "kafkaQueueProblems feature flag enabled causing queue backlog"
 
   - entity:
-      name: message-queue-consumer
-      group_id: message-queue-consumer-pods
-      kind: Deployment
-    condition: "Consumer processing rate artificially reduced, unable to acknowledge messages fast enough"
+      name: accounting-service
+      group_id: accounting-pod-1
+      kind: Pod
+    condition: "Service unable to process messages fast enough, causing queue buildup"
     category: Configuration Error
-    fault_mechanism: custom-modify-environment-variables
+    fault_mechanism: custom(flagd)
 
   - entity:
-      name: signing-request-generator
-      group_id: load-generator-pods
-      kind: Job
-    condition: "Excessive signing requests simulating OCP payload release surge (10x normal rate)"
-    category: Load Surge
-    fault_mechanism: custom-signing-request-surge
-    note: "OCP released two streams simultaneously with parallel pipelines, creating exceptional load"
+      name: fraud-detection-service
+      group_id: fraud-detection-pod-1
+      kind: Pod
+    condition: "Service experiencing high latency processing queued messages"
+    category: Resource Saturation
+    fault_mechanism: chaos-mesh-StressChaos
+
+  - entity:
+      name: flagd-config
+      group_id: flagd-config-1
+      kind: ConfigMap
+    condition: "kafkaQueueProblems feature flag set causing consumer delay"
+    category: Configuration Setting
+    fault_mechanism: custom(flagd)
 
 alerts:
-  # Note: These alerts are based on the actual Konflux production incident.
-  # The alerts (SigningTaskTimeout, MessageQueueBacklog, MessageDeliveryLatency, SigningServiceHighCPU)
-  # are custom alerts defined in the Konflux production monitoring setup:
-  # - SigningTaskTimeout: Defined in Tekton pipeline metrics/alerting configuration
-  # - MessageQueueBacklog/MessageDeliveryLatency: Defined in UMB (Universal Message Bus) monitoring dashboard
-  # - SigningServiceHighCPU: Standard Kubernetes metrics-based alert, likely defined in Prometheus rules
-  # These are not part of the standard kube-prometheus-stack charts but are specific to the Konflux
-  # infrastructure and would be found in the Konflux GitOps repository managing monitoring rules.
-  - id: SigningTaskTimeout
-    group_id: ci-pipeline-service
+  # Using existing ITBench alerts from otel-demo.yaml
+  - id: RequestErrorRate
+    group_id: accounting-service-1
     metadata:
-      description: "Signing tasks timing out after 25 minutes waiting for RADAS response"
-      severity: critical
-      source: "Tekton pipeline metrics"
-
-  - id: MessageQueueBacklog
-    group_id: message-queue-broker
-    metadata:
-      description: "UMB queue depth exceeds 100,000 unacknowledged messages"
+      description: "Request error rate in accounting service is above threshold due to queue backlog"
       severity: warning
-      source: "UMB monitoring dashboard"
 
-  - id: MessageDeliveryLatency
-    group_id: message-queue-broker
+  - id: RequestErrorRate
+    group_id: fraud-detection-service-1
     metadata:
-      description: "Message P99 latency exceeds 10,000 seconds (normal < 0.2s)"
-      severity: critical
-      source: "UMB status dashboard"
-
-  - id: SigningServiceHighCPU
-    group_id: signing-service-pods
-    metadata:
-      description: "RADAS pods at 100% CPU utilization, unable to scale"
+      description: "Request error rate in fraud-detection service is above threshold"
       severity: warning
-      source: "Kubernetes metrics"
+
+  - id: RequestLatencyProcessor
+    group_id: accounting-service-1
+    metadata:
+      description: "P95 latency in accounting service exceeds 15000ms threshold"
+      severity: warning
+
+  - id: RequestLatencyProcessor
+    group_id: fraud-detection-service-1
+    metadata:
+      description: "P95 latency in fraud-detection service exceeds 15000ms threshold"
+      severity: warning
+
+  - id: KafkaConnectionClosureRate
+    group_id: kafka-pod-1
+    metadata:
+      description: "Kafka consumer connection closure rate above 0 indicating consumer issues"
+      severity: warning
+
+  - id: NoRequestsDetected
+    group_id: checkout-service-1
+    metadata:
+      description: "Checkout service has 0 requests due to upstream service failures"
+      severity: warning
+
+  - id: PendingPodsDetected
+    group_id: accounting-pod-1
+    metadata:
+      description: "Pods stuck in Pending state if attempting to scale under resource constraints"
+      severity: critical
 
 groups:
-  - id: signing-service-pods
-    kind: Pod
-    namespace: signing-service
+  - id: flagd-config-1
+    kind: ConfigMap
+    namespace: otel-demo
     filter:
-      - signing-service-.*
+      - flagd-config\b
     root_cause: true
-    reason: "Insufficient pod count (20) for request volume, prevented from scaling by resource quota"
+    reason: "kafkaQueueProblems feature flag enabled causing queue backlog and consumer delay"
 
-  - id: signing-service-deployment
-    kind: Deployment
-    namespace: signing-service
+  - id: flagd-pod-1
+    kind: Pod
+    namespace: otel-demo
     filter:
-      - signing-service\b
+      - flagd-.*
 
-  - id: message-queue-broker
+  - id: flagd-service-1
     kind: Service
-    namespace: messaging-infrastructure
+    namespace: otel-demo
     filter:
-      - message-queue-broker\b
+      - flagd\b
 
-  - id: message-queue-consumer-pods
+  - id: kafka-pod-1
     kind: Pod
-    namespace: messaging-infrastructure
+    namespace: otel-demo
     filter:
-      - message-queue-consumer-.*
+      - kafka-.*
 
-  - id: ci-pipeline-service
+  - id: kafka-service-1
     kind: Service
-    namespace: ci-pipelines
+    namespace: otel-demo
     filter:
-      - pipeline-.*
+      - kafka\b
 
-  - id: signing-task-pods
+  - id: accounting-pod-1
     kind: Pod
-    namespace: ci-pipelines
+    namespace: otel-demo
     filter:
-      - .*-sign-.*
+      - accountingservice-.*
 
-  - id: load-generator-pods
-    kind: Pod
-    namespace: ci-pipelines
+  - id: accounting-service-1
+    kind: Service
+    namespace: otel-demo
     filter:
-      - signing-request-generator-.*
+      - accountingservice\b
+
+  - id: fraud-detection-pod-1
+    kind: Pod
+    namespace: otel-demo
+    filter:
+      - frauddetectionservice-.*
+
+  - id: fraud-detection-service-1
+    kind: Service
+    namespace: otel-demo
+    filter:
+      - frauddetectionservice\b
+
+  - id: checkout-pod-1
+    kind: Pod
+    namespace: otel-demo
+    filter:
+      - checkoutservice-.*
+
+  - id: checkout-service-1
+    kind: Service
+    namespace: otel-demo
+    filter:
+      - checkoutservice\b
 
 aliases:
-  - - signing-service-deployment
-    - signing-service-pods
-  - - message-queue-broker
-    - message-queue-consumer-pods
-  - - ci-pipeline-service
-    - signing-task-pods
+  - - flagd-pod-1
+    - flagd-service-1
+  - - kafka-pod-1
+    - kafka-service-1
+  - - accounting-pod-1
+    - accounting-service-1
+  - - fraud-detection-pod-1
+    - fraud-detection-service-1
+  - - checkout-pod-1
+    - checkout-service-1
 
 propagations:
-  # Load surge creates message queue backlog
-  - source: load-generator-pods
-    target: message-queue-broker
-    condition: "10x surge in signing requests overwhelms queue consumer capacity"
-    effect: "Message queue depth increases to 200,000+ unacknowledged messages"
-    note: "Surge caused by OCP releasing two streams simultaneously"
+  # Feature flag enables queue problems
+  - source: flagd-config-1
+    target: flagd-service-1
+    condition: "kafkaQueueProblems feature flag set to 'on'"
+    effect: "Flagd enables Kafka queue overload and consumer delay injection"
 
-  # Message queue backlog prevents RADAS from receiving new requests
-  - source: message-queue-broker
-    target: signing-service-pods
-    condition: "Consumer cannot process queue fast enough (prefetch=1, 5s delay per message)"
-    effect: "RADAS receives no new signing requests, appears idle while queue builds"
+  # Kafka queue backlog builds
+  - source: flagd-service-1
+    target: kafka-service-1
+    condition: "Kafka queue overloaded with messages"
+    effect: "Message queue depth increases, consumer lag grows"
 
-  # Resource quota prevents RADAS from scaling to meet demand
-  - source: signing-service-pods
-    target: signing-service-pods
-    condition: "Namespace resource quota caps memory at 2Gi (20 pods @ 100Mi each)"
-    effect: "Horizontal Pod Autoscaler cannot create additional pods despite high CPU"
+  # Accounting service affected by queue backlog
+  - source: kafka-service-1
+    target: accounting-service-1
+    condition: "Consumer delay causes slow message processing"
+    effect: "Accounting service latency increases dramatically, errors occur"
 
-  # Signing service unable to process causes pipeline timeouts
-  - source: signing-service-pods
-    target: signing-task-pods
-    condition: "RADAS not processing signing requests due to queue backlog"
-    effect: "Tekton signing tasks wait 25 minutes then timeout"
+  # Fraud detection service affected
+  - source: kafka-service-1
+    target: fraud-detection-service-1
+    condition: "Consumer cannot process messages fast enough"
+    effect: "Fraud detection service latency exceeds threshold"
 
-  # Pipeline timeouts cascade to complete release failure
-  - source: signing-task-pods
-    target: ci-pipeline-service
-    condition: "All signing tasks timeout after 25 minutes"
-    effect: "100% failure rate for all release pipelines requiring signing"
+  # Cascading failure to checkout
+  - source: accounting-service-1
+    target: checkout-service-1
+    condition: "Accounting service unavailable or timing out"
+    effect: "Checkout service cannot complete orders, receives no successful requests"
+
+  - source: fraud-detection-service-1
+    target: checkout-service-1
+    condition: "Fraud detection service unavailable or timing out"
+    effect: "Checkout blocked waiting for fraud check response"
 
 recommended_actions:
   - solution:
-      id: immediate_scale_signing_service
+      id: disable_kafka_queue_problems_flag
       actions:
-        - "Increase namespace resource quota (CPU: 40→100 cores, Memory: 80Gi→200Gi)"
-        - "Scale RADAS deployment: 20→50 pods"
-        - "Monitor UMB queue depth until backlog clears"
-      timing: "Within 1 hour of detection"
+        - "Disable kafkaQueueProblems feature flag in flagd-config ConfigMap"
+        - "Set defaultVariant to 'off' for kafkaQueueProblems"
+      timing: "Immediate"
 
   - solution:
-      id: communicate_with_users
+      id: monitor_kafka_consumer_lag
       actions:
-        - "Add banner to Konflux UI warning of signing service degradation"
-        - "Notify users when queue stabilizes and safe to retry"
-      timing: "Immediately upon Sev-1 declaration"
+        - "Check Kafka consumer lag metrics"
+        - "Verify consumer group health"
+      timing: "During investigation"
 
   - solution:
-      id: permanent_capacity_increase
+      id: scale_consumer_services
       actions:
-        - "Implement RADAS auto-scaling (HPA with appropriate thresholds)"
-        - "Set baseline to 30-40 pods (not 20)"
-        - "Add proactive alerting on UMB queue depth trending"
-      timing: "Post-incident prevention"
-      jira: "CLOUDWF-11243"
+        - "Scale accounting and fraud-detection deployments"
+        - "Increase consumer processing capacity"
+      timing: "If load is legitimate"
 
   - solution:
-      id: improve_observability
+      id: improve_queue_monitoring
       actions:
-        - "Enable Splunk logging for signing tasks (long-term retention)"
-        - "Add alerting on message queue growth rate (not just absolute depth)"
-        - "Dashboard for RADAS processing rate vs incoming request rate"
+        - "Add alerting on Kafka consumer lag trending"
+        - "Dashboard for message processing rate vs incoming rate"
       timing: "Post-incident improvement"
-      jira: "KFLUXINFRA-1966"
 

@@ -1,198 +1,164 @@
 ---
-# Ground Truth for ITN-2025-00160: API Server High Error Rate
-# Evidence from Slack channel C09528B6JAD.json
+# Ground Truth for Incident 51: Service High Error Rate Due to Load Surge
+# Based on ITN-2025-00160 incident pattern - adapted for ITBench otel-demo application
 metadata:
   version: "v1"
 
 fault:
   - entity:
-      name: api-request-generator
-      group_id: load-generator-pods
-      kind: Job
-    condition: "Excessive API requests (1000 req/s) triggering rate limiting"
+      name: load-generator
+      group_id: load-generator-pod-1
+      kind: Pod
+    condition: "Load generator configured with excessive request rate overwhelming frontend-proxy"
     category: Client Behavior
     fault_mechanism: custom-api-request-surge
 
   - entity:
-      name: kube-apiserver
-      group_id: api-server-pods
+      name: frontend-proxy
+      group_id: frontend-proxy-pod-1
       kind: Pod
-    condition: "Rate limiting clients exceeding request quota (HTTP 429 responses)"
-    category: Expected Behavior
+    condition: "Service overwhelmed by request volume, returning errors"
+    category: Resource Saturation
     fault_mechanism: none
-    note: "This is protective behavior, not a fault - but triggers misconfigured alert"
+    note: "Service under heavy load - cascading failures to downstream services"
 
   - entity:
-      name: etcd
-      group_id: etcd-pods
+      name: frontend
+      group_id: frontend-pod-1
       kind: Pod
-    condition: "I/O latency injected causing API Server timeouts"
-    category: Infrastructure Fault
-    fault_mechanism: chaos-mesh-IOChaos
-
-  - entity:
-      name: kube-apiserver-memory
-      group_id: api-server-pods
-      kind: Pod
-    condition: "Memory pressure causing OOM and pod restarts"
-    category: Resource Exhaustion
+    condition: "Frontend service experiencing high latency due to backend pressure"
+    category: Resource Saturation
     fault_mechanism: chaos-mesh-StressChaos
 
 alerts:
-  # Note: These alerts are based on the actual Konflux production incident.
-  # The original alert (KonfluxAPIServerHighErrorRate) was a custom alert defined in
-  # the Konflux observatorium production Prometheus configuration, not in the standard
-  # kube-prometheus-stack charts. The alert definitions would be found in the Konflux
-  # GitOps repository managing the observatorium Prometheus rules.
-  # The revised alert and recommended alerts are proposed improvements based on the
-  # incident analysis.
-  - id: KonfluxAPIServerHighErrorRate
-    group_id: api-server-pods
+  # Using existing ITBench alerts from otel-demo.yaml
+  - id: RequestErrorRate
+    group_id: frontend-proxy-service-1
     metadata:
-      description: "API Server error rate > 5% for 5 minutes (ORIGINAL: includes 5XX and 429)"
+      description: "Request error rate in frontend-proxy service is above threshold"
+      severity: warning
+
+  - id: RequestErrorRate
+    group_id: frontend-service-1
+    metadata:
+      description: "Request error rate in frontend service is above threshold due to cascading failures"
+      severity: warning
+
+  - id: RequestLatency
+    group_id: frontend-proxy-service-1
+    metadata:
+      description: "P95 latency in frontend-proxy service exceeds 1500ms threshold"
+      severity: warning
+
+  - id: RequestLatency
+    group_id: frontend-service-1
+    metadata:
+      description: "P95 latency in frontend service exceeds 1500ms threshold"
+      severity: warning
+
+  - id: PendingPodsDetected
+    group_id: frontend-proxy-pod-1
+    metadata:
+      description: "Pods stuck in Pending state if cluster cannot schedule under load"
       severity: critical
-      source: "rhtap-observatorium-production"
-      issue: "Alert incorrectly treats 429 rate limiting as critical server failure"
-
-  - id: KonfluxAPIServerHighErrorRateRevised
-    group_id: api-server-pods
-    metadata:
-      description: "API Server error rate > 5% for 5 minutes (REVISED: only 5XX server errors)"
-      severity: critical
-      source: "rhtap-observatorium-production"
-      merge_request: "https://gitlab.cee.redhat.com/konflux/docs/sop/-/merge_requests/371"
-      improvement: "Excludes expected rate limiting behavior from critical alert"
-
-  - id: KonfluxAPIServerRateLimitExceeded
-    group_id: api-server-pods
-    metadata:
-      description: "Sustained high rate of 429 responses indicating excessive client"
-      severity: warning
-      source: "Prometheus"
-      status: "RECOMMENDED - not yet implemented"
-      purpose: "Monitor rate limiting separately without critical alarm"
-
-  - id: EtcdHighLatency
-    group_id: etcd-pods
-    metadata:
-      description: "etcd fsync latency P99 > 100ms"
-      severity: warning
-      source: "Kubernetes metrics"
-
-  - id: APIServerMemoryHigh
-    group_id: api-server-pods
-    metadata:
-      description: "API Server pod memory usage > 90% of limit"
-      severity: warning
-      source: "Kubernetes metrics"
 
 groups:
-  - id: api-server-pods
+  - id: load-generator-pod-1
     kind: Pod
-    namespace: kube-system
+    namespace: otel-demo
     filter:
-      - kube-apiserver-.*
-    note: "Control plane component - affects entire cluster"
-
-  - id: etcd-pods
-    kind: Pod
-    namespace: kube-system
-    filter:
-      - etcd-.*
-    note: "Backing store for API Server"
-
-  - id: load-generator-pods
-    kind: Pod
-    namespace: default
-    filter:
-      - api-request-generator-.*
+      - load-generator-.*
     root_cause: true
-    reason: "Generates excessive requests causing rate limiting (Scenario A)"
+    reason: "Generates excessive requests causing service overload"
 
-  - id: monitoring-alert-config
-    kind: ConfigMap
-    namespace: observability
+  - id: load-generator-service-1
+    kind: Service
+    namespace: otel-demo
     filter:
-      - konflux-alerts
-    root_cause: true
-    reason: "Misconfigured alert treats 429 (expected) as critical error"
+      - load-generator\b
+
+  - id: frontend-proxy-pod-1
+    kind: Pod
+    namespace: otel-demo
+    filter:
+      - frontend-proxy-.*
+
+  - id: frontend-proxy-service-1
+    kind: Service
+    namespace: otel-demo
+    filter:
+      - frontend-proxy\b
+
+  - id: frontend-pod-1
+    kind: Pod
+    namespace: otel-demo
+    filter:
+      - frontend-.*
+
+  - id: frontend-service-1
+    kind: Service
+    namespace: otel-demo
+    filter:
+      - frontend\b
 
 aliases:
-  - - api-server-pods
-    - etcd-pods
+  - - load-generator-pod-1
+    - load-generator-service-1
+  - - frontend-proxy-pod-1
+    - frontend-proxy-service-1
+  - - frontend-pod-1
+    - frontend-service-1
 
 propagations:
-  # Scenario A: Excessive requests → Rate limiting
-  - source: load-generator-pods
-    target: api-server-pods
-    condition: "API request rate exceeds server quota (1000 req/s from single client)"
-    effect: "API Server returns HTTP 429 (Too Many Requests) to protect itself"
-    classification: "Expected behavior, not failure"
+  # Scenario A: Excessive requests → Service overload
+  - source: load-generator-pod-1
+    target: load-generator-service-1
+    condition: "Load generator configured with high request rate"
+    effect: "Generates excessive HTTP requests to frontend-proxy"
 
-  # Scenario B: etcd latency → API Server timeouts
-  - source: etcd-pods
-    target: api-server-pods
-    condition: "etcd I/O latency > 200ms causes API Server storage operations to timeout"
-    effect: "API Server returns HTTP 503 (Service Unavailable) or 504 (Gateway Timeout)"
-    classification: "Genuine server failure"
+  - source: load-generator-service-1
+    target: frontend-proxy-service-1
+    condition: "Request rate exceeds frontend-proxy capacity"
+    effect: "Frontend-proxy returns HTTP errors, latency increases"
 
-  # Scenario C: Memory pressure → API Server crashes
-  - source: api-server-pods
-    target: api-server-pods
-    condition: "Memory allocation exceeds pod limit (OOM)"
-    effect: "Kubelet kills API Server pod, brief 503 errors during restart"
-    classification: "Genuine server failure"
+  # Scenario B: Cascading failures to frontend
+  - source: frontend-proxy-service-1
+    target: frontend-service-1
+    condition: "Frontend-proxy overwhelmed passes pressure to frontend"
+    effect: "Frontend service error rate increases, latency degrades"
 
-  # Misconfigured alert → False positive incident
-  - source: api-server-pods
-    target: monitoring-alert-config
-    condition: "Alert definition includes HTTP 429 in error calculation"
-    effect: "Critical alert fires even when only rate limiting occurs (no actual server failure)"
-    classification: "Observability issue"
+  # Scenario C: Resource pressure
+  - source: frontend-pod-1
+    target: frontend-pod-1
+    condition: "Memory/CPU pressure under load"
+    effect: "Pod may be OOM killed or throttled"
 
 recommended_actions:
   - solution:
-      id: refine_alert_definition
+      id: reduce_load_generator_rate
       actions:
-        - "Separate 5XX (server errors) from 4XX (client errors) in alerting"
-        - "Create separate warning-level alert for sustained 429 rate"
-        - "Update runbooks to investigate 429 sources, not treat as critical"
+        - "Reduce load generator request rate to sustainable level"
+        - "Verify load generator configuration in flagd-config ConfigMap"
       timing: "Immediate"
-      status: "COMPLETED"
-      merge_request: "https://gitlab.cee.redhat.com/konflux/docs/sop/-/merge_requests/371"
 
   - solution:
-      id: investigate_rate_limit_source
+      id: scale_frontend_services
       actions:
-        - "Query Kubernetes audit logs for top API clients by request count"
-        - "Identify controller, monitoring agent, or user causing 429s"
-        - "Adjust client reconciliation rate or add backoff"
+        - "Scale frontend-proxy and frontend deployments"
+        - "Increase resource limits if needed"
+      timing: "If load is legitimate"
+
+  - solution:
+      id: investigate_traffic_source
+      actions:
+        - "Check load generator configuration"
+        - "Verify if traffic spike is intentional or misconfiguration"
       timing: "Post-incident investigation"
-      status: "IN PROGRESS"
-      jira: "SPRE-1657"
 
   - solution:
-      id: scale_api_server_if_genuine_5xx
+      id: implement_rate_limiting
       actions:
-        - "If genuine 5XX errors: increase API Server replica count"
-        - "If etcd latency: investigate storage performance"
-        - "If memory pressure: increase API Server pod memory limits"
-      timing: "If scenario B or C confirmed"
-      status: "NOT NEEDED for this incident"
-
-  - solution:
-      id: improve_alert_testing
-      actions:
-        - "Test new alerts with realistic traffic before production"
-        - "Review all SLO alerts for HTTP code semantics"
-        - "Add alert testing to CI/CD pipeline"
-      timing: "Post-incident process improvement"
-
-  - solution:
-      id: implement_client_quotas
-      actions:
-        - "Set explicit rate limits per service account"
-        - "Monitor and alert on per-client request rates"
-        - "Create priority queues for critical vs non-critical clients"
+        - "Configure rate limiting at ingress level"
+        - "Set up autoscaling policies"
       timing: "Long-term improvement"
 
