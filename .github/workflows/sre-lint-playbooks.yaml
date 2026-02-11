@@ -15,8 +15,8 @@ jobs:
     name: Lint playbooks and roles in main directory
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6.0.1
-      - uses: actions/setup-python@v6.1.0
+      - uses: actions/checkout@v6.0.2
+      - uses: actions/setup-python@v6.2.0
         with:
           python-version: '3.13'
       - name: Install Python dependencies
@@ -24,7 +24,7 @@ jobs:
           pip install -r sre/requirements.txt
           pip install -r sre/requirements-dev.txt
       - name: Run ansible-lint
-        uses: ansible/ansible-lint@v25.12.2
+        uses: ansible/ansible-lint@v26.1.1
         with:
           args: playbooks roles
           setup_python: "false"
@@ -34,8 +34,8 @@ jobs:
     name: Lint playbooks and roles in remote cluster directory
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6.0.1
-      - uses: actions/setup-python@v6.1.0
+      - uses: actions/checkout@v6.0.2
+      - uses: actions/setup-python@v6.2.0
         with:
           python-version: '3.13'
       - name: Install Python dependencies
@@ -43,7 +43,7 @@ jobs:
           pip install -r sre/requirements.txt
           pip install -r sre/requirements-dev.txt
       - name: Run ansible-lint
-        uses: ansible/ansible-lint@v25.12.2
+        uses: ansible/ansible-lint@v26.1.1
         with:
           setup_python: "false"
           working_directory: sre/dev/remote_cluster
