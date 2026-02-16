@@ -3,6 +3,10 @@
 # Simulates runaway controller making excessive API requests
 # Based on ITN-2025-00160 incident
 
+- name: Set script content for template
+  ansible.builtin.set_fact:
+    api_request_surge_script_content: "{{ lookup('ansible.builtin.file', 'files/api_request_surge/generate-api-load.sh') }}"
+
 - name: Create API request surge resources
   kubernetes.core.k8s:
     kubeconfig: "{{ faults_cluster.kubeconfig }}"
@@ -22,4 +26,3 @@
       status: "True"
     wait_timeout: 60
   register: deployment_info
-  ignore_errors: true

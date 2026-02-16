@@ -40,7 +40,7 @@ metadata:
   namespace: {{ spec.namespace.name }}
 data:
   generate-api-load.sh: |
-{{ lookup('ansible.builtin.file', 'files/api_request_surge/generate-api-load.sh') | indent(width=4) }}
+{{ api_request_surge_script_content | indent(width=4) }}
 ---
 apiVersion: apps/v1
 kind: Deployment
