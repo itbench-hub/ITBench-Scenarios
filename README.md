@@ -1,7 +1,7 @@
 # ITBench-Scenarios
 
-**This repository has been archived. For updates and contributions, please refer to the [main repository](https://github.com/itbench-hub/ITBench/tree/main/scenarios).**
-
+> [!NOTE]
+> **This repository has been archived. For updates and contributions, please refer to the [main repository](https://github.com/itbench-hub/ITBench/tree/main/scenarios).**
 This repository contains infrastructure automation scripts for both deploying the environments and configuring the scenarios required to run [ITBench](https://github.com/ITBench-Hub/ITBench).
 These scenarios are realistic simulations based on actual IT automation challenges faced by CISO, SRE, and FinOps teams.
 For example, one of the SRE scenarios is to resolve a “high error rate on service checkout” while a CISO scenario involves assessing the compliance posture for a “new control rule detected for RHEL 9.”
