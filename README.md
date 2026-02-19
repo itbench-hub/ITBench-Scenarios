@@ -1,7 +1,7 @@
 # ITBench-Scenarios
 
 > [!NOTE]
-> **This repository has been archived. For updates and contributions, please refer to the [main repository](https://github.com/itbench-hub/ITBench/tree/main/scenarios).**
+> **This repository has been archived. All future development and contributions have moved to the [ITBench main repository](https://github.com/itbench-hub/ITBench/tree/main/scenarios).**
 
 This repository contains infrastructure automation scripts for both deploying the environments and configuring the scenarios required to run [ITBench](https://github.com/ITBench-Hub/ITBench).
 These scenarios are realistic simulations based on actual IT automation challenges faced by CISO, SRE, and FinOps teams.
